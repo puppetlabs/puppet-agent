@@ -1,11 +1,7 @@
 component "puppet" do |pkg, settings, platform|
-#  pkg.fetch_source "http://builds.puppetlabs.lan/pe-puppet/3.7.2.0/artifacts/pe-puppet-3.7.2.0.tar.gz", "f875da5680101b9550f866009f18d0ef"
-  pkg.url = "http://builds.puppetlabs.lan/pe-puppet/3.7.2.0/artifacts/pe-puppet-3.7.2.0.tar.gz"
-  pkg.md5sum = "f875da5680101b9550f866009f18d0ef"
-  pkg.version = "3.7.2.0"
-  # pkg.load_metadata
-  # puppet.json
-  # { "url": "http://...", "md5sum": "abcd1234", "version": "3.7.2.0" }
+  pkg.url "http://builds.puppetlabs.lan/pe-puppet/3.7.2.0/artifacts/pe-puppet-3.7.2.0.tar.gz"
+  pkg.md5sum "f875da5680101b9550f866009f18d0ef"
+  pkg.version "3.7.2.0"
 
   pkg.depends_on "ruby"
   pkg.depends_on "facter"
@@ -26,7 +22,7 @@ component "puppet" do |pkg, settings, platform|
     fail "need to know where to put service files"
   end
 
-  pkg.install_with do
+  pkg.install do
     ["#{settings[:bindir]}/ruby install.rb --configdir=#{settings[:sysconfdir]} --sitelibdir=#{settings[:ruby_vendordir]} --configs --quick --man --mandir=#{settings[:mandir]}",
      install]
   end

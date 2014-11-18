@@ -1,7 +1,7 @@
 component "openssl" do |pkg, settings, platform|
-  pkg.version = "1.0.0o"
-  pkg.md5sum = "473b311354b7b19d624a4f291580e82e"
-  pkg.url = "http://buildsources.delivery.puppetlabs.net/openssl-1.0.0o.tar.gz"
+  pkg.version "1.0.0o"
+  pkg.md5sum "473b311354b7b19d624a4f291580e82e"
+  pkg.url "http://buildsources.delivery.puppetlabs.net/openssl-1.0.0o.tar.gz"
 
   # use pkg.replaces to handle both of the following
   # pkg.replaces "pe-openssl"
@@ -9,7 +9,7 @@ component "openssl" do |pkg, settings, platform|
   #pkg.obsoletes (replaces)
   #pkg.conflicts
 
-  pkg.configure_with do
+  pkg.configure do
     [# OpenSSL Configure doesn't honor CFLAGS or LDFLAGS as environment variables.
     # Instead, those should be passed to Configure at the end of its options, as
     # any unrecognized options are passed straight through to ${CC}. Defining
@@ -53,12 +53,12 @@ component "openssl" do |pkg, settings, platform|
   end
 =end
 
-  pkg.build_with do
+  pkg.build do
     ["#{platform[:make]} depend",
     "#{platform[:make]}"]
   end
 
-  pkg.install_with do
+  pkg.install do
     ["#{platform[:make]} INSTALL_PREFIX=/ install",
     linking]
   end

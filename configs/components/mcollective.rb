@@ -1,7 +1,7 @@
 component "mcollective" do |pkg, settings, platform|
-  pkg.version = "2.6.0.4"
-  pkg.md5sum = "792be7d43c8f9f7e742c7e6a7afb5f5e"
-  pkg.url = "http://builds.puppetlabs.lan/pe-mcollective/2.6.0.4/artifacts/pe-mcollective-2.6.0.4.tar.gz"
+  pkg.version "2.6.0.4"
+  pkg.md5sum "792be7d43c8f9f7e742c7e6a7afb5f5e"
+  pkg.url "http://builds.puppetlabs.lan/pe-mcollective/2.6.0.4/artifacts/pe-mcollective-2.6.0.4.tar.gz"
 
   pkg.depends_on "ruby"
   pkg.depends_on "ruby-stomp"
@@ -21,7 +21,7 @@ component "mcollective" do |pkg, settings, platform|
     fail "need to know where to put service files"
   end
 
-  pkg.install_with do
+  pkg.install do
     ["#{settings[:bindir]}/ruby install.rb --plugindir=#{settings[:prefix]}/mcollective/plugins --configdir=#{settings[:sysconfdir]} --sitelibdir=#{settings[:ruby_vendordir]} --configs --quick --man --mandir=#{settings[:mandir]}",
      install]
   end
