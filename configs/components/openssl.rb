@@ -43,8 +43,18 @@ component "openssl" do |pkg, settings, platform|
   if platform.is_deb?
     linking = "ln -s /etc/ssl/certs/ca-certificates.crt '#{settings[:prefix]}/ssl/cert.pem'"
   elsif platform.is_rpm?
-    linking = "ln -s /etc/pki/tls/certs/ca-bundle.crt '#{settings[:prefix]}/ssl/cert.pem'"
+    case platform[:name]
+    when "sles-10-(.*)$", "sles-11-(.*)$"
+      linking = "pushd '#{settings[:prefix]}/ssl/certs' 2>&1 >/dev/null; find /etc/ssl/certs -type f -a -name '\*pem' -print0 | xargs -0 --no-run-if-empty -n1 ln -sf; /usr/bin/c_rehash ."
+    when "sles-12-(.*)$"
+      linking = "ln -s /etc/ssl/ca-bundle.pem '#{settings[:prefix]}/ssl/cert.pem'"
+    when "el-4-(.*)$"
+      linking = "ln -s /usr/share/ssl/certs/ca-bundle.crt '#{settings[:prefix]}/ssl/cert.pem'"
+    else
+      linking = "ln -s /etc/pki/tls/certs/ca-bundle.crt '#{settings[:prefix]}/ssl/cert.pem'"
+    end
   end
+
 =begin
   if platform.is_deb?
     pkg.link "/etc/ssl/certs/ca-certificates.crt", "#{settings[:prefix]}/ssl/cert.pem"

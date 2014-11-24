@@ -5,6 +5,7 @@ component "augeas" do |pkg, settings, platform|
 
   if platform.is_rpm?
     pkg.build_depends_on "libxml2-devel"
+    pkg.build_depends_on "pkgconfig"
     pkg.build_depends_on "readline-devel"
   elsif platform.is_deb?
     pkg.build_depends_on "libxml2-dev"
