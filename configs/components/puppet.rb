@@ -1,7 +1,7 @@
 component "puppet" do |pkg, settings, platform|
-  pkg.url "http://builds.puppetlabs.lan/pe-puppet/3.7.2.0/artifacts/pe-puppet-3.7.2.0.tar.gz"
-  pkg.md5sum "f875da5680101b9550f866009f18d0ef"
-  pkg.version "3.7.2.0"
+  pkg.url "http://builds.puppetlabs.lan/pe-puppet/3.7.2.2/artifacts/pe-puppet-3.7.2.2.tar.gz"
+  pkg.md5sum "4f0c81833af80aee77b45335b7e69a7f"
+  pkg.version "3.7.2.2"
 
   pkg.depends_on "ruby"
   pkg.depends_on "facter"

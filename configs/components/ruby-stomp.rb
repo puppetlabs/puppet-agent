@@ -1,7 +1,7 @@
 component "ruby-stomp" do |pkg, settings, platform|
-  pkg.version "1.2.9"
-  pkg.md5sum "6bc97daafeae143816f9999a189cb5dc"
-  pkg.url "http://buildsources.delivery.puppetlabs.net/stomp-1.2.9.tar.gz"
+  pkg.version "1.3.3"
+  pkg.md5sum "803344d3291a3fc3daa7da67b318165a"
+  pkg.url "http://buildsources.delivery.puppetlabs.net/stomp-1.3.3.tar.gz"
 
   pkg.depends_on "ruby"
 
