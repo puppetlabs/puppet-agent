@@ -1,9 +1,4 @@
 platform "el-5-i386" do |plat|
-#  plat.tool :make => "/usr/bin/make"
-#  plat.tool :patch => "/usr/bin/patch"
-#  plat.service { :type => "sysv", :defaultdir => "/etc/sysconfig", :servicedir => "/etc/rc.d/init.d" }
-  plat.make = "/usr/bin/make"
-  plat.patch = "/usr/bin/patch"
   plat.servicedir = "/etc/rc.d/init.d"
   plat.defaultdir = "/etc/sysconfig"
   plat.servicetype = "sysv"

@@ -3,8 +3,8 @@ component "mcollective" do |pkg, settings, platform|
   pkg.md5sum "f0876fe5e13d2128fe6e5319478661ba"
   pkg.url "http://builds.puppetlabs.lan/pe-mcollective/2.6.0.5/artifacts/pe-mcollective-2.6.0.5.tar.gz"
 
-  pkg.depends_on "ruby"
-  pkg.depends_on "ruby-stomp"
+  pkg.build_requires "ruby"
+  pkg.build_requires "ruby-stomp"
 
   case platform[:servicetype]
   when "systemd"

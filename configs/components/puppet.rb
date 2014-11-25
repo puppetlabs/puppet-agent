@@ -3,9 +3,9 @@ component "puppet" do |pkg, settings, platform|
   pkg.md5sum "4f0c81833af80aee77b45335b7e69a7f"
   pkg.version "3.7.2.2"
 
-  pkg.depends_on "ruby"
-  pkg.depends_on "facter"
-  pkg.depends_on "hiera"
+  pkg.build_requires "ruby"
+  pkg.build_requires "facter"
+  pkg.build_requires "hiera"
 
   case platform[:servicetype]
   when "systemd"

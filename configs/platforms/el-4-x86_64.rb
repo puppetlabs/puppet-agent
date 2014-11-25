@@ -1,6 +1,4 @@
 platform "el-4-x86_64" do |plat|
-  plat.make = "/usr/bin/make"
-  plat.patch = "/usr/bin/patch"
   plat.servicedir = "/etc/rc.d/init.d"
   plat.defaultdir = "/etc/sysconfig"
   plat.servicetype = "sysv"

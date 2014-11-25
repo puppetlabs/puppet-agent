@@ -4,12 +4,12 @@ component "augeas" do |pkg, settings, platform|
   pkg.url "http://buildsources.delivery.puppetlabs.net/augeas-1.2.0.tar.gz"
 
   if platform.is_rpm?
-    pkg.build_depends_on "libxml2-devel"
-    pkg.build_depends_on "pkgconfig"
-    pkg.build_depends_on "readline-devel"
+    pkg.build_requires "libxml2-devel"
+    pkg.build_requires "pkgconfig"
+    pkg.build_requires "readline-devel"
   elsif platform.is_deb?
-    pkg.build_depends_on "libxml2-dev"
-    pkg.build_depends_on "libreadline-dev"
+    pkg.build_requires "libxml2-dev"
+    pkg.build_requires "libreadline-dev"
   end
 
   pkg.configure do
