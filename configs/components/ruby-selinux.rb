@@ -11,12 +11,11 @@ if platform.name =~ /^el-(5|6|7)-.*/
 
     pkg.url "http://buildsources.delivery.puppetlabs.net/libselinux-#{pkg.get_version}.tgz"
 
-    pkg.depends_on "ruby"
-
-    pkg.build_depends_on "swig"
-    pkg.build_depends_on "libsepol"
-    pkg.build_depends_on "libsepol-devel"
-    pkg.build_depends_on "libselinux-devel"
+    pkg.build_requires "ruby"
+    pkg.build_requires "swig"
+    pkg.build_requires "libsepol"
+    pkg.build_requires "libsepol-devel"
+    pkg.build_requires "libselinux-devel"
 
     pkg.build do
       ["export RUBYHDRDIR=$(shell #{settings[:bindir]}/ruby -rrbconfig -e 'puts RbConfig::CONFIG[\"rubyhdrdir\"]')",
