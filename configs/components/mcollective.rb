@@ -1,7 +1,7 @@
 component "mcollective" do |pkg, settings, platform|
-  pkg.version "2.6.0.4"
-  pkg.md5sum "792be7d43c8f9f7e742c7e6a7afb5f5e"
-  pkg.url "http://builds.puppetlabs.lan/pe-mcollective/2.6.0.4/artifacts/pe-mcollective-2.6.0.4.tar.gz"
+  pkg.version "2.6.0.5"
+  pkg.md5sum "f0876fe5e13d2128fe6e5319478661ba"
+  pkg.url "http://builds.puppetlabs.lan/pe-mcollective/2.6.0.5/artifacts/pe-mcollective-2.6.0.5.tar.gz"
 
   pkg.depends_on "ruby"
   pkg.depends_on "ruby-stomp"

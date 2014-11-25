@@ -1,7 +1,7 @@
 component "ruby" do |comp, settings, platform|
-  comp.version "1.9.3-p484"
-  comp.md5sum "8ac0dee72fe12d75c8b2d0ef5d0c2968"
-  comp.url "http://buildsources.delivery.puppetlabs.net/ruby-1.9.3-p484.tar.gz"
+  comp.version "2.1.5"
+  comp.md5sum "df4c1b23f624a50513c7a78cb51a13dc"
+  comp.url "http://buildsources.delivery.puppetlabs.net/ruby-2.1.5.tar.gz"
 
   comp.depends_on "openssl"
   comp.depends_on "libyaml"
@@ -17,7 +17,6 @@ component "ruby" do |comp, settings, platform|
                 --prefix=#{settings[:prefix]} \
                 --with-opt-dir=#{settings[:prefix]} \
                 --enable-option-checking=no \
-                --with-openssl-dir=#{settings[:prefix]} \
                 --without-win32ole \
                 --without-tcl \
                 --without-gcc \
