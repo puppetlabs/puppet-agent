@@ -1,5 +1,4 @@
 platform "sles-12-x86_64" do |plat|
-  plat.make = "/usr/bin/make"
   plat.servicedir = "/usr/lib/systemd/system"
   plat.defaultdir = "/etc/sysconfig"
   plat.servicetype = "systemd"

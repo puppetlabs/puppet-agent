@@ -1,5 +1,4 @@
 platform "ubuntu-10.04-i386" do |plat|
-  plat.make = "/usr/bin/make"
   plat.servicedir = "/etc/init.d"
   plat.defaultdir = "/etc/default"
   plat.servicetype = "sysv"
