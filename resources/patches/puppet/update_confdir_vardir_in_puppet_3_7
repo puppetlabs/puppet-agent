@@ -1,0 +1,32 @@
+From aee472f4fec67f5a56bc271ee9676c90c240a5ab Mon Sep 17 00:00:00 2001
+From: Geoff Nichols <geoff.nichols@puppetlabs.com>
+Date: Tue, 25 Nov 2014 16:54:51 -0800
+Subject: [PATCH] Update confdir and vardir for unified puppet-agent
+
+This commit updates the "conf_dir" and "var_dir" methods
+with the new settings for the unified puppet agent.
+---
+ lib/puppet/util/run_mode.rb | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/lib/puppet/util/run_mode.rb b/lib/puppet/util/run_mode.rb
+index b53bb79..4d70d26 100644
+--- a/lib/puppet/util/run_mode.rb
++++ b/lib/puppet/util/run_mode.rb
+@@ -55,11 +55,11 @@ module Puppet
+ 
+     class UnixRunMode < RunMode
+       def conf_dir
+-        which_dir("/etc/puppetlabs/puppet", "~/.puppet")
++        which_dir("/etc/puppetlabs/agent", "~/.puppet")
+       end
+ 
+       def var_dir
+-        which_dir("/var/opt/lib/pe-puppet", "~/.puppet/var")
++        which_dir("/opt/puppetlabs/agent/cache", "~/.puppet/var")
+       end
+     end
+ 
+-- 
+1.9.3 (Apple Git-50)
+
