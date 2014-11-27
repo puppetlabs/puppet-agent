@@ -6,23 +6,18 @@ component "mcollective" do |pkg, settings, platform|
   pkg.build_requires "ruby"
   pkg.build_requires "ruby-stomp"
 
-  case platform[:servicetype]
+  case platform.servicetype
   when "systemd"
-    pkg.add_service_file "#{platform[:servicedir]}/mcollective.service"
-    pkg.add_service_file "#{platform[:defaultdir]}/mcollective"
-    install = [ "cp -pr ext/redhat/pe-mcollective.service #{platform[:servicedir]}/mcollective.service",
-                "cp -pr ext/redhat/pe-mcollective.sysconfig #{platform[:defaultdir]}/mcollective"]
+    pkg.install_service "ext/redhat/pe-mcollective.service", "ext/redhat/pe-mcollective.sysconfig"
+    pkg.install_file "ext/redhat/pe-mcollective-systemd.logrotate", "/etc/logrotate.d/mcollective"
   when "sysv"
-    pkg.add_service_file "#{platform[:servicedir]}/mcollective"
-    pkg.add_service_file "#{platform[:defaultdir]}/mcollective"
-    install = [ "cp -pr ext/redhat/pe-mcollective.init-rh #{platform[:servicedir]}/mcollective",
-                "cp -pr ext/redhat/pe-mcollective.sysconfig #{platform[:defaultdir]}/mcollective"]
+    pkg.install_service "ext/redhat/pe-mcollective.init-rh", "ext/redhat/pe-mcollective.sysconfig"
+    pkg.install_file "ext/redhat/pe-mcollective-sysv.logrotate", "/etc/logrotate.d/mcollective"
   else
     fail "need to know where to put service files"
   end
 
   pkg.install do
-    ["#{settings[:bindir]}/ruby install.rb --plugindir=#{settings[:prefix]}/mcollective/plugins --configdir=#{settings[:sysconfdir]} --sitelibdir=#{settings[:ruby_vendordir]} --configs --quick --man --mandir=#{settings[:mandir]}",
-     install]
+    ["#{settings[:bindir]}/ruby install.rb --plugindir=#{settings[:prefix]}/mcollective/plugins --configdir=#{settings[:sysconfdir]} --sitelibdir=#{settings[:ruby_vendordir]} --configs --quick --man --mandir=#{settings[:mandir]}"]
   end
 end

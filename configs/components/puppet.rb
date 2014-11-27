@@ -10,23 +10,18 @@ component "puppet" do |pkg, settings, platform|
   pkg.build_requires "facter"
   pkg.build_requires "hiera"
 
-  case platform[:servicetype]
+  case platform.servicetype
   when "systemd"
-    pkg.add_service_file "#{platform[:servicedir]}/puppet.service"
-    pkg.add_service_file "#{platform[:defaultdir]}/puppet"
-    install = ["cp -pr ext/systemd/pe-puppet.service #{platform[:servicedir]}/puppet.service",
-               "touch #{platform[:defaultdir]}/puppet"]
+    pkg.install_service "ext/systemd/pe-puppet.service"
   when "sysv"
-    pkg.add_service_file "#{platform[:servicedir]}/puppet"
-    pkg.add_service_file "#{platform[:defaultdir]}/puppet"
-    install = ["cp -pr ext/redhat/pe-puppet-client.init #{platform[:servicedir]}/puppet",
-               "touch #{platform[:defaultdir]}/puppet"]
+    pkg.install_service "ext/redhat/pe-puppet-client.init"
   else
     fail "need to know where to put service files"
   end
 
+  pkg.install_file "ext/redhat/pe-puppet-logrotate", "/etc/logrotate.d/puppet"
+
   pkg.install do
-    ["#{settings[:bindir]}/ruby install.rb --configdir=#{settings[:sysconfdir]} --sitelibdir=#{settings[:ruby_vendordir]} --configs --quick --man --mandir=#{settings[:mandir]}",
-     install]
+    ["#{settings[:bindir]}/ruby install.rb --configdir=#{settings[:sysconfdir]} --sitelibdir=#{settings[:ruby_vendordir]} --configs --quick --man --mandir=#{settings[:mandir]}"]
   end
 end
