@@ -1,7 +1,7 @@
 component "ruby-shadow" do |pkg, settings, platform|
-  pkg.version "2.2.0"
-  pkg.md5sum "11cddd40138172899b9cfc275e5272ed"
-  pkg.url "http://buildsources.delivery.puppetlabs.net/ruby-shadow-2.2.0.tar.gz"
+  pkg.version "2.3.3"
+  pkg.md5sum "c9fec6b2a18d673322a6d3d83870e122"
+  pkg.url "http://buildsources.delivery.puppetlabs.net/ruby-shadow-2.3.3.tar.gz"
 
   pkg.build_requires "ruby"
 
