@@ -11,7 +11,7 @@ project "puppet-agent" do |proj|
   proj.setting(:ruby_vendordir, File.join(proj.libdir, "ruby", "vendor_ruby"))
 
   proj.description "The Puppet Agent package contains all of the elements needed to run puppet, including ruby, facter, hiera and mcollective."
-#  proj.version
+  proj.version "0.1.1"
   proj.license "ASL 2.0"
   proj.vendor "Puppet Labs <info@puppetlabs.com>"
   proj.homepage "https://www.puppetlabs.com"
