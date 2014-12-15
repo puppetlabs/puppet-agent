@@ -35,8 +35,6 @@ project "puppet-agent" do |proj|
   proj.component "ruby-shadow"
   proj.component "ruby-augeas"
   proj.component "openssl"
-  proj.component "libyaml"
-#  proj.component "libxml"
 
   proj.directory proj.prefix
   proj.directory proj.sysconfdir
