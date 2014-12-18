@@ -23,7 +23,7 @@ project "puppet-agent" do |proj|
   # First our stuff
   proj.component "puppet"
   proj.component "facter"
-  unless proj.platform.is_sles?
+  unless proj.get_platform.is_sles?
     proj.component "cfacter"
   end
   proj.component "hiera"
