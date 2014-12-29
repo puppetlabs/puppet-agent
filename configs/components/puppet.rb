@@ -12,12 +12,20 @@ component "puppet" do |pkg, settings, platform|
   when "systemd"
     pkg.install_service "ext/systemd/puppet.service", "ext/redhat/client.sysconfig"
   when "sysv"
-    pkg.install_service "ext/redhat/client.init", "ext/redhat/client.sysconfig"
+    if platform.is_deb?
+      pkg.install_service "ext/debian/puppet.init", "ext/debian/puppet.default"
+    elsif platform.is_rpm?
+      pkg.install_service "ext/redhat/client.init", "ext/redhat/client.sysconfig"
+    end
   else
     fail "need to know where to put service files"
   end
 
-  pkg.install_file "ext/redhat/logrotate", "/etc/logrotate.d/puppet"
+  if platform.is_deb?
+    pkg.install_file "ext/debian/puppet.logrotate", "/etc/logrotate.d/puppet"
+  elsif platform.is_rpm?
+    pkg.install_file "ext/redhat/logrotate", "/etc/logrotate.d/puppet"
+  end
 
   pkg.install do
     ["#{settings[:bindir]}/ruby install.rb --configdir=#{settings[:sysconfdir]} --sitelibdir=#{settings[:ruby_vendordir]} --configs --quick --man --mandir=#{settings[:mandir]}"]

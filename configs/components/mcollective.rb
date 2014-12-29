@@ -11,7 +11,12 @@ component "mcollective" do |pkg, settings, platform|
     pkg.install_service "ext/redhat/pe-mcollective.service", "ext/redhat/pe-mcollective.sysconfig"
     pkg.install_file "ext/redhat/pe-mcollective-systemd.logrotate", "/etc/logrotate.d/mcollective"
   when "sysv"
-    pkg.install_service "ext/redhat/pe-mcollective.init-rh", "ext/redhat/pe-mcollective.sysconfig"
+    if platform.is_deb?
+      pkg.install_service "ext/debian/pe-mcollective.init", "ext/debian/pe-mcollective.default"
+    elsif platform.is_rpm?
+      pkg.install_service "ext/redhat/pe-mcollective.init-rh", "ext/redhat/pe-mcollective.sysconfig"
+    end
+
     pkg.install_file "ext/redhat/pe-mcollective-sysv.logrotate", "/etc/logrotate.d/mcollective"
   else
     fail "need to know where to put service files"
