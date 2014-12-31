@@ -28,10 +28,10 @@ component "ruby" do |pkg, settings, platform|
   end
 
   pkg.build do
-    ["#{platform[:make]}"]
+    ["#{platform[:make]} -j$(shell expr $(shell #{platform[:num_cores]}) + 1)"]
   end
 
   pkg.install do
-    ["#{platform[:make]} install"]
+    ["#{platform[:make]} -j$(shell expr $(shell #{platform[:num_cores]}) + 1) install"]
   end
 end

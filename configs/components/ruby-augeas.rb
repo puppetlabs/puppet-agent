@@ -11,11 +11,11 @@ component "ruby-augeas" do |pkg, settings, platform|
      "export CFLAGS=#{platform[:cflags]}",
      "export PKG_CONFIG_PATH=#{settings[:libdir]}/pkgconfig",
      "#{settings[:bindir]}/ruby ext/augeas/extconf.rb",
-     platform[:make]]
+     "#{platform[:make]} -j$(shell expr $(shell #{platform[:num_cores]}) + 1)"]
   end
 
   pkg.install do
-    ["#{platform[:make]} DESTDIR=/ install",
+    ["#{platform[:make]} -j$(shell expr $(shell #{platform[:num_cores]}) + 1) DESTDIR=/ install",
      "install -d #{settings[:ruby_vendordir]}",
      "cp -pr lib/augeas.rb #{settings[:ruby_vendordir]}"]
   end
