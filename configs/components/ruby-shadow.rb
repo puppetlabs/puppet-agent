@@ -9,10 +9,10 @@ component "ruby-shadow" do |pkg, settings, platform|
     ["export CONFIGURE_ARGS='--vendor'",
      "export CFLAGS=#{settings[:cflags]}",
      "#{settings[:bindir]}/ruby extconf.rb",
-     platform[:make]]
+     "#{platform[:make]} -j$(shell expr $(shell #{platform[:num_cores]}) + 1)"]
   end
 
   pkg.install do
-    ["#{platform[:make]} DESTDIR=/ install"]
+    ["#{platform[:make]} -j$(shell expr $(shell #{platform[:num_cores]}) + 1) DESTDIR=/ install"]
   end
 end
