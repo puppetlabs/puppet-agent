@@ -3,6 +3,7 @@ project "puppet-agent" do |proj|
   proj.setting(:prefix, "/opt/puppetlabs/agent")
   proj.setting(:sysconfdir, "/etc/puppetlabs/agent")
   proj.setting(:logdir, "/var/log/puppetlabs/agent")
+  proj.setting(:piddir, "/var/run/puppetlabs/agent")
   proj.setting(:bindir, File.join(proj.prefix, "bin"))
   proj.setting(:libdir, File.join(proj.prefix, "lib"))
   proj.setting(:includedir, File.join(proj.prefix, "include"))
@@ -42,5 +43,6 @@ project "puppet-agent" do |proj|
   proj.directory proj.prefix
   proj.directory proj.sysconfdir
   proj.directory proj.logdir
+  proj.directory proj.piddir
 
 end
