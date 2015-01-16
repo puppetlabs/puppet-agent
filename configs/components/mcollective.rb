@@ -23,6 +23,10 @@ component "mcollective" do |pkg, settings, platform|
   end
 
   pkg.install do
-    ["#{settings[:bindir]}/ruby install.rb --plugindir=#{settings[:prefix]}/mcollective/plugins --configdir=#{settings[:sysconfdir]} --sitelibdir=#{settings[:ruby_vendordir]} --configs --quick --man --mandir=#{settings[:mandir]}"]
+    ["#{settings[:bindir]}/ruby install.rb --plugindir=#{settings[:prefix]}/mcollective/plugins --configdir=#{File.join(settings[:sysconfdir], 'mcollective')} --sitelibdir=#{settings[:ruby_vendordir]} --configs --quick --man --mandir=#{settings[:mandir]}"]
   end
+
+  pkg.configfile File.join(settings[:sysconfdir], 'mcollective', 'client.cfg')
+  pkg.configfile File.join(settings[:sysconfdir], 'mcollective', 'server.cfg')
+  pkg.configfile "/etc/logrotate.d/mcollective"
 end
