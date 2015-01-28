@@ -1,9 +1,6 @@
 component "puppet" do |pkg, settings, platform|
   pkg.load_from_json("configs/components/puppet.json")
 
-  # Patches Puppet to use /opt/puppetlabs/agent and ../cache as conf_dir and var_dir.
-  pkg.apply_patch "resources/patches/puppet/update_confdir_vardir_in_puppet.patch"
-
   pkg.build_requires "ruby"
   pkg.build_requires "facter"
   pkg.build_requires "hiera"
