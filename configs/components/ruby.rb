@@ -13,18 +13,9 @@ component "ruby" do |pkg, settings, platform|
 
   pkg.configure do
     ["./configure \
-                --prefix=#{settings[:prefix]} \
-                --with-opt-dir=#{settings[:prefix]} \
-                --enable-option-checking=no \
-                --without-win32ole \
-                --without-tcl \
-                --without-gcc \
-                --without-tk \
-                --without-fiddle \
-                --without-X11 \
-                --disable-pthread \
-                --disable-install-rdoc \
-                --disable-dtrace"]
+        --prefix=#{settings[:prefix]} \
+        --with-opt-dir=#{settings[:prefix]} \
+        --disable-install-rdoc"]
   end
 
   pkg.build do
