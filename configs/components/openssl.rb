@@ -3,11 +3,7 @@ component "openssl" do |pkg, settings, platform|
   pkg.md5sum "8cafccab6f05e8048148e5c282ed5402"
   pkg.url "http://buildsources.delivery.puppetlabs.net/openssl-#{pkg.get_version}.tar.gz"
 
-  # use pkg.replaces to handle both of the following
-  # pkg.replaces "pe-openssl"
-  #
-  #pkg.obsoletes (replaces)
-  #pkg.conflicts
+  ca_certfile = File.join(settings[:prefix], 'ssl', 'cert.pem')
 
   pkg.configure do
     [# OpenSSL Configure doesn't honor CFLAGS or LDFLAGS as environment variables.
@@ -40,36 +36,29 @@ component "openssl" do |pkg, settings, platform|
       #{settings[:ldflags]} -Wl,-z,relro"]
   end
 
-  if platform.is_deb?
-    linking = "ln -s /etc/ssl/certs/ca-certificates.crt '#{settings[:prefix]}/ssl/cert.pem'"
-  elsif platform.is_rpm?
-    case platform[:name]
-    when /sles-10-.*$/, /sles-11-.*$/
-      linking = "pushd '#{settings[:prefix]}/ssl/certs' 2>&1 >/dev/null; find /etc/ssl/certs -type f -a -name '\*pem' -print0 | xargs -0 --no-run-if-empty -n1 ln -sf; /usr/bin/c_rehash ."
-    when /sles-12-.*$/
-      linking = "ln -s /etc/ssl/ca-bundle.pem '#{settings[:prefix]}/ssl/cert.pem'"
-    when /el-4-.*$/
-      linking = "ln -s /usr/share/ssl/certs/ca-bundle.crt '#{settings[:prefix]}/ssl/cert.pem'"
-    else
-      linking = "ln -s /etc/pki/tls/certs/ca-bundle.crt '#{settings[:prefix]}/ssl/cert.pem'"
-    end
-  end
-
-=begin
-  if platform.is_deb?
-    pkg.link "/etc/ssl/certs/ca-certificates.crt", "#{settings[:prefix]}/ssl/cert.pem"
-  elsif platform.is_rpm?
-    pkg.link "/etc/pki/tls/certs/ca-bundle.crt", "#{settings[:prefix]}/ssl/cert.pem"
-  end
-=end
-
   pkg.build do
     ["#{platform[:make]} depend",
     "#{platform[:make]}"]
   end
 
   pkg.install do
-    ["#{platform[:make]} INSTALL_PREFIX=/ install",
-    linking]
+    ["#{platform[:make]} INSTALL_PREFIX=/ install"]
+  end
+
+  if platform.is_deb?
+    pkg.link '/etc/ssl/certs/ca-certificates.crt', ca_certfile
+  elsif platform.is_rpm?
+    case platform[:name]
+    when /sles-10-.*$/, /sles-11-.*$/
+      pkg.install do
+        "pushd '#{settings[:prefix]}/ssl/certs' 2>&1 >/dev/null; find /etc/ssl/certs -type f -a -name '\*pem' -print0 | xargs -0 --no-run-if-empty -n1 ln -sf; /usr/bin/c_rehash ."
+      end
+    when /sles-12-.*$/
+      pkg.link '/etc/ssl/ca-bundle.pem', ca_certfile
+    when /el-4-.*$/
+      pkg.link '/usr/share/ssl/certs/ca-bundle.crt', ca_certfile
+    else
+      pkg.link '/etc/pki/tls/certs/ca-bundle.crt', ca_certfile
+    end
   end
 end
