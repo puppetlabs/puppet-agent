@@ -1,30 +1,35 @@
 component "mcollective" do |pkg, settings, platform|
-  pkg.version "2.6.0.5"
-  pkg.md5sum "f0876fe5e13d2128fe6e5319478661ba"
-  pkg.url "http://builds.puppetlabs.lan/pe-mcollective/2.6.0.5/artifacts/pe-mcollective-2.6.0.5.tar.gz"
+  pkg.load_from_json("configs/components/mcollective.json")
 
   pkg.build_requires "ruby"
   pkg.build_requires "ruby-stomp"
 
   case platform.servicetype
   when "systemd"
-    pkg.install_service "ext/redhat/pe-mcollective.service", "ext/redhat/pe-mcollective.sysconfig"
-    pkg.install_file "ext/redhat/pe-mcollective-systemd.logrotate", "/etc/logrotate.d/mcollective"
+    pkg.install_service "ext/aio/redhat/mcollective.service", "ext/aio/redhat/mcollective.sysconfig"
+    pkg.install_file "ext/aio/redhat/mcollective-systemd.logrotate", "/etc/logrotate.d/mcollective"
   when "sysv"
     if platform.is_deb?
-      pkg.install_service "ext/debian/pe-mcollective.init", "ext/debian/pe-mcollective.default"
+      pkg.install_service "ext/aio/debian/mcollective.init", "ext/aio/debian/mcollective.default"
+    elsif platform.is_sles?
+      pkg.install_service "ext/aio/suse/mcollective.init", "ext/aio/redhat/mcollective.sysconfig"
     elsif platform.is_rpm?
-      pkg.install_service "ext/redhat/pe-mcollective.init-rh", "ext/redhat/pe-mcollective.sysconfig"
+      pkg.install_service "ext/aio/redhat/mcollective.init", "ext/aio/redhat/mcollective.sysconfig"
     end
 
-    pkg.install_file "ext/redhat/pe-mcollective-sysv.logrotate", "/etc/logrotate.d/mcollective"
-  else
+    pkg.install_file "ext/aio/redhat/mcollective-sysv.logrotate", "/etc/logrotate.d/mcollective"
+
+else
     fail "need to know where to put service files"
   end
 
   pkg.install do
-    ["#{settings[:bindir]}/ruby install.rb --plugindir=#{settings[:prefix]}/mcollective/plugins --configdir=#{File.join(settings[:sysconfdir], 'mcollective')} --sitelibdir=#{settings[:ruby_vendordir]} --configs --quick --man --mandir=#{settings[:mandir]}"]
+    ["#{settings[:bindir]}/ruby install.rb --configdir=#{File.join(settings[:sysconfdir], 'mcollective')} --sitelibdir=#{settings[:ruby_vendordir]} --quick --sbindir=#{settings[:prefix]}/bin"] 
   end
+
+  # Bring in the client.cfg and server.cfg from ext/aio.
+  pkg.install_file "ext/aio/common/client.cfg.dist", File.join(settings[:sysconfdir], 'mcollective', 'client.cfg')
+  pkg.install_file "ext/aio/common/server.cfg.dist", File.join(settings[:sysconfdir], 'mcollective', 'server.cfg')
 
   pkg.configfile File.join(settings[:sysconfdir], 'mcollective', 'client.cfg')
   pkg.configfile File.join(settings[:sysconfdir], 'mcollective', 'server.cfg')
