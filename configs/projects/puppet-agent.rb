@@ -41,6 +41,7 @@ project "puppet-agent" do |proj|
   proj.component "ruby-shadow"
   proj.component "ruby-augeas"
   proj.component "openssl"
+  proj.component "virt-what"
 
   proj.directory proj.prefix
   proj.directory proj.sysconfdir
