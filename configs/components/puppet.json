@@ -1,4 +1,4 @@
 {
-  "url": "git://github.com/whopper/puppet",
-  "ref": "PUP-3632/unified-agent-layout"
+  "url": "git://github.com/nwolfe/puppet",
+  "ref": "pup3809-separate-code-conf-dirs"
 }

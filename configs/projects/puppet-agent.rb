@@ -44,7 +44,7 @@ project "puppet-agent" do |proj|
 
   proj.directory proj.prefix
   proj.directory proj.sysconfdir
-  proj.directory proj.logdir
+  proj.directory proj.logdir, mode: "0750"
   proj.directory proj.piddir
 
 end
