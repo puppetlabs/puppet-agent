@@ -51,7 +51,7 @@ component "openssl" do |pkg, settings, platform|
     case platform[:name]
     when /sles-10-.*$/, /sles-11-.*$/
       pkg.install do
-        "pushd '#{settings[:prefix]}/ssl/certs' 2>&1 >/dev/null; find /etc/ssl/certs -type f -a -name '\*pem' -print0 | xargs -0 --no-run-if-empty -n1 ln -sf; /usr/bin/c_rehash ."
+        "pushd '#{settings[:prefix]}/ssl/certs' 2>&1 >/dev/null; find /etc/ssl/certs -type f -a -name '\*pem' -print0 | xargs -0 --no-run-if-empty -n1 ln -sf; #{settings[:prefix]}/bin/c_rehash ."
       end
     when /sles-12-.*$/
       pkg.link '/etc/ssl/ca-bundle.pem', ca_certfile
