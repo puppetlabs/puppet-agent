@@ -25,10 +25,7 @@ component "puppet" do |pkg, settings, platform|
   end
 
   pkg.install do
-    [
-      "#{settings[:bindir]}/ruby install.rb --configdir=#{settings[:sysconfdir]} --sitelibdir=#{settings[:ruby_vendordir]} --configs --quick --man --mandir=#{settings[:mandir]}",
-      "touch #{File.join(settings[:sysconfdir], 'puppet.conf')}"
-    ]
+    "#{settings[:bindir]}/ruby install.rb --configdir=#{settings[:sysconfdir]} --sitelibdir=#{settings[:ruby_vendordir]} --configs --quick --man --mandir=#{settings[:mandir]}"
   end
 
   pkg.configfile File.join(settings[:sysconfdir], 'puppet.conf')
