@@ -34,4 +34,7 @@ component "puppet" do |pkg, settings, platform|
   pkg.configfile File.join(settings[:sysconfdir], 'puppet.conf')
   pkg.configfile File.join(settings[:sysconfdir], 'auth.conf')
   pkg.configfile "/etc/logrotate.d/puppet"
+
+  pkg.directory File.join(settings[:prefix], 'cache'), mode: '0750'
+  pkg.directory File.join(settings[:sysconfdir], 'ssl'), mode: '0750'
 end
