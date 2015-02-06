@@ -5,6 +5,12 @@ component "puppet" do |pkg, settings, platform|
   pkg.build_requires "facter"
   pkg.build_requires "hiera"
 
+  pkg.replaces 'puppet'
+
+  if platform.is_deb?
+    pkg.replaces 'puppet-common'
+  end
+
   case platform.servicetype
   when "systemd"
     pkg.install_service "ext/systemd/puppet.service", "ext/redhat/client.sysconfig"

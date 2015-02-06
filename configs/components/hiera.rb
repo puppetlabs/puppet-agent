@@ -4,6 +4,8 @@ component "hiera" do |pkg, settings, platform|
   pkg.build_requires "ruby"
   pkg.build_requires "rubygem-deep-merge"
 
+  pkg.replaces 'hiera'
+
   pkg.install do
     "#{settings[:bindir]}/ruby install.rb --configdir=#{settings[:puppet_codedir]} --sitelibdir=#{settings[:ruby_vendordir]} --configs --quick --man --mandir=#{settings[:mandir]}"
   end
