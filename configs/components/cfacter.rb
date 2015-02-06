@@ -10,7 +10,8 @@ component "cfacter" do |pkg, settings, platform|
   pkg.build_requires "pl-libyaml-cpp-devel"
 
   pkg.configure do
-    ["/opt/pl-build-tools/bin/cmake \
+    ["PATH=#{settings[:bindir]}:$$PATH \
+          /opt/pl-build-tools/bin/cmake \
           -DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/pl-build-toolchain.cmake \
           -DCMAKE_VERBOSE_MAKEFILE=ON \
           -DCMAKE_INSTALL_PREFIX=#{settings[:prefix]} \
