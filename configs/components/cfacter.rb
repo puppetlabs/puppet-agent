@@ -2,6 +2,7 @@ component "cfacter" do |pkg, settings, platform|
   pkg.url "git://github.com/puppetlabs/cfacter"
   pkg.ref "origin/master"
 
+  pkg.build_requires "ruby"
   pkg.build_requires "pl-gcc"
   pkg.build_requires "pl-cmake"
   pkg.build_requires "pl-libboost-static"
