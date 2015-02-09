@@ -26,6 +26,8 @@ MCO          = JSON.parse(File.read('configs/components/mcollective.json'))
 WINDOWS      = JSON.parse(File.read('configs/components/windows_puppet.json'))
 WINDOWS_RUBY = JSON.parse(File.read('configs/components/windows_ruby.json'))
 
+ssh_key = ENV['VANAGON_SSH_KEY'] ? "-i #{ENV['VANAGON_SSH_KEY']}" : ''
+
 
 
 # Retrieve a vm
@@ -35,7 +37,7 @@ hostname = /\"hostname\": \"(.*)\"/.match(curl_output)[1]
 # Set up the environment so I don't keep crying
 ssh_env = "export PATH=\'/cygdrive/c/tools/ruby215/bin:/cygdrive/c/ProgramData/chocolatey/bin:/cygdrive/c/Program Files (x86)/Windows Installer XML v3.5/bin:/usr/local/bin:/usr/bin:/cygdrive/c/Windows/system32:/cygdrive/c/Windows:/cygdrive/c/Windows/System32/Wbem:/cygdrive/c/Windows/System32/WindowsPowerShell/v1.0:/bin\'"
 
-Kernel.system("ssh -tt -o StrictHostKeyChecking=no Administrator@#{hostname} \"echo \\\"#{ssh_env}\\\" >> ~/.bash_profile\"")
+Kernel.system("ssh #{ssh_key} -tt -o StrictHostKeyChecking=no Administrator@#{hostname} \"echo \\\"#{ssh_env}\\\" >> ~/.bash_profile\"")
 
 
 
@@ -43,20 +45,20 @@ Kernel.system("ssh -tt -o StrictHostKeyChecking=no Administrator@#{hostname} \"e
 #
 #
 
-Kernel.system("ssh -tt -o StrictHostKeyChecking=no Administrator@#{hostname} 'source .bash_profile ; echo $PATH'")
+Kernel.system("ssh #{ssh_key} -tt -o StrictHostKeyChecking=no Administrator@#{hostname} 'source .bash_profile ; echo $PATH'")
 
 # Download and execute the cfacter build script
 # this script lives in the puppetlabs/cfacter repo
 Kernel.system("ssh #{ssh_key} -tt -o StrictHostKeyChecking=no Administrator@#{hostname} \"curl -O #{CFACTER['url'].sub('git://github.com','https://raw.githubusercontent.com')}/#{CFACTER['ref'].sub('origin/','')}/contrib/cfacter.ps1 && powershell.exe -NoProfile -ExecutionPolicy Unrestricted -InputFormat None -Command ./cfacter.ps1 -arch #{script_arch} -buildSource #{BUILD_SOURCE}\"")
 
 # Move all necessary dll's into cfacter bindir
-Kernel.system("ssh -tt -o StrictHostKeyChecking=no Administrator@#{hostname} \"cp /cygdrive/c/tools/mingw#{script_arch}/bin/libgcc_s_#{ARCH == 'x64' ? 'seh' : 'sjlj'}-1.dll /cygdrive/c/tools/mingw#{script_arch}/bin/libstdc++-6.dll /cygdrive/c/tools/mingw#{script_arch}/bin/libwinpthread-1.dll /home/Administrator/cfacter/release/bin/\"")
+Kernel.system("ssh #{ssh_key} -tt -o StrictHostKeyChecking=no Administrator@#{hostname} \"cp /cygdrive/c/tools/mingw#{script_arch}/bin/libgcc_s_#{ARCH == 'x64' ? 'seh' : 'sjlj'}-1.dll /cygdrive/c/tools/mingw#{script_arch}/bin/libstdc++-6.dll /cygdrive/c/tools/mingw#{script_arch}/bin/libwinpthread-1.dll /home/Administrator/cfacter/release/bin/\"")
 
 # Grab cfacter.rb so that it is available for custom facts written in ruby
-Kernel.system("ssh -tt -o StrictHostKeyChecking=no Administrator@#{hostname} \"cp /home/Administrator/cfacter/gem/lib/cfacter.rb /home/Administrator/cfacter/release/lib/\"")
+Kernel.system("ssh #{ssh_key} -tt -o StrictHostKeyChecking=no Administrator@#{hostname} \"cp /home/Administrator/cfacter/gem/lib/cfacter.rb /home/Administrator/cfacter/release/lib/\"")
 
 # Zip up the built archives
-Kernel.system("ssh -tt -o StrictHostKeyChecking=no Administrator@#{hostname} \"source .bash_profile ; 7za.exe a -r -tzip -x\!*obj cfacter.zip 'C:\\cygwin64\\home\\Administrator\\cfacter\\release\\bin' 'C:\\cygwin64\\home\\Administrator\\cfacter\\lib\\inc' 'C:\\cygwin64\\home\\Administrator\\cfacter\\lib\\cfacter.rb'\"")
+Kernel.system("ssh #{ssh_key} -tt -o StrictHostKeyChecking=no Administrator@#{hostname} \"source .bash_profile ; 7za.exe a -r -tzip -x\!*obj cfacter.zip 'C:\\cygwin64\\home\\Administrator\\cfacter\\release\\bin' 'C:\\cygwin64\\home\\Administrator\\cfacter\\lib\\inc' 'C:\\cygwin64\\home\\Administrator\\cfacter\\lib\\cfacter.rb'\"")
 
 
 ### Build puppet-agent.msi
@@ -93,7 +95,7 @@ CONFIG = {
 File.open("winconfig.yaml", 'w') { |f| f.write(YAML.dump(CONFIG)) }
 
 # Install Wix35 with chocolatey
-Kernel.system("ssh -tt -o StrictHostKeyChecking=no Administrator@#{hostname} \"source .bash_profile ; choco install Wix35\"")
+Kernel.system("ssh #{ssh_key} -tt -o StrictHostKeyChecking=no Administrator@#{hostname} \"source .bash_profile ; choco install Wix35\"")
 
 # Clone puppet_for_the_win
 Kernel.system("ssh #{ssh_key} -tt -o StrictHostKeyChecking=no Administrator@#{hostname} \"source .bash_profile ; git clone #{WINDOWS['url']} ; cd puppet_for_the_win && git checkout #{WINDOWS['ref']}\"")
@@ -102,7 +104,7 @@ Kernel.system("ssh #{ssh_key} -tt -o StrictHostKeyChecking=no Administrator@#{ho
 Kernel.system("scp winconfig.yaml Administrator@#{hostname}:/home/Administrator/puppet_for_the_win/")
 
 # Build the MSI with automation in puppet_for_the_win
-Kernel.system("ssh -tt -o StrictHostKeyChecking=no Administrator@#{hostname} \"source .bash_profile ; cd /home/Administrator/puppet_for_the_win ; AGENT_VERSION_STRING=#{AGENT_VERSION_STRING} ARCH=#{ARCH} c:/tools/ruby215/bin/rake clobber windows:build config=winconfig.yaml\"")
+Kernel.system("ssh #{ssh_key} -tt -o StrictHostKeyChecking=no Administrator@#{hostname} \"source .bash_profile ; cd /home/Administrator/puppet_for_the_win ; AGENT_VERSION_STRING=#{AGENT_VERSION_STRING} ARCH=#{ARCH} c:/tools/ruby215/bin/rake clobber windows:build config=winconfig.yaml\"")
 
 # Fetch back the built installer
 Kernel.system("scp Administrator@#{hostname}:/home/Administrator/puppet_for_the_win/pkg/puppet-agent-#{AGENT_VERSION_STRING}-#{ARCH}.msi output/")
