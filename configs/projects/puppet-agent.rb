@@ -27,7 +27,7 @@ project "puppet-agent" do |proj|
   # First our stuff
   proj.component "puppet"
   proj.component "facter"
-  unless ( proj.get_platform.is_sles? or proj.get_platform.is_eos? )
+  unless ( proj.get_platform.is_eos? or proj.get_platform.is_nxos? )
     proj.component "cfacter"
     proj.component "libffi"
     proj.component "rubygem-ffi"

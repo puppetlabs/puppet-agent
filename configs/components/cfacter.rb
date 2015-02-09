@@ -5,10 +5,19 @@ component "cfacter" do |pkg, settings, platform|
   pkg.build_requires "ruby"
   pkg.build_requires "pl-gcc"
   pkg.build_requires "pl-cmake"
-  pkg.build_requires "pl-libboost-static"
-  pkg.build_requires "pl-libboost-devel"
-  pkg.build_requires "pl-libyaml-cpp-static"
-  pkg.build_requires "pl-libyaml-cpp-devel"
+
+  # SLES uses vanagon built pl-build-tools
+  if  platform.is_sles?
+    pkg.build_requires "pl-boost"
+    pkg.build_requires "pl-yaml-cpp"
+  else
+    # these are from the pl-depdenncy repo
+    pkg.build_requires "pl-libboost-static"
+    pkg.build_requires "pl-libboost-devel"
+    pkg.build_requires "pl-libyaml-cpp-static"
+    pkg.build_requires "pl-libyaml-cpp-devel"
+  end
+
 
   pkg.configure do
     ["PATH=#{settings[:bindir]}:$$PATH \
