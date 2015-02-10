@@ -4,6 +4,14 @@ component "mcollective" do |pkg, settings, platform|
   pkg.build_requires "ruby"
   pkg.build_requires "ruby-stomp"
 
+  pkg.replaces 'mcollective'
+  pkg.replaces 'mcollective-common'
+  pkg.replaces 'mcollective-client'
+
+  if platform.is_deb?
+    pkg.replaces 'mcollective-doc'
+  end
+
   case platform.servicetype
   when "systemd"
     pkg.install_service "ext/aio/redhat/mcollective.service", "ext/aio/redhat/mcollective.sysconfig"
