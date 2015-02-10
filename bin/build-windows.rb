@@ -1,5 +1,6 @@
 require 'yaml'
 require 'json'
+require 'fileutils'
 
 # The architecture of cfacter/the installer we are going to build
 ARCH                 = ENV['ARCH'] || 'x64'
@@ -54,11 +55,8 @@ Kernel.system("ssh #{ssh_key} -tt -o StrictHostKeyChecking=no Administrator@#{ho
 # Move all necessary dll's into cfacter bindir
 Kernel.system("ssh #{ssh_key} -tt -o StrictHostKeyChecking=no Administrator@#{hostname} \"cp /cygdrive/c/tools/mingw#{script_arch}/bin/libgcc_s_#{ARCH == 'x64' ? 'seh' : 'sjlj'}-1.dll /cygdrive/c/tools/mingw#{script_arch}/bin/libstdc++-6.dll /cygdrive/c/tools/mingw#{script_arch}/bin/libwinpthread-1.dll /home/Administrator/cfacter/release/bin/\"")
 
-# Grab cfacter.rb so that it is available for custom facts written in ruby
-Kernel.system("ssh #{ssh_key} -tt -o StrictHostKeyChecking=no Administrator@#{hostname} \"cp /home/Administrator/cfacter/gem/lib/cfacter.rb /home/Administrator/cfacter/release/lib/\"")
-
 # Zip up the built archives
-Kernel.system("ssh #{ssh_key} -tt -o StrictHostKeyChecking=no Administrator@#{hostname} \"source .bash_profile ; 7za.exe a -r -tzip -x\!*obj cfacter.zip 'C:\\cygwin64\\home\\Administrator\\cfacter\\release\\bin' 'C:\\cygwin64\\home\\Administrator\\cfacter\\lib\\inc' 'C:\\cygwin64\\home\\Administrator\\cfacter\\lib\\cfacter.rb'\"")
+Kernel.system("ssh #{ssh_key} -tt -o StrictHostKeyChecking=no Administrator@#{hostname} \"source .bash_profile ; 7za.exe a -r -tzip -x\!*obj cfacter.zip 'C:\\cygwin64\\home\\Administrator\\cfacter\\release\\bin' 'C:\\cygwin64\\home\\Administrator\\cfacter\\lib\\inc' 'C:\\cygwin64\\home\\Administrator\\cfacter\\release\\lib\\cfacter.rb'\"")
 
 
 ### Build puppet-agent.msi
@@ -107,10 +105,12 @@ Kernel.system("scp winconfig.yaml Administrator@#{hostname}:/home/Administrator/
 Kernel.system("ssh #{ssh_key} -tt -o StrictHostKeyChecking=no Administrator@#{hostname} \"source .bash_profile ; cd /home/Administrator/puppet_for_the_win ; AGENT_VERSION_STRING=#{AGENT_VERSION_STRING} ARCH=#{ARCH} c:/tools/ruby215/bin/rake clobber windows:build config=winconfig.yaml\"")
 
 # Fetch back the built installer
-Kernel.system("scp Administrator@#{hostname}:/home/Administrator/puppet_for_the_win/pkg/puppet-agent-#{AGENT_VERSION_STRING}-#{ARCH}.msi output/")
+FileUtils.mkdir_p("output/windows/#{ARCH}")
+Kernel.system("scp Administrator@#{hostname}:/home/Administrator/puppet_for_the_win/pkg/puppet-agent-#{AGENT_VERSION_STRING}-#{ARCH}.msi output/windows/#{ARCH}/")
 
 
 # delete a vm only if we successfully brought back the msi
-if File.exists?("puppet-agent-#{AGENT_VERSION_STRING}-#{ARCH}.msi")
+if File.exists?("output/windows/#{ARCH}/puppet-agent-#{AGENT_VERSION_STRING}-#{ARCH}.msi")
   Kernel.system("curl -X DELETE --url \"http://vmpooler.delivery.puppetlabs.net/vm/#{hostname}\"")
+  FileUtils.rm 'winconfig.yaml'
 end
