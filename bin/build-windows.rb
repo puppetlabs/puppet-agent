@@ -94,7 +94,7 @@ CONFIG = {
 File.open("winconfig.yaml", 'w') { |f| f.write(YAML.dump(CONFIG)) }
 
 # Install Wix35 with chocolatey
-Kernel.system("ssh #{ssh_key} -tt -o StrictHostKeyChecking=no Administrator@#{hostname} \"source .bash_profile ; choco install Wix35\"")
+Kernel.system("ssh #{ssh_key} -tt -o StrictHostKeyChecking=no Administrator@#{hostname} \"source .bash_profile ; choco install -y Wix35\"")
 
 # Clone puppet_for_the_win
 result = Kernel.system("ssh #{ssh_key} -tt -o StrictHostKeyChecking=no Administrator@#{hostname} \"source .bash_profile ; git clone #{WINDOWS['url']} ; cd puppet_for_the_win && git checkout #{WINDOWS['ref']}\"")
