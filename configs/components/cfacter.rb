@@ -1,6 +1,5 @@
 component "cfacter" do |pkg, settings, platform|
-  pkg.url "git://github.com/puppetlabs/cfacter"
-  pkg.ref "origin/master"
+  pkg.load_from_json('configs/components/cfacter.json')
 
   pkg.build_requires "ruby"
   pkg.build_requires "pl-gcc"

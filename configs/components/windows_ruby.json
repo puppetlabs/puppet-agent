@@ -1,0 +1,7 @@
+{
+  "url": "git://github.com/puppetlabs/puppet-win32-ruby",
+  "ref": {
+    "x86": "origin/2.1.x-x86",
+    "x64": "origin/2.1.x-x64"
+  }
+}
