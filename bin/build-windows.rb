@@ -101,7 +101,7 @@ result = Kernel.system("ssh #{ssh_key} -tt -o StrictHostKeyChecking=no Administr
 fail "It seems there were some issues cloning the puppet_for_the_win repo" unless result
 
 # Send the config file over so we know what to build with
-Kernel.system("scp winconfig.yaml Administrator@#{hostname}:/home/Administrator/puppet_for_the_win/")
+Kernel.system("scp #{ssh_key} winconfig.yaml Administrator@#{hostname}:/home/Administrator/puppet_for_the_win/")
 
 # Build the MSI with automation in puppet_for_the_win
 result = Kernel.system("ssh #{ssh_key} -tt -o StrictHostKeyChecking=no Administrator@#{hostname} \"source .bash_profile ; cd /home/Administrator/puppet_for_the_win ; AGENT_VERSION_STRING=#{AGENT_VERSION_STRING} ARCH=#{ARCH} c:/tools/ruby215/bin/rake clobber windows:build config=winconfig.yaml\"")
@@ -109,7 +109,7 @@ fail "It seems there were some issues building the puppet-agent msi" unless resu
 
 # Fetch back the built installer
 FileUtils.mkdir_p("output/windows/#{ARCH}")
-Kernel.system("scp Administrator@#{hostname}:/home/Administrator/puppet_for_the_win/pkg/puppet-agent-#{AGENT_VERSION_STRING}-#{ARCH}.msi output/windows/#{ARCH}/")
+Kernel.system("scp #{ssh_key} Administrator@#{hostname}:/home/Administrator/puppet_for_the_win/pkg/puppet-agent-#{AGENT_VERSION_STRING}-#{ARCH}.msi output/windows/#{ARCH}/")
 
 
 # delete a vm only if we successfully brought back the msi
