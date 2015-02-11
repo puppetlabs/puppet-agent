@@ -1,21 +1,21 @@
-component "augeas" do |pkg, settings, platform|
-  pkg.version "1.3.0"
-  pkg.md5sum "c8890b11a04795ecfe5526eeae946b2d"
+component 'augeas' do |pkg, settings, platform|
+  pkg.version '1.3.0'
+  pkg.md5sum 'c8890b11a04795ecfe5526eeae946b2d'
   pkg.url "http://buildsources.delivery.puppetlabs.net/#{pkg.get_name}-#{pkg.get_version}.tar.gz"
 
   if platform.is_rpm?
-    pkg.build_requires "libxml2-devel"
-    pkg.build_requires "pkgconfig"
-    pkg.build_requires "readline-devel"
+    pkg.build_requires 'libxml2-devel'
     pkg.requires 'libxml2'
 
+    pkg.build_requires 'readline-devel'
     pkg.requires 'readline'
 
+    pkg.build_requires 'pkgconfig'
   elsif platform.is_deb?
-    pkg.build_requires "libxml2-dev"
-    pkg.build_requires "libreadline-dev"
+    pkg.build_requires 'libxml2-dev'
     pkg.requires 'libxml2'
 
+    pkg.build_requires 'libreadline-dev'
     pkg.requires 'libreadline6'
 
     pkg.build_requires 'pkg-config'
