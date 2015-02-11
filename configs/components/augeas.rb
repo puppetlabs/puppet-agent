@@ -1,7 +1,7 @@
 component "augeas" do |pkg, settings, platform|
-  pkg.version "1.2.0"
-  pkg.md5sum "dce2f52cbd20f72c7da48e014ad48076"
-  pkg.url "http://buildsources.delivery.puppetlabs.net/augeas-1.2.0.tar.gz"
+  pkg.version "1.3.0"
+  pkg.md5sum "c8890b11a04795ecfe5526eeae946b2d"
+  pkg.url "http://buildsources.delivery.puppetlabs.net/#{pkg.get_name}-#{pkg.get_version}.tar.gz"
 
   if platform.is_rpm?
     pkg.build_requires "libxml2-devel"
