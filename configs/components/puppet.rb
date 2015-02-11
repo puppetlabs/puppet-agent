@@ -42,4 +42,11 @@ component "puppet" do |pkg, settings, platform|
   pkg.directory File.join(settings[:puppetdir], 'ssl'), mode: '0750'
   pkg.directory settings[:puppet_configdir]
   pkg.directory settings[:puppet_codedir]
+
+  # PUP-2037 - Ensure the package creates the default environment for directory environments
+  # Being deliberately explicit below ensures that the component/package will own each of these directories.
+  pkg.directory File.join(settings[:puppet_codedir], 'environments')
+  pkg.directory File.join(settings[:puppet_codedir], 'environments', 'production')
+  pkg.directory File.join(settings[:puppet_codedir], 'environments', 'production', 'manifests')
+  pkg.directory File.join(settings[:puppet_codedir], 'environments', 'production', 'modules')
 end
