@@ -11,6 +11,9 @@ component "puppet" do |pkg, settings, platform|
     pkg.replaces 'puppet-common'
   end
 
+  # Patches Puppet to use /opt/puppetlabs/agent and ../cache as conf_dir and var_dir.
+  pkg.apply_patch "resources/patches/puppet/update_confdir_vardir_in_puppet.patch"
+
   case platform.servicetype
   when "systemd"
     pkg.install_service "ext/systemd/puppet.service", "ext/redhat/client.sysconfig"
