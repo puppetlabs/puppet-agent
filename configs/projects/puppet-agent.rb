@@ -29,8 +29,6 @@ project "puppet-agent" do |proj|
   proj.component "facter"
   unless ( proj.get_platform.is_eos? or proj.get_platform.is_nxos? )
     proj.component "cfacter"
-    proj.component "libffi"
-    proj.component "rubygem-ffi"
   end
   proj.component "hiera"
   proj.component "mcollective"
