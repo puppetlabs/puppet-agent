@@ -50,14 +50,17 @@ Kernel.system("ssh #{ssh_key} -tt -o StrictHostKeyChecking=no Administrator@#{ho
 
 # Download and execute the cfacter build script
 # this script lives in the puppetlabs/cfacter repo
-result = Kernel.system("ssh #{ssh_key} -tt -o StrictHostKeyChecking=no Administrator@#{hostname} \"curl -O #{CFACTER['url'].sub('git://github.com','https://raw.githubusercontent.com')}/#{CFACTER['ref'].sub('origin/','')}/contrib/cfacter.ps1 && powershell.exe -NoProfile -ExecutionPolicy Unrestricted -InputFormat None -Command ./cfacter.ps1 -arch #{script_arch} -buildSource #{BUILD_SOURCE}\"")
+result = Kernel.system("ssh #{ssh_key} -tt -o StrictHostKeyChecking=no Administrator@#{hostname} \"curl -O #{CFACTER['url'].sub('git://github.com','https://raw.githubusercontent.com')}/#{CFACTER['ref'].sub('origin/','')}/contrib/cfacter.ps1 && powershell.exe -NoProfile -ExecutionPolicy Unrestricted -InputFormat None -Command ./cfacter.ps1 -arch #{script_arch} -buildSource #{BUILD_SOURCE} -cfacterRef #{CFACTER['ref']} -cfacterFork #{CFACTER['url']}\"")
 fail "It looks like the cfacter build script failed for some reason. I would suggest ssh'ing into the box and poking around" unless result
 
 # Move all necessary dll's into cfacter bindir
 Kernel.system("ssh #{ssh_key} -tt -o StrictHostKeyChecking=no Administrator@#{hostname} \"cp /cygdrive/c/tools/mingw#{script_arch}/bin/libgcc_s_#{ARCH == 'x64' ? 'seh' : 'sjlj'}-1.dll /cygdrive/c/tools/mingw#{script_arch}/bin/libstdc++-6.dll /cygdrive/c/tools/mingw#{script_arch}/bin/libwinpthread-1.dll /home/Administrator/cfacter/release/bin/\"")
 
+# Format everything to prepare to archive it
+Kernel.system("ssh #{ssh_key} -tt -o StrictHostKeyChecking=no Administrator@#{hostname} \"source .bash_profile ; mkdir -p /home/Administrator/archive/lib ; cp -r /home/Administrator/cfacter/release/bin /home/Administrator/cfacter/lib/inc /home/Administrator/archive/ ; cp /home/Administrator/cfacter/release/lib/cfacter.rb /home/Administrator/archive/lib/ \"")
+
 # Zip up the built archives
-Kernel.system("ssh #{ssh_key} -tt -o StrictHostKeyChecking=no Administrator@#{hostname} \"source .bash_profile ; 7za.exe a -r -tzip -x\!*obj cfacter.zip 'C:\\cygwin64\\home\\Administrator\\cfacter\\release\\bin' 'C:\\cygwin64\\home\\Administrator\\cfacter\\lib\\inc' 'C:\\cygwin64\\home\\Administrator\\cfacter\\release\\lib\\cfacter.rb'\"")
+Kernel.system("ssh #{ssh_key} -tt -o StrictHostKeyChecking=no Administrator@#{hostname} \"source .bash_profile ; 7za.exe a -r -tzip cfacter.zip 'C:\\cygwin64\\home\\Administrator\\archive\\*'\"")
 
 
 ### Build puppet-agent.msi
