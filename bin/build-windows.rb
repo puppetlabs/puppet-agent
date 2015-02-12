@@ -29,7 +29,8 @@ WINDOWS_RUBY = JSON.parse(File.read('configs/components/windows_ruby.json'))
 
 ssh_key = ENV['VANAGON_SSH_KEY'] ? "-i #{ENV['VANAGON_SSH_KEY']}" : ''
 
-
+#chocolatey versions
+CHOCO_WIX35_VERSION = '3.5.2519.20130612'
 
 # Retrieve a vm
 curl_output=`curl -d --url http://vmpooler.delivery.puppetlabs.net/vm/win-2012-x86_64`
@@ -97,7 +98,7 @@ CONFIG = {
 File.open("winconfig.yaml", 'w') { |f| f.write(YAML.dump(CONFIG)) }
 
 # Install Wix35 with chocolatey
-Kernel.system("ssh #{ssh_key} -tt -o StrictHostKeyChecking=no Administrator@#{hostname} \"source .bash_profile ; choco install -y Wix35\"")
+Kernel.system("ssh #{ssh_key} -tt -o StrictHostKeyChecking=no Administrator@#{hostname} \"source .bash_profile ; choco install -y Wix35 --version #{CHOCO_WIX35_VERSION}\"")
 
 # Clone puppet_for_the_win
 result = Kernel.system("ssh #{ssh_key} -tt -o StrictHostKeyChecking=no Administrator@#{hostname} \"source .bash_profile ; git clone #{WINDOWS['url']} ; cd puppet_for_the_win && git checkout #{WINDOWS['ref']}\"")
