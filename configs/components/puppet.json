@@ -1,4 +1,1 @@
-{
-  "url": "git://github.com/puppetlabs/puppet",
-  "ref": "aio"
-}
+{"url": "git://github.com/puppetlabs/puppet.git", "ref": "a354e25f53d129690677eaf6a1def623933efc54"}
