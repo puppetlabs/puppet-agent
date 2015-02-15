@@ -31,7 +31,7 @@ component "puppet" do |pkg, settings, platform|
   end
 
   pkg.install do
-    "#{settings[:bindir]}/ruby install.rb --puppetdir=#{settings[:puppetdir]} --sitelibdir=#{settings[:ruby_vendordir]} --configs --quick --man --mandir=#{settings[:mandir]}"
+    "#{settings[:bindir]}/ruby install.rb --configdir=#{settings[:puppet_configdir]} --sitelibdir=#{settings[:ruby_vendordir]} --configs --quick --man --mandir=#{settings[:mandir]}"
   end
 
   pkg.configfile File.join(settings[:puppet_configdir], 'puppet.conf')
@@ -39,7 +39,7 @@ component "puppet" do |pkg, settings, platform|
   pkg.configfile "/etc/logrotate.d/puppet"
 
   pkg.directory File.join(settings[:prefix], 'cache'), mode: '0750'
-  pkg.directory File.join(settings[:puppetdir], 'ssl'), mode: '0750'
+  pkg.directory File.join(settings[:puppet_configdir], 'ssl'), mode: '0750'
   pkg.directory settings[:puppet_configdir]
   pkg.directory settings[:puppet_codedir]
 end
