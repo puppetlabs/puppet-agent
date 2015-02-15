@@ -1,10 +1,9 @@
 project "puppet-agent" do |proj|
   # Project level settings our components will care about
-  proj.setting(:prefix, "/opt/puppetlabs/agent")
-  proj.setting(:sysconfdir, "/etc/puppetlabs/agent")
-  proj.setting(:puppetdir, proj.sysconfdir)
-  proj.setting(:puppet_configdir, File.join(proj.puppetdir, 'config'))
-  proj.setting(:puppet_codedir, File.join(proj.puppetdir, 'code'))
+  proj.setting(:prefix, "/opt/puppetlabs/puppet")
+  proj.setting(:sysconfdir, "/etc/puppetlabs/puppet")
+  proj.setting(:puppet_configdir, proj.sysconfdir)
+  proj.setting(:puppet_codedir, "/etc/puppetlabs/code")
   proj.setting(:logdir, "/var/log/puppetlabs/agent")
   proj.setting(:piddir, "/var/run/puppetlabs/agent")
   proj.setting(:bindir, File.join(proj.prefix, "bin"))
