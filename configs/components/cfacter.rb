@@ -27,6 +27,7 @@ component "cfacter" do |pkg, settings, platform|
           -DBOOST_STATIC=ON \
           -DYAMLCPP_STATIC=ON \
           -DFACTER_PATH=#{settings[:bindir]} \
+          -DFACTER_RUBY=#{settings[:libdir]}/$(shell #{settings[:bindir]}/ruby -rrbconfig -e 'print RbConfig::CONFIG[\"LIBRUBY_SO\"]') \
           ."]
   end
 
