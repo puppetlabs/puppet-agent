@@ -2,11 +2,18 @@ require 'yaml'
 require 'json'
 require 'fileutils'
 
+
+# BUILD_TARGET passed through the pipeline
+build_target         = ENV['BUILD_TARGET']
 # The architecture of cfacter/the installer we are going to build
-ARCH                 = ENV['ARCH'] || 'x64'
+if build_target && /win\-(?<build_arch>x86|x64)/ =~ build_target
+  ARCH               = build_arch
+else
+  ARCH               = ENV['ARCH'] || 'x64'
+end
 
 # The version of this build
-AGENT_VERSION_STRING = %x{git describe --tags}.chomp.gsub('-', '.')
+AGENT_VERSION_STRING = ENV['AGENT_VERSION_STRING'] || %x{git describe --tags}.chomp.gsub('-', '.')
 
 # Whether or not we are going to build boost and yaml-cpp or copy them from existing builds
 # If `TRUE`, this will build boost and yaml-cpp according to the specifications in
