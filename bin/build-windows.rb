@@ -61,7 +61,9 @@ Kernel.system("ssh #{ssh_key} -tt -o StrictHostKeyChecking=no Administrator@#{ho
 
 # Download and execute the cfacter build script
 # this script lives in the puppetlabs/cfacter repo
-result = Kernel.system("ssh #{ssh_key} -tt -o StrictHostKeyChecking=no Administrator@#{hostname} \"curl -O #{CFACTER['url'].sub('git://github.com','https://raw.githubusercontent.com')}/#{CFACTER['ref'].sub('origin/','')}/contrib/cfacter.ps1 && powershell.exe -NoProfile -ExecutionPolicy Unrestricted -InputFormat None -Command ./cfacter.ps1 -arch #{script_arch} -buildSource #{BUILD_SOURCE} -cfacterRef #{CFACTER['ref']} -cfacterFork #{CFACTER['url']}\"")
+cfacter_build_script = CFACTER['url'].sub('git://github.com','https://raw.githubusercontent.com') +
+  CFACTER['ref'].sub('origin/','') + '/contrib/cfacter.ps1'
+result = Kernel.system("ssh #{ssh_key} -tt -o StrictHostKeyChecking=no Administrator@#{hostname} \"curl -O #{cfacter_build_script} && powershell.exe -NoProfile -ExecutionPolicy Unrestricted -InputFormat None -Command ./cfacter.ps1 -arch #{script_arch} -buildSource #{BUILD_SOURCE} -cfacterRef #{CFACTER['ref']} -cfacterFork #{CFACTER['url']}\"")
 fail "It looks like the cfacter build script failed for some reason. I would suggest ssh'ing into the box and poking around" unless result
 
 # Move all necessary dll's into cfacter bindir
