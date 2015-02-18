@@ -37,6 +37,7 @@ project "puppet-agent" do |proj|
   proj.component "ruby"
   proj.component "ruby-stomp"
   proj.component "rubygem-deep-merge"
+  proj.component "rubygem-net-ssh"
   proj.component "ruby-selinux"
   proj.component "ruby-shadow"
   proj.component "ruby-augeas"
