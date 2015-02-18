@@ -3,6 +3,8 @@ component "ruby" do |pkg, settings, platform|
   pkg.md5sum "df4c1b23f624a50513c7a78cb51a13dc"
   pkg.url "http://buildsources.delivery.puppetlabs.net/ruby-2.1.5.tar.gz"
 
+  pkg.apply_patch "resources/patches/ruby/libyaml_cve-2014-9130.patch"
+
   pkg.build_requires "openssl"
 
   if platform.is_deb?
