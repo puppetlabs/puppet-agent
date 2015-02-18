@@ -125,12 +125,12 @@ result = Kernel.system("#{ssh_command} \"source .bash_profile ; cd /home/Adminis
 fail "It seems there were some issues building the puppet-agent msi" unless result
 
 # Fetch back the built installer
-FileUtils.mkdir_p("output/windows/#{ARCH}")
-Kernel.system("scp #{ssh_key} Administrator@#{hostname}:/home/Administrator/puppet_for_the_win/pkg/puppet-agent-#{AGENT_VERSION_STRING}-#{ARCH}.msi output/windows/#{ARCH}/")
+FileUtils.mkdir_p("output/windows")
+Kernel.system("scp #{ssh_key} Administrator@#{hostname}:/home/Administrator/puppet_for_the_win/pkg/puppet-agent-#{AGENT_VERSION_STRING}-#{ARCH}.msi output/windows/")
 
 
 # delete a vm only if we successfully brought back the msi
-if File.exists?("output/windows/#{ARCH}/puppet-agent-#{AGENT_VERSION_STRING}-#{ARCH}.msi")
+if File.exists?("output/windows/puppet-agent-#{AGENT_VERSION_STRING}-#{ARCH}.msi")
   Kernel.system("curl -X DELETE --url \"http://vmpooler.delivery.puppetlabs.net/vm/#{hostname}\"")
   FileUtils.rm 'winconfig.yaml'
 end
