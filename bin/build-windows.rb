@@ -128,9 +128,10 @@ fail "It seems there were some issues building the puppet-agent msi" unless resu
 FileUtils.mkdir_p("output/windows")
 Kernel.system("scp #{ssh_key} Administrator@#{hostname}:/home/Administrator/puppet_for_the_win/pkg/puppet-agent-#{AGENT_VERSION_STRING}-#{ARCH}.msi output/windows/")
 
-
 # delete a vm only if we successfully brought back the msi
-if File.exists?("output/windows/puppet-agent-#{AGENT_VERSION_STRING}-#{ARCH}.msi")
+msi_path = "output/windows/puppet-agent-#{AGENT_VERSION_STRING}-#{ARCH}.msi"
+if File.exists?(msi_path)
+  FileUtils.ln_s(msi_path, "output/windows/puppet-agent-#{ARCH}.msi")
   Kernel.system("curl -X DELETE --url \"http://vmpooler.delivery.puppetlabs.net/vm/#{hostname}\"")
   FileUtils.rm 'winconfig.yaml'
 end
