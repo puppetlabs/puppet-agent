@@ -114,7 +114,7 @@ File.open("winconfig.yaml", 'w') { |f| f.write(YAML.dump(CONFIG)) }
 Kernel.system("#{ssh_command} \"source .bash_profile ; choco install -y Wix35 --version #{CHOCO_WIX35_VERSION}\"")
 
 # Clone puppet_for_the_win
-result = Kernel.system("#{ssh_command} \"source .bash_profile ; git clone #{WINDOWS['url']} ; cd puppet_for_the_win && git checkout #{WINDOWS['ref']}\"")
+result = Kernel.system("#{ssh_command} \"source .bash_profile ; git clone #{WINDOWS['url']} puppet_for_the_win; cd puppet_for_the_win && git checkout #{WINDOWS['ref']}\"")
 fail "It seems there were some issues cloning the puppet_for_the_win repo" unless result
 
 # Send the config file over so we know what to build with
