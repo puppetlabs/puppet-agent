@@ -8,4 +8,3 @@ deb_targets: 'trusty-i386 trusty-amd64'
 rpm_targets: 'el-6-i386 el-6-x86_64 el-7-x86_64'
 sign_tar: FALSE
 vanagon_project: TRUE
-build_pe: TRUE
