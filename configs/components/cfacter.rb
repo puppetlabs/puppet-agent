@@ -26,6 +26,7 @@ component "cfacter" do |pkg, settings, platform|
           -DCMAKE_INSTALL_PREFIX=#{settings[:prefix]} \
           -DBOOST_STATIC=ON \
           -DYAMLCPP_STATIC=ON \
+          -DFACTER_PATH=#{settings[:bindir]} \
           ."]
   end
 
