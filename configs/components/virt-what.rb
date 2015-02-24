@@ -1,7 +1,7 @@
 component "virt-what" do |pkg, settings, platform|
   pkg.version "1.1.4"
   pkg.md5sum "4d9bb5afc81de31f66443d8674bb3672"
-  pkg.url "http://buildsources.delivery.puppetlabs.net/virt-what-1.14.tar.gz"
+  pkg.url "#{settings[:mirror_url]}virt-what-1.14.tar.gz"
 
   # Run-time requirements
   unless platform.is_deb?

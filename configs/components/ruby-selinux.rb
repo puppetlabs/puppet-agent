@@ -9,7 +9,7 @@ if platform.name =~ /^el-(5|6|7)-.*/
       pkg.md5sum "f814c71fca5a85ebfeb81b57afed59db"
     end
 
-    pkg.url "http://buildsources.delivery.puppetlabs.net/libselinux-#{pkg.get_version}.tgz"
+    pkg.url "#{settings[:mirror_url]}libselinux-#{pkg.get_version}.tgz"
 
     pkg.build_requires "ruby"
     pkg.build_requires "swig"
