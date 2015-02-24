@@ -17,9 +17,12 @@ component "cfacter" do |pkg, settings, platform|
     pkg.build_requires "pl-libyaml-cpp-devel"
   end
 
+  build_dir = 'build'
 
   pkg.configure do
-    ["PATH=#{settings[:bindir]}:$$PATH \
+    ["mkdir -p #{build_dir} && \
+      cd #{build_dir} && \
+      PATH=#{settings[:bindir]}:$$PATH \
           /opt/pl-build-tools/bin/cmake \
           -DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/pl-build-toolchain.cmake \
           -DCMAKE_VERBOSE_MAKEFILE=ON \
@@ -28,14 +31,15 @@ component "cfacter" do |pkg, settings, platform|
           -DYAMLCPP_STATIC=ON \
           -DFACTER_PATH=#{settings[:bindir]} \
           -DFACTER_RUBY=#{settings[:libdir]}/$(shell #{settings[:bindir]}/ruby -rrbconfig -e 'print RbConfig::CONFIG[\"LIBRUBY_SO\"]') \
-          ."]
+          .. && \
+      cd .."]
   end
 
   pkg.build do
-    ["#{platform[:make]} -j$(shell expr $(shell #{platform[:num_cores]}) + 1)"]
+    ["cd #{build_dir} && #{platform[:make]} -j$(shell expr $(shell #{platform[:num_cores]}) + 1) && cd .."]
   end
 
   pkg.install do
-    ["#{platform[:make]} -j$(shell expr $(shell #{platform[:num_cores]}) + 1) install"]
+    ["cd #{build_dir} && #{platform[:make]} -j$(shell expr $(shell #{platform[:num_cores]}) + 1) install && cd .."]
   end
 end
