@@ -6,8 +6,8 @@ component "cfacter" do |pkg, settings, platform|
   pkg.build_requires "pl-gcc"
   pkg.build_requires "pl-cmake"
 
-  # SLES and Debian 8 uses vanagon built pl-build-tools
-  if platform.is_sles? or (platform.is_deb? and platform.os_version >= 8)
+  # SLES uses vanagon built pl-build-tools
+  if  platform.is_sles?
     pkg.build_requires "pl-boost"
     pkg.build_requires "pl-yaml-cpp"
   else
