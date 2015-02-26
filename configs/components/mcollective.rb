@@ -32,7 +32,7 @@ else
   end
 
   pkg.install do
-    ["#{settings[:bindir]}/ruby install.rb --configdir=#{File.join(settings[:sysconfdir], 'mcollective')} --sitelibdir=#{settings[:ruby_vendordir]} --quick --sbindir=#{settings[:prefix]}/bin"] 
+    ["#{settings[:bindir]}/ruby install.rb --configdir=#{File.join(settings[:sysconfdir], 'mcollective')} --sitelibdir=#{settings[:ruby_vendordir]} --quick --sbindir=#{settings[:prefix]}/bin"]
   end
 
   # Bring in the client.cfg and server.cfg from ext/aio.
