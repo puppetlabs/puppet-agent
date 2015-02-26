@@ -42,4 +42,6 @@ else
   pkg.configfile File.join(settings[:sysconfdir], 'mcollective', 'client.cfg')
   pkg.configfile File.join(settings[:sysconfdir], 'mcollective', 'server.cfg')
   pkg.configfile "/etc/logrotate.d/mcollective"
+
+  pkg.link "#{settings[:bindir]}/mco", "#{settings[:link_bindir]}/mco"
 end

@@ -7,6 +7,7 @@ project "puppet-agent" do |proj|
   proj.setting(:logdir, "/var/log/puppetlabs/agent")
   proj.setting(:piddir, "/var/run/puppetlabs/agent")
   proj.setting(:bindir, File.join(proj.prefix, "bin"))
+  proj.setting(:link_bindir, "/opt/puppetlabs/bin")
   proj.setting(:libdir, File.join(proj.prefix, "lib"))
   proj.setting(:includedir, File.join(proj.prefix, "include"))
   proj.setting(:datadir, File.join(proj.prefix, "share"))
@@ -48,5 +49,6 @@ project "puppet-agent" do |proj|
   proj.directory proj.sysconfdir
   proj.directory proj.logdir, mode: "0750"
   proj.directory proj.piddir
+  proj.directory proj.link_bindir
 
 end

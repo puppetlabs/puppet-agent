@@ -41,4 +41,6 @@ component "puppet" do |pkg, settings, platform|
   pkg.directory File.join(settings[:prefix], 'cache'), mode: '0750'
   pkg.directory settings[:puppet_configdir]
   pkg.directory settings[:puppet_codedir]
+
+  pkg.link "#{settings[:bindir]}/puppet", "#{settings[:link_bindir]}/puppet"
 end

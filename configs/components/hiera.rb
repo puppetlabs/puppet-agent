@@ -11,4 +11,6 @@ component "hiera" do |pkg, settings, platform|
   end
 
   pkg.configfile File.join(settings[:puppet_codedir], 'hiera.yaml')
+
+  pkg.link "#{settings[:bindir]}/hiera", "#{settings[:link_bindir]}/hiera"
 end
