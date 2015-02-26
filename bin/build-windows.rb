@@ -131,8 +131,9 @@ Kernel.system("scp #{ssh_key} Administrator@#{hostname}:/home/Administrator/pupp
 
 # delete a vm only if we successfully brought back the msi
 msi_path = "output/windows/#{msi_file}"
+link_path= "output/windows/puppet-agent-#{ARCH}.msi"
 if File.exists?(msi_path)
-  FileUtils.ln("./#{msi_path}", "output/windows/puppet-agent-#{ARCH}.msi")
+  FileUtils.ln("./#{msi_path}", link_path, :force => true)
   Kernel.system("curl -X DELETE --url \"http://vmpooler.delivery.puppetlabs.net/vm/#{hostname}\"")
   FileUtils.rm 'winconfig.yaml'
 end
