@@ -41,4 +41,6 @@ component "cfacter" do |pkg, settings, platform|
   pkg.install do
     ["#{platform[:make]} -j$(shell expr $(shell #{platform[:num_cores]}) + 1) install"]
   end
+
+  pkg.link "#{settings[:bindir]}/cfacter", "#{settings[:link_bindir]}/cfacter"
 end

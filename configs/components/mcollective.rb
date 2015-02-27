@@ -32,8 +32,10 @@ else
   end
 
   pkg.install do
-    ["#{settings[:bindir]}/ruby install.rb --configdir=#{File.join(settings[:sysconfdir], 'mcollective')} --sitelibdir=#{settings[:ruby_vendordir]} --quick --sbindir=#{settings[:prefix]}/bin"] 
+    ["#{settings[:bindir]}/ruby install.rb --configdir=#{File.join(settings[:sysconfdir], 'mcollective')} --sitelibdir=#{settings[:ruby_vendordir]} --quick --sbindir=#{settings[:bindir]}"]
   end
+
+  pkg.directory File.join(settings[:sysconfdir], "mcollective")
 
   # Bring in the client.cfg and server.cfg from ext/aio.
   pkg.install_file "ext/aio/common/client.cfg.dist", File.join(settings[:sysconfdir], 'mcollective', 'client.cfg')
@@ -41,5 +43,8 @@ else
 
   pkg.configfile File.join(settings[:sysconfdir], 'mcollective', 'client.cfg')
   pkg.configfile File.join(settings[:sysconfdir], 'mcollective', 'server.cfg')
+  pkg.configfile File.join(settings[:sysconfdir], 'mcollective', 'facts.yaml')
   pkg.configfile "/etc/logrotate.d/mcollective"
+
+  pkg.link "#{settings[:bindir]}/mco", "#{settings[:link_bindir]}/mco"
 end

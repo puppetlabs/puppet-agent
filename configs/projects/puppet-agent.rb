@@ -1,12 +1,13 @@
 project "puppet-agent" do |proj|
   # Project level settings our components will care about
   proj.setting(:prefix, "/opt/puppetlabs/puppet")
-  proj.setting(:sysconfdir, "/etc/puppetlabs/puppet")
-  proj.setting(:puppet_configdir, proj.sysconfdir)
+  proj.setting(:sysconfdir, "/etc/puppetlabs")
+  proj.setting(:puppet_configdir, File.join(proj.sysconfdir, 'puppet'))
   proj.setting(:puppet_codedir, "/etc/puppetlabs/code")
-  proj.setting(:logdir, "/var/log/puppetlabs/agent")
-  proj.setting(:piddir, "/var/run/puppetlabs/agent")
+  proj.setting(:logdir, "/var/log/puppetlabs")
+  proj.setting(:piddir, "/var/run/puppetlabs")
   proj.setting(:bindir, File.join(proj.prefix, "bin"))
+  proj.setting(:link_bindir, "/opt/puppetlabs/bin")
   proj.setting(:libdir, File.join(proj.prefix, "lib"))
   proj.setting(:includedir, File.join(proj.prefix, "include"))
   proj.setting(:datadir, File.join(proj.prefix, "share"))
@@ -48,5 +49,6 @@ project "puppet-agent" do |proj|
   proj.directory proj.sysconfdir
   proj.directory proj.logdir, mode: "0750"
   proj.directory proj.piddir
+  proj.directory proj.link_bindir
 
 end
