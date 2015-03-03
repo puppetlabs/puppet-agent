@@ -36,6 +36,8 @@ component "puppet" do |pkg, settings, platform|
   pkg.directory settings[:puppet_codedir]
   pkg.directory File.join(settings[:puppet_codedir], "modules")
   pkg.directory File.join(settings[:prefix], "modules")
+  pkg.directory File.join(settings[:puppet_codedir], 'environments')
+  pkg.directory File.join(settings[:puppet_codedir], 'environments', 'production')
   pkg.directory File.join(settings[:puppet_codedir], 'environments', 'production', 'manifests')
   pkg.directory File.join(settings[:puppet_codedir], 'environments', 'production', 'modules')
 
