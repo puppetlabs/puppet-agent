@@ -19,6 +19,18 @@ component "cfacter" do |pkg, settings, platform|
     pkg.build_requires "pl-libyaml-cpp-devel"
   end
 
+  # Skip blkid unless we can ensure it exists at build time. Otherwise we depend
+  # on the vagaries of the system we build on.
+  skip_blkid = 'ON'
+  if platform.is_deb?
+    pkg.build_requires "libblkid-dev"
+    skip_blkid = 'OFF'
+  elsif platform.is_rpm?
+    if (platform.is_el? and platform.os_version.to_i >= 6) or (platform.is_sles? and platform.os_version.to_i >= 11)
+      pkg.build_requires "libblkid-devel"
+      skip_blkid = 'OFF'
+    end
+  end
 
   pkg.configure do
     ["PATH=#{settings[:bindir]}:$$PATH \
@@ -32,6 +44,7 @@ component "cfacter" do |pkg, settings, platform|
           -DFACTER_PATH=#{settings[:bindir]} \
           -DFACTER_RUBY=#{settings[:libdir]}/$(shell #{settings[:bindir]}/ruby -rrbconfig -e 'print RbConfig::CONFIG[\"LIBRUBY_SO\"]') \
           -DWITHOUT_CURL=ON \
+          -DWITHOUT_BLKID=#{skip_blkid} \
           ."]
   end
 
