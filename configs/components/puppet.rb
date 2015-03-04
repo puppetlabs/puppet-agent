@@ -40,6 +40,7 @@ component "puppet" do |pkg, settings, platform|
   pkg.directory File.join(settings[:puppet_codedir], 'environments', 'production')
   pkg.directory File.join(settings[:puppet_codedir], 'environments', 'production', 'manifests')
   pkg.directory File.join(settings[:puppet_codedir], 'environments', 'production', 'modules')
+  pkg.install_configfile 'conf/environment.conf', File.join(settings[:puppet_codedir], 'environments', 'production', 'environment.conf')
 
   pkg.link "#{settings[:bindir]}/puppet", "#{settings[:link_bindir]}/puppet"
 end
