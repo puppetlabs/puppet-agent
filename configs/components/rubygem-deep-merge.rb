@@ -6,6 +6,6 @@ component "rubygem-deep-merge" do |pkg, settings, platform|
   pkg.build_requires "ruby"
 
   pkg.install do
-    ["#{settings[:bindir]}/gem install --no-rdoc --no-ri deep_merge-1.0.0.gem"]
+    ["#{settings[:bindir]}/gem install --no-rdoc --no-ri --local deep_merge-1.0.0.gem"]
   end
 end

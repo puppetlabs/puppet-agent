@@ -6,6 +6,6 @@ component "ruby-stomp" do |pkg, settings, platform|
   pkg.build_requires "ruby"
 
   pkg.install do
-    [ "#{settings[:bindir]}/gem install --no-rdoc --no-ri stomp-1.3.3.gem"]
+    [ "#{settings[:bindir]}/gem install --no-rdoc --no-ri --local stomp-1.3.3.gem"]
   end
 end

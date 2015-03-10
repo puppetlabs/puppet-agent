@@ -6,6 +6,6 @@ component "rubygem-net-ssh" do |pkg, settings, platform|
   pkg.build_requires "ruby"
 
   pkg.install do
-    ["#{settings[:bindir]}/gem install --no-rdoc --no-ri net-ssh-#{pkg.get_version}.gem"]
+    ["#{settings[:bindir]}/gem install --no-rdoc --no-ri --local net-ssh-#{pkg.get_version}.gem"]
   end
 end
