@@ -13,6 +13,7 @@ project "puppet-agent" do |proj|
   proj.setting(:datadir, File.join(proj.prefix, "share"))
   proj.setting(:mandir, File.join(proj.datadir, "man"))
   proj.setting(:ruby_vendordir, File.join(proj.libdir, "ruby", "vendor_ruby"))
+  proj.setting(:mirror_url, "http://buildsources.delivery.puppetlabs.net/")
 
   proj.description "The Puppet Agent package contains all of the elements needed to run puppet, including ruby, facter, hiera and mcollective."
   proj.version_from_git
