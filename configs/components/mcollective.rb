@@ -8,6 +8,10 @@ component "mcollective" do |pkg, settings, platform|
   pkg.replaces 'mcollective-common'
   pkg.replaces 'mcollective-client'
 
+  pkg.provides 'mcollective'
+  pkg.provides 'mcollective-common'
+  pkg.provides 'mcollective-client'
+
   if platform.is_deb?
     pkg.replaces 'mcollective-doc'
   end

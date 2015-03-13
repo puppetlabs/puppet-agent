@@ -6,9 +6,11 @@ component "puppet" do |pkg, settings, platform|
   pkg.build_requires "hiera"
 
   pkg.replaces 'puppet'
+  pkg.provides 'puppet'
 
   if platform.is_deb?
     pkg.replaces 'puppet-common'
+    pkg.provides 'puppet-common'
   end
 
   case platform.servicetype
