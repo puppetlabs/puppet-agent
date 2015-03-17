@@ -31,7 +31,7 @@ project "puppet-agent" do |proj|
     proj.component "cfacter"
   end
   proj.component "hiera"
-  proj.component "mcollective"
+  proj.component "marionette-collective"
 
   # Then the dependencies
   proj.component "augeas"
