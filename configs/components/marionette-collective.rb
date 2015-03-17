@@ -31,7 +31,7 @@ component "marionette-collective" do |pkg, settings, platform|
 
     pkg.install_file "ext/aio/redhat/mcollective-sysv.logrotate", "/etc/logrotate.d/mcollective"
 
-else
+  else
     fail "need to know where to put service files"
   end
 
