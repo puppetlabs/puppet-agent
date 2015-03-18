@@ -3,8 +3,8 @@ component "facter" do |pkg, settings, platform|
 
   pkg.build_requires 'ruby'
 
-  pkg.replaces 'facter'
-  pkg.provides 'facter'
+  pkg.replaces 'facter', '2.4.2'
+  pkg.provides 'facter', '2.4.2'
 
   pkg.install do
     ["#{settings[:bindir]}/ruby install.rb --sitelibdir=#{settings[:ruby_vendordir]} --quick --man --mandir=#{settings[:mandir]}"]
