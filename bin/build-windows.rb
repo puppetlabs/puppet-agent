@@ -30,7 +30,7 @@ PUPPET       = JSON.parse(File.read('configs/components/puppet.json'))
 FACTER       = JSON.parse(File.read('configs/components/facter.json'))
 CFACTER      = JSON.parse(File.read('configs/components/cfacter.json'))
 HIERA        = JSON.parse(File.read('configs/components/hiera.json'))
-MCO          = JSON.parse(File.read('configs/components/mcollective.json'))
+MCO          = JSON.parse(File.read('configs/components/marionette-collective.json'))
 WINDOWS      = JSON.parse(File.read('configs/components/windows_puppet.json'))
 WINDOWS_RUBY = JSON.parse(File.read('configs/components/windows_ruby.json'))
 

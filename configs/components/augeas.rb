@@ -8,7 +8,11 @@ component 'augeas' do |pkg, settings, platform|
     pkg.requires 'libxml2'
 
     pkg.build_requires 'readline-devel'
-    pkg.requires 'readline'
+    if platform.is_nxos?
+      pkg.requires 'libreadline6'
+    else
+      pkg.requires 'readline'
+    end
 
     pkg.build_requires 'pkgconfig'
   elsif platform.is_deb?
