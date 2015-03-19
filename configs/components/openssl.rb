@@ -1,6 +1,6 @@
 component "openssl" do |pkg, settings, platform|
-  pkg.version "1.0.0q"
-  pkg.md5sum "8cafccab6f05e8048148e5c282ed5402"
+  pkg.version "1.0.0r"
+  pkg.md5sum "ea48d0ad53e10f06a9475d8cdc209dfa"
   pkg.url "http://buildsources.delivery.puppetlabs.net/openssl-#{pkg.get_version}.tar.gz"
 
   ca_certfile = File.join(settings[:prefix], 'ssl', 'cert.pem')
