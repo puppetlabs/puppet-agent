@@ -1,5 +1,5 @@
-component "mcollective" do |pkg, settings, platform|
-  pkg.load_from_json("configs/components/mcollective.json")
+component "marionette-collective" do |pkg, settings, platform|
+  pkg.load_from_json("configs/components/marionette-collective.json")
 
   pkg.build_requires "ruby"
   pkg.build_requires "ruby-stomp"
@@ -31,7 +31,7 @@ component "mcollective" do |pkg, settings, platform|
 
     pkg.install_file "ext/aio/redhat/mcollective-sysv.logrotate", "/etc/logrotate.d/mcollective"
 
-else
+  else
     fail "need to know where to put service files"
   end
 
