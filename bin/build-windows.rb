@@ -111,7 +111,8 @@ CONFIG = {
 File.open("winconfig.yaml", 'w') { |f| f.write(YAML.dump(CONFIG)) }
 
 # Install Wix35 with chocolatey
-Kernel.system("#{ssh_command} \"source .bash_profile ; choco install -y Wix35 --version #{CHOCO_WIX35_VERSION}\"")
+wix_install = "choco install -y Wix35 -source https://www.myget.org/F/puppetlabs -version #{CHOCO_WIX35_VERSION}"
+Kernel.system("#{ssh_command} \"source .bash_profile ; if (!#{wix_install}); then #{wix_install}; fi\"")
 
 # Clone puppet_for_the_win
 result = Kernel.system("#{ssh_command} \"source .bash_profile ; git clone #{WINDOWS['url']} puppet_for_the_win; cd puppet_for_the_win && git checkout #{WINDOWS['ref']}\"")
