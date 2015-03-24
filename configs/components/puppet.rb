@@ -19,6 +19,8 @@ component "puppet" do |pkg, settings, platform|
   when "sysv"
     if platform.is_deb?
       pkg.install_service "ext/debian/puppet.init", "ext/debian/puppet.default"
+    elsif platform.is_sles?
+      pkg.install_service "ext/suse/client.init", "ext/redhat/client.sysconfig"
     elsif platform.is_rpm?
       pkg.install_service "ext/redhat/client.init", "ext/redhat/client.sysconfig"
     end
