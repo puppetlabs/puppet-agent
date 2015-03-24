@@ -16,8 +16,7 @@ end
 AGENT_VERSION_STRING = ENV['AGENT_VERSION_STRING'] || %x{git describe --tags}.chomp.gsub('-', '.')
 
 # Whether or not we are going to build boost and yaml-cpp or copy them from existing builds
-# If `TRUE`, this will build boost and yaml-cpp according to the specifications in
-# git://github.com/puppetlabs/cfacter/master/contrib/cfacter.ps1
+# If `TRUE`, this will build boost and yaml-cpp according to the specifications in cfacter.ps1
 # If `FALSE`, this will download and unpack prebuilt boost and yaml-cpp arcives.
 BUILD_SOURCE         = ENV['BUILD_SOURCE'] || '0'
 
@@ -60,11 +59,10 @@ fail "Unable to connect to the host. Is is possible that you aren't on VPN or co
 
 Kernel.system("#{ssh_command} 'source .bash_profile ; echo $PATH'")
 
-# Download and execute the cfacter build script
-# this script lives in the puppetlabs/cfacter repo
-cfacter_build_script = ENV['CFACTER_BUILD_SCRIPT'] || 
-  "https://raw.githubusercontent.com/puppetlabs/cfacter/#{CFACTER['ref']}/contrib/cfacter.ps1"
-result = Kernel.system("#{ssh_command} \"curl -O #{cfacter_build_script} && powershell.exe -NoProfile -ExecutionPolicy Unrestricted -InputFormat None -Command ./cfacter.ps1 -arch #{script_arch} -buildSource #{BUILD_SOURCE} -cfacterRef #{CFACTER['ref']} -cfacterFork #{CFACTER['url']}\"")
+# Send and execute the cfacter build script
+cfacter_build_script = ENV['CFACTER_BUILD_SCRIPT'] || 'bin/cfacter.ps1'
+Kernel.system("scp #{ssh_key} #{cfacter_build_script} Administrator@#{hostname}:/home/Administrator/")
+result = Kernel.system("#{ssh_command} \"powershell.exe -NoProfile -ExecutionPolicy Unrestricted -InputFormat None -Command ./cfacter.ps1 -arch #{script_arch} -buildSource #{BUILD_SOURCE} -cfacterRef #{CFACTER['ref']} -cfacterFork #{CFACTER['url']}\"")
 fail "It looks like the cfacter build script #{cfacter_build_script} failed for some reason. I would suggest ssh'ing into the box and poking around" unless result
 
 # Move all necessary dll's into cfacter bindir
