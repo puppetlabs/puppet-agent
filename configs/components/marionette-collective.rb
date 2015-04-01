@@ -4,13 +4,13 @@ component "marionette-collective" do |pkg, settings, platform|
   pkg.build_requires "ruby"
   pkg.build_requires "ruby-stomp"
 
-  pkg.replaces 'mcollective', '2.8.1'
-  pkg.replaces 'mcollective-common', '2.8.1'
-  pkg.replaces 'mcollective-client', '2.8.1'
+  pkg.replaces 'mcollective', '2.9.0'
+  pkg.replaces 'mcollective-common', '2.9.0'
+  pkg.replaces 'mcollective-client', '2.9.0'
 
-  pkg.provides 'mcollective', '2.8.1'
-  pkg.provides 'mcollective-common', '2.8.1'
-  pkg.provides 'mcollective-client', '2.8.1'
+  pkg.provides 'mcollective', '2.9.0'
+  pkg.provides 'mcollective-common', '2.9.0'
+  pkg.provides 'mcollective-client', '2.9.0'
 
   if platform.is_deb?
     pkg.replaces 'mcollective-doc'
