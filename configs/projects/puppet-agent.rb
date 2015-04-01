@@ -19,6 +19,7 @@ project "puppet-agent" do |proj|
   proj.license "ASL 2.0"
   proj.vendor "Puppet Labs <info@puppetlabs.com>"
   proj.homepage "https://www.puppetlabs.com"
+  proj.target_repo "PC1"
 
   # Platform specific
   proj.setting(:cflags, "-I#{proj.includedir}")
