@@ -1,6 +1,8 @@
 component "facter" do |pkg, settings, platform|
   pkg.load_from_json('configs/components/facter.json')
 
+  # net-tools is required for ifconfig; it can be removed with Facter 3
+  pkg.requires 'net-tools'
   pkg.build_requires 'ruby'
 
   pkg.replaces 'facter', '2.4.2'
