@@ -5,13 +5,15 @@ component "facter" do |pkg, settings, platform|
   pkg.requires 'net-tools'
   pkg.build_requires 'ruby'
 
+  # Here we replace and provide facter 3 to ensure that even as we continue
+  # to release 2.x versions of facter upgrades to puppet-agent will be clean
   if platform.is_rpm?
     # In our rpm packages, facter has an epoch set, so we need to account for that here
-    pkg.replaces 'facter', '1:2.4.2'
-    pkg.provides 'facter', '1:2.4.2'
+    pkg.replaces 'facter', '1:3.0.0'
+    pkg.provides 'facter', '1:3.0.0'
   else
-    pkg.replaces 'facter', '2.4.2'
-    pkg.provides 'facter', '2.4.2'
+    pkg.replaces 'facter', '3.0.0'
+    pkg.provides 'facter', '3.0.0'
   end
 
   pkg.install do
