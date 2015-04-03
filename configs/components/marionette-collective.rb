@@ -4,13 +4,15 @@ component "marionette-collective" do |pkg, settings, platform|
   pkg.build_requires "ruby"
   pkg.build_requires "ruby-stomp"
 
-  pkg.replaces 'mcollective', '2.9.0'
-  pkg.replaces 'mcollective-common', '2.9.0'
-  pkg.replaces 'mcollective-client', '2.9.0'
+  # Here we replace and provide mcollective 3 to ensure that even as we continue
+  # to release 2.x versions of mcollective upgrades to puppet-agent will be clean
+  pkg.replaces 'mcollective', '3.0.0'
+  pkg.replaces 'mcollective-common', '3.0.0'
+  pkg.replaces 'mcollective-client', '3.0.0'
 
-  pkg.provides 'mcollective', '2.9.0'
-  pkg.provides 'mcollective-common', '2.9.0'
-  pkg.provides 'mcollective-client', '2.9.0'
+  pkg.provides 'mcollective', '3.0.0'
+  pkg.provides 'mcollective-common', '3.0.0'
+  pkg.provides 'mcollective-client', '3.0.0'
 
   if platform.is_deb?
     pkg.replaces 'mcollective-doc'
