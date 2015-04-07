@@ -20,6 +20,7 @@ project "puppet-agent" do |proj|
   proj.vendor "Puppet Labs <info@puppetlabs.com>"
   proj.homepage "https://www.puppetlabs.com"
   proj.target_repo "PC1"
+  proj.identifier "com.puppetlabs"
 
   # Platform specific
   proj.setting(:cflags, "-I#{proj.includedir}")
@@ -28,7 +29,7 @@ project "puppet-agent" do |proj|
   # First our stuff
   proj.component "puppet"
   proj.component "facter"
-  unless ( proj.get_platform.is_eos? or proj.get_platform.is_nxos? )
+  unless ( proj.get_platform.is_eos? or proj.get_platform.is_nxos? or proj.get_platform.is_osx? )
     proj.component "cfacter"
   end
   proj.component "hiera"
@@ -36,6 +37,7 @@ project "puppet-agent" do |proj|
 
   # Then the dependencies
   proj.component "augeas"
+  proj.component "cfpropertylist" if proj.get_platform.is_osx?
   proj.component "ruby"
   proj.component "ruby-stomp"
   proj.component "rubygem-deep-merge"
