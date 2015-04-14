@@ -9,13 +9,21 @@ component "marionette-collective" do |pkg, settings, platform|
   pkg.replaces 'mcollective', '3.0.0'
   pkg.replaces 'mcollective-common', '3.0.0'
   pkg.replaces 'mcollective-client', '3.0.0'
+  pkg.replaces 'pe-mcollective', '3.0.0'
+  pkg.replaces 'pe-mcollective-common', '3.0.0'
+  pkg.replaces 'pe-mcollective-client', '3.0.0'
+
 
   pkg.provides 'mcollective', '3.0.0'
   pkg.provides 'mcollective-common', '3.0.0'
   pkg.provides 'mcollective-client', '3.0.0'
+  pkg.provides 'pe-mcollective', '3.0.0'
+  pkg.provides 'pe-mcollective-common', '3.0.0'
+  pkg.provides 'pe-mcollective-client', '3.0.0'
 
   if platform.is_deb?
     pkg.replaces 'mcollective-doc'
+    pkg.replaces 'pe-mcollective-doc'
   end
 
   case platform.servicetype

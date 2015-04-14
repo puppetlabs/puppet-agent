@@ -3,6 +3,9 @@ component "ruby-shadow" do |pkg, settings, platform|
   pkg.md5sum "c9fec6b2a18d673322a6d3d83870e122"
   pkg.url "http://buildsources.delivery.puppetlabs.net/ruby-shadow-2.3.3.tar.gz"
 
+  pkg.provides "pe-#{pkg.get_name}", pkg.get_version
+  pkg.replaces "pe-#{pkg.get_name}", '2.3.3'
+
   pkg.build_requires "ruby"
 
   pkg.build do
