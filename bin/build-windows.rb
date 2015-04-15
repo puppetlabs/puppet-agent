@@ -5,7 +5,7 @@ require 'fileutils'
 
 # BUILD_TARGET passed through the pipeline
 build_target         = ENV['BUILD_TARGET']
-# The architecture of cfacter/the installer we are going to build
+# The architecture of facter/the installer we are going to build
 if build_target && /win\-(?<build_arch>x86|x64)/ =~ build_target
   ARCH               = build_arch
 else
@@ -17,18 +17,17 @@ AGENT_VERSION_STRING = ENV['AGENT_VERSION_STRING'] || %x{git describe --tags}.ch
 
 # Whether or not we are going to build boost and yaml-cpp or copy them from existing builds
 # If `TRUE`, this will build boost and yaml-cpp according to the specifications in
-# git://github.com/puppetlabs/cfacter/master/contrib/cfacter.ps1
+# git://github.com/puppetlabs/facter/master/contrib/facter.ps1
 # If `FALSE`, this will download and unpack prebuilt boost and yaml-cpp arcives.
 BUILD_SOURCE         = ENV['BUILD_SOURCE'] || '0'
 
-# Parsed information that we need to specify in order to know where to find different built cfacter bits
-# and correctly pass information to the cfacter build script
+# Parsed information that we need to specify in order to know where to find different built facter bits
+# and correctly pass information to the facter build script
 script_arch          = "#{ARCH =='x64' ? '64' : '32'}"
 
 # The refs we will use when building the MSI
 PUPPET       = JSON.parse(File.read('configs/components/puppet.json'))
 FACTER       = JSON.parse(File.read('configs/components/facter.json'))
-CFACTER      = JSON.parse(File.read('configs/components/cfacter.json'))
 HIERA        = JSON.parse(File.read('configs/components/hiera.json'))
 MCO          = JSON.parse(File.read('configs/components/marionette-collective.json'))
 WINDOWS      = JSON.parse(File.read('configs/components/windows_puppet.json'))
@@ -54,27 +53,27 @@ result = Kernel.system("#{ssh_command} \"echo \\\"#{ssh_env}\\\" >> ~/.bash_prof
 fail "Unable to connect to the host. Is is possible that you aren't on VPN or connected to the internal PL network?" unless result
 
 
-### Build CFacter
+### Build Facter
 #
 #
 
 Kernel.system("#{ssh_command} 'source .bash_profile ; echo $PATH'")
 
-# Download and execute the cfacter build script
-# this script lives in the puppetlabs/cfacter repo
-cfacter_build_script = ENV['CFACTER_BUILD_SCRIPT'] || 
-  "https://raw.githubusercontent.com/puppetlabs/cfacter/#{CFACTER['ref']}/contrib/cfacter.ps1"
-result = Kernel.system("#{ssh_command} \"curl -O #{cfacter_build_script} && powershell.exe -NoProfile -ExecutionPolicy Unrestricted -InputFormat None -Command ./cfacter.ps1 -arch #{script_arch} -buildSource #{BUILD_SOURCE} -cfacterRef #{CFACTER['ref']} -cfacterFork #{CFACTER['url']}\"")
-fail "It looks like the cfacter build script #{cfacter_build_script} failed for some reason. I would suggest ssh'ing into the box and poking around" unless result
+# Download and execute the facter build script
+# this script lives in the puppetlabs/facter repo
+facter_build_script = ENV['FACTER_BUILD_SCRIPT'] ||
+  "https://raw.githubusercontent.com/puppetlabs/facter/#{FACTER['ref']}/contrib/facter.ps1"
+result = Kernel.system("#{ssh_command} \"curl -O #{facter_build_script} && powershell.exe -NoProfile -ExecutionPolicy Unrestricted -InputFormat None -Command ./facter.ps1 -arch #{script_arch} -buildSource #{BUILD_SOURCE} -facterRef #{FACTER['ref']} -facterFork #{FACTER['url']}\"")
+fail "It looks like the facter build script #{facter_build_script} failed for some reason. I would suggest ssh'ing into the box and poking around" unless result
 
-# Move all necessary dll's into cfacter bindir
-Kernel.system("#{ssh_command} \"cp /cygdrive/c/tools/mingw#{script_arch}/bin/libgcc_s_#{ARCH == 'x64' ? 'seh' : 'sjlj'}-1.dll /cygdrive/c/tools/mingw#{script_arch}/bin/libstdc++-6.dll /cygdrive/c/tools/mingw#{script_arch}/bin/libwinpthread-1.dll /home/Administrator/cfacter/release/bin/\"")
+# Move all necessary dll's into facter bindir
+Kernel.system("#{ssh_command} \"cp /cygdrive/c/tools/mingw#{script_arch}/bin/libgcc_s_#{ARCH == 'x64' ? 'seh' : 'sjlj'}-1.dll /cygdrive/c/tools/mingw#{script_arch}/bin/libstdc++-6.dll /cygdrive/c/tools/mingw#{script_arch}/bin/libwinpthread-1.dll /home/Administrator/facter/release/bin/\"")
 
 # Format everything to prepare to archive it
-Kernel.system("#{ssh_command} \"source .bash_profile ; mkdir -p /home/Administrator/archive/lib ; cp -r /home/Administrator/cfacter/release/bin /home/Administrator/cfacter/lib/inc /home/Administrator/archive/ ; cp /home/Administrator/cfacter/release/lib/cfacter.rb /home/Administrator/archive/lib/ \"")
+Kernel.system("#{ssh_command} \"source .bash_profile ; mkdir -p /home/Administrator/archive/lib ; cp -r /home/Administrator/facter/release/bin /home/Administrator/facter/lib/inc /home/Administrator/archive/ ; cp /home/Administrator/facter/release/lib/facter.rb /home/Administrator/archive/lib/ \"")
 
 # Zip up the built archives
-Kernel.system("#{ssh_command} \"source .bash_profile ; 7za.exe a -r -tzip cfacter.zip 'C:\\cygwin64\\home\\Administrator\\archive\\*'\"")
+Kernel.system("#{ssh_command} \"source .bash_profile ; 7za.exe a -r -tzip facter.zip 'C:\\cygwin64\\home\\Administrator\\archive\\*'\"")
 
 
 ### Build puppet-agent.msi
@@ -91,16 +90,12 @@ CONFIG = {
       :repo => HIERA['url']
     },
     'facter' => {
-      :ref  => FACTER['ref'],
-      :repo => FACTER['url']
+      :archive => 'facter.zip',
+      :path    => 'file:///home/Administrator'
     },
     'mcollective' => {
       :ref  => MCO['ref'],
       :repo => MCO['url']
-    },
-    'cfacter' => {
-      :archive => 'cfacter.zip',
-      :path    => 'file:///home/Administrator'
     },
     'sys' => {
       :ref  => WINDOWS_RUBY['ref'][ARCH],
