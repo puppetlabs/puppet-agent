@@ -1,5 +1,5 @@
 platform "nxos-1-x86_64" do |plat|
-  plat.servicedir "/etc/rc.d/init.d"
+  plat.servicedir "/etc/init.d"
   plat.defaultdir "/etc/sysconfig"
   plat.servicetype "sysv"
   plat.provision_with "echo"
