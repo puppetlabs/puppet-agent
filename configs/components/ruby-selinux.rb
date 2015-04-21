@@ -4,10 +4,14 @@ if platform.name =~ /^el-(5|6|7)-.*/
       pkg.version "1.33.4"
       pkg.md5sum "08762379de2242926854080dad649b67"
       pkg.apply_patch "resources/patches/ruby-selinux/libselinux-rhat.patch"
+      pkg.replaces "pe-#{pkg.get_name}", "1.33.4.1"
     else
       pkg.version "2.0.94"
+      pkg.replaces "pe-#{pkg.get_name}", "2.0.94.1"
       pkg.md5sum "f814c71fca5a85ebfeb81b57afed59db"
     end
+
+    pkg.provides "pe-#{pkg.get_name}", pkg.get_version
 
     pkg.url "http://buildsources.delivery.puppetlabs.net/libselinux-#{pkg.get_version}.tgz"
 

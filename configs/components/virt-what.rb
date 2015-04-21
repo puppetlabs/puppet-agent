@@ -3,6 +3,9 @@ component "virt-what" do |pkg, settings, platform|
   pkg.md5sum "4d9bb5afc81de31f66443d8674bb3672"
   pkg.url "http://buildsources.delivery.puppetlabs.net/virt-what-1.14.tar.gz"
 
+  pkg.provides "pe-#{pkg.get_name}", pkg.get_version
+  pkg.replaces "pe-#{pkg.get_name}", '1.15'
+
   # Run-time requirements
   unless platform.is_deb?
     requires "util-linux"
