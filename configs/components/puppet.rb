@@ -28,6 +28,9 @@ component "puppet" do |pkg, settings, platform|
     fail "need to know where to put service files"
   end
 
+  # Puppet requires tar, otherwise PMT will not install modules
+  pkg.requires 'tar'
+
   pkg.install do
     "#{settings[:bindir]}/ruby install.rb --configdir=#{settings[:puppet_configdir]} --sitelibdir=#{settings[:ruby_vendordir]} --configs --quick --man --mandir=#{settings[:mandir]}"
   end

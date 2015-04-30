@@ -1,6 +1,13 @@
 component "facter" do |pkg, settings, platform|
   pkg.load_from_json('configs/components/facter.json')
 
+  # facter requires the hostname command, which is provided by net-tools
+  # on el5/6, but by hostname on more recent el releases including fedora
+  # as well as all debian/ubuntu releases. The hostname package is not
+  # available on sles
+  if platform.is_deb? || (platform.is_el? && platform.os_version.to_i >= 7) || platform.is_fedora?
+    pkg.requires 'hostname'
+  end
   # net-tools is required for ifconfig; it can be removed with Facter 3
   pkg.requires 'net-tools'
   pkg.build_requires 'ruby'
