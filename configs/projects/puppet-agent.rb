@@ -40,11 +40,15 @@ project "puppet-agent" do |proj|
   proj.component "ruby-stomp"
   proj.component "rubygem-deep-merge"
   proj.component "rubygem-net-ssh"
-  proj.component "ruby-selinux"
   proj.component "ruby-shadow"
   proj.component "ruby-augeas"
   proj.component "openssl"
   proj.component "virt-what"
+
+  # We only build ruby-selinux for EL 5-7
+  if proj.get_platform.name =~ /^el-(5|6|7)-.*/
+    proj.component "ruby-selinux"
+  end
 
   proj.directory proj.prefix
   proj.directory proj.sysconfdir
