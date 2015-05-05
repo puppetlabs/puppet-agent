@@ -7,8 +7,9 @@ component "ruby-augeas" do |pkg, settings, platform|
   pkg.build_requires "augeas"
 
   pkg.build do
-    ["export CONFIGURE_ARGS='--vendor'",
-     "export CFLAGS=#{platform[:cflags]}",
+    ["export PATH=$$PATH:/usr/local/bin", 
+     "export CONFIGURE_ARGS='--vendor'",
+     "export CFLAGS=#{settings[:cflags]}",
      "export PKG_CONFIG_PATH=#{settings[:libdir]}/pkgconfig",
      "#{settings[:bindir]}/ruby ext/augeas/extconf.rb",
      "#{platform[:make]} -j$(shell expr $(shell #{platform[:num_cores]}) + 1)"]

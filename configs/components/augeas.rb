@@ -26,7 +26,8 @@ component 'augeas' do |pkg, settings, platform|
   end
 
   pkg.configure do
-    ["./configure --prefix=#{settings[:prefix]}"]
+    ["PATH=$$PATH:/usr/local/bin \
+     ./configure --prefix=#{settings[:prefix]}"]
   end
 
   pkg.build do
