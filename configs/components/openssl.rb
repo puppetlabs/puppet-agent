@@ -45,7 +45,7 @@ component "openssl" do |pkg, settings, platform|
       no-srp \
       no-ssl2 \
       no-ssl3 \
-      #{settings[:cflags]}
+      #{settings[:cflags]} \
       #{ldflags}"]
   end
 
