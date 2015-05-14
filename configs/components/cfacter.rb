@@ -5,22 +5,12 @@ component "cfacter" do |pkg, settings, platform|
   pkg.build_requires "openssl"
   pkg.build_requires "pl-gcc"
   pkg.build_requires "pl-cmake"
+  pkg.build_requires "pl-boost"
+  pkg.build_requires "pl-yaml-cpp"
 
   pkg.replaces 'cfacter', '0.5.0'
   pkg.provides 'cfacter', '0.5.0'
 
-  # SLES and Debian 8 uses vanagon built pl-build-tools
-  if platform.is_sles? or (platform.os_name == 'debian' and platform.os_version.to_i >= 8) or
-      platform.name.match(/^ubuntu-14.10-.*$/)
-    pkg.build_requires "pl-boost"
-    pkg.build_requires "pl-yaml-cpp"
-  else
-    # these are from the pl-dependency repo
-    pkg.build_requires "pl-libboost-static"
-    pkg.build_requires "pl-libboost-devel"
-    pkg.build_requires "pl-libyaml-cpp-static"
-    pkg.build_requires "pl-libyaml-cpp-devel"
-  end
 
   # Skip blkid unless we can ensure it exists at build time. Otherwise we depend
   # on the vagaries of the system we build on.
