@@ -1,7 +1,7 @@
 platform "debian-8-i386" do |plat|
-  plat.servicedir "/etc/init.d"
+  plat.servicedir "/lib/systemd/system"
   plat.defaultdir "/etc/default"
-  plat.servicetype "sysv"
+  plat.servicetype "systemd"
   plat.codename "jessie"
 
   plat.apt_repo "http://pl-build-tools.delivery.puppetlabs.net/debian/pl-build-tools-release-jessie.deb"
