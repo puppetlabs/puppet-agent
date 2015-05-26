@@ -101,7 +101,7 @@ component "facter" do |pkg, settings, platform|
 
     pkg.build do
       # Until a `check` target exists, run tests are part of the build.
-      ["#{platform[:make]} -j$(shell expr $(shell #{platform[:num_cores]}) + 1) && #{platform[:make]} test ARGS=-V"]
+      ["PATH=#{settings[:bindir]}:$$PATH #{platform[:make]} -j$(shell expr $(shell #{platform[:num_cores]}) + 1) && #{platform[:make]} test ARGS=-V"]
     end
 
     pkg.install do
