@@ -1,5 +1,5 @@
 component "facter" do |pkg, settings, platform|
-  use_facter_2x = (platform.is_eos? || platform.is_osx?)
+  use_facter_2x = platform.is_eos?
   if use_facter_2x
     # Build facter-2.x
     pkg.load_from_json('configs/components/facter-2.x.json')
@@ -36,15 +36,26 @@ component "facter" do |pkg, settings, platform|
       ["#{settings[:bindir]}/ruby install.rb --sitelibdir=#{settings[:ruby_vendordir]} --quick --man --mandir=#{settings[:mandir]}"]
     end
   else
-    pkg.build_requires "openssl"
-    pkg.build_requires "pl-gcc"
-    pkg.build_requires "pl-cmake"
+
+    # OSX uses clang and system openssl.  cmake comes from brew.
+    if platform.is_osx?
+      pkg.build_requires "cmake"
+    else
+      pkg.build_requires "openssl"
+      pkg.build_requires "pl-gcc"
+      pkg.build_requires "pl-cmake"
+    end
 
     # SLES and Debian 8 uses vanagon built pl-build-tools
+    # OSX installs build reqs from brew.  yaml-cpp requires an additional arg
+    # due to the bottle not including the static lib.
     if platform.is_sles? or (platform.os_name == 'debian' and platform.os_version.to_i >= 8) or
       platform.name.match(/^ubuntu-14.10-.*$/) or platform.is_nxos?
       pkg.build_requires "pl-boost"
       pkg.build_requires "pl-yaml-cpp"
+    elsif platform.is_osx?
+      pkg.build_requires "boost"
+      pkg.build_requires "yaml-cpp --with-static-lib"
     else
       # these are from the pl-dependency repo
       pkg.build_requires "pl-libboost-static"
@@ -67,6 +78,8 @@ component "facter" do |pkg, settings, platform|
       pkg.build_requires 'java-1.7.0-openjdk-devel'
     when /fedora-f21/
       pkg.build_requires 'java-1.8.0-openjdk-devel'
+    when /osx-(10.9|10.10)/
+      pkg.build_requires 'Caskroom/cask/java'
     end
 
     # Skip blkid unless we can ensure it exists at build time. Otherwise we depend
@@ -82,11 +95,21 @@ component "facter" do |pkg, settings, platform|
       end
     end
 
+    # cmake on OSX is provided by brew
+    # a toolchain is not currently required for OSX since we're building with clang.
+    if platform.is_osx?
+      toolchain=""
+      cmake="/usr/local/bin/cmake"
+    else
+      toolchain="-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/pl-build-toolchain.cmake"
+      cmake="/opt/pl-build-tools/bin/cmake"
+    end
+
     pkg.configure do
       ["PATH=#{settings[:bindir]}:$$PATH \
           #{java_home} \
-          /opt/pl-build-tools/bin/cmake \
-          -DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/pl-build-toolchain.cmake \
+          #{cmake} \
+          #{toolchain} \
           -DCMAKE_VERBOSE_MAKEFILE=ON \
           -DCMAKE_PREFIX_PATH=#{settings[:prefix]} \
           -DCMAKE_INSTALL_PREFIX=#{settings[:prefix]} \
