@@ -14,6 +14,10 @@ component "marionette-collective" do |pkg, settings, platform|
   pkg.provides 'mcollective-common', '3.0.0'
   pkg.provides 'mcollective-client', '3.0.0'
 
+  pkg.replaces 'pe-mcollective'
+  pkg.replaces 'pe-mcollective-common'
+  pkg.replaces 'pe-mcollective-client'
+
   if platform.is_deb?
     pkg.replaces 'mcollective-doc'
   end
