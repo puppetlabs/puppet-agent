@@ -1,5 +1,5 @@
 component "facter" do |pkg, settings, platform|
-  use_facter_2x = (platform.is_eos? || platform.is_nxos? || platform.is_osx?)
+  use_facter_2x = (platform.is_eos? || platform.is_osx?)
   if use_facter_2x
     # Build facter-2.x
     pkg.load_from_json('configs/components/facter-2.x.json')
@@ -42,7 +42,7 @@ component "facter" do |pkg, settings, platform|
 
     # SLES and Debian 8 uses vanagon built pl-build-tools
     if platform.is_sles? or (platform.os_name == 'debian' and platform.os_version.to_i >= 8) or
-      platform.name.match(/^ubuntu-14.10-.*$/)
+      platform.name.match(/^ubuntu-14.10-.*$/) or platform.is_nxos?
       pkg.build_requires "pl-boost"
       pkg.build_requires "pl-yaml-cpp"
     else
@@ -72,7 +72,7 @@ component "facter" do |pkg, settings, platform|
     # Skip blkid unless we can ensure it exists at build time. Otherwise we depend
     # on the vagaries of the system we build on.
     skip_blkid = 'ON'
-    if platform.is_deb?
+    if platform.is_deb? or platform.is_nxos?
       pkg.build_requires "libblkid-dev"
       skip_blkid = 'OFF'
     elsif platform.is_rpm?
