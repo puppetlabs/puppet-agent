@@ -18,6 +18,8 @@ component "facter" do |pkg, settings, platform|
   pkg.replaces 'cfacter', '0.5.0'
   pkg.provides 'cfacter', '0.5.0'
 
+  pkg.replaces 'pe-facter'
+
   pkg.build_requires "ruby"
 
   if use_facter_2x

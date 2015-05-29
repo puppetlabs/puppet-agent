@@ -3,6 +3,8 @@ component "ruby-augeas" do |pkg, settings, platform|
   pkg.md5sum "a132eace43ce13ccd059e22c0b1188ac"
   pkg.url "http://buildsources.delivery.puppetlabs.net/ruby-augeas-0.5.0.tgz"
 
+  pkg.replaces 'pe-ruby-augeas'
+
   pkg.build_requires "ruby"
   pkg.build_requires "augeas"
 
