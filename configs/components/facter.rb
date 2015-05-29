@@ -39,19 +39,8 @@ component "facter" do |pkg, settings, platform|
     pkg.build_requires "openssl"
     pkg.build_requires "pl-gcc"
     pkg.build_requires "pl-cmake"
-
-    # SLES and Debian 8 uses vanagon built pl-build-tools
-    if platform.is_sles? or (platform.os_name == 'debian' and platform.os_version.to_i >= 8) or
-      platform.name.match(/^ubuntu-14.10-.*$/) or platform.is_nxos?
-      pkg.build_requires "pl-boost"
-      pkg.build_requires "pl-yaml-cpp"
-    else
-      # these are from the pl-dependency repo
-      pkg.build_requires "pl-libboost-static"
-      pkg.build_requires "pl-libboost-devel"
-      pkg.build_requires "pl-libyaml-cpp-static"
-      pkg.build_requires "pl-libyaml-cpp-devel"
-    end
+    pkg.build_requires "pl-boost"
+    pkg.build_requires "pl-yaml-cpp"
 
     java_home = ''
     case platform.name
