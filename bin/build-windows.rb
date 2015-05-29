@@ -47,7 +47,7 @@ puts "Acquired #{vm_type} VM from pooler at #{hostname}"
 
 # Set up the environment so I don't keep crying
 ssh_command = "ssh #{ssh_key} -tt -o StrictHostKeyChecking=no Administrator@#{hostname}"
-ssh_env = "export PATH=\'/cygdrive/c/Program Files (x86)/Git/cmd:/cygdrive/c/tools/ruby215/bin:/cygdrive/c/ProgramData/chocolatey/bin:/cygdrive/c/Program Files (x86)/Windows Installer XML v3.5/bin:/usr/local/bin:/usr/bin:/cygdrive/c/Windows/system32:/cygdrive/c/Windows:/cygdrive/c/Windows/System32/Wbem:/cygdrive/c/Windows/System32/WindowsPowerShell/v1.0:/bin\'"
+ssh_env = "export PATH=\'/cygdrive/c/Program Files (x86)/Git/cmd:/cygdrive/c/tools/ruby21/bin:/cygdrive/c/ProgramData/chocolatey/bin:/cygdrive/c/Program Files (x86)/Windows Installer XML v3.5/bin:/usr/local/bin:/usr/bin:/cygdrive/c/Windows/system32:/cygdrive/c/Windows:/cygdrive/c/Windows/System32/Wbem:/cygdrive/c/Windows/System32/WindowsPowerShell/v1.0:/bin\'"
 
 result = Kernel.system("#{ssh_command} \"echo \\\"#{ssh_env}\\\" >> ~/.bash_profile\"")
 fail "Unable to connect to the host. Is is possible that you aren't on VPN or connected to the internal PL network?" unless result
@@ -117,7 +117,7 @@ fail "It seems there were some issues cloning the puppet_for_the_win repo" unles
 Kernel.system("scp #{ssh_key} winconfig.yaml Administrator@#{hostname}:/home/Administrator/puppet_for_the_win/")
 
 # Build the MSI with automation in puppet_for_the_win
-result = Kernel.system("#{ssh_command} \"source .bash_profile ; cd /home/Administrator/puppet_for_the_win ; AGENT_VERSION_STRING=#{AGENT_VERSION_STRING} ARCH=#{ARCH} c:/tools/ruby215/bin/rake clobber windows:build config=winconfig.yaml\"")
+result = Kernel.system("#{ssh_command} \"source .bash_profile ; cd /home/Administrator/puppet_for_the_win ; AGENT_VERSION_STRING=#{AGENT_VERSION_STRING} ARCH=#{ARCH} c:/tools/ruby21/bin/rake clobber windows:build config=winconfig.yaml\"")
 fail "It seems there were some issues building the puppet-agent msi" unless result
 
 # Fetch back the built installer
