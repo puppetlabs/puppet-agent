@@ -10,6 +10,8 @@ component "ruby-selinux" do |pkg, settings, platform|
 
   pkg.url "http://buildsources.delivery.puppetlabs.net/libselinux-#{pkg.get_version}.tgz"
 
+  pkg.replaces 'pe-ruby-selinux'
+
   pkg.build_requires "ruby"
   pkg.build_requires "swig"
   pkg.build_requires "libsepol"

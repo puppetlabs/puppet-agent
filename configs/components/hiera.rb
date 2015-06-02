@@ -7,6 +7,8 @@ component "hiera" do |pkg, settings, platform|
   pkg.replaces 'hiera', '2.0.0'
   pkg.provides 'hiera', '2.0.0'
 
+  pkg.replaces 'pe-hiera'
+
   pkg.install do
     "#{settings[:bindir]}/ruby install.rb --configdir=#{settings[:puppet_codedir]} --sitelibdir=#{settings[:ruby_vendordir]} --configs --quick --man --mandir=#{settings[:mandir]}"
   end
