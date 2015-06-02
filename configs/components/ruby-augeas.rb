@@ -3,12 +3,15 @@ component "ruby-augeas" do |pkg, settings, platform|
   pkg.md5sum "a132eace43ce13ccd059e22c0b1188ac"
   pkg.url "http://buildsources.delivery.puppetlabs.net/ruby-augeas-0.5.0.tgz"
 
+  pkg.replaces 'pe-ruby-augeas'
+
   pkg.build_requires "ruby"
   pkg.build_requires "augeas"
 
   pkg.build do
-    ["export CONFIGURE_ARGS='--vendor'",
-     "export CFLAGS=#{platform[:cflags]}",
+    ["export PATH=$$PATH:/usr/local/bin", 
+     "export CONFIGURE_ARGS='--vendor'",
+     "export CFLAGS=#{settings[:cflags]}",
      "export PKG_CONFIG_PATH=#{settings[:libdir]}/pkgconfig",
      "#{settings[:bindir]}/ruby ext/augeas/extconf.rb",
      "#{platform[:make]} -j$(shell expr $(shell #{platform[:num_cores]}) + 1)"]

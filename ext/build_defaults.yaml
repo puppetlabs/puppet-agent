@@ -4,8 +4,8 @@ packaging_url: 'git://github.com/puppetlabs/packaging.git --branch=master'
 packaging_repo: 'packaging'
 gpg_name: 'info@puppetlabs.com'
 gpg_key: '4BD6EC30'
-deb_targets: 'trusty-i386 trusty-amd64'
-rpm_targets: 'el-6-i386 el-6-x86_64 el-7-x86_64'
+deb_targets: 'lucid-i386 lucid-amd64 precise-i386 precise-amd64 squeeze-i386 squeeze-amd64 trusty-i386 trusty-amd64 wheezy-i386 wheezy-amd64'
+rpm_targets: 'el-5-i386 el-5-x86_64 el-6-i386 el-6-x86_64 el-7-x86_64 sles-11-i386 sles-11-x86_64 sles-12-x86_64'
 sign_tar: FALSE
 vanagon_project: TRUE
 apt_repo_name: 'PC1'

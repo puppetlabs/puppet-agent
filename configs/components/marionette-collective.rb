@@ -14,6 +14,10 @@ component "marionette-collective" do |pkg, settings, platform|
   pkg.provides 'mcollective-common', '3.0.0'
   pkg.provides 'mcollective-client', '3.0.0'
 
+  pkg.replaces 'pe-mcollective'
+  pkg.replaces 'pe-mcollective-common'
+  pkg.replaces 'pe-mcollective-client'
+
   if platform.is_deb?
     pkg.replaces 'mcollective-doc'
   end
@@ -33,6 +37,9 @@ component "marionette-collective" do |pkg, settings, platform|
 
     pkg.install_file "ext/aio/redhat/mcollective-sysv.logrotate", "/etc/logrotate.d/mcollective"
 
+  when "launchd"
+    pkg.install_service "ext/aio/osx/mcollective.plist", nil, "com.puppetlabs.mcollective"
+
   else
     fail "need to know where to put service files"
   end
@@ -50,7 +57,7 @@ component "marionette-collective" do |pkg, settings, platform|
   pkg.configfile File.join(settings[:sysconfdir], 'mcollective', 'client.cfg')
   pkg.configfile File.join(settings[:sysconfdir], 'mcollective', 'server.cfg')
   pkg.configfile File.join(settings[:sysconfdir], 'mcollective', 'facts.yaml')
-  pkg.configfile "/etc/logrotate.d/mcollective"
+  pkg.configfile "/etc/logrotate.d/mcollective" unless platform.is_osx?
 
   pkg.link "#{settings[:bindir]}/mco", "#{settings[:link_bindir]}/mco"
 end
