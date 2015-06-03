@@ -82,6 +82,9 @@ component "facter" do |pkg, settings, platform|
       pkg.build_requires 'java-1.8.0-openjdk-devel'
     when /osx-(10.9|10.10)/
       pkg.build_requires 'Caskroom/cask/java'
+    when /sles-12/
+      pkg.build_requires 'java-1_7_0-openjdk-devel'
+      java_home = "JAVA_HOME=/usr/lib64/jvm/java-1.7.0-openjdk"
     end
 
     # Skip blkid unless we can ensure it exists at build time. Otherwise we depend
