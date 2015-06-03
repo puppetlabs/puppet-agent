@@ -42,28 +42,14 @@ component "facter" do |pkg, settings, platform|
     # OSX uses clang and system openssl.  cmake comes from brew.
     if platform.is_osx?
       pkg.build_requires "cmake"
+      pkg.build_requires "boost"
+      pkg.build_requires "yaml-cpp --with-static-lib"
     else
       pkg.build_requires "openssl"
       pkg.build_requires "pl-gcc"
       pkg.build_requires "pl-cmake"
-    end
-
-    # SLES and Debian 8 uses vanagon built pl-build-tools
-    # OSX installs build reqs from brew.  yaml-cpp requires an additional arg
-    # due to the bottle not including the static lib.
-    if platform.is_sles? or (platform.os_name == 'debian' and platform.os_version.to_i >= 8) or
-      platform.name.match(/^ubuntu-14.10-.*$/) or platform.is_nxos?
       pkg.build_requires "pl-boost"
       pkg.build_requires "pl-yaml-cpp"
-    elsif platform.is_osx?
-      pkg.build_requires "boost"
-      pkg.build_requires "yaml-cpp --with-static-lib"
-    else
-      # these are from the pl-dependency repo
-      pkg.build_requires "pl-libboost-static"
-      pkg.build_requires "pl-libboost-devel"
-      pkg.build_requires "pl-libyaml-cpp-static"
-      pkg.build_requires "pl-libyaml-cpp-devel"
     end
 
     java_home = ''
