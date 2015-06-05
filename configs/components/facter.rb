@@ -22,6 +22,9 @@ component "facter" do |pkg, settings, platform|
 
   pkg.build_requires "ruby"
 
+  # Running facter (as part of testing) expects virt-what is available
+  pkg.build_requires 'virt-what'
+
   if use_facter_2x
     # facter requires the hostname command, which is provided by net-tools
     # on el5/6, but by hostname on more recent el releases including fedora
