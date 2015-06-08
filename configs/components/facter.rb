@@ -56,6 +56,7 @@ component "facter" do |pkg, settings, platform|
     end
 
     java_home = ''
+    java_includedir = ''
     case platform.name
     when /el-(6|7)/
       pkg.build_requires 'java-1.8.0-openjdk-devel'
@@ -71,6 +72,13 @@ component "facter" do |pkg, settings, platform|
       pkg.build_requires 'java-1.8.0-openjdk-devel'
     when /osx-(10.9|10.10)/
       pkg.build_requires 'Caskroom/cask/java'
+    when /sles-12/
+      pkg.build_requires 'java-1_7_0-openjdk-devel'
+      java_home = "JAVA_HOME=/usr/lib64/jvm/java-1.7.0-openjdk"
+    when /sles-11/
+      pkg.build_requires 'java-1_7_0-ibm-devel'
+      java_home = "JAVA_HOME=/usr/lib64/jvm/java-1.7.0-ibm-1.7.0"
+      java_includedir = "-DJAVA_JVM_LIBRARY=/usr/lib64/jvm/java-1.7.0-ibm-1.7.0/include"
     end
 
     # Skip blkid unless we can ensure it exists at build time. Otherwise we depend
@@ -110,6 +118,7 @@ component "facter" do |pkg, settings, platform|
           -DFACTER_RUBY=#{settings[:libdir]}/$(shell #{settings[:bindir]}/ruby -rrbconfig -e 'print RbConfig::CONFIG[\"LIBRUBY_SO\"]') \
           -DWITHOUT_CURL=ON \
           -DWITHOUT_BLKID=#{skip_blkid} \
+          #{java_includedir} \
           ."]
     end
 
