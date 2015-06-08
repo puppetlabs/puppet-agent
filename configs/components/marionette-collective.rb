@@ -30,7 +30,7 @@ component "marionette-collective" do |pkg, settings, platform|
     if platform.is_deb?
       pkg.install_service "ext/aio/debian/mcollective.init", "ext/aio/debian/mcollective.default", "mcollective"
     elsif platform.is_sles?
-      pkg.install_service "ext/aio/suse/mcollective.init", "ext/aio/redhat/mcollective.sysconfig"
+      pkg.install_service "ext/aio/suse/mcollective.init", "ext/aio/redhat/mcollective.sysconfig", "mcollective"
     elsif platform.is_rpm?
       pkg.install_service "ext/aio/redhat/mcollective.init", "ext/aio/redhat/mcollective.sysconfig", "mcollective"
     end
