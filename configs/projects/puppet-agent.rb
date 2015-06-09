@@ -36,6 +36,8 @@ project "puppet-agent" do |proj|
   # Then the dependencies
   proj.component "augeas"
   proj.component "cfpropertylist" if proj.get_platform.is_osx?
+  # Curl is only needed for compute clusters (GCE, EC2); so rpm, deb, and Windows
+  proj.component "curl" if proj.get_platform.is_rpm? || proj.get_platform.is_deb?
   proj.component "ruby"
   proj.component "ruby-stomp"
   proj.component "rubygem-deep-merge"
