@@ -4,6 +4,7 @@ component "ruby" do |pkg, settings, platform|
   pkg.url "http://buildsources.delivery.puppetlabs.net/ruby-#{pkg.get_version}.tar.gz"
 
   pkg.apply_patch "resources/patches/ruby/libyaml_cve-2014-9130.patch"
+  pkg.apply_patch "resources/patches/ruby/CVE-2015-4020.patch"
 
   pkg.build_requires "openssl"
 
