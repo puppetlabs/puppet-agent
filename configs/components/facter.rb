@@ -22,6 +22,9 @@ component "facter" do |pkg, settings, platform|
 
   pkg.build_requires "ruby"
 
+  # Running facter (as part of testing) expects virt-what is available
+  pkg.build_requires 'virt-what'
+
   if use_facter_2x
     # facter requires the hostname command, which is provided by net-tools
     # on el5/6, but by hostname on more recent el releases including fedora
@@ -42,31 +45,18 @@ component "facter" do |pkg, settings, platform|
     # OSX uses clang and system openssl.  cmake comes from brew.
     if platform.is_osx?
       pkg.build_requires "cmake"
+      pkg.build_requires "boost"
+      pkg.build_requires "yaml-cpp --with-static-lib"
     else
       pkg.build_requires "openssl"
       pkg.build_requires "pl-gcc"
       pkg.build_requires "pl-cmake"
-    end
-
-    # SLES and Debian 8 uses vanagon built pl-build-tools
-    # OSX installs build reqs from brew.  yaml-cpp requires an additional arg
-    # due to the bottle not including the static lib.
-    if platform.is_sles? or (platform.os_name == 'debian' and platform.os_version.to_i >= 8) or
-      platform.name.match(/^ubuntu-14.10-.*$/) or platform.is_nxos?
       pkg.build_requires "pl-boost"
       pkg.build_requires "pl-yaml-cpp"
-    elsif platform.is_osx?
-      pkg.build_requires "boost"
-      pkg.build_requires "yaml-cpp --with-static-lib"
-    else
-      # these are from the pl-dependency repo
-      pkg.build_requires "pl-libboost-static"
-      pkg.build_requires "pl-libboost-devel"
-      pkg.build_requires "pl-libyaml-cpp-static"
-      pkg.build_requires "pl-libyaml-cpp-devel"
     end
 
     java_home = ''
+    java_includedir = ''
     case platform.name
     when /el-(6|7)/
       pkg.build_requires 'java-1.8.0-openjdk-devel'
@@ -82,6 +72,13 @@ component "facter" do |pkg, settings, platform|
       pkg.build_requires 'java-1.8.0-openjdk-devel'
     when /osx-(10.9|10.10)/
       pkg.build_requires 'Caskroom/cask/java'
+    when /sles-12/
+      pkg.build_requires 'java-1_7_0-openjdk-devel'
+      java_home = "JAVA_HOME=/usr/lib64/jvm/java-1.7.0-openjdk"
+    when /sles-11/
+      pkg.build_requires 'java-1_7_0-ibm-devel'
+      java_home = "JAVA_HOME=/usr/lib64/jvm/java-1.7.0-ibm-1.7.0"
+      java_includedir = "-DJAVA_JVM_LIBRARY=/usr/lib64/jvm/java-1.7.0-ibm-1.7.0/include"
     end
 
     # Skip blkid unless we can ensure it exists at build time. Otherwise we depend
@@ -121,6 +118,7 @@ component "facter" do |pkg, settings, platform|
           -DFACTER_RUBY=#{settings[:libdir]}/$(shell #{settings[:bindir]}/ruby -rrbconfig -e 'print RbConfig::CONFIG[\"LIBRUBY_SO\"]') \
           -DWITHOUT_CURL=ON \
           -DWITHOUT_BLKID=#{skip_blkid} \
+          #{java_includedir} \
           ."]
     end
 
