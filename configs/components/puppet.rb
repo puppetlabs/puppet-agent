@@ -37,6 +37,23 @@ component "puppet" do |pkg, settings, platform|
     fail "need to know where to put service files"
   end
 
+  # To create a tmpfs directory for the piddir, it seems like it's either this
+  # or a PR against Puppet until that sort of support can be rolled into the
+  # Vanagon tooling directly. It's totally a hack, and I'm not proud of this
+  # in any meaningful way.
+  # - Ryan "I'm sorry. I'm so sorry." McKern, June 8 2015
+  # - Jira # RE-3954
+  if platform.servicetype == 'systemd'
+    pkg.build do
+      "echo 'd #{settings[:piddir]} 0755 root root -' > puppet-agent.conf"
+    end
+
+    # Also part of the ugly, ugly, ugly, sad, tragic hack.
+    # - Ryan "Rub some HEREDOC on it" McKern, June 8 2015
+    # - Jira # RE-3954
+    pkg.install_configfile 'puppet-agent.conf', File.join(settings[:tmpfilesdir], 'puppet-agent.conf')
+  end
+
   # Puppet requires tar, otherwise PMT will not install modules
   pkg.requires 'tar'
 

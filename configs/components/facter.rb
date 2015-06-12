@@ -94,6 +94,13 @@ component "facter" do |pkg, settings, platform|
       end
     end
 
+    # curl is only used for compute clusters (GCE, EC2); so rpm, deb, and Windows
+    skip_curl = 'ON'
+    if platform.is_rpm? || platform.is_deb?
+      pkg.build_requires "curl"
+      skip_curl = 'OFF'
+    end
+
     # cmake on OSX is provided by brew
     # a toolchain is not currently required for OSX since we're building with clang.
     if platform.is_osx?
@@ -116,7 +123,7 @@ component "facter" do |pkg, settings, platform|
           -DYAMLCPP_STATIC=ON \
           -DFACTER_PATH=#{settings[:bindir]} \
           -DFACTER_RUBY=#{settings[:libdir]}/$(shell #{settings[:bindir]}/ruby -rrbconfig -e 'print RbConfig::CONFIG[\"LIBRUBY_SO\"]') \
-          -DWITHOUT_CURL=ON \
+          -DWITHOUT_CURL=#{skip_curl} \
           -DWITHOUT_BLKID=#{skip_blkid} \
           #{java_includedir} \
           ."]

@@ -12,6 +12,7 @@ project "puppet-agent" do |proj|
   proj.setting(:includedir, File.join(proj.prefix, "include"))
   proj.setting(:datadir, File.join(proj.prefix, "share"))
   proj.setting(:mandir, File.join(proj.datadir, "man"))
+  proj.setting(:tmpfilesdir, "/usr/lib/tmpfiles.d")
   proj.setting(:ruby_vendordir, File.join(proj.libdir, "ruby", "vendor_ruby"))
 
   proj.description "The Puppet Agent package contains all of the elements needed to run puppet, including ruby, facter, hiera and mcollective."
@@ -35,6 +36,8 @@ project "puppet-agent" do |proj|
   # Then the dependencies
   proj.component "augeas"
   proj.component "cfpropertylist" if proj.get_platform.is_osx?
+  # Curl is only needed for compute clusters (GCE, EC2); so rpm, deb, and Windows
+  proj.component "curl" if proj.get_platform.is_rpm? || proj.get_platform.is_deb?
   proj.component "ruby"
   proj.component "ruby-stomp"
   proj.component "rubygem-deep-merge"
