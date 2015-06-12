@@ -22,8 +22,9 @@ component "facter" do |pkg, settings, platform|
 
   pkg.build_requires "ruby"
 
-  # Running facter (as part of testing) expects virt-what is available
+  # Running facter (as part of testing) expects virt-what and augtool are available
   pkg.build_requires 'virt-what'
+  pkg.build_requires 'augeas'
 
   if use_facter_2x
     # facter requires the hostname command, which is provided by net-tools
