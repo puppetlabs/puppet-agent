@@ -1,15 +1,10 @@
 component 'augeas' do |pkg, settings, platform|
-  if platform.is_osx?
-    # RE-4826 - Augeas 1.4.0 won't build on osx due to libedit incompatibilities
-    pkg.version '1.3.0'
-    pkg.md5sum 'c8890b11a04795ecfe5526eeae946b2d'
-  else
-    pkg.version '1.4.0'
-    pkg.md5sum 'a2536a9c3d744dc09d234228fe4b0c93'
-  end
+  pkg.version '1.4.0'
+  pkg.md5sum 'a2536a9c3d744dc09d234228fe4b0c93'
   pkg.url "http://buildsources.delivery.puppetlabs.net/#{pkg.get_name}-#{pkg.get_version}.tar.gz"
 
   pkg.replaces 'pe-augeas'
+  pkg.apply_patch 'resources/patches/augeas/osx-stub-needed-readline-functions.patch'
 
   if platform.is_rpm?
     pkg.build_requires 'libxml2-devel'
