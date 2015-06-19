@@ -3,6 +3,8 @@ component "rubygem-net-ssh" do |pkg, settings, platform|
   pkg.md5sum "797c9a7a9e25c781cbf6b77a0054bb2e"
   pkg.url "http://buildsources.delivery.puppetlabs.net/net-ssh-#{pkg.get_version}.gem"
 
+  pkg.replaces 'pe-rubygem-net-ssh'
+
   pkg.build_requires "ruby"
 
   pkg.install do

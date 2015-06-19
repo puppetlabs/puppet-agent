@@ -8,6 +8,13 @@ component "puppet" do |pkg, settings, platform|
   pkg.replaces 'puppet', '4.0.0'
   pkg.provides 'puppet', '4.0.0'
 
+  pkg.replaces 'pe-puppet'
+  pkg.replaces 'pe-ruby-rgen'
+  pkg.replaces 'pe-cloud-provisioner-libs'
+  pkg.replaces 'pe-cloud-provisioner'
+  pkg.replaces 'pe-puppet-enterprise-release', '4.0.0'
+  pkg.replaces 'pe-agent'
+
   if platform.is_deb?
     pkg.replaces 'puppet-common', '4.0.0'
     pkg.provides 'puppet-common', '4.0.0'
@@ -24,8 +31,27 @@ component "puppet" do |pkg, settings, platform|
     elsif platform.is_rpm?
       pkg.install_service "ext/redhat/client.init", "ext/redhat/client.sysconfig"
     end
+  when "launchd"
+    pkg.install_service "ext/osx/puppet.plist", nil, "com.puppetlabs.puppet"
   else
     fail "need to know where to put service files"
+  end
+
+  # To create a tmpfs directory for the piddir, it seems like it's either this
+  # or a PR against Puppet until that sort of support can be rolled into the
+  # Vanagon tooling directly. It's totally a hack, and I'm not proud of this
+  # in any meaningful way.
+  # - Ryan "I'm sorry. I'm so sorry." McKern, June 8 2015
+  # - Jira # RE-3954
+  if platform.servicetype == 'systemd'
+    pkg.build do
+      "echo 'd #{settings[:piddir]} 0755 root root -' > puppet-agent.conf"
+    end
+
+    # Also part of the ugly, ugly, ugly, sad, tragic hack.
+    # - Ryan "Rub some HEREDOC on it" McKern, June 8 2015
+    # - Jira # RE-3954
+    pkg.install_configfile 'puppet-agent.conf', File.join(settings[:tmpfilesdir], 'puppet-agent.conf')
   end
 
   # Puppet requires tar, otherwise PMT will not install modules
