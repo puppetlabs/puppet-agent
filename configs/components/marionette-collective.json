@@ -1,1 +1,4 @@
-{"url": "git://github.com/puppetlabs/marionette-collective.git", "ref": "e1d952275973368f6b4137d3ec6fd507e545a728"}
+{
+  "url": "git://github.com/puppetlabs/marionette-collective",
+  "ref": "refs/tags/2.8.2"
+}

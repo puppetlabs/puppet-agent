@@ -1,1 +1,5 @@
-{"url": "git://github.com/puppetlabs/hiera.git", "ref": "84bfb43a22d1ee535b1213828090a754d4373c36"}
+{
+  "url": "git://github.com/puppetlabs/hiera",
+  "ref": "refs/tags/2.0.1"
+}
+
