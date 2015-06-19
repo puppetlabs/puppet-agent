@@ -12,7 +12,12 @@ component "openssl" do |pkg, settings, platform|
     target = 'darwin64-x86_64-cc'
     ldflags = ''
   else
-    target = 'linux-elf'
+    if platform.architecture =~ /86$/
+      target = 'linux-elf'
+      sslflags = '386'
+    elsif platform.architecture =~ /64$/
+      target = 'linux-x86_64'
+    end
     ldflags = "#{settings[:ldflags]} -Wl,-z,relro"
   end
 
@@ -32,8 +37,9 @@ component "openssl" do |pkg, settings, platform|
       --libdir=lib \
       --openssldir=#{settings[:prefix]}/ssl \
       shared \
+      no-asm \
       #{target} \
-      no-asm 386 \
+      #{sslflags} \
       no-camellia \
       enable-seed \
       enable-tlsext \
