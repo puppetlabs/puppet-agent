@@ -55,6 +55,8 @@ component "facter" do |pkg, settings, platform|
       pkg.build_requires "pl-yaml-cpp"
     end
 
+    # Explicitly skip jruby if not installing a jdk.
+    skip_jruby = 'OFF'
     java_home = ''
     java_includedir = ''
     case platform.name
@@ -70,8 +72,6 @@ component "facter" do |pkg, settings, platform|
       pkg.build_requires 'java-1.7.0-openjdk-devel'
     when /fedora-f21/
       pkg.build_requires 'java-1.8.0-openjdk-devel'
-    when /osx-(10.9|10.10)/
-      pkg.build_requires 'Caskroom/cask/java'
     when /sles-12/
       pkg.build_requires 'java-1_7_0-openjdk-devel'
       java_home = "JAVA_HOME=/usr/lib64/jvm/java-1.7.0-openjdk"
@@ -79,6 +79,8 @@ component "facter" do |pkg, settings, platform|
       pkg.build_requires 'java-1_7_0-ibm-devel'
       java_home = "JAVA_HOME=/usr/lib64/jvm/java-1.7.0-ibm-1.7.0"
       java_includedir = "-DJAVA_JVM_LIBRARY=/usr/lib64/jvm/java-1.7.0-ibm-1.7.0/include"
+    else
+      skip_jruby = 'ON'
     end
 
     # Skip blkid unless we can ensure it exists at build time. Otherwise we depend
@@ -125,6 +127,7 @@ component "facter" do |pkg, settings, platform|
           -DFACTER_RUBY=#{settings[:libdir]}/$(shell #{settings[:bindir]}/ruby -rrbconfig -e 'print RbConfig::CONFIG[\"LIBRUBY_SO\"]') \
           -DWITHOUT_CURL=#{skip_curl} \
           -DWITHOUT_BLKID=#{skip_blkid} \
+          -DWITHOUT_JRUBY=#{skip_jruby} \
           #{java_includedir} \
           ."]
     end
