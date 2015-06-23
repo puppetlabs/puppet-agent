@@ -3,7 +3,27 @@ component "openssl" do |pkg, settings, platform|
   pkg.md5sum "fe54d58a42c6aa1c7a587378e27072f3"
   pkg.url "http://buildsources.delivery.puppetlabs.net/openssl-#{pkg.get_version}.tar.gz"
 
+  pkg.replaces 'pe-openssl'
+
   ca_certfile = File.join(settings[:prefix], 'ssl', 'cert.pem')
+
+  case platform.name
+  when /^osx-.*$/
+    target = 'darwin64-x86_64-cc'
+    ldflags = ''
+  else
+    if platform.architecture =~ /86$/
+      target = 'linux-elf'
+      sslflags = '386'
+    elsif platform.architecture =~ /64$/
+      target = 'linux-x86_64'
+    end
+    ldflags = "#{settings[:ldflags]} -Wl,-z,relro"
+  end
+
+  if platform.is_osx?
+    pkg.apply_patch 'resources/patches/openssl/openssl-1.0.0l-use-gcc-instead-of-makedepend.patch'
+  end
 
   pkg.configure do
     [# OpenSSL Configure doesn't honor CFLAGS or LDFLAGS as environment variables.
@@ -17,8 +37,9 @@ component "openssl" do |pkg, settings, platform|
       --libdir=lib \
       --openssldir=#{settings[:prefix]}/ssl \
       shared \
-      linux-elf \
-      no-asm 386 \
+      no-asm \
+      #{target} \
+      #{sslflags} \
       no-camellia \
       enable-seed \
       enable-tlsext \
@@ -33,7 +54,7 @@ component "openssl" do |pkg, settings, platform|
       no-ssl2 \
       no-ssl3 \
       #{settings[:cflags]} \
-      #{settings[:ldflags]} -Wl,-z,relro"]
+      #{ldflags}"]
   end
 
   pkg.build do

@@ -12,14 +12,17 @@ project "puppet-agent" do |proj|
   proj.setting(:includedir, File.join(proj.prefix, "include"))
   proj.setting(:datadir, File.join(proj.prefix, "share"))
   proj.setting(:mandir, File.join(proj.datadir, "man"))
+  proj.setting(:tmpfilesdir, "/usr/lib/tmpfiles.d")
   proj.setting(:ruby_vendordir, File.join(proj.libdir, "ruby", "vendor_ruby"))
 
   proj.description "The Puppet Agent package contains all of the elements needed to run puppet, including ruby, facter, hiera and mcollective."
   proj.version_from_git
-  proj.license "ASL 2.0"
+  proj.write_version_file File.join(proj.prefix, 'VERSION')
+  proj.license "See components"
   proj.vendor "Puppet Labs <info@puppetlabs.com>"
   proj.homepage "https://www.puppetlabs.com"
   proj.target_repo "PC1"
+  proj.identifier "com.puppetlabs"
 
   # Platform specific
   proj.setting(:cflags, "-I#{proj.includedir}")
@@ -28,18 +31,19 @@ project "puppet-agent" do |proj|
   # First our stuff
   proj.component "puppet"
   proj.component "facter"
-  unless ( proj.get_platform.is_eos? or proj.get_platform.is_nxos? )
-    proj.component "cfacter"
-  end
   proj.component "hiera"
   proj.component "marionette-collective"
 
   # Then the dependencies
   proj.component "augeas"
+  proj.component "cfpropertylist" if proj.get_platform.is_osx?
+  # Curl is only needed for compute clusters (GCE, EC2); so rpm, deb, and Windows
+  proj.component "curl" if proj.get_platform.is_rpm? || proj.get_platform.is_deb?
   proj.component "ruby"
   proj.component "ruby-stomp"
   proj.component "rubygem-deep-merge"
   proj.component "rubygem-net-ssh"
+  proj.component "rubygem-hocon"
   proj.component "ruby-shadow"
   proj.component "ruby-augeas"
   proj.component "openssl"

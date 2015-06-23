@@ -1,7 +1,10 @@
 component 'augeas' do |pkg, settings, platform|
-  pkg.version '1.3.0'
-  pkg.md5sum 'c8890b11a04795ecfe5526eeae946b2d'
+  pkg.version '1.4.0'
+  pkg.md5sum 'a2536a9c3d744dc09d234228fe4b0c93'
   pkg.url "http://buildsources.delivery.puppetlabs.net/#{pkg.get_name}-#{pkg.get_version}.tar.gz"
+
+  pkg.replaces 'pe-augeas'
+  pkg.apply_patch 'resources/patches/augeas/osx-stub-needed-readline-functions.patch'
 
   if platform.is_rpm?
     pkg.build_requires 'libxml2-devel'
@@ -26,7 +29,8 @@ component 'augeas' do |pkg, settings, platform|
   end
 
   pkg.configure do
-    ["./configure --prefix=#{settings[:prefix]}"]
+    ["PATH=$$PATH:/usr/local/bin \
+     ./configure --prefix=#{settings[:prefix]}"]
   end
 
   pkg.build do
