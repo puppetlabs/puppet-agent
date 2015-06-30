@@ -1,6 +1,6 @@
 component "openssl" do |pkg, settings, platform|
-  pkg.version "1.0.0r"
-  pkg.md5sum "ea48d0ad53e10f06a9475d8cdc209dfa"
+  pkg.version "1.0.0s"
+  pkg.md5sum "fe54d58a42c6aa1c7a587378e27072f3"
   pkg.url "http://buildsources.delivery.puppetlabs.net/openssl-#{pkg.get_version}.tar.gz"
 
   pkg.replaces 'pe-openssl'
@@ -12,7 +12,12 @@ component "openssl" do |pkg, settings, platform|
     target = 'darwin64-x86_64-cc'
     ldflags = ''
   else
-    target = 'linux-elf'
+    if platform.architecture =~ /86$/
+      target = 'linux-elf'
+      sslflags = '386'
+    elsif platform.architecture =~ /64$/
+      target = 'linux-x86_64'
+    end
     ldflags = "#{settings[:ldflags]} -Wl,-z,relro"
   end
 
@@ -32,8 +37,9 @@ component "openssl" do |pkg, settings, platform|
       --libdir=lib \
       --openssldir=#{settings[:prefix]}/ssl \
       shared \
+      no-asm \
       #{target} \
-      no-asm 386 \
+      #{sslflags} \
       no-camellia \
       enable-seed \
       enable-tlsext \
