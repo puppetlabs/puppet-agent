@@ -4,6 +4,7 @@ The Puppet Agent
  * Runtime requirements
  * Building puppet-agent
  * Building puppet-agent for windows
+ * Branches in puppet-agent
  * License
  * Maintainers
 
@@ -38,6 +39,42 @@ pattern to other platforms. `ruby bin/build-windows.rb BUILD_TARGET=win-x86` is
 the way to do this. The windows build assumes access to Puppet Labs' vm pooler
 and does not currently accept a hostname override. VANAGON\_SSH\_KEY is
 respected for ssh key overrides.
+
+Branches in puppet-agent
+---
+There are two types of branches in puppet-agent
+* release branches (e.g. aardwolf)
+* tracking branches (e.g. master and stable)
+
+The fundamental difference between the two is their relation with CI pipelines, especially wrt the component configurations:
+* on a release branch: 
+  * all components reference component tags *never* SHAs
+* on a tracking branch: 
+  * some components may reference tags if they’re slow moving (ruby, openssl)
+  * some components reference SHAs promoted by a CI pipeline (generally puppet-agent#master pipelines track components' master branches, and likewise for stable)
+
+Guidelines on Merging Between Branches
+* stable should be merged to master regularly (e.g. per commit), as is done for component repos; no PR needed
+* master should be merged to stable as-needed; typically this is done when a component merges its master to stable, and there are matching changes needed in puppet-agent
+* stable should be merged to aardwolf as-needed; typically this is done when a component is tagged and ready for release, and there are matching changes needed in puppet-agent
+
+Generally, no PR is needed for routine merges from stable to master, but a PR is advised for other merges. Use your judgment of course, and put up a PR if you want review.
+
+Note that for all these merges, the merge should pick up:
+* changes outside of config/components
+* changes that bumped to a tag inside config/components
+
+But never:
+* changes that bumped to a SHA inside config/components
+
+Here's a sample snippet used for a stable -> aardwolf merge:
+
+```
+git merge --no-commit --no-ff stable
+for i in {hiera,facter,puppet,marionette-collective}; do git checkout aardwolf -- configs/components/$i.json;done
+git checkout aardwolf -- configs/components/windows_*.json
+git commit -m "(maint) Restore promoted components refs after merge from stable"
+```
 
 License
 ---
