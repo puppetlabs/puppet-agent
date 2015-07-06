@@ -35,6 +35,7 @@ project "puppet-agent" do |proj|
   proj.component "marionette-collective"
 
   # Then the dependencies
+  proj.component "leatherman"
   proj.component "augeas"
   proj.component "cfpropertylist" if proj.get_platform.is_osx?
   # Curl is only needed for compute clusters (GCE, EC2); so rpm, deb, and Windows
