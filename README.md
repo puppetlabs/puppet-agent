@@ -57,10 +57,11 @@ Guidelines on Merging Between Branches
 * stable should be merged to master regularly (e.g. per commit), as is done for component repos; no PR needed
 * master should be merged to stable as-needed; typically this is done when a component merges its master to stable, and there are matching changes needed in puppet-agent
 * stable should be merged to aardwolf as-needed; typically this is done when a component is tagged and ready for release, and there are matching changes needed in puppet-agent
+* aardwolf should be merged to stable after each tag; this ensures that a 'git describe' on stable always refers to a "later" release than what came off aardwolf; this merge can be accomplished with 'git merge aardwolf -s ours' and should not change the contents of any files (because no content changes should ever originate on aardwolf)
 
-Generally, no PR is needed for routine merges from stable to master, but a PR is advised for other merges. Use your judgment of course, and put up a PR if you want review.
+Generally, no PR is needed for routine merges from stable to master or aardwolf, but a PR is advised for other merges. Use your judgment of course, and put up a PR if you want review.
 
-Note that for all these merges, the merge should pick up:
+Note that for all merges from master or stable, the merge should pick up:
 * changes outside of config/components
 * changes that bumped to a tag inside config/components
 
