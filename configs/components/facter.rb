@@ -15,6 +15,7 @@ component "facter" do |pkg, settings, platform|
   pkg.replaces 'pe-facter'
 
   pkg.build_requires "ruby"
+  pkg.build_requires "leatherman"
 
   # Running facter (as part of testing) expects virt-what is available
   pkg.build_requires 'virt-what'
