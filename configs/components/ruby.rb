@@ -26,7 +26,7 @@ component "ruby" do |pkg, settings, platform|
         --prefix=#{settings[:prefix]} \
         --with-opt-dir=#{settings[:prefix]} \
         --enable-shared \
-        --disable-install-rdoc"]
+        --disable-install-doc"]
   end
 
   pkg.build do
