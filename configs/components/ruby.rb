@@ -27,11 +27,14 @@ component "ruby" do |pkg, settings, platform|
     pkg.build_requires "zlib-devel"
   end
 
+  # Here we set --enable-bundled-libyaml to ensure that the libyaml included in
+  # ruby is used, even if the build system has a copy of libyaml available
   pkg.configure do
     ["#{env} ./configure \
         --prefix=#{settings[:prefix]} \
         --with-opt-dir=#{settings[:prefix]} \
         --enable-shared \
+        --enable-bundled-libyaml \
         --disable-install-doc"]
   end
 
