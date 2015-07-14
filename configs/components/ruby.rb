@@ -13,6 +13,9 @@ component "ruby" do |pkg, settings, platform|
   pkg.apply_patch "resources/patches/ruby/libyaml_cve-2014-9130.patch"
   pkg.apply_patch "resources/patches/ruby/CVE-2015-4020.patch"
 
+  # Required only on el4 so far
+  pkg.apply_patch "resources/patches/ruby/ruby-no-stack-protector.patch" if platform.name =~ /el-4/
+
   pkg.build_requires "openssl"
 
   if platform.is_deb?
