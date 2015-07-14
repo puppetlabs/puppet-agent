@@ -15,6 +15,9 @@ component "ruby" do |pkg, settings, platform|
 
   pkg.build_requires "openssl"
 
+  env = "PATH=/opt/pl-build-tools/bin:$$PATH"
+  env += " CFLAGS='#{settings[:cflags]}' LDFLAGS='#{settings[:ldflags]}'" if platform.is_linux?
+
   if platform.is_deb?
     pkg.build_requires "zlib1g-dev"
   elsif platform.is_rpm?
@@ -22,7 +25,7 @@ component "ruby" do |pkg, settings, platform|
   end
 
   pkg.configure do
-    ["./configure \
+    ["#{env} ./configure \
         --prefix=#{settings[:prefix]} \
         --with-opt-dir=#{settings[:prefix]} \
         --enable-shared \
@@ -30,10 +33,10 @@ component "ruby" do |pkg, settings, platform|
   end
 
   pkg.build do
-    ["#{platform[:make]} -j$(shell expr $(shell #{platform[:num_cores]}) + 1)"]
+    ["#{env} #{platform[:make]} -j$(shell expr $(shell #{platform[:num_cores]}) + 1)"]
   end
 
   pkg.install do
-    ["#{platform[:make]} -j$(shell expr $(shell #{platform[:num_cores]}) + 1) install"]
+    ["#{env} #{platform[:make]} -j$(shell expr $(shell #{platform[:num_cores]}) + 1) install"]
   end
 end
