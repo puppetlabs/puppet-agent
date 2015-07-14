@@ -9,7 +9,7 @@ component "ruby-shadow" do |pkg, settings, platform|
 
   pkg.build do
     ["export CONFIGURE_ARGS='--vendor'",
-     "export CFLAGS=#{settings[:cflags]}",
+     "export CFLAGS='#{settings[:cflags]}'",
      "#{settings[:bindir]}/ruby extconf.rb",
      "#{platform[:make]} -j$(shell expr $(shell #{platform[:num_cores]}) + 1)"]
   end

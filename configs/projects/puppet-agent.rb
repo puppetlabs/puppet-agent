@@ -25,8 +25,8 @@ project "puppet-agent" do |proj|
   proj.identifier "com.puppetlabs"
 
   # Platform specific
-  proj.setting(:cflags, "-I#{proj.includedir}")
-  proj.setting(:ldflags, "-L#{proj.libdir} -Wl,-rpath=#{proj.libdir}")
+  proj.setting(:cflags, "-I#{proj.includedir} -I/opt/pl-build-tools/include")
+  proj.setting(:ldflags, "-L#{proj.libdir} -L/opt/pl-build-tools/lib -Wl,-rpath=#{proj.libdir}")
 
   # First our stuff
   proj.component "puppet"
