@@ -19,7 +19,7 @@ component "ruby" do |pkg, settings, platform|
   pkg.build_requires "openssl"
 
   env = "PATH=/opt/pl-build-tools/bin:$$PATH"
-  env += " CFLAGS='#{settings[:cflags]}' LDFLAGS='#{settings[:ldflags]}'" if platform.is_linux?
+  env += " XCFLAGS='#{settings[:cflags]}' LDFLAGS='#{settings[:ldflags]}'" if platform.is_linux?
 
   if platform.is_deb?
     pkg.build_requires "zlib1g-dev"
