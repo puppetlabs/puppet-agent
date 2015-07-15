@@ -5,14 +5,7 @@ component "openssl" do |pkg, settings, platform|
 
   pkg.replaces 'pe-openssl'
 
-  # Use our toolchain here. It's not available on osx, so only include it on linux systems.
-  if platform.is_linux?
-    pkg.build_requires 'pl-binutils'
-    pkg.build_requires 'pl-gcc'
-  end
-
   ca_certfile = File.join(settings[:prefix], 'ssl', 'cert.pem')
-  env = "PATH=/opt/pl-build-tools/bin:$$PATH"
 
   case platform.name
   when /^osx-.*$/
@@ -39,7 +32,7 @@ component "openssl" do |pkg, settings, platform|
     # --libdir ensures that we avoid the multilib (lib/ vs. lib64/) problem,
     # since configure uses the existence of a lib64 directory to determine
     # if it should install its own libs into a multilib dir. Yay OpenSSL!
-    "#{env} ./Configure \
+    "./Configure \
       --prefix=#{settings[:prefix]} \
       --libdir=lib \
       --openssldir=#{settings[:prefix]}/ssl \
@@ -65,12 +58,12 @@ component "openssl" do |pkg, settings, platform|
   end
 
   pkg.build do
-    ["#{env} #{platform[:make]} depend",
-    "#{env} #{platform[:make]}"]
+    ["#{platform[:make]} depend",
+    "#{platform[:make]}"]
   end
 
   pkg.install do
-    ["#{env} #{platform[:make]} INSTALL_PREFIX=/ install"]
+    ["#{platform[:make]} INSTALL_PREFIX=/ install"]
   end
 
   if platform.is_deb?
