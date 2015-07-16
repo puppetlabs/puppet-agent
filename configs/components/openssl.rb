@@ -9,10 +9,12 @@ component "openssl" do |pkg, settings, platform|
   if platform.is_linux?
     pkg.build_requires 'pl-binutils'
     pkg.build_requires 'pl-gcc'
+  elsif platform.is_osx?
+    pkg.build_requires 'makedepend'
   end
 
   ca_certfile = File.join(settings[:prefix], 'ssl', 'cert.pem')
-  env = "PATH=/opt/pl-build-tools/bin:$$PATH"
+  env = "PATH=/opt/pl-build-tools/bin:$$PATH:/usr/local/bin"
 
   case platform.name
   when /^osx-.*$/
@@ -26,10 +28,6 @@ component "openssl" do |pkg, settings, platform|
       target = 'linux-x86_64'
     end
     ldflags = "#{settings[:ldflags]} -Wl,-z,relro"
-  end
-
-  if platform.is_osx?
-    pkg.apply_patch 'resources/patches/openssl/openssl-1.0.0l-use-gcc-instead-of-makedepend.patch'
   end
 
   pkg.configure do
