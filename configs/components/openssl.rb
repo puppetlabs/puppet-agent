@@ -5,6 +5,10 @@ component "openssl" do |pkg, settings, platform|
 
   pkg.replaces 'pe-openssl'
 
+  if platform.is_osx?
+    pkg.build_requires 'makedepend'
+  end
+
   ca_certfile = File.join(settings[:prefix], 'ssl', 'cert.pem')
 
   case platform.name
@@ -19,10 +23,6 @@ component "openssl" do |pkg, settings, platform|
       target = 'linux-x86_64'
     end
     ldflags = "#{settings[:ldflags]} -Wl,-z,relro"
-  end
-
-  if platform.is_osx?
-    pkg.apply_patch 'resources/patches/openssl/openssl-1.0.0l-use-gcc-instead-of-makedepend.patch'
   end
 
   pkg.configure do
