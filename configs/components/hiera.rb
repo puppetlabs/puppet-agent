@@ -17,5 +17,5 @@ component "hiera" do |pkg, settings, platform|
 
   pkg.link "#{settings[:bindir]}/hiera", "#{settings[:link_bindir]}/hiera"
 
-  pkg.directory File.join(settings[:puppet_codedir], 'hieradata')
+  pkg.directory File.join(settings[:puppet_codedir], 'environments', 'production', 'hieradata')
 end

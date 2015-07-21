@@ -1,6 +1,6 @@
 component 'curl' do |pkg, settings, platform|
-  pkg.version '7.42.1'
-  pkg.md5sum '8df5874c4a67ad55496bf3af548d99a2'
+  pkg.version '7.43.0'
+  pkg.md5sum '3037f0b6ce03d434618e9db5506ae6be'
   pkg.url "http://buildsources.delivery.puppetlabs.net/curl-#{pkg.get_version}.tar.gz"
 
   pkg.build_requires "openssl"
