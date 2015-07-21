@@ -3,7 +3,7 @@ platform "eos-4-i386" do |plat|
   plat.defaultdir "/etc/sysconfig"
   plat.servicetype "sysv"
 
-  plat.yum_repo "http://pl-build-tools.delivery.puppetlabs.net/yum/eos/4/i386/pl-build-tools-el-4.repo"
+  plat.yum_repo "http://pl-build-tools.delivery.puppetlabs.net/yum/fedora/14/i386/pl-build-tools-fedora-14.repo"
   plat.yum_repo "http://osmirror.delivery.puppetlabs.net/eos-4-i386/eos-4-i386.repo"
   plat.provision_with "yum install -y --nogpgcheck autoconf automake createrepo rsync gcc make rpm-build rpm-libs yum-utils zip"
 

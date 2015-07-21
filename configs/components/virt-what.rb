@@ -9,7 +9,7 @@ component "virt-what" do |pkg, settings, platform|
   unless platform.is_deb?
     requires "util-linux"
   end
-  unless ( platform.name =~ /^el-4-.*$/ or platform.name =~ /^sles-(10|11)-.*$/ or platform.is_nxos? )
+  unless ( platform.name =~ /^el-4-.*$/ or platform.name =~ /^sles-(10|11)-.*$/ or platform.is_nxos? or platform.is_eos? )
     requires "dmidecode"
   end
   if platform.name =~ /^sles-(10|11)-.*$/
