@@ -16,8 +16,9 @@ component "facter" do |pkg, settings, platform|
 
   pkg.build_requires "ruby"
 
-  # Running facter (as part of testing) expects virt-what is available
+  # Running facter (as part of testing) expects virt-what and augtool are available
   pkg.build_requires 'virt-what'
+  pkg.build_requires 'augeas'
 
   # OSX uses clang and system openssl.  cmake comes from brew.
   if platform.is_osx?
