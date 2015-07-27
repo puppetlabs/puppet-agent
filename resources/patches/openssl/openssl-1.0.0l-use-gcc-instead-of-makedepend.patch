@@ -1,0 +1,12 @@
+diff -u --recursive a/Makefile.org b/Makefile.org
+--- a/Makefile.org	2014-01-06 07:00:59.000000000 -0800
++++ b/Makefile.org	2014-05-28 00:19:25.000000000 -0700
+@@ -70,7 +70,7 @@
+ PERL= perl
+ TAR= tar
+ TARFLAGS= --no-recursion
+-MAKEDEPPROG=makedepend
++MAKEDEPPROG=$(CC) -MMD
+ LIBDIR=lib
+
+ # We let the C compiler driver to take care of .s files. This is done in
