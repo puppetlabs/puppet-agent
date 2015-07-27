@@ -1,0 +1,11 @@
+--- a/dmidecode.c	2015/05/04 11:24:54	1.194
++++ b/dmidecode.c	2015/05/04 11:28:49	1.195
+@@ -4379,7 +4379,7 @@
+ 
+ 		to_dmi_header(&h, data);
+ 		display = ((opt.type == NULL || opt.type[h.type])
+-			&& !((opt.flags & FLAG_QUIET) && (h.type > 39 && h.type <= 127))
++			&& !((opt.flags & FLAG_QUIET) && (h.type == 126 || h.type == 127))
+ 			&& !opt.string);
+ 
+ 		/*

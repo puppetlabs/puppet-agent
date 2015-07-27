@@ -1,0 +1,36 @@
+--- a/dmidecode.c	2013/04/24 13:35:22	1.174
++++ b/dmidecode.c	2013/04/24 18:11:56	1.175
+@@ -712,7 +712,6 @@
+ 		{ 0x3D, "Opteron 6200" },
+ 		{ 0x3E, "Opteron 4200" },
+ 		{ 0x3F, "FX" },
+-
+ 		{ 0x40, "MIPS" },
+ 		{ 0x41, "MIPS R4000" },
+ 		{ 0x42, "MIPS R4200" },
+@@ -729,7 +728,6 @@
+ 		{ 0x4D, "Opteron 6300" },
+ 		{ 0x4E, "Opteron 3300" },
+ 		{ 0x4F, "FirePro" },
+-
+ 		{ 0x50, "SPARC" },
+ 		{ 0x51, "SuperSPARC" },
+ 		{ 0x52, "MicroSPARC II" },
+@@ -1176,7 +1174,7 @@
+ 		"Socket LGA1356-3" /* 0x2C */
+ 	};
+ 
+-	if (code >= 0x01 && code <= 0x2A)
++	if (code >= 0x01 && code <= 0x2C)
+ 		return upgrade[code - 0x01];
+ 	return out_of_spec;
+ }
+@@ -2338,7 +2336,7 @@
+ 	{
+ 		int i;
+ 
+-		for (i = 1; i <= 14; i++)
++		for (i = 1; i <= 15; i++)
+ 			if (code & (1 << i))
+ 				printf(" %s", detail[i - 1]);
+ 	}
