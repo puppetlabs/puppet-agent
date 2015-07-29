@@ -48,6 +48,7 @@ project "puppet-agent" do |proj|
   proj.component "ruby-augeas"
   proj.component "openssl"
   proj.component "virt-what"
+  proj.component "dmidecode"
 
   # We only build ruby-selinux for EL 5-7
   if proj.get_platform.name =~ /^el-(5|6|7)-.*/
