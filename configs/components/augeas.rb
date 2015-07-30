@@ -5,6 +5,7 @@ component 'augeas' do |pkg, settings, platform|
 
   pkg.replaces 'pe-augeas'
   pkg.apply_patch 'resources/patches/augeas/osx-stub-needed-readline-functions.patch'
+  pkg.apply_patch 'resources/patches/augeas/sudoers-negated-command-alias.patch'
 
   if platform.is_rpm?
     pkg.build_requires 'libxml2-devel'
