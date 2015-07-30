@@ -77,6 +77,9 @@ component "facter" do |pkg, settings, platform|
     if (platform.is_el? and platform.os_version.to_i >= 6) or (platform.is_sles? and platform.os_version.to_i >= 11)
       pkg.build_requires "libblkid-devel"
       skip_blkid = 'OFF'
+    elsif (platform.is_el? and platform.os_version.to_i < 6)
+      pkg.build_requires "e2fsprogs-devel"
+      skip_blkid = 'OFF'
     end
   end
 
