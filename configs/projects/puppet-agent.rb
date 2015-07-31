@@ -36,7 +36,6 @@ project "puppet-agent" do |proj|
 
   # Then the dependencies
   proj.component "augeas"
-  proj.component "cfpropertylist" if proj.get_platform.is_osx?
   # Curl is only needed for compute clusters (GCE, EC2); so rpm, deb, and Windows
   proj.component "curl" if proj.get_platform.is_rpm? || proj.get_platform.is_deb?
   proj.component "ruby"
@@ -48,6 +47,12 @@ project "puppet-agent" do |proj|
   proj.component "ruby-augeas"
   proj.component "openssl"
   proj.component "virt-what"
+
+  # Components only applicable on OSX
+  if proj.get_platform.is_osx?
+   proj.component "cfpropertylist"
+   proj.component "ca-cert"
+  end
 
   # We only build ruby-selinux for EL 5-7
   if proj.get_platform.name =~ /^el-(5|6|7)-.*/
