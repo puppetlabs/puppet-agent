@@ -8,18 +8,22 @@ component "ruby-augeas" do |pkg, settings, platform|
   pkg.build_requires "ruby"
   pkg.build_requires "augeas"
 
+  pkg.environment "PATH" => "$$PATH:/usr/local/bin:/opt/csw/bin"
+  pkg.environment "CONFIGURE_ARGS" => '--vendor'
+  pkg.environment "CFLAGS" => settings[:cflags]
+  pkg.environment "PKG_CONFIG_PATH" => File.join(settings[:libdir], 'pkgconfig')
+
   pkg.build do
-    ["export PATH=$$PATH:/usr/local/bin", 
-     "export CONFIGURE_ARGS='--vendor'",
-     "export CFLAGS='#{settings[:cflags]}'",
-     "export PKG_CONFIG_PATH=#{settings[:libdir]}/pkgconfig",
-     "#{settings[:bindir]}/ruby ext/augeas/extconf.rb",
-     "#{platform[:make]} -j$(shell expr $(shell #{platform[:num_cores]}) + 1)"]
+     [ "#{settings[:bindir]}/ruby ext/augeas/extconf.rb",
+       "#{platform[:make]} -j$(shell expr $(shell #{platform[:num_cores]}) + 1)" ]
   end
 
+  pkg.install_file 'lib/augeas.rb', File.join(settings[:ruby_vendordir], 'augeas.rb')
   pkg.install do
-    ["#{platform[:make]} -j$(shell expr $(shell #{platform[:num_cores]}) + 1) DESTDIR=/ install",
-     "install -d #{settings[:ruby_vendordir]}",
-     "cp -pr lib/augeas.rb #{settings[:ruby_vendordir]}"]
+    [
+      "#{platform[:make]} -j$(shell expr $(shell #{platform[:num_cores]}) + 1) DESTDIR=/ install",
+      "chown root:root #{settings[:ruby_vendordir]}/augeas.rb",
+    ]
   end
+
 end
