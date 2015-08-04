@@ -1,6 +1,6 @@
 component "rubygem-hocon" do |pkg, settings, platform|
-  pkg.version "0.9.2"
-  pkg.md5sum "a52cf152dd6efcc943d002f724121fe6"
+  pkg.version "0.9.3"
+  pkg.md5sum "af89595899c3b893787045039ff02ee0"
   pkg.url "http://buildsources.delivery.puppetlabs.net/hocon-#{pkg.get_version}.gem"
 
   pkg.build_requires "ruby"
