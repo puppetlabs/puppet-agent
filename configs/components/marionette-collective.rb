@@ -39,7 +39,8 @@ component "marionette-collective" do |pkg, settings, platform|
 
   when "launchd"
     pkg.install_service "ext/aio/osx/mcollective.plist", nil, "com.puppetlabs.mcollective"
-
+  when "smf"
+    pkg.install_service "ext/aio/solaris/smf/mcollective.xml", nil, "mcollective"
   else
     fail "need to know where to put service files"
   end
@@ -57,7 +58,7 @@ component "marionette-collective" do |pkg, settings, platform|
   pkg.configfile File.join(settings[:sysconfdir], 'mcollective', 'client.cfg')
   pkg.configfile File.join(settings[:sysconfdir], 'mcollective', 'server.cfg')
   pkg.configfile File.join(settings[:sysconfdir], 'mcollective', 'facts.yaml')
-  pkg.configfile "/etc/logrotate.d/mcollective" unless platform.is_osx?
+  pkg.configfile "/etc/logrotate.d/mcollective" if platform.is_linux?
 
   pkg.link "#{settings[:bindir]}/mco", "#{settings[:link_bindir]}/mco"
 end
