@@ -33,6 +33,8 @@ component "puppet" do |pkg, settings, platform|
     end
   when "launchd"
     pkg.install_service "ext/osx/puppet.plist", nil, "com.puppetlabs.puppet"
+  when "smf"
+    pkg.install_service "ext/solaris/smf/puppet.xml", "ext/solaris/smf/puppet"
   else
     fail "need to know where to put service files"
   end
