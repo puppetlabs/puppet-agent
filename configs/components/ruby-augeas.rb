@@ -8,7 +8,7 @@ component "ruby-augeas" do |pkg, settings, platform|
   pkg.build_requires "ruby"
   pkg.build_requires "augeas"
 
-  pkg.environment "PATH" => "$$PATH:/usr/local/bin:/opt/csw/bin"
+  pkg.environment "PATH" => "$$PATH:/usr/local/bin:/opt/csw/bin:/usr/ccs/bin:/usr/sfw/bin"
   pkg.environment "CONFIGURE_ARGS" => '--vendor'
   pkg.environment "CFLAGS" => settings[:cflags]
   pkg.environment "PKG_CONFIG_PATH" => File.join(settings[:libdir], 'pkgconfig')
