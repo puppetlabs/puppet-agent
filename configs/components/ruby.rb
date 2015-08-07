@@ -28,6 +28,7 @@ component "ruby" do |pkg, settings, platform|
   end
 
   if platform.is_solaris?
+    pkg.build_requires 'libedit'
     pkg.environment "PATH" => "#{settings[:bindir]}:/usr/ccs/bin:/usr/sfw/bin:$$PATH"
   end
 

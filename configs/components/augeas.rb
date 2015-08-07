@@ -26,6 +26,8 @@ component 'augeas' do |pkg, settings, platform|
     pkg.requires 'libreadline6'
 
     pkg.build_requires 'pkg-config'
+  elsif platform.is_solaris?
+    pkg.build_requires 'libedit'
   end
 
   pkg.configure do
