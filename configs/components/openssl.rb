@@ -7,6 +7,7 @@ component "openssl" do |pkg, settings, platform|
 
   if platform.is_osx?
     pkg.build_requires 'makedepend'
+    env = "PATH=$$PATH:/usr/local/bin"
   end
 
   ca_certfile = File.join(settings[:prefix], 'ssl', 'cert.pem')
@@ -32,7 +33,7 @@ component "openssl" do |pkg, settings, platform|
     # --libdir ensures that we avoid the multilib (lib/ vs. lib64/) problem,
     # since configure uses the existence of a lib64 directory to determine
     # if it should install its own libs into a multilib dir. Yay OpenSSL!
-    "./Configure \
+    "#{env} ./Configure \
       --prefix=#{settings[:prefix]} \
       --libdir=lib \
       --openssldir=#{settings[:prefix]}/ssl \
@@ -58,12 +59,12 @@ component "openssl" do |pkg, settings, platform|
   end
 
   pkg.build do
-    ["#{platform[:make]} depend",
-    "#{platform[:make]}"]
+    ["#{env} #{platform[:make]} depend",
+    "#{env} #{platform[:make]}"]
   end
 
   pkg.install do
-    ["#{platform[:make]} INSTALL_PREFIX=/ install"]
+    ["#{env} #{platform[:make]} INSTALL_PREFIX=/ install"]
   end
 
   if platform.is_deb?
