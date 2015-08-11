@@ -6,11 +6,12 @@ component "ruby-shadow" do |pkg, settings, platform|
   pkg.replaces 'pe-ruby-shadow'
 
   pkg.build_requires "ruby"
+  pkg.environment "PATH" => "$$PATH:/usr/ccs/bin:/usr/sfw/bin"
+  pkg.environment "CONFIGURE_ARGS" => '--vendor'
+  pkg.environment "CFLAGS" => settings[:cflags]
 
   pkg.build do
-    ["export CONFIGURE_ARGS='--vendor'",
-     "export CFLAGS='#{settings[:cflags]}'",
-     "#{settings[:bindir]}/ruby extconf.rb",
+     [ "#{settings[:bindir]}/ruby extconf.rb",
      "#{platform[:make]} -j$(shell expr $(shell #{platform[:num_cores]}) + 1)"]
   end
 

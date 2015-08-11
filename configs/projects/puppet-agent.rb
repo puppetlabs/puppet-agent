@@ -50,6 +50,11 @@ project "puppet-agent" do |proj|
   proj.component "virt-what"
   proj.component "dmidecode"
 
+  # Needed to avoid using readline on solaris
+  if platform.is_solaris?
+    proj.component "libedit"
+  end
+
   # We only build ruby-selinux for EL 5-7
   if proj.get_platform.name =~ /^el-(5|6|7)-.*/
     proj.component "ruby-selinux"

@@ -16,12 +16,20 @@ component "ruby" do |pkg, settings, platform|
   # Required only on el4 so far
   pkg.apply_patch "resources/patches/ruby/ruby-no-stack-protector.patch" if platform.name =~ /el-4/
 
+  # This is needed for date_core to correctly compile on solaris 10. Breaks gem installations.
+  pkg.apply_patch "resources/patches/ruby/fix-date-compilation.patch" if platform.is_solaris?
+
   pkg.build_requires "openssl"
 
   if platform.is_deb?
     pkg.build_requires "zlib1g-dev"
   elsif platform.is_rpm?
     pkg.build_requires "zlib-devel"
+  end
+
+  if platform.is_solaris?
+    pkg.build_requires 'libedit'
+    pkg.environment "PATH" => "#{settings[:bindir]}:/usr/ccs/bin:/usr/sfw/bin:$$PATH"
   end
 
   # Here we set --enable-bundled-libyaml to ensure that the libyaml included in

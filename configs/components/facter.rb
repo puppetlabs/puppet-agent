@@ -24,6 +24,12 @@ component "facter" do |pkg, settings, platform|
     pkg.build_requires "cmake"
     pkg.build_requires "boost"
     pkg.build_requires "yaml-cpp --with-static-lib"
+  elsif platform.is_solaris?
+    pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/solaris/10/pl-gcc-4.8.2.#{platform.architecture}.pkg.gz"
+    pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/solaris/10/pl-binutils-2.25.#{platform.architecture}.pkg.gz"
+    pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/solaris/10/pl-boost-1.57.0.#{platform.architecture}.pkg.gz"
+    pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/solaris/10/pl-yaml-cpp-0.5.1.#{platform.architecture}.pkg.gz"
+    pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/solaris/10/pl-cmake-3.2.3.i386.pkg.gz"
   else
     pkg.build_requires "openssl"
     pkg.build_requires "pl-gcc"
@@ -89,11 +95,17 @@ component "facter" do |pkg, settings, platform|
   # cmake on OSX is provided by brew
   # a toolchain is not currently required for OSX since we're building with clang.
   if platform.is_osx?
-    toolchain=""
-    cmake="/usr/local/bin/cmake"
+    toolchain = ""
+    cmake = "/usr/local/bin/cmake"
+  elsif platform.is_solaris?
+    toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/i386-pc-solaris2.10/pl-build-toolchain.cmake"
+    cmake = "/opt/pl-build-tools/i386-pc-solaris2.10/bin/cmake"
+
+    # FACT-1156: If we build with -O3, solaris segfaults due to something in std::vector
+    special_flags = "-DCMAKE_CXX_FLAGS_RELEASE='-O2 -DNDEBUG'"
   else
-    toolchain="-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/pl-build-toolchain.cmake"
-    cmake="/opt/pl-build-tools/bin/cmake"
+    toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/pl-build-toolchain.cmake"
+    cmake = "/opt/pl-build-tools/bin/cmake"
   end
 
   pkg.configure do
@@ -104,6 +116,7 @@ component "facter" do |pkg, settings, platform|
         -DCMAKE_VERBOSE_MAKEFILE=ON \
         -DCMAKE_PREFIX_PATH=#{settings[:prefix]} \
         -DCMAKE_INSTALL_PREFIX=#{settings[:prefix]} \
+        #{special_flags} \
         -DBOOST_STATIC=ON \
         -DYAMLCPP_STATIC=ON \
         -DFACTER_PATH=#{settings[:bindir]} \
