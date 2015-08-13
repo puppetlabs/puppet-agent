@@ -129,5 +129,6 @@ component "facter" do |pkg, settings, platform|
   end
 
   pkg.link "#{settings[:bindir]}/facter", "#{settings[:link_bindir]}/facter"
+  pkg.directory File.join('/opt/puppetlabs', 'facter')
   pkg.directory File.join('/opt/puppetlabs', 'facter', 'facts.d')
 end

@@ -59,6 +59,7 @@ project "puppet-agent" do |proj|
     proj.component "ruby-selinux"
   end
 
+  proj.directory "/opt/puppetlabs"
   proj.directory proj.prefix
   proj.directory proj.sysconfdir
   proj.directory proj.logdir
