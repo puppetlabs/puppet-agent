@@ -28,9 +28,14 @@ component "openssl" do |pkg, settings, platform|
     ldflags = ''
   elsif platform.is_solaris?
     pkg.environment "PATH" => "/opt/pl-build-tools/bin:$$PATH:/usr/local/bin:/usr/ccs/bin:/usr/sfw/bin"
-    pkg.environment "CC" => "/opt/pl-build-tools/bin/i386-pc-solaris2.10-gcc"
-    target = 'solaris-x86-gcc'
-    ldflags = "-Wl,-rpath=#{settings[:libdir]}"
+    pkg.environment "CC" => "/opt/pl-build-tools/bin/#{settings[:platform_triple]}-gcc"
+    if platform.architecture =~ /86/
+      target = 'solaris-x86-gcc'
+    else
+      target = 'solaris-sparcv9-gcc'
+    end
+
+    ldflags = "-R/opt/pl-build-tools/#{settings[:platform_triple]}/lib -Wl,-rpath=#{settings[:libdir]} -L/opt/pl-build-tools/#{settings[:platform_triple]}/lib"
     cflags = "#{settings[:cflags]} -fPIC"
   else
     pkg.environment "PATH" => "/opt/pl-build-tools/bin:$$PATH:/usr/local/bin"
