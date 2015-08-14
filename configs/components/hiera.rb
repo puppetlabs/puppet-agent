@@ -9,8 +9,14 @@ component "hiera" do |pkg, settings, platform|
 
   pkg.replaces 'pe-hiera'
 
+  if platform.architecture == "sparc"
+    ruby = '/opt/csw/bin/ruby'
+  else
+    ruby = File.join(settings[:bindir], 'ruby')
+  end
+
   pkg.install do
-    "#{settings[:bindir]}/ruby install.rb --configdir=#{settings[:puppet_codedir]} --sitelibdir=#{settings[:ruby_vendordir]} --configs --quick --man --mandir=#{settings[:mandir]}"
+    "#{ruby} install.rb --ruby=#{File.join(settings[:bindir], 'ruby')} --bindir=#{settings[:bindir]} --configdir=#{settings[:puppet_codedir]} --sitelibdir=#{settings[:ruby_vendordir]} --configs --quick --man --mandir=#{settings[:mandir]}"
   end
 
   pkg.configfile File.join(settings[:puppet_codedir], 'hiera.yaml')
