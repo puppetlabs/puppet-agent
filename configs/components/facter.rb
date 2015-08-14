@@ -49,29 +49,33 @@ component "facter" do |pkg, settings, platform|
     pkg.build_requires 'java-1.8.0-openjdk-devel'
   when /debian-(7|8)-amd64/
     pkg.build_requires 'openjdk-7-jdk'
-    java_home = "JAVA_HOME=/usr/lib/jvm/java-7-openjdk-amd64"
+    java_home = "/usr/lib/jvm/java-7-openjdk-amd64"
   when /debian-(7|8)-i386/
     pkg.build_requires 'openjdk-7-jdk'
-    java_home = "JAVA_HOME=/usr/lib/jvm/java-7-openjdk-i386"
+    java_home = "/usr/lib/jvm/java-7-openjdk-i386"
   when /ubuntu-(12\.04|14\.\d{2})-amd64/
     pkg.build_requires 'openjdk-7-jdk'
-    java_home = "JAVA_HOME=/usr/lib/jvm/java-7-openjdk-amd64"
+    java_home = "/usr/lib/jvm/java-7-openjdk-amd64"
   when /ubuntu-(12\.04|14\.\d{2})-i386/
     pkg.build_requires 'openjdk-7-jdk'
-    java_home = "JAVA_HOME=/usr/lib/jvm/java-7-openjdk-i386"
+    java_home = "/usr/lib/jvm/java-7-openjdk-i386"
   when /fedora-f20/
     pkg.build_requires 'java-1.7.0-openjdk-devel'
   when /fedora-f21/
     pkg.build_requires 'java-1.8.0-openjdk-devel'
   when /sles-12/
     pkg.build_requires 'java-1_7_0-openjdk-devel'
-    java_home = "JAVA_HOME=/usr/lib64/jvm/java-1.7.0-openjdk"
+    java_home = "/usr/lib64/jvm/java-1.7.0-openjdk"
   when /sles-11/
     pkg.build_requires 'java-1_7_0-ibm-devel'
-    java_home = "JAVA_HOME=/usr/lib64/jvm/java-1.7.0-ibm-1.7.0"
+    java_home = "/usr/lib64/jvm/java-1.7.0-ibm-1.7.0"
     java_includedir = "-DJAVA_JVM_LIBRARY=/usr/lib64/jvm/java-1.7.0-ibm-1.7.0/include"
   else
     skip_jruby = 'ON'
+  end
+
+  if java_home
+    pkg.environment "JAVA_HOME" => java_home
   end
 
   # Skip blkid unless we can ensure it exists at build time. Otherwise we depend
@@ -111,8 +115,7 @@ component "facter" do |pkg, settings, platform|
   end
 
   pkg.configure do
-    ["#{java_home} \
-        #{cmake} \
+    ["#{cmake} \
         #{toolchain} \
         -DCMAKE_VERBOSE_MAKEFILE=ON \
         -DCMAKE_PREFIX_PATH=#{settings[:prefix]} \
