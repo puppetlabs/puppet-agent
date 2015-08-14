@@ -10,18 +10,24 @@ component "ruby-augeas" do |pkg, settings, platform|
 
   pkg.environment "PATH" => "$$PATH:/usr/local/bin:/opt/csw/bin:/usr/ccs/bin:/usr/sfw/bin"
   pkg.environment "CONFIGURE_ARGS" => '--vendor'
-  pkg.environment "CFLAGS" => settings[:cflags]
   pkg.environment "PKG_CONFIG_PATH" => File.join(settings[:libdir], 'pkgconfig')
 
+  if platform.architecture == "sparc"
+    ruby = "/opt/csw/bin/ruby -r#{settings[:datadir]}/doc/rbconfig.rb"
+    pkg.environment "RUBY" => "/opt/csw/bin/ruby"
+  else
+    ruby = File.join(settings[:bindir], 'ruby')
+  end
+
   pkg.build do
-     [ "#{settings[:bindir]}/ruby ext/augeas/extconf.rb",
-       "#{platform[:make]} -j$(shell expr $(shell #{platform[:num_cores]}) + 1)" ]
+     [ "#{ruby} ext/augeas/extconf.rb",
+       "#{platform[:make]} -e -j$(shell expr $(shell #{platform[:num_cores]}) + 1)" ]
   end
 
   pkg.install_file 'lib/augeas.rb', File.join(settings[:ruby_vendordir], 'augeas.rb')
   pkg.install do
     [
-      "#{platform[:make]} -j$(shell expr $(shell #{platform[:num_cores]}) + 1) DESTDIR=/ install",
+      "#{platform[:make]} -e -j$(shell expr $(shell #{platform[:num_cores]}) + 1) DESTDIR=/ install",
     ]
   end
 

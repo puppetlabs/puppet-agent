@@ -8,14 +8,20 @@ component "ruby-shadow" do |pkg, settings, platform|
   pkg.build_requires "ruby"
   pkg.environment "PATH" => "$$PATH:/usr/ccs/bin:/usr/sfw/bin"
   pkg.environment "CONFIGURE_ARGS" => '--vendor'
-  pkg.environment "CFLAGS" => settings[:cflags]
+
+  if platform.architecture == "sparc"
+    ruby = "/opt/csw/bin/ruby -r#{settings[:datadir]}/doc/rbconfig.rb"
+    pkg.environment "RUBY" => "/opt/csw/bin/ruby"
+  else
+    ruby = File.join(settings[:bindir], 'ruby')
+  end
 
   pkg.build do
-     [ "#{settings[:bindir]}/ruby extconf.rb",
-     "#{platform[:make]} -j$(shell expr $(shell #{platform[:num_cores]}) + 1)"]
+     [ "#{ruby} extconf.rb",
+     "#{platform[:make]} -e -j$(shell expr $(shell #{platform[:num_cores]}) + 1)"]
   end
 
   pkg.install do
-    ["#{platform[:make]} -j$(shell expr $(shell #{platform[:num_cores]}) + 1) DESTDIR=/ install"]
+    ["#{platform[:make]} -e -j$(shell expr $(shell #{platform[:num_cores]}) + 1) DESTDIR=/ install"]
   end
 end
