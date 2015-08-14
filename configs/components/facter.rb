@@ -19,6 +19,8 @@ component "facter" do |pkg, settings, platform|
   # Running facter (as part of testing) expects virt-what is available
   pkg.build_requires 'virt-what'
 
+  pkg.environment "PATH" => "#{settings[:bindir]}:$$PATH"
+
   # OSX uses clang and system openssl.  cmake comes from brew.
   if platform.is_osx?
     pkg.build_requires "cmake"
@@ -109,8 +111,7 @@ component "facter" do |pkg, settings, platform|
   end
 
   pkg.configure do
-    ["PATH=#{settings[:bindir]}:$$PATH \
-        #{java_home} \
+    ["#{java_home} \
         #{cmake} \
         #{toolchain} \
         -DCMAKE_VERBOSE_MAKEFILE=ON \
