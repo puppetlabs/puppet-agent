@@ -27,7 +27,7 @@ component 'augeas' do |pkg, settings, platform|
 
     pkg.build_requires 'pkg-config'
   elsif platform.is_solaris?
-    pkg.environment "PATH" => "$$PATH:/usr/local/bin:/usr/ccs/bin:/usr/sfw/bin:#{settings[:bindir]}"
+    pkg.environment "PATH" => "/opt/pl-build-tools/bin:$$PATH:/usr/local/bin:/usr/ccs/bin:/usr/sfw/bin:#{settings[:bindir]}"
     pkg.environment "CFLAGS" => settings[:cflags]
     pkg.environment "LDFLAGS" => settings[:ldflags]
     pkg.build_requires 'libedit'
@@ -40,7 +40,7 @@ component 'augeas' do |pkg, settings, platform|
 
 
   pkg.configure do
-    [ "./configure --prefix=#{settings[:prefix]}" ]
+    [ "./configure --prefix=#{settings[:prefix]} #{settings[:host]}" ]
   end
 
   pkg.build do
