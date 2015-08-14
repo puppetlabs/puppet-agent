@@ -22,10 +22,12 @@ project "puppet-agent" do |proj|
       platform_triple = "#{platform.architecture}-pc-solaris2.#{platform.os_version}"
     else
       platform_triple = "#{platform.architecture}-sun-solaris2.#{platform.os_version}"
+      host = "--host #{platform_triple}"
     end
   end
 
   proj.setting(:platform_triple, platform_triple)
+  proj.setting(:host, host)
 
   proj.description "The Puppet Agent package contains all of the elements needed to run puppet, including ruby, facter, hiera and mcollective."
   proj.version_from_git
