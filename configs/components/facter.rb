@@ -98,13 +98,16 @@ component "facter" do |pkg, settings, platform|
     skip_curl = 'OFF'
   end
 
+  ruby = "#{File.join(settings[:bindir], 'ruby')} -rrbconfig"
+
   # cmake on OSX is provided by brew
   # a toolchain is not currently required for OSX since we're building with clang.
   if platform.is_osx?
     toolchain = ""
     cmake = "/usr/local/bin/cmake"
   elsif platform.is_solaris?
-    toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/i386-pc-solaris2.10/pl-build-toolchain.cmake"
+    ruby = "/opt/csw/bin/ruby -r#{settings[:datadir]}/doc/rbconfig.rb"
+    toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/#{settings[:platform_triple]}/pl-build-toolchain.cmake"
     cmake = "/opt/pl-build-tools/i386-pc-solaris2.10/bin/cmake"
 
     # FACT-1156: If we build with -O3, solaris segfaults due to something in std::vector
@@ -124,7 +127,8 @@ component "facter" do |pkg, settings, platform|
         -DBOOST_STATIC=ON \
         -DYAMLCPP_STATIC=ON \
         -DFACTER_PATH=#{settings[:bindir]} \
-        -DFACTER_RUBY=#{settings[:libdir]}/$(shell #{settings[:bindir]}/ruby -rrbconfig -e 'print RbConfig::CONFIG[\"LIBRUBY_SO\"]') \
+        -DRUBY_LIB_INSTALL=#{settings[:ruby_vendordir]} \
+        -DFACTER_RUBY=#{settings[:libdir]}/$(shell #{ruby} -e 'print RbConfig::CONFIG[\"LIBRUBY_SO\"]') \
         -DWITHOUT_CURL=#{skip_curl} \
         -DWITHOUT_BLKID=#{skip_blkid} \
         -DWITHOUT_JRUBY=#{skip_jruby} \
@@ -132,9 +136,19 @@ component "facter" do |pkg, settings, platform|
         ."]
   end
 
+  # Make test will explode horribly in a cross-compile situation
+  if platform.architecture == "sparc"
+    test = ":"
+  else
+    test = "#{platform[:make]} test ARGS=-V"
+  end
+
   pkg.build do
     # Until a `check` target exists, run tests are part of the build.
-    ["#{platform[:make]} -j$(shell expr $(shell #{platform[:num_cores]}) + 1) && #{platform[:make]} test ARGS=-V"]
+    [
+      "#{platform[:make]} -j$(shell expr $(shell #{platform[:num_cores]}) + 1)",
+      test
+    ]
   end
 
   pkg.install do
