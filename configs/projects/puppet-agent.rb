@@ -16,6 +16,17 @@ project "puppet-agent" do |proj|
   proj.setting(:tmpfilesdir, "/usr/lib/tmpfiles.d")
   proj.setting(:ruby_vendordir, File.join(proj.libdir, "ruby", "vendor_ruby"))
 
+  # For solaris, we build cross-compilers
+  if platform.is_solaris?
+    if platform.architecture == 'i386'
+      platform_triple = "#{platform.architecture}-pc-solaris2.#{platform.os_version}"
+    else
+      platform_triple = "#{platform.architecture}-sun-solaris2.#{platform.os_version}"
+    end
+  end
+
+  proj.setting(:platform_triple, platform_triple)
+
   proj.description "The Puppet Agent package contains all of the elements needed to run puppet, including ruby, facter, hiera and mcollective."
   proj.version_from_git
   proj.write_version_file File.join(proj.prefix, 'VERSION')
