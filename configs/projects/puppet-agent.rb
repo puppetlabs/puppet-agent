@@ -12,6 +12,7 @@ project "puppet-agent" do |proj|
   proj.setting(:includedir, File.join(proj.prefix, "include"))
   proj.setting(:datadir, File.join(proj.prefix, "share"))
   proj.setting(:mandir, File.join(proj.datadir, "man"))
+  proj.setting(:gem_home, File.join(proj.libdir, "ruby/gems/2.1.0"))
   proj.setting(:tmpfilesdir, "/usr/lib/tmpfiles.d")
   proj.setting(:ruby_vendordir, File.join(proj.libdir, "ruby", "vendor_ruby"))
 
