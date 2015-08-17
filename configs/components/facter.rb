@@ -16,8 +16,10 @@ component "facter" do |pkg, settings, platform|
 
   pkg.build_requires "ruby"
 
-  # Running facter (as part of testing) expects virt-what is available
-  pkg.build_requires 'virt-what'
+  if platform.is_linux?
+    # Running facter (as part of testing) expects virt-what is available
+    pkg.build_requires 'virt-what'
+  end
 
   pkg.environment "PATH" => "#{settings[:bindir]}:$$PATH"
 

@@ -65,8 +65,12 @@ project "puppet-agent" do |proj|
   proj.component "ruby-shadow"
   proj.component "ruby-augeas"
   proj.component "openssl"
-  proj.component "virt-what"
-  proj.component "dmidecode"
+
+  # These utilites don't really work on unix
+  if proj.get_platform.is_linux?
+    proj.component "virt-what"
+    proj.component "dmidecode"
+  end
 
   # Needed to avoid using readline on solaris
   if platform.is_solaris?
