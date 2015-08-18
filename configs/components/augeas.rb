@@ -5,13 +5,14 @@ component 'augeas' do |pkg, settings, platform|
 
   pkg.replaces 'pe-augeas'
   pkg.apply_patch 'resources/patches/augeas/osx-stub-needed-readline-functions.patch'
+  pkg.apply_patch 'resources/patches/augeas/sudoers-negated-command-alias.patch'
 
   if platform.is_rpm?
     pkg.build_requires 'libxml2-devel'
     pkg.requires 'libxml2'
 
     pkg.build_requires 'readline-devel'
-    if platform.is_nxos?
+    if platform.is_nxos? or platform.is_cisco_wrlinux?
       pkg.requires 'libreadline6'
     else
       pkg.requires 'readline'
