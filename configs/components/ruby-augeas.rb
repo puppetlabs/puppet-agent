@@ -22,8 +22,11 @@ component "ruby-augeas" do |pkg, settings, platform|
   pkg.install do
     [
       "#{platform[:make]} -j$(shell expr $(shell #{platform[:num_cores]}) + 1) DESTDIR=/ install",
-      "chown root:root #{settings[:ruby_vendordir]}/augeas.rb",
     ]
   end
+
+  pkg.install do
+    "chown root:root #{settings[:ruby_vendordir]}/augeas.rb"
+  end if platform.is_solaris?
 
 end
