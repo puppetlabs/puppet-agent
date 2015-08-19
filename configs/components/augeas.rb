@@ -38,7 +38,6 @@ component 'augeas' do |pkg, settings, platform|
     pkg.environment "PATH" => "$$PATH:/usr/local/bin"
   end
 
-
   pkg.configure do
     [ "./configure --prefix=#{settings[:prefix]} #{settings[:host]}" ]
   end
