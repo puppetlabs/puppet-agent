@@ -31,6 +31,7 @@ component 'augeas' do |pkg, settings, platform|
     pkg.environment "CFLAGS" => settings[:cflags]
     pkg.environment "LDFLAGS" => settings[:ldflags]
     pkg.build_requires 'libedit'
+    pkg.build_requires 'runtime'
     pkg.build_requires 'pkgconfig'
     pkg.environment "PKG_CONFIG_PATH" => "/opt/csw/lib/pkgconfig"
     pkg.environment "PKG_CONFIG" => "/opt/csw/bin/pkg-config"

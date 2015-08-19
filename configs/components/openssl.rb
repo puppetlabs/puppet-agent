@@ -10,6 +10,7 @@ component "openssl" do |pkg, settings, platform|
     pkg.build_requires 'pl-binutils'
     pkg.build_requires 'pl-gcc'
   elsif platform.is_solaris?
+    pkg.build_requires 'runtime'
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/solaris/10/pl-gcc-4.8.2.#{platform.architecture}.pkg.gz"
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/solaris/10/pl-binutils-2.25.#{platform.architecture}.pkg.gz"
 

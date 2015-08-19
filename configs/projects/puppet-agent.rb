@@ -74,6 +74,7 @@ project "puppet-agent" do |proj|
 
   # Needed to avoid using readline on solaris
   if platform.is_solaris?
+    proj.component "runtime"
     proj.component "libedit"
   end
 
