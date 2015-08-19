@@ -1,5 +1,5 @@
-component "cpp-pxp-client" do |pkg, settings, platform|
-  pkg.load_from_json('configs/components/cpp-pxp-client.json')
+component "cpp-pcp-client" do |pkg, settings, platform|
+  pkg.load_from_json('configs/components/cpp-pcp-client.json')
 
   pkg.build_requires "openssl"
   pkg.build_requires "pl-gcc"
