@@ -9,9 +9,13 @@ component "ruby-shadow" do |pkg, settings, platform|
   pkg.environment "PATH" => "$$PATH:/usr/ccs/bin:/usr/sfw/bin"
   pkg.environment "CONFIGURE_ARGS" => '--vendor'
 
-  if platform.architecture == "sparc"
-    ruby = "/opt/csw/bin/ruby -r#{settings[:datadir]}/doc/rbconfig.rb"
-    pkg.environment "RUBY" => "/opt/csw/bin/ruby"
+  if platform.is_solaris?
+    if platform.architecture == 'sparc'
+      ruby = "/opt/csw/bin/ruby -r#{settings[:datadir]}/doc/rbconfig.rb"
+      pkg.environment "RUBY" => "/opt/csw/bin/ruby"
+    else
+      ruby = "#{File.join(settings[:bindir], 'ruby')} -r#{settings[:datadir]}/doc/rbconfig.rb"
+    end
   else
     ruby = File.join(settings[:bindir], 'ruby')
   end

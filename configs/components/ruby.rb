@@ -14,8 +14,19 @@ component "ruby" do |pkg, settings, platform|
   pkg.apply_patch "resources/patches/ruby/CVE-2015-4020.patch"
 
   # Cross-compiles require a hand-built rbconfig from the target system
-  if platform.architecture == "sparc"
-    pkg.add_source "file://resources/files/rbconfig-#{settings[:platform_triple]}.rb", sum: "e3ce52e22c49b7a32eb290b6253b0cbc"
+  if platform.is_solaris?
+    rbconfig_info = {
+      'sparc-sun-solaris2.10' => {
+        :sum => "e3ce52e22c49b7a32eb290b6253b0cbc",
+        :target_double => 'sparc-solaris2.10',
+      },
+      'i386-pc-solaris2.10' => {
+        :sum => "5a34dbec6d4b8dbe1a01dedfc60441aa",
+        :target_double => 'i386-solaris2.10',
+      },
+    }
+
+    pkg.add_source "file://resources/files/rbconfig-#{settings[:platform_triple]}.rb", sum: rbconfig_info[settings[:platform_triple]][:sum]
   end
 
   # Required only on el4 so far
@@ -69,15 +80,22 @@ component "ruby" do |pkg, settings, platform|
     ]
   end
 
-  if platform.architecture == "sparc"
-    # Here we replace the rbconfig from our cross-compile with an rbconfig from a native sparc ruby build so that
-    # gem installs on a user system will actually work
+  if platform.is_solaris?
+    # Here we replace the rbconfig from our ruby compiled with our toolchain
+    # with an rbconfig from a ruby of the same version compiled with the system
+    # gcc. Without this, the rbconfig will be looking for a gcc that won't
+    # exist on a user system and will also pass flags which may not work on
+    # that system.
+    # We also disable a safety check in the rbconfig to prevent it from being
+    # loaded from a different ruby, because we're going to do that later to
+    # install compiled gems.
+    target_dir = File.join(settings[:libdir], "ruby", "2.1.0", rbconfig_info[settings[:platform_triple]][:target_double])
     pkg.install do
       [
-        "/opt/csw/bin/gsed -i 's|raise|warn|g' /opt/puppetlabs/puppet/lib/ruby/2.1.0/sparc-solaris2.10/rbconfig.rb",
+        "/opt/csw/bin/gsed -i 's|raise|warn|g' #{target_dir}/rbconfig.rb",
         "mkdir -p #{settings[:datadir]}/doc",
-        "cp /opt/puppetlabs/puppet/lib/ruby/2.1.0/sparc-solaris2.10/rbconfig.rb #{settings[:datadir]}/doc",
-        "cp ../rbconfig-#{settings[:platform_triple]}.rb /opt/puppetlabs/puppet/lib/ruby/2.1.0/sparc-solaris2.10",
+        "cp #{target_dir}/rbconfig.rb #{settings[:datadir]}/doc",
+        "cp ../rbconfig-#{settings[:platform_triple]}.rb #{target_dir}/rbconfig.rb",
       ]
     end
   end
