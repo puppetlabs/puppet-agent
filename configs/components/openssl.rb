@@ -91,6 +91,8 @@ component "openssl" do |pkg, settings, platform|
     ["#{platform[:make]} INSTALL_PREFIX=/ install"]
   end
 
+  pkg.install_file "LICENSE", "#{settings[:prefix]}/share/doc/openssl-#{pkg.get_version}/LICENSE"
+
   if platform.is_deb?
     pkg.link '/etc/ssl/certs/ca-certificates.crt', ca_certfile
   elsif platform.is_rpm?
