@@ -42,6 +42,7 @@ component "ruby" do |pkg, settings, platform|
     pkg.build_requires 'runtime'
     pkg.environment "PATH" => "#{settings[:bindir]}:/usr/ccs/bin:/usr/sfw/bin:$$PATH"
     pkg.environment "CC" => "/opt/pl-build-tools/bin/#{settings[:platform_triple]}-gcc"
+    pkg.environment "LDFLAGS" => "-Wl,-rpath=/opt/puppetlabs/puppet/lib"
   end
 
   # Here we set --enable-bundled-libyaml to ensure that the libyaml included in
