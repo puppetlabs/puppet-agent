@@ -12,9 +12,13 @@ component "ruby-augeas" do |pkg, settings, platform|
   pkg.environment "CONFIGURE_ARGS" => '--vendor'
   pkg.environment "PKG_CONFIG_PATH" => File.join(settings[:libdir], 'pkgconfig')
 
-  if platform.architecture == "sparc"
-    ruby = "/opt/csw/bin/ruby -r#{settings[:datadir]}/doc/rbconfig.rb"
-    pkg.environment "RUBY" => "/opt/csw/bin/ruby"
+  if platform.is_solaris?
+    if platform.architecture == 'sparc'
+      ruby = "/opt/csw/bin/ruby -r#{settings[:datadir]}/doc/rbconfig.rb"
+      pkg.environment "RUBY" => "/opt/csw/bin/ruby"
+    else
+      ruby = "#{File.join(settings[:bindir], 'ruby')} -r#{settings[:datadir]}/doc/rbconfig.rb"
+    end
   else
     ruby = File.join(settings[:bindir], 'ruby')
   end
