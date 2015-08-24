@@ -6,11 +6,11 @@ component 'libedit' do |pkg, settings, platform|
   pkg.environment "PATH" => "/opt/pl-build-tools/bin:$$PATH"
 
   if platform.is_solaris?
-    pkg.environment "CC" => "/opt/pl-build-tools/bin/i386-pc-solaris2.10-gcc"
+    pkg.environment "CC" => "/opt/pl-build-tools/bin/#{settings[:platform_triple]}-gcc"
   end
 
   pkg.configure do
-    "./configure --prefix=#{settings[:prefix]}"
+    "./configure --prefix=#{settings[:prefix]} #{settings[:host]}"
   end
 
   pkg.build do

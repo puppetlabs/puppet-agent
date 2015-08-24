@@ -16,8 +16,6 @@ component "virt-what" do |pkg, settings, platform|
     requires "pmtools"
   end
 
-  pkg.environment "PATH" => "$$PATH:/usr/ccs/bin:/usr/sfw/bin"
-
   if platform.is_rpm?
     pkg.build_requires "util-linux"
   end

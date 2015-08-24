@@ -12,8 +12,22 @@ project "puppet-agent" do |proj|
   proj.setting(:includedir, File.join(proj.prefix, "include"))
   proj.setting(:datadir, File.join(proj.prefix, "share"))
   proj.setting(:mandir, File.join(proj.datadir, "man"))
+  proj.setting(:gem_home, File.join(proj.libdir, "ruby/gems/2.1.0"))
   proj.setting(:tmpfilesdir, "/usr/lib/tmpfiles.d")
   proj.setting(:ruby_vendordir, File.join(proj.libdir, "ruby", "vendor_ruby"))
+
+  # For solaris, we build cross-compilers
+  if platform.is_solaris?
+    if platform.architecture == 'i386'
+      platform_triple = "#{platform.architecture}-pc-solaris2.#{platform.os_version}"
+    else
+      platform_triple = "#{platform.architecture}-sun-solaris2.#{platform.os_version}"
+      host = "--host #{platform_triple}"
+    end
+  end
+
+  proj.setting(:platform_triple, platform_triple)
+  proj.setting(:host, host)
 
   proj.description "The Puppet Agent package contains all of the elements needed to run puppet, including ruby, facter, hiera and mcollective."
   proj.version_from_git
@@ -51,11 +65,16 @@ project "puppet-agent" do |proj|
   proj.component "ruby-shadow"
   proj.component "ruby-augeas"
   proj.component "openssl"
-  proj.component "virt-what"
-  proj.component "dmidecode"
+
+  # These utilites don't really work on unix
+  if proj.get_platform.is_linux?
+    proj.component "virt-what"
+    proj.component "dmidecode"
+  end
 
   # Needed to avoid using readline on solaris
   if platform.is_solaris?
+    proj.component "runtime"
     proj.component "libedit"
   end
 

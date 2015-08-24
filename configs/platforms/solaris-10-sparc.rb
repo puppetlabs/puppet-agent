@@ -1,8 +1,11 @@
-platform "solaris-10-i386" do |plat|
+platform "solaris-10-sparc" do |plat|
   plat.servicedir "/var/svc/manifest"
   plat.defaultdir "/lib/svc/method"
   plat.servicetype "smf"
   plat.vcloud_name "solaris-10-x86_64"
+  plat.tar "/usr/sfw/bin/gtar"
+  plat.patch "/usr/bin/gpatch"
+  plat.num_cores "/usr/bin/kstat cpu_info | /opt/csw/bin/ggrep -E '[[:space:]]+core_id[[:space:]]' | wc -l"
 
   base_pkgs = ['arc', 'gnu-idn', 'gpch', 'gtar', 'hea', 'libm', 'wgetu', 'xcu4']
   base_url = 'http://pl-build-tools.delivery.puppetlabs.net/solaris/10/depends'

@@ -22,6 +22,12 @@ component "marionette-collective" do |pkg, settings, platform|
     pkg.replaces 'mcollective-doc'
   end
 
+  if platform.architecture == "sparc"
+    ruby = '/opt/csw/bin/ruby'
+  else
+    ruby = File.join(settings[:bindir], 'ruby')
+  end
+
   case platform.servicetype
   when "systemd"
     pkg.install_service "ext/aio/redhat/mcollective.service", "ext/aio/redhat/mcollective.sysconfig", "mcollective"
@@ -46,7 +52,7 @@ component "marionette-collective" do |pkg, settings, platform|
   end
 
   pkg.install do
-    ["#{settings[:bindir]}/ruby install.rb --configdir=#{File.join(settings[:sysconfdir], 'mcollective')} --sitelibdir=#{settings[:ruby_vendordir]} --quick --sbindir=#{settings[:bindir]}"]
+    ["#{ruby} install.rb --ruby=#{File.join(settings[:bindir], 'ruby')} --bindir=#{settings[:bindir]} --configdir=#{File.join(settings[:sysconfdir], 'mcollective')} --sitelibdir=#{settings[:ruby_vendordir]} --quick --sbindir=#{settings[:bindir]}"]
   end
 
   pkg.directory File.join(settings[:sysconfdir], "mcollective")

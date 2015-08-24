@@ -10,6 +10,7 @@ component "openssl" do |pkg, settings, platform|
     pkg.build_requires 'pl-binutils'
     pkg.build_requires 'pl-gcc'
   elsif platform.is_solaris?
+    pkg.build_requires 'runtime'
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/solaris/10/pl-gcc-4.8.2.#{platform.architecture}.pkg.gz"
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/solaris/10/pl-binutils-2.25.#{platform.architecture}.pkg.gz"
 
@@ -28,9 +29,14 @@ component "openssl" do |pkg, settings, platform|
     ldflags = ''
   elsif platform.is_solaris?
     pkg.environment "PATH" => "/opt/pl-build-tools/bin:$$PATH:/usr/local/bin:/usr/ccs/bin:/usr/sfw/bin"
-    pkg.environment "CC" => "/opt/pl-build-tools/bin/i386-pc-solaris2.10-gcc"
-    target = 'solaris-x86-gcc'
-    ldflags = "-Wl,-rpath=#{settings[:libdir]}"
+    pkg.environment "CC" => "/opt/pl-build-tools/bin/#{settings[:platform_triple]}-gcc"
+    if platform.architecture =~ /86/
+      target = 'solaris-x86-gcc'
+    else
+      target = 'solaris-sparcv9-gcc'
+    end
+
+    ldflags = "-R/opt/pl-build-tools/#{settings[:platform_triple]}/lib -Wl,-rpath=#{settings[:libdir]} -L/opt/pl-build-tools/#{settings[:platform_triple]}/lib"
     cflags = "#{settings[:cflags]} -fPIC"
   else
     pkg.environment "PATH" => "/opt/pl-build-tools/bin:$$PATH:/usr/local/bin"
