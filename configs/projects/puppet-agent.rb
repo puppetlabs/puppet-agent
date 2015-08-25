@@ -80,6 +80,9 @@ project "puppet-agent" do |proj|
   # Components only applicable on OSX
   if proj.get_platform.is_osx?
    proj.component "cfpropertylist"
+  end
+
+  if proj.get_platform.is_solaris? || proj.get_platform.is_osx?
    proj.component "ca-cert"
   end
 
