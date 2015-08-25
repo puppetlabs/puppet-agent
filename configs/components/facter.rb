@@ -21,6 +21,9 @@ component "facter" do |pkg, settings, platform|
     pkg.build_requires 'virt-what'
   end
 
+  # Running facter (as part of testing) expects augtool are available
+  pkg.build_requires 'augeas'
+
   pkg.environment "PATH" => "#{settings[:bindir]}:$$PATH"
 
   # OSX uses clang and system openssl.  cmake comes from brew.
@@ -83,12 +86,15 @@ component "facter" do |pkg, settings, platform|
   # Skip blkid unless we can ensure it exists at build time. Otherwise we depend
   # on the vagaries of the system we build on.
   skip_blkid = 'ON'
-  if platform.is_deb? or platform.is_nxos?
+  if platform.is_deb? or platform.is_nxos? or platform.is_cisco_wrlinux?
     pkg.build_requires "libblkid-dev"
     skip_blkid = 'OFF'
   elsif platform.is_rpm?
-    if (platform.is_el? and platform.os_version.to_i >= 6) or (platform.is_sles? and platform.os_version.to_i >= 11)
+    if (platform.is_el? and platform.os_version.to_i >= 6) or (platform.is_sles? and platform.os_version.to_i >= 11) or platform.is_fedora?
       pkg.build_requires "libblkid-devel"
+      skip_blkid = 'OFF'
+    elsif (platform.is_el? and platform.os_version.to_i < 6) or (platform.is_sles? and platform.os_version.to_i < 11)
+      pkg.build_requires "e2fsprogs-devel"
       skip_blkid = 'OFF'
     end
   end
@@ -158,5 +164,6 @@ component "facter" do |pkg, settings, platform|
   end
 
   pkg.link "#{settings[:bindir]}/facter", "#{settings[:link_bindir]}/facter"
+  pkg.directory File.join('/opt/puppetlabs', 'facter')
   pkg.directory File.join('/opt/puppetlabs', 'facter', 'facts.d')
 end

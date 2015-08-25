@@ -5,6 +5,7 @@ The Puppet Agent
  * Building puppet-agent
  * Building puppet-agent for windows
  * Branches in puppet-agent
+ * Installer plugin for OSX
  * License
  * Maintainers
 
@@ -76,6 +77,12 @@ for i in {hiera,facter,puppet,marionette-collective}; do git checkout aardwolf -
 git checkout aardwolf -- configs/components/windows_*.json
 git commit -m "(maint) Restore promoted components refs after merge from stable"
 ```
+
+Installer plugin for OSX
+---
+The GUI installer for OSX includes a custom plugin that captures and sets information such
+as the puppet master and certificate name for the client.  The source for this Xcode project
+can be found [here](https://github.com/puppetlabs/puppet-agent-osx-installer-plugin).
 
 License
 ---
