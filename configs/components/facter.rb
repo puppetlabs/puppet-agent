@@ -114,7 +114,9 @@ component "facter" do |pkg, settings, platform|
     toolchain = ""
     cmake = "/usr/local/bin/cmake"
   elsif platform.is_solaris?
-    ruby = "/opt/csw/bin/ruby -r#{settings[:datadir]}/doc/rbconfig.rb"
+    if platform.architecture == 'sparc'
+      ruby = "/opt/csw/bin/ruby -r#{settings[:datadir]}/doc/rbconfig.rb"
+    end
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/#{settings[:platform_triple]}/pl-build-toolchain.cmake"
     cmake = "/opt/pl-build-tools/i386-pc-solaris2.10/bin/cmake"
 
@@ -145,7 +147,7 @@ component "facter" do |pkg, settings, platform|
   end
 
   # Make test will explode horribly in a cross-compile situation
-  if platform.architecture == "sparc"
+  if platform.architecture == 'sparc'
     test = ":"
   else
     test = "#{platform[:make]} test ARGS=-V"
