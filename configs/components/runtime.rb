@@ -3,6 +3,8 @@ component "runtime" do |pkg, settings, platform|
   if platform.is_solaris?
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/solaris/10/pl-gcc-4.8.2.#{platform.architecture}.pkg.gz"
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/solaris/10/pl-binutils-2.25.#{platform.architecture}.pkg.gz"
+  elsif platform.is_linux?
+    pkg.build_requires "pl-gcc"
   end
 
   if platform.architecture == "sparc"

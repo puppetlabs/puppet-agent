@@ -73,9 +73,12 @@ project "puppet-agent" do |proj|
     proj.component "dmidecode"
   end
 
+  if platform.is_solaris? || platform.name =~ /^el-4/
+    proj.component "runtime"
+  end
+
   # Needed to avoid using readline on solaris
   if platform.is_solaris?
-    proj.component "runtime"
     proj.component "libedit"
   end
 
