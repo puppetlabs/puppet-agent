@@ -21,6 +21,10 @@ component 'augeas' do |pkg, settings, platform|
       pkg.requires 'readline'
     end
 
+    if platform.name =~ /el-4/
+      pkg.build_requires 'runtime'
+    end
+
     pkg.build_requires 'pkgconfig'
   elsif platform.is_deb?
     pkg.build_requires 'libxml2-dev'

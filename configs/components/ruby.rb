@@ -29,9 +29,6 @@ component "ruby" do |pkg, settings, platform|
     pkg.add_source "file://resources/files/rbconfig-#{settings[:platform_triple]}.rb", sum: rbconfig_info[settings[:platform_triple]][:sum]
   end
 
-  # Required only on el4 so far
-  pkg.apply_patch "resources/patches/ruby/ruby-no-stack-protector.patch" if platform.name =~ /el-4/
-
   # This is needed for date_core to correctly compile on solaris 10. Breaks gem installations.
   pkg.apply_patch "resources/patches/ruby/fix-date-compilation.patch" if platform.is_solaris?
 
