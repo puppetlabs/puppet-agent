@@ -16,6 +16,8 @@ project "puppet-agent" do |proj|
   proj.setting(:tmpfilesdir, "/usr/lib/tmpfiles.d")
   proj.setting(:ruby_vendordir, File.join(proj.libdir, "ruby", "vendor_ruby"))
 
+  platform = proj.get_platform
+
   # For solaris, we build cross-compilers
   if platform.is_solaris?
     if platform.architecture == 'i386'
@@ -47,7 +49,7 @@ project "puppet-agent" do |proj|
   proj.component "facter"
   proj.component "hiera"
   proj.component "marionette-collective"
-  if proj.get_platform.is_rpm? || proj.get_platform.is_deb?
+  if platform.is_rpm? || platform.is_deb?
     proj.component "cpp-pcp-client"
     proj.component "pxp-agent"
   end
@@ -55,7 +57,7 @@ project "puppet-agent" do |proj|
   # Then the dependencies
   proj.component "augeas"
   # Curl is only needed for compute clusters (GCE, EC2); so rpm, deb, and Windows
-  proj.component "curl" if proj.get_platform.is_rpm? || proj.get_platform.is_deb?
+  proj.component "curl" if platform.is_linux?
   proj.component "ruby"
   proj.component "ruby-stomp"
   proj.component "rubygem-deep-merge"
@@ -66,7 +68,7 @@ project "puppet-agent" do |proj|
   proj.component "openssl"
 
   # These utilites don't really work on unix
-  if proj.get_platform.is_linux?
+  if platform.is_linux?
     proj.component "virt-what"
     proj.component "dmidecode"
   end
@@ -78,16 +80,16 @@ project "puppet-agent" do |proj|
   end
 
   # Components only applicable on OSX
-  if proj.get_platform.is_osx?
+  if platform.is_osx?
    proj.component "cfpropertylist"
   end
 
-  if proj.get_platform.is_solaris? || proj.get_platform.is_osx?
+  if platform.is_solaris? || platform.is_osx?
    proj.component "ca-cert"
   end
 
   # We only build ruby-selinux for EL 5-7
-  if proj.get_platform.name =~ /^el-(5|6|7)-.*/
+  if platform.name =~ /^el-(5|6|7)-.*/
     proj.component "ruby-selinux"
   end
 
