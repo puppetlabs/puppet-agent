@@ -49,7 +49,7 @@ project "puppet-agent" do |proj|
   proj.component "facter"
   proj.component "hiera"
   proj.component "marionette-collective"
-  if platform.is_rpm? || platform.is_deb?
+  if platform.is_linux?
     proj.component "cpp-pcp-client"
     proj.component "pxp-agent"
   end
@@ -63,7 +63,7 @@ project "puppet-agent" do |proj|
   proj.component "rubygem-deep-merge"
   proj.component "rubygem-net-ssh"
   proj.component "rubygem-hocon"
-  proj.component "ruby-shadow"
+  proj.component "ruby-shadow" unless platform.is_aix?
   proj.component "ruby-augeas"
   proj.component "openssl"
 

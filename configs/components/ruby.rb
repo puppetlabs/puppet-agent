@@ -10,8 +10,17 @@ component "ruby" do |pkg, settings, platform|
   pkg.replaces 'pe-ruby-ldap'
   pkg.replaces 'pe-rubygem-gem2rpm'
 
-  pkg.apply_patch "resources/patches/ruby/libyaml_cve-2014-9130.patch"
-  pkg.apply_patch "resources/patches/ruby/CVE-2015-4020.patch"
+  base = 'resources/patches/ruby'
+  pkg.apply_patch "#{base}/libyaml_cve-2014-9130.patch"
+  pkg.apply_patch "#{base}/CVE-2015-4020.patch"
+
+  if platform.is_aix?
+    pkg.apply_patch "#{base}/aix_ruby_2.1_libpath_with_opt_dir.patch"
+    pkg.apply_patch "#{base}/aix_ruby_2.1_fix_proctitle.patch"
+    pkg.apply_patch "#{base}/aix_ruby_2.1_fix_make_test_failure.patch"
+    pkg.environment "CC" => "/opt/pl-build-tools/bin/gcc"
+    pkg.environment "LDFLAGS" =>  "-Wl,-brtl,-L/opt/puppetlabs/puppet/lib"
+  end
 
   # Cross-compiles require a hand-built rbconfig from the target system
   if platform.is_solaris?
@@ -40,6 +49,8 @@ component "ruby" do |pkg, settings, platform|
 
   if platform.is_deb?
     pkg.build_requires "zlib1g-dev"
+  elsif platform.is_aix?
+    pkg.build_requires "http://osmirror.delivery.puppetlabs.net/AIX_MIRROR/zlib-devel-1.2.3-4.aix5.2.ppc.rpm"
   elsif platform.is_rpm?
     pkg.build_requires "zlib-devel"
   end
@@ -60,7 +71,8 @@ component "ruby" do |pkg, settings, platform|
   # Here we set --enable-bundled-libyaml to ensure that the libyaml included in
   # ruby is used, even if the build system has a copy of libyaml available
   pkg.configure do
-    ["./configure \
+    [
+      "./configure \
         --prefix=#{settings[:prefix]} \
         --with-opt-dir=#{settings[:prefix]} \
         --enable-shared \
