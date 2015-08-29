@@ -72,7 +72,7 @@ project "puppet-agent" do |proj|
   proj.component "rubygem-deep-merge"
   proj.component "rubygem-net-ssh"
   proj.component "rubygem-hocon"
-  proj.component "ruby-shadow"
+  proj.component "ruby-shadow" unless platform.is_aix?
   proj.component "ruby-augeas"
   proj.component "openssl"
 
