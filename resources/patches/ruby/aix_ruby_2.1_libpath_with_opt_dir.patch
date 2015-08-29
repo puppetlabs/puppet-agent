@@ -1,0 +1,31 @@
+From 52385c43d8638225794cf8913b52701e4ceb5597 Mon Sep 17 00:00:00 2001
+From: Geoff Nichols <geoff.nichols@puppetlabs.com>
+Date: Mon, 11 May 2015 13:17:26 -0700
+Subject: [PATCH] (patch) aix ruby 2.1 libpath with opt dir
+
+Prior to this commit, build of Ruby 2.1.x on AIX with the --with-opt-dir
+configure flag fails due to whitespace in the -blibpath arguments
+arguments passed to the linker. (This patch uses a fragment derived
+from the "non-portable sed" patch we used for Ruby 1.9.3.)
+---
+ configure | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/configure b/configure
+index 8d8da19..1c04b66 100755
+--- a/configure
++++ b/configure
+@@ -20086,7 +20086,9 @@ if test "x$OPT_DIR" != x; then
+         for dir in $OPT_DIR; do
+             echo x ${LIBPATHFLAG} ${RPATHFLAG} |
+             sed "s/^x *//;s${IFS}"'%1\\$-s'"${IFS}${dir}/lib${IFS}g;s${IFS}%s${IFS}${dir}/lib${IFS}g"
+-        done | tr '\012' ' '`
++        done |
++        sed "s% \+% %g;s% /%${IFS}/%g" |
++        tr '\012' ' '`
+     test x"${LDFLAGS}" = x || LDFLAGS="$LDFLAGS "
+     LDFLAGS="$LDFLAGS$val"
+     test x"${DLDFLAGS}" = x || DLDFLAGS="$DLDFLAGS "
+-- 
+2.3.2 (Apple Git-55)
+
