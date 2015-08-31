@@ -1,6 +1,6 @@
 component "ruby" do |pkg, settings, platform|
-  pkg.version "2.1.6"
-  pkg.md5sum "6e5564364be085c45576787b48eeb75f"
+  pkg.version "2.1.7"
+  pkg.md5sum "2e143b8e19b056df46479ae4412550c9"
   pkg.url "http://buildsources.delivery.puppetlabs.net/ruby-#{pkg.get_version}.tar.gz"
 
   pkg.replaces 'pe-ruby'
@@ -11,17 +11,16 @@ component "ruby" do |pkg, settings, platform|
   pkg.replaces 'pe-rubygem-gem2rpm'
 
   pkg.apply_patch "resources/patches/ruby/libyaml_cve-2014-9130.patch"
-  pkg.apply_patch "resources/patches/ruby/CVE-2015-4020.patch"
 
   # Cross-compiles require a hand-built rbconfig from the target system
   if platform.is_solaris?
     rbconfig_info = {
       'sparc-sun-solaris2.10' => {
-        :sum => "e3ce52e22c49b7a32eb290b6253b0cbc",
+        :sum => "94ccda4d66ada8d301dce0cdd111ea5a",
         :target_double => 'sparc-solaris2.10',
       },
       'i386-pc-solaris2.10' => {
-        :sum => "5a34dbec6d4b8dbe1a01dedfc60441aa",
+        :sum => "d4d75e7afccbb235fc079f558473c7f9",
         :target_double => 'i386-solaris2.10',
       },
     }
