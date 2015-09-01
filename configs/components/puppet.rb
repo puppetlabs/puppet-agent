@@ -63,7 +63,13 @@ component "puppet" do |pkg, settings, platform|
   end
 
   # Puppet requires tar, otherwise PMT will not install modules
-  pkg.requires 'tar'
+  if platform.is_solaris?
+    if platform.os_version == "11"
+      pkg.requires 'archiver/gnu-tar'
+    end
+  else
+    pkg.requires 'tar'
+  end
 
   pkg.install do
     [

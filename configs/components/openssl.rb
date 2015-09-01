@@ -13,10 +13,14 @@ component "openssl" do |pkg, settings, platform|
       pkg.build_requires 'runtime'
     end
   elsif platform.is_solaris?
-    pkg.build_requires 'runtime'
-    pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/solaris/10/pl-gcc-4.8.2.#{platform.architecture}.pkg.gz"
-    pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/solaris/10/pl-binutils-2.25.#{platform.architecture}.pkg.gz"
+    if platform.os_version == "10"
+      pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/solaris/10/pl-gcc-4.8.2.#{platform.architecture}.pkg.gz"
+      pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/solaris/10/pl-binutils-2.25.#{platform.architecture}.pkg.gz"
+    elsif platform.os_version == "11"
+      pkg.build_requires 'pl-gcc'
+    end
 
+    pkg.build_requires 'runtime'
     pkg.apply_patch 'resources/patches/openssl/add-shell-to-engines_makefile.patch'
     pkg.apply_patch 'resources/patches/openssl/openssl-1.0.0l-use-gcc-instead-of-makedepend.patch'
   elsif platform.is_osx?

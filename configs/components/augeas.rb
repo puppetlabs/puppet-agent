@@ -40,9 +40,15 @@ component 'augeas' do |pkg, settings, platform|
     pkg.environment "LDFLAGS" => settings[:ldflags]
     pkg.build_requires 'libedit'
     pkg.build_requires 'runtime'
-    pkg.build_requires 'pkgconfig'
-    pkg.environment "PKG_CONFIG_PATH" => "/opt/csw/lib/pkgconfig"
-    pkg.environment "PKG_CONFIG" => "/opt/csw/bin/pkg-config"
+    if platform.os_version == "10"
+      pkg.build_requires 'pkgconfig'
+      pkg.environment "PKG_CONFIG_PATH" => "/opt/csw/lib/pkgconfig"
+      pkg.environment "PKG_CONFIG" => "/opt/csw/bin/pkg-config"
+    else
+      pkg.build_requires 'pl-pkg-config'
+      pkg.environment "PKG_CONFIG_PATH" => "/usr/lib/pkgconfig"
+      pkg.environment "PKG_CONFIG" => "/opt/pl-build-tools/bin/pkg-config"
+    end
   elsif platform.is_osx?
     pkg.environment "PATH" => "$$PATH:/usr/local/bin"
   end
