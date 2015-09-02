@@ -1,0 +1,16 @@
+--- a/dmidecode.c	2014/07/11 09:24:22	1.181
++++ b/dmidecode.c	2014/10/13 10:05:22	1.182
+@@ -2311,10 +2311,11 @@
+ 		"Reserved",
+ 		"Reserved",
+ 		"DDR3",
+-		"FBD2", /* 0x19 */
++		"FBD2",
++		"DDR4" /* 0x1A */
+ 	};
+ 
+-	if (code >= 0x01 && code <= 0x19)
++	if (code >= 0x01 && code <= 0x1A)
+ 		return type[code - 0x01];
+ 	return out_of_spec;
+ }

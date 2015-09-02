@@ -1,0 +1,20 @@
+From 0a321b21fa52b47a764b0fee2ab6a3de80807777 Mon Sep 17 00:00:00 2001
+From: naruse <naruse@b2dd03c8-39d4-4d8f-98ff-823fe69b080e>
+Date: Sat, 28 Mar 2015 02:30:17 +0000
+Subject: [PATCH] fix r50104 [Bug #10906]
+
+git-svn-id: svn+ssh://ci.ruby-lang.org/ruby/trunk@50105 b2dd03c8-39d4-4d8f-98ff-823fe69b080e
+---
+ ext/date/extconf.rb | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/ext/date/extconf.rb b/ext/date/extconf.rb
+index 0547a3e..6f479ea 100644
+--- a/ext/date/extconf.rb
++++ b/ext/date/extconf.rb
+@@ -1,2 +1,5 @@
+ require 'mkmf'
++if try_cflags("-std=iso9899:1999")
++  $CFLAGS += " " << "-std=iso9899:1999"
++end
+ create_makefile('date_core')
