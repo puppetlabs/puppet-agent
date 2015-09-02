@@ -49,6 +49,10 @@ project "puppet-agent" do |proj|
   proj.component "facter"
   proj.component "hiera"
   proj.component "marionette-collective"
+  if platform.is_rpm? || platform.is_deb?
+    proj.component "cpp-pcp-client"
+    proj.component "pxp-agent"
+  end
 
   # Then the dependencies
   proj.component "augeas"
