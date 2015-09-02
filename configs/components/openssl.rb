@@ -48,6 +48,8 @@ component "openssl" do |pkg, settings, platform|
       sslflags = '386'
     elsif platform.architecture =~ /64$/
       target = 'linux-x86_64'
+    elsif platform.architecture =~ /ppce500mc$/
+      target = 'linux-ppc'
     end
     cflags = settings[:cflags]
     ldflags = "#{settings[:ldflags]} -Wl,-z,relro"
