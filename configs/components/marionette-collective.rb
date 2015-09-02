@@ -22,6 +22,12 @@ component "marionette-collective" do |pkg, settings, platform|
     pkg.replaces 'mcollective-doc'
   end
 
+  if platform.architecture == "sparc"
+    ruby = '/opt/csw/bin/ruby'
+  else
+    ruby = File.join(settings[:bindir], 'ruby')
+  end
+
   case platform.servicetype
   when "systemd"
     pkg.install_service "ext/aio/redhat/mcollective.service", "ext/aio/redhat/mcollective.sysconfig", "mcollective"
@@ -39,13 +45,14 @@ component "marionette-collective" do |pkg, settings, platform|
 
   when "launchd"
     pkg.install_service "ext/aio/osx/mcollective.plist", nil, "com.puppetlabs.mcollective"
-
+  when "smf"
+    pkg.install_service "ext/aio/solaris/smf/mcollective.xml", nil, "mcollective"
   else
     fail "need to know where to put service files"
   end
 
   pkg.install do
-    ["#{settings[:bindir]}/ruby install.rb --configdir=#{File.join(settings[:sysconfdir], 'mcollective')} --sitelibdir=#{settings[:ruby_vendordir]} --quick --sbindir=#{settings[:bindir]}"]
+    ["#{ruby} install.rb --ruby=#{File.join(settings[:bindir], 'ruby')} --bindir=#{settings[:bindir]} --configdir=#{File.join(settings[:sysconfdir], 'mcollective')} --sitelibdir=#{settings[:ruby_vendordir]} --quick --sbindir=#{settings[:bindir]}"]
   end
 
   pkg.directory File.join(settings[:sysconfdir], "mcollective")
@@ -57,7 +64,7 @@ component "marionette-collective" do |pkg, settings, platform|
   pkg.configfile File.join(settings[:sysconfdir], 'mcollective', 'client.cfg')
   pkg.configfile File.join(settings[:sysconfdir], 'mcollective', 'server.cfg')
   pkg.configfile File.join(settings[:sysconfdir], 'mcollective', 'facts.yaml')
-  pkg.configfile "/etc/logrotate.d/mcollective" unless platform.is_osx?
+  pkg.configfile "/etc/logrotate.d/mcollective" if platform.is_linux?
 
   pkg.link "#{settings[:bindir]}/mco", "#{settings[:link_bindir]}/mco"
 end
