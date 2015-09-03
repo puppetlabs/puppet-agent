@@ -40,7 +40,7 @@ ssh_key = ENV['VANAGON_SSH_KEY'] ? "-i #{ENV['VANAGON_SSH_KEY']}" : ''
 CHOCO_WIX35_VERSION = '3.5.2519.20130612'
 
 # Retrieve a vm
-vm_type = 'win-2012-x86_64'
+vm_type = 'win-2012r2-x86_64'
 auth_token = ENV['VMPOOL_TOKEN'] || ''
 curl_output = `curl --data --url http://vmpooler.delivery.puppetlabs.net/vm/#{vm_type} -H X-AUTH-TOKEN:#{auth_token}`
 host_json = JSON.parse(curl_output)
