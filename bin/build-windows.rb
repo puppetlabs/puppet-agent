@@ -70,12 +70,15 @@ puts "Build-Windows.rb... facter build Completed!!"
 
 # Move all necessary dll's into facter bindir
 Kernel.system("set -vx;#{ssh_command} \"cp /cygdrive/c/tools/mingw#{script_arch}/bin/libgcc_s_#{ARCH == 'x64' ? 'seh' : 'sjlj'}-1.dll /cygdrive/c/tools/mingw#{script_arch}/bin/libstdc++-6.dll /cygdrive/c/tools/mingw#{script_arch}/bin/libwinpthread-1.dll /home/Administrator/facter/release/bin/\"")
+fail "Copying compiler DLLs to build directory failed" unless $?.success?
 
 # Format everything to prepare to archive it
 Kernel.system("set -vx;#{ssh_command} \"source .bash_profile ; mkdir -p /home/Administrator/archive/lib ; cp -r /home/Administrator/facter/release/bin /home/Administrator/facter/lib/inc /home/Administrator/archive/ ; cp /home/Administrator/facter/release/lib/facter.rb /home/Administrator/archive/lib/ \"")
+fail "Copying source files for packaging failed" unless $?.success?
 
 # Zip up the built archives
 Kernel.system("set -vx;#{ssh_command} \"source .bash_profile ; 7za.exe a -r -tzip facter.zip 'C:\\cygwin64\\home\\Administrator\\archive\\*'\"")
+fail "Creating archive failed" unless $?.success?
 
 
 ### Build puppet-agent.msi
