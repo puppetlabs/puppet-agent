@@ -23,6 +23,10 @@ component "ruby" do |pkg, settings, platform|
         :sum => "d4d75e7afccbb235fc079f558473c7f9",
         :target_double => 'i386-solaris2.10',
       },
+      'i386-pc-solaris2.11' => {
+        :sum => "d966bfa1ecb32567be06edb06e0ef4f1",
+        :target_double => 'i386-solaris2.11',
+      },
     }
 
     pkg.add_source "file://resources/files/rbconfig-#{settings[:platform_triple]}.rb", sum: rbconfig_info[settings[:platform_triple]][:sum]
@@ -41,13 +45,13 @@ component "ruby" do |pkg, settings, platform|
 
   if platform.is_solaris?
     if platform.architecture == "sparc"
-      # ruby1.8 is not new enough to successfully cross-compile ruby 2.1.6 (it doesn't understand the --disable-gems flag)
+      # ruby1.8 is not new enough to successfully cross-compile ruby 2.1.x (it doesn't understand the --disable-gems flag)
       pkg.build_requires 'ruby19'
       special_flags = "--with-baseruby=/opt/csw/bin/ruby"
     end
     pkg.build_requires 'libedit'
     pkg.build_requires 'runtime'
-    pkg.environment "PATH" => "#{settings[:bindir]}:/usr/ccs/bin:/usr/sfw/bin:$$PATH"
+    pkg.environment "PATH" => "#{settings[:bindir]}:/usr/ccs/bin:/usr/sfw/bin:$$PATH:/opt/csw/bin"
     pkg.environment "CC" => "/opt/pl-build-tools/bin/#{settings[:platform_triple]}-gcc"
     pkg.environment "LDFLAGS" => "-Wl,-rpath=/opt/puppetlabs/puppet/lib"
   end
@@ -88,7 +92,7 @@ component "ruby" do |pkg, settings, platform|
     target_dir = File.join(settings[:libdir], "ruby", "2.1.0", rbconfig_info[settings[:platform_triple]][:target_double])
     pkg.install do
       [
-        "/opt/csw/bin/gsed -i 's|raise|warn|g' #{target_dir}/rbconfig.rb",
+        "gsed -i 's|raise|warn|g' #{target_dir}/rbconfig.rb",
         "mkdir -p #{settings[:datadir]}/doc",
         "cp #{target_dir}/rbconfig.rb #{settings[:datadir]}/doc",
         "cp ../rbconfig-#{settings[:platform_triple]}.rb #{target_dir}/rbconfig.rb",
