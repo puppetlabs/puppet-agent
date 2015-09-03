@@ -2,6 +2,7 @@ require 'yaml'
 require 'json'
 require 'fileutils'
 
+SCRIPT_ROOT = File.expand_path(File.dirname(__FILE__))
 
 # BUILD_TARGET passed through the pipeline
 build_target         = ENV['BUILD_TARGET']
@@ -16,8 +17,7 @@ end
 AGENT_VERSION_STRING = ENV['AGENT_VERSION_STRING'] || %x{git describe --tags}.chomp.gsub('-', '.')
 
 # Whether or not we are going to build boost and yaml-cpp or copy them from existing builds
-# If `TRUE`, this will build boost and yaml-cpp according to the specifications in
-# git://github.com/puppetlabs/facter/master/contrib/facter.ps1
+# If `TRUE`, this will build boost and yaml-cpp according to the specifications in facter.ps1
 # If `FALSE`, this will download and unpack prebuilt boost and yaml-cpp arcives.
 BUILD_SOURCE         = ENV['BUILD_SOURCE'] || '0'
 
@@ -68,13 +68,9 @@ else
     FACTER_ref = FACTER['ref']
 end
 
-# Download and execute the facter build script
-# this script lives in the puppetlabs/facter repo
-facter_build_script = ENV['FACTER_BUILD_SCRIPT'] ||
-  "https://raw.githubusercontent.com/puppetlabs/facter/#{FACTER_ref}/contrib/facter.ps1"
-puts "Downloading Facter build script from #{facter_build_script}"
-result = Kernel.system("#{ssh_command} \"curl -O #{facter_build_script} && powershell.exe -NoProfile -ExecutionPolicy Unrestricted -InputFormat None -Command ./facter.ps1 -arch #{script_arch} -buildSource #{BUILD_SOURCE} -facterRef #{FACTER['ref']} -facterFork #{FACTER['url']}\"")
-fail "It looks like the facter build script #{facter_build_script} failed for some reason. I would suggest ssh'ing into the box and poking around" unless result
+Kernel.system("scp #{File.join(SCRIPT_ROOT, 'facter.ps1')} Administrator@#{hostname}:/home/Administrator/")
+result = Kernel.system("#{ssh_command} \"powershell.exe -NoProfile -ExecutionPolicy Unrestricted -InputFormat None -Command ./facter.ps1 -arch #{script_arch} -buildSource #{BUILD_SOURCE} -facterRef #{FACTER['ref']} -facterFork #{FACTER['url']}\"")
+fail "It looks like the facter build script facter.ps1 failed for some reason. I would suggest ssh'ing into the box and poking around:\n#{result}" unless result
 
 # Move all necessary dll's into facter bindir
 Kernel.system("#{ssh_command} \"cp /cygdrive/c/tools/mingw#{script_arch}/bin/libgcc_s_#{ARCH == 'x64' ? 'seh' : 'sjlj'}-1.dll /cygdrive/c/tools/mingw#{script_arch}/bin/libstdc++-6.dll /cygdrive/c/tools/mingw#{script_arch}/bin/libwinpthread-1.dll /home/Administrator/facter/release/bin/\"")
