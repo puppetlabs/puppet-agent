@@ -25,7 +25,7 @@ component "ruby" do |pkg, settings, platform|
         :target_double => 'i386-solaris2.10',
       },
       'i386-pc-solaris2.11' => {
-        :sum => "d966bfa1ecb32567be06edb06e0ef4f1",
+        :sum => "bf62b4ad7b3f74299f7b3f5a0a819798",
         :target_double => 'i386-solaris2.11',
       },
     }
