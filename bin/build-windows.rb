@@ -69,17 +69,21 @@ else
 end
 
 Kernel.system("scp #{File.join(SCRIPT_ROOT, 'facter.ps1')} Administrator@#{hostname}:/home/Administrator/")
+fail "Copying facter.ps1 to #{hostname} failed" unless $?.success?
 result = Kernel.system("#{ssh_command} \"powershell.exe -NoProfile -ExecutionPolicy Unrestricted -InputFormat None -Command ./facter.ps1 -arch #{script_arch} -buildSource #{BUILD_SOURCE} -facterRef #{FACTER['ref']} -facterFork #{FACTER['url']}\"")
 fail "It looks like the facter build script facter.ps1 failed for some reason. I would suggest ssh'ing into the box and poking around:\n#{result}" unless result
 
 # Move all necessary dll's into facter bindir
 Kernel.system("#{ssh_command} \"cp /cygdrive/c/tools/mingw#{script_arch}/bin/libgcc_s_#{ARCH == 'x64' ? 'seh' : 'sjlj'}-1.dll /cygdrive/c/tools/mingw#{script_arch}/bin/libstdc++-6.dll /cygdrive/c/tools/mingw#{script_arch}/bin/libwinpthread-1.dll /home/Administrator/facter/release/bin/\"")
+fail "Copying compiler DLLs to build directory failed" unless $?.success?
 
 # Format everything to prepare to archive it
 Kernel.system("#{ssh_command} \"source .bash_profile ; mkdir -p /home/Administrator/archive/lib ; cp -r /home/Administrator/facter/release/bin /home/Administrator/facter/lib/inc /home/Administrator/archive/ ; cp /home/Administrator/facter/release/lib/facter.rb /home/Administrator/archive/lib/ \"")
+fail "Copying source files for packaging failed" unless $?.success?
 
 # Zip up the built archives
 Kernel.system("#{ssh_command} \"source .bash_profile ; 7za.exe a -r -tzip facter.zip 'C:\\cygwin64\\home\\Administrator\\archive\\*'\"")
+fail "Creating archive failed" unless $?.success?
 
 
 ### Build puppet-agent.msi
