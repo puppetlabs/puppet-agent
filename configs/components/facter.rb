@@ -31,7 +31,7 @@ component "facter" do |pkg, settings, platform|
     pkg.build_requires "cmake"
     pkg.build_requires "boost"
     pkg.build_requires "yaml-cpp --with-static-lib"
-  elsif platform.is_solaris?
+  elsif platform.name =~ /solaris-10/
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/solaris/10/pl-gcc-4.8.2.#{platform.architecture}.pkg.gz"
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/solaris/10/pl-binutils-2.25.#{platform.architecture}.pkg.gz"
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/solaris/10/pl-boost-1.57.0.#{platform.architecture}.pkg.gz"
@@ -117,8 +117,9 @@ component "facter" do |pkg, settings, platform|
     if platform.architecture == 'sparc'
       ruby = "/opt/csw/bin/ruby -r#{settings[:datadir]}/doc/rbconfig.rb"
     end
+
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/#{settings[:platform_triple]}/pl-build-toolchain.cmake"
-    cmake = "/opt/pl-build-tools/i386-pc-solaris2.10/bin/cmake"
+    cmake = "/opt/pl-build-tools/i386-pc-solaris2.#{platform.os_version}/bin/cmake"
 
     # FACT-1156: If we build with -O3, solaris segfaults due to something in std::vector
     special_flags = "-DCMAKE_CXX_FLAGS_RELEASE='-O2 -DNDEBUG'"
