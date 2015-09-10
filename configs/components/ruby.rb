@@ -14,19 +14,19 @@ component "ruby" do |pkg, settings, platform|
   pkg.apply_patch "#{base}/libyaml_cve-2014-9130.patch"
   pkg.apply_patch "#{base}/CVE-2015-4020.patch"
 
-  if platform.is_aix?
-    pkg.apply_patch "#{base}/aix_ruby_2.1_libpath_with_opt_dir.patch"
-    pkg.apply_patch "#{base}/aix_ruby_2.1_fix_proctitle.patch"
-    pkg.apply_patch "#{base}/aix_ruby_2.1_fix_make_test_failure.patch"
-    pkg.environment "CC" => "/opt/pl-build-tools/bin/gcc"
-    pkg.environment "LDFLAGS" =>  settings[:ldflags]
-    pkg.build_requires "libedit"
-    pkg.build_requires "runtime"
-  end
-
-  # Cross-compiles require a hand-built rbconfig from the target system
-  if platform.is_solaris?
     rbconfig_info = {
+      'powerpc-ibm-aix5.3.0.0' => {
+        :sum => "6800f474883e2a35b411ddf6275b44cd",
+        :target_double => "powerpc-aix5.3.0.0",
+      },
+      'powerpc-ibm-aix6.1.0.0' => {
+        :sum => "9a18a7b4016628b506f55651d93678c2",
+        :target_double => "powerpc-aix6.1.0.0",
+      },
+      'powerpc-ibm-aix7.1.0.0' => {
+        :sum => "311c2ab3a3bb9afb8724d2e347136270",
+        :target_double => "powerpc-aix7.1.0.0",
+       },
       'i386-pc-solaris2.10' => {
         :sum => "5a34dbec6d4b8dbe1a01dedfc60441aa",
         :target_double => 'i386-solaris2.10',
@@ -45,6 +45,22 @@ component "ruby" do |pkg, settings, platform|
       }
     }
 
+  if platform.is_aix?
+    pkg.apply_patch "#{base}/aix_ruby_2.1_libpath_with_opt_dir.patch"
+    pkg.apply_patch "#{base}/aix_ruby_2.1_fix_proctitle.patch"
+    pkg.apply_patch "#{base}/aix_ruby_2.1_fix_make_test_failure.patch"
+    pkg.environment "CC" => "/opt/pl-build-tools/bin/gcc"
+    pkg.environment "LDFLAGS" => settings[:ldflags]
+    pkg.build_requires "libedit"
+    pkg.build_requires "runtime"
+
+    # This normalizes the build string to something like AIX 7.1.0.0 rather
+    # than AIX 7.1.0.2 or something
+    special_flags = "--build=#{settings[:platform_triple]}"
+  end
+
+  # Cross-compiles require a hand-built rbconfig from the target system
+  if platform.is_solaris? || platform.is_aix?
     pkg.add_source "file://resources/files/rbconfig-#{settings[:platform_triple]}.rb", sum: rbconfig_info[settings[:platform_triple]][:sum]
   end
 
@@ -91,20 +107,19 @@ component "ruby" do |pkg, settings, platform|
         --disable-install-doc \
         --disable-install-rdoc \
         #{settings[:host]} \
-        #{special_flags}"]
+        #{special_flags}"
+     ]
   end
 
   pkg.build do
-    ["#{platform[:make]} -j$(shell expr $(shell #{platform[:num_cores]}) + 1)"]
+    "#{platform[:make]} -j$(shell expr $(shell #{platform[:num_cores]}) + 1)"
   end
 
   pkg.install do
-    [
-      "#{platform[:make]} -j$(shell expr $(shell #{platform[:num_cores]}) + 1) install",
-    ]
+    "#{platform[:make]} -j$(shell expr $(shell #{platform[:num_cores]}) + 1) install"
   end
 
-  if platform.is_solaris?
+  if platform.is_solaris? || platform.is_aix?
     # Here we replace the rbconfig from our ruby compiled with our toolchain
     # with an rbconfig from a ruby of the same version compiled with the system
     # gcc. Without this, the rbconfig will be looking for a gcc that won't
@@ -113,14 +128,22 @@ component "ruby" do |pkg, settings, platform|
     # We also disable a safety check in the rbconfig to prevent it from being
     # loaded from a different ruby, because we're going to do that later to
     # install compiled gems.
+    #
+    # On AIX we build everything using our own GCC. This means that gem
+    # installing a compiled gem would not work without us shipping that gcc.
+    # This tells the ruby setup that it can use the default system gcc rather
+    # than our own.
     target_dir = File.join(settings[:libdir], "ruby", "2.1.0", rbconfig_info[settings[:platform_triple]][:target_double])
+    sed = "gsed" if platform.is_solaris?
+    sed = "/opt/freeware/bin/sed" if platform.is_aix?
     pkg.install do
       [
-        "gsed -i 's|raise|warn|g' #{target_dir}/rbconfig.rb",
+        "#{sed} -i 's|raise|warn|g' #{target_dir}/rbconfig.rb",
         "mkdir -p #{settings[:datadir]}/doc",
         "cp #{target_dir}/rbconfig.rb #{settings[:datadir]}/doc",
         "cp ../rbconfig-#{settings[:platform_triple]}.rb #{target_dir}/rbconfig.rb",
       ]
     end
   end
+
 end

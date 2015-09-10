@@ -41,6 +41,11 @@ project "puppet-agent" do |proj|
 
   proj.setting(:gem_install, "#{proj.host_gem} install --no-rdoc --no-ri --local ")
 
+  # For AIX, we use the triple to install a better rbconfig
+  if platform.is_aix?
+    platform_triple = "powerpc-ibm-aix#{platform.os_version}.0.0"
+  end
+
   proj.setting(:platform_triple, platform_triple)
   proj.setting(:host, host)
 
