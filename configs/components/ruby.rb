@@ -21,6 +21,7 @@ component "ruby" do |pkg, settings, platform|
     pkg.environment "CC" => "/opt/pl-build-tools/bin/gcc"
     pkg.environment "LDFLAGS" =>  settings[:ldflags]
     pkg.build_requires "libedit"
+    pkg.build_requires "runtime"
   end
 
   # Cross-compiles require a hand-built rbconfig from the target system

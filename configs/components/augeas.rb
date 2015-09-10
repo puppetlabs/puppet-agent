@@ -19,6 +19,7 @@ component 'augeas' do |pkg, settings, platform|
     pkg.environment "LDFLAGS" => settings[:ldflags]
     pkg.environment "CFLAGS" => "-I/opt/puppetlabs/puppet/include/"
     pkg.build_requires 'libedit'
+    pkg.build_requires 'runtime'
   end
 
   if platform.is_rpm? && !platform.is_aix?
