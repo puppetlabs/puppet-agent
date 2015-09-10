@@ -26,6 +26,7 @@ component "openssl" do |pkg, settings, platform|
   elsif platform.is_aix?
     pkg.apply_patch 'resources/patches/openssl/add-shell-to-engines_makefile.patch'
     pkg.apply_patch 'resources/patches/openssl/openssl-1.0.0l-use-gcc-instead-of-makedepend.patch'
+    pkg.build_requires 'runtime'
   elsif platform.is_osx?
     pkg.build_requires 'makedepend'
   end

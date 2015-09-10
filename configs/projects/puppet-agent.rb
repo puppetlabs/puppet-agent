@@ -85,7 +85,7 @@ project "puppet-agent" do |proj|
     proj.component "dmidecode"
   end
 
-  if platform.is_solaris? || platform.name =~ /^el-4/
+  if platform.is_solaris? || platform.name =~ /^el-4/ || platform.is_aix?
     proj.component "runtime"
   end
 
