@@ -19,7 +19,8 @@ component "ruby" do |pkg, settings, platform|
     pkg.apply_patch "#{base}/aix_ruby_2.1_fix_proctitle.patch"
     pkg.apply_patch "#{base}/aix_ruby_2.1_fix_make_test_failure.patch"
     pkg.environment "CC" => "/opt/pl-build-tools/bin/gcc"
-    pkg.environment "LDFLAGS" =>  "-Wl,-brtl,-L/opt/puppetlabs/puppet/lib"
+    pkg.environment "LDFLAGS" =>  settings[:ldflags]
+    pkg.build_requires "libedit"
   end
 
   # Cross-compiles require a hand-built rbconfig from the target system
