@@ -43,6 +43,9 @@ project "puppet-agent" do |proj|
   # Platform specific
   proj.setting(:cflags, "-I#{proj.includedir} -I/opt/pl-build-tools/include")
   proj.setting(:ldflags, "-L#{proj.libdir} -L/opt/pl-build-tools/lib -Wl,-rpath=#{proj.libdir}")
+  if platform.is_aix?
+    proj.setting(:ldflags, "-Wl,-brtl -L#{proj.libdir} -L/opt/pl-build-tools/lib")
+  end
 
   # First our stuff
   proj.component "puppet"
@@ -77,8 +80,8 @@ project "puppet-agent" do |proj|
     proj.component "runtime"
   end
 
-  # Needed to avoid using readline on solaris
-  if platform.is_solaris?
+  # Needed to avoid using readline on solaris and aix
+  if platform.is_solaris? || platform.is_aix?
     proj.component "libedit"
   end
 
