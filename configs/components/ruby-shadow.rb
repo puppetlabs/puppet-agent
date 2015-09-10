@@ -6,15 +6,26 @@ component "ruby-shadow" do |pkg, settings, platform|
   pkg.replaces 'pe-ruby-shadow'
 
   pkg.build_requires "ruby"
+  pkg.environment "PATH" => "$$PATH:/usr/ccs/bin:/usr/sfw/bin"
+  pkg.environment "CONFIGURE_ARGS" => '--vendor'
+
+  if platform.is_solaris?
+    if platform.architecture == 'sparc'
+      ruby = "/opt/csw/bin/ruby -r#{settings[:datadir]}/doc/rbconfig.rb"
+      pkg.environment "RUBY" => "/opt/csw/bin/ruby"
+    else
+      ruby = "#{File.join(settings[:bindir], 'ruby')} -r#{settings[:datadir]}/doc/rbconfig.rb"
+    end
+  else
+    ruby = File.join(settings[:bindir], 'ruby')
+  end
 
   pkg.build do
-    ["export CONFIGURE_ARGS='--vendor'",
-     "export CFLAGS=#{settings[:cflags]}",
-     "#{settings[:bindir]}/ruby extconf.rb",
-     "#{platform[:make]} -j$(shell expr $(shell #{platform[:num_cores]}) + 1)"]
+     [ "#{ruby} extconf.rb",
+     "#{platform[:make]} -e -j$(shell expr $(shell #{platform[:num_cores]}) + 1)"]
   end
 
   pkg.install do
-    ["#{platform[:make]} -j$(shell expr $(shell #{platform[:num_cores]}) + 1) DESTDIR=/ install"]
+    ["#{platform[:make]} -e -j$(shell expr $(shell #{platform[:num_cores]}) + 1) DESTDIR=/ install"]
   end
 end

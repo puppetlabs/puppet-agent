@@ -1,28 +1,61 @@
 component "openssl" do |pkg, settings, platform|
-  pkg.version "1.0.0s"
-  pkg.md5sum "fe54d58a42c6aa1c7a587378e27072f3"
+  pkg.version "1.0.2d"
+  pkg.md5sum "38dd619b2e77cbac69b99f52a053d25a"
   pkg.url "http://buildsources.delivery.puppetlabs.net/openssl-#{pkg.get_version}.tar.gz"
 
   pkg.replaces 'pe-openssl'
 
-  if platform.is_osx?
+  # Use our toolchain here. It's not available on osx, so only include it on linux systems.
+  if platform.is_linux?
+    pkg.build_requires 'pl-binutils'
+    pkg.build_requires 'pl-gcc'
+    if platform.name =~ /el-4/
+      pkg.build_requires 'runtime'
+    end
+  elsif platform.is_solaris?
+    if platform.os_version == "10"
+      pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/solaris/10/pl-gcc-4.8.2.#{platform.architecture}.pkg.gz"
+      pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/solaris/10/pl-binutils-2.25.#{platform.architecture}.pkg.gz"
+    elsif platform.os_version == "11"
+      pkg.build_requires 'pl-gcc'
+    end
+
+    pkg.build_requires 'runtime'
+    pkg.apply_patch 'resources/patches/openssl/add-shell-to-engines_makefile.patch'
+    pkg.apply_patch 'resources/patches/openssl/openssl-1.0.0l-use-gcc-instead-of-makedepend.patch'
+  elsif platform.is_osx?
     pkg.build_requires 'makedepend'
-    env = "PATH=$$PATH:/usr/local/bin"
   end
 
   ca_certfile = File.join(settings[:prefix], 'ssl', 'cert.pem')
 
-  case platform.name
-  when /^osx-.*$/
+  if platform.is_osx?
+    pkg.environment "PATH" => "/opt/pl-build-tools/bin:$$PATH:/usr/local/bin"
     target = 'darwin64-x86_64-cc'
+    cflags = settings[:cflags]
     ldflags = ''
+  elsif platform.is_solaris?
+    pkg.environment "PATH" => "/opt/pl-build-tools/bin:$$PATH:/usr/local/bin:/usr/ccs/bin:/usr/sfw/bin"
+    pkg.environment "CC" => "/opt/pl-build-tools/bin/#{settings[:platform_triple]}-gcc"
+    if platform.architecture =~ /86/
+      target = 'solaris-x86-gcc'
+    else
+      target = 'solaris-sparcv9-gcc'
+    end
+
+    ldflags = "-R/opt/pl-build-tools/#{settings[:platform_triple]}/lib -Wl,-rpath=#{settings[:libdir]} -L/opt/pl-build-tools/#{settings[:platform_triple]}/lib"
+    cflags = "#{settings[:cflags]} -fPIC"
   else
+    pkg.environment "PATH" => "/opt/pl-build-tools/bin:$$PATH:/usr/local/bin"
     if platform.architecture =~ /86$/
       target = 'linux-elf'
       sslflags = '386'
     elsif platform.architecture =~ /64$/
       target = 'linux-x86_64'
+    elsif platform.architecture =~ /ppce500mc$/
+      target = 'linux-ppc'
     end
+    cflags = settings[:cflags]
     ldflags = "#{settings[:ldflags]} -Wl,-z,relro"
   end
 
@@ -33,7 +66,7 @@ component "openssl" do |pkg, settings, platform|
     # --libdir ensures that we avoid the multilib (lib/ vs. lib64/) problem,
     # since configure uses the existence of a lib64 directory to determine
     # if it should install its own libs into a multilib dir. Yay OpenSSL!
-    "#{env} ./Configure \
+    "./Configure \
       --prefix=#{settings[:prefix]} \
       --libdir=lib \
       --openssldir=#{settings[:prefix]}/ssl \
@@ -54,17 +87,17 @@ component "openssl" do |pkg, settings, platform|
       no-srp \
       no-ssl2 \
       no-ssl3 \
-      #{settings[:cflags]} \
+      #{cflags} \
       #{ldflags}"]
   end
 
   pkg.build do
-    ["#{env} #{platform[:make]} depend",
-    "#{env} #{platform[:make]}"]
+    ["#{platform[:make]} depend",
+    "#{platform[:make]}"]
   end
 
   pkg.install do
-    ["#{env} #{platform[:make]} INSTALL_PREFIX=/ install"]
+    ["#{platform[:make]} INSTALL_PREFIX=/ install"]
   end
 
   pkg.install_file "LICENSE", "#{settings[:prefix]}/share/doc/openssl-#{pkg.get_version}/LICENSE"

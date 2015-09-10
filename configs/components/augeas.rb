@@ -15,10 +15,14 @@ component 'augeas' do |pkg, settings, platform|
     pkg.requires 'libxml2'
 
     pkg.build_requires 'readline-devel'
-    if platform.is_nxos? or platform.is_cisco_wrlinux?
+    if platform.is_nxos? or platform.is_cisco_wrlinux? or platform.is_huaweios?
       pkg.requires 'libreadline6'
     else
       pkg.requires 'readline'
+    end
+
+    if platform.name =~ /el-4/
+      pkg.build_requires 'runtime'
     end
 
     pkg.build_requires 'pkgconfig'
@@ -30,11 +34,27 @@ component 'augeas' do |pkg, settings, platform|
     pkg.requires 'libreadline6'
 
     pkg.build_requires 'pkg-config'
+  elsif platform.is_solaris?
+    pkg.environment "PATH" => "/opt/pl-build-tools/bin:$$PATH:/usr/local/bin:/usr/ccs/bin:/usr/sfw/bin:#{settings[:bindir]}"
+    pkg.environment "CFLAGS" => settings[:cflags]
+    pkg.environment "LDFLAGS" => settings[:ldflags]
+    pkg.build_requires 'libedit'
+    pkg.build_requires 'runtime'
+    if platform.os_version == "10"
+      pkg.build_requires 'pkgconfig'
+      pkg.environment "PKG_CONFIG_PATH" => "/opt/csw/lib/pkgconfig"
+      pkg.environment "PKG_CONFIG" => "/opt/csw/bin/pkg-config"
+    else
+      pkg.build_requires 'pl-pkg-config'
+      pkg.environment "PKG_CONFIG_PATH" => "/usr/lib/pkgconfig"
+      pkg.environment "PKG_CONFIG" => "/opt/pl-build-tools/bin/pkg-config"
+    end
+  elsif platform.is_osx?
+    pkg.environment "PATH" => "$$PATH:/usr/local/bin"
   end
 
   pkg.configure do
-    ["PATH=$$PATH:/usr/local/bin \
-     ./configure --prefix=#{settings[:prefix]}"]
+    [ "./configure --prefix=#{settings[:prefix]} #{settings[:host]}" ]
   end
 
   pkg.build do
