@@ -16,13 +16,9 @@ component 'augeas' do |pkg, settings, platform|
     pkg.build_requires "http://osmirror.delivery.puppetlabs.net/AIX_MIRROR/libxml2-2.6.21-4.aix5.2.ppc.rpm"
     pkg.build_requires "http://osmirror.delivery.puppetlabs.net/AIX_MIRROR/libxml2-devel-2.6.21-4.aix5.2.ppc.rpm"
     pkg.environment "CC" => "/opt/pl-build-tools/bin/gcc"
-    if platform.os_version =~ /6.1|7.1/
-      pkg.build_requires "http://osmirror.delivery.puppetlabs.net/AIX_MIRROR/readline-6.1-2.aix6.1.ppc.rpm"
-      pkg.build_requires "http://osmirror.delivery.puppetlabs.net/AIX_MIRROR/readline-devel-6.1-2.aix6.1.ppc.rpm"
-    else
-      pkg.build_requires "http://osmirror.delivery.puppetlabs.net/AIX_MIRROR/readline-4.3-2.aix5.1.ppc.rpm"
-      pkg.build_requires "http://osmirror.delivery.puppetlabs.net/AIX_MIRROR/readline-devel-4.3-2.aix5.1.ppc.rpm"
-    end
+    pkg.environment "LDFLAGS" => settings[:ldflags]
+    pkg.environment "CFLAGS" => "-I/opt/puppetlabs/puppet/include/"
+    pkg.build_requires 'libedit'
   end
 
   if platform.is_rpm? && !platform.is_aix?

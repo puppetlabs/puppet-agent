@@ -7,10 +7,14 @@ component 'libedit' do |pkg, settings, platform|
 
   if platform.is_solaris?
     pkg.environment "CC" => "/opt/pl-build-tools/bin/#{settings[:platform_triple]}-gcc"
+  elsif platform.is_aix?
+    pkg.build_requires "http://osmirror.delivery.puppetlabs.net/AIX_MIRROR/gawk-3.1.3-1.aix5.1.ppc.rpm"
+    pkg.environment "CC" => "/opt/pl-build-tools/bin/gcc"
+    pkg.environment "LDFLAGS" => settings[:ldflags]
   end
 
   pkg.configure do
-    "./configure --prefix=#{settings[:prefix]} #{settings[:host]}"
+    "./configure --enable-shared --prefix=#{settings[:prefix]} #{settings[:host]}"
   end
 
   pkg.build do
