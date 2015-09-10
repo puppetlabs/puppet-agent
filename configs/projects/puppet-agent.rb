@@ -28,6 +28,11 @@ project "puppet-agent" do |proj|
     end
   end
 
+  # For AIX, we use the triple to install a better rbconfig
+  if platform.is_aix?
+    platform_triple = "powerpc-ibm-aix#{platform.os_version}.0.0"
+  end
+
   proj.setting(:platform_triple, platform_triple)
   proj.setting(:host, host)
 
