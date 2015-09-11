@@ -80,11 +80,11 @@ project "puppet-agent" do |proj|
 
   # Components only applicable on OSX
   if platform.is_osx?
-   proj.component "cfpropertylist"
+    proj.component "cfpropertylist"
   end
 
   if platform.is_solaris? || platform.is_osx?
-   proj.component "ca-cert"
+    proj.component "ca-cert"
   end
 
   # We only build ruby-selinux for EL 5-7
