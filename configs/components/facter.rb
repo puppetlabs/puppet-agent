@@ -23,6 +23,7 @@ component "facter" do |pkg, settings, platform|
 
   # Running facter (as part of testing) expects augtool are available
   pkg.build_requires 'augeas'
+  pkg.build_requires "openssl"
 
   pkg.environment "PATH" => "#{settings[:bindir]}:$$PATH"
 
@@ -37,8 +38,12 @@ component "facter" do |pkg, settings, platform|
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/solaris/10/pl-boost-1.57.0.#{platform.architecture}.pkg.gz"
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/solaris/10/pl-yaml-cpp-0.5.1.#{platform.architecture}.pkg.gz"
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/solaris/10/pl-cmake-3.2.3.i386.pkg.gz"
+  elsif platform.name =~ /solaris-11/
+    pkg.build_requires "pl-gcc-#{platform.architecture}"
+    pkg.build_requires "pl-cmake"
+    pkg.build_requires "pl-boost-#{platform.architecture}"
+    pkg.build_requires "pl-yaml-cpp-#{platform.architecture}"
   else
-    pkg.build_requires "openssl"
     pkg.build_requires "pl-gcc"
     pkg.build_requires "pl-cmake"
     pkg.build_requires "pl-boost"
