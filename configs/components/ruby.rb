@@ -16,18 +16,22 @@ component "ruby" do |pkg, settings, platform|
   # Cross-compiles require a hand-built rbconfig from the target system
   if platform.is_solaris?
     rbconfig_info = {
-      'sparc-sun-solaris2.10' => {
-        :sum => "e3ce52e22c49b7a32eb290b6253b0cbc",
-        :target_double => 'sparc-solaris2.10',
-      },
       'i386-pc-solaris2.10' => {
         :sum => "5a34dbec6d4b8dbe1a01dedfc60441aa",
         :target_double => 'i386-solaris2.10',
+      },
+      'sparc-sun-solaris2.10' => {
+        :sum => "e3ce52e22c49b7a32eb290b6253b0cbc",
+        :target_double => 'sparc-solaris2.10',
       },
       'i386-pc-solaris2.11' => {
         :sum => "bf62b4ad7b3f74299f7b3f5a0a819798",
         :target_double => 'i386-solaris2.11',
       },
+      'sparc-sun-solaris2.11' => {
+        :sum => "a699015beb45b4bc5065d69b4610d326",
+        :target_double => 'sparc-solaris2.11',
+      }
     }
 
     pkg.add_source "file://resources/files/rbconfig-#{settings[:platform_triple]}.rb", sum: rbconfig_info[settings[:platform_triple]][:sum]
