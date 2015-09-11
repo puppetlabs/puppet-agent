@@ -83,7 +83,7 @@ project "puppet-agent" do |proj|
     proj.component "cfpropertylist"
   end
 
-  if platform.is_solaris? || platform.is_osx?
+  if platform.is_solaris? || platform.is_osx? || platform.name =~ /^el-4/
     proj.component "ca-cert"
   end
 

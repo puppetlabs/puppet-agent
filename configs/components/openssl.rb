@@ -113,7 +113,7 @@ component "openssl" do |pkg, settings, platform|
     when /sles-12-.*$/
       pkg.link '/etc/ssl/ca-bundle.pem', ca_certfile
     when /el-4-.*$/
-      pkg.link '/usr/share/ssl/certs/ca-bundle.crt', ca_certfile
+      # Do nothing here. We have a minimal root cert bundle.
     else
       pkg.link '/etc/pki/tls/certs/ca-bundle.crt', ca_certfile
     end
