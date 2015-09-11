@@ -111,7 +111,7 @@ component "facter" do |pkg, settings, platform|
     skip_curl = 'OFF'
   end
 
-  ruby = "#{File.join(settings[:bindir], 'ruby')} -rrbconfig"
+  ruby = "#{settings[:host_ruby]} -rrbconfig"
 
   # cmake on OSX is provided by brew
   # a toolchain is not currently required for OSX since we're building with clang.
@@ -120,7 +120,7 @@ component "facter" do |pkg, settings, platform|
     cmake = "/usr/local/bin/cmake"
   elsif platform.is_solaris?
     if platform.architecture == 'sparc'
-      ruby = "/opt/csw/bin/ruby -r#{settings[:datadir]}/doc/rbconfig.rb"
+      ruby = "#{settings[:host_ruby]} -r#{settings[:datadir]}/doc/rbconfig.rb"
     end
 
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/#{settings[:platform_triple]}/pl-build-toolchain.cmake"

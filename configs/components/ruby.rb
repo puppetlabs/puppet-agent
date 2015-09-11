@@ -50,9 +50,14 @@ component "ruby" do |pkg, settings, platform|
 
   if platform.is_solaris?
     if platform.architecture == "sparc"
-      # ruby1.8 is not new enough to successfully cross-compile ruby 2.1.x (it doesn't understand the --disable-gems flag)
-      pkg.build_requires 'ruby19'
-      special_flags = "--with-baseruby=/opt/csw/bin/ruby"
+      if platform.os_version == "10"
+        # ruby1.8 is not new enough to successfully cross-compile ruby 2.1.x (it doesn't understand the --disable-gems flag)
+        pkg.build_requires 'ruby19'
+      elsif platform.os_version == "11"
+        pkg.build_requires 'pl-ruby'
+      end
+
+      special_flags = "--with-baseruby=#{settings[:host_ruby]}"
     end
     pkg.build_requires 'libedit'
     pkg.build_requires 'runtime'
