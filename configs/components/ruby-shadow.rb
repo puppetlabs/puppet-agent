@@ -11,11 +11,9 @@ component "ruby-shadow" do |pkg, settings, platform|
 
   if platform.is_solaris?
     if platform.architecture == 'sparc'
-      ruby = "/opt/csw/bin/ruby -r#{settings[:datadir]}/doc/rbconfig.rb"
-      pkg.environment "RUBY" => "/opt/csw/bin/ruby"
-    else
-      ruby = "#{File.join(settings[:bindir], 'ruby')} -r#{settings[:datadir]}/doc/rbconfig.rb"
+      pkg.environment "RUBY" => settings[:host_ruby]
     end
+    ruby = "#{settings[:host_ruby]} -r#{settings[:datadir]}/doc/rbconfig.rb"
   else
     ruby = File.join(settings[:bindir], 'ruby')
   end

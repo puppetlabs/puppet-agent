@@ -15,6 +15,8 @@ project "puppet-agent" do |proj|
   proj.setting(:gem_home, File.join(proj.libdir, "ruby/gems/2.1.0"))
   proj.setting(:tmpfilesdir, "/usr/lib/tmpfiles.d")
   proj.setting(:ruby_vendordir, File.join(proj.libdir, "ruby", "vendor_ruby"))
+  proj.setting(:host_ruby, File.join(proj.bindir, "ruby"))
+  proj.setting(:host_gem, File.join(proj.bindir, "gem"))
 
   platform = proj.get_platform
 
@@ -25,8 +27,19 @@ project "puppet-agent" do |proj|
     else
       platform_triple = "#{platform.architecture}-sun-solaris2.#{platform.os_version}"
       host = "--host #{platform_triple}"
+
+      # For cross-compiling, we have a standalone ruby
+      if platform.os_version == "10"
+        proj.setting(:host_ruby, "/opt/csw/bin/ruby")
+        proj.setting(:host_gem, "/opt/csw/bin/gem19")
+      else
+        proj.setting(:host_ruby, "/opt/pl-build-tools/bin/ruby")
+        proj.setting(:host_gem, "/opt/pl-build-tools/bin/gem")
+      end
     end
   end
+
+  proj.setting(:gem_install, "#{proj.host_gem} install --no-rdoc --no-ri --local ")
 
   proj.setting(:platform_triple, platform_triple)
   proj.setting(:host, host)
