@@ -56,12 +56,6 @@ component "puppet" do |pkg, settings, platform|
     pkg.install_configfile 'puppet-agent.conf', File.join(settings[:tmpfilesdir], 'puppet-agent.conf')
   end
 
-  if platform.architecture == "sparc"
-    ruby = '/opt/csw/bin/ruby'
-  else
-    ruby = File.join(settings[:bindir], 'ruby')
-  end
-
   # Puppet requires tar, otherwise PMT will not install modules
   if platform.is_solaris?
     if platform.os_version == "11"
@@ -73,7 +67,7 @@ component "puppet" do |pkg, settings, platform|
 
   pkg.install do
     [
-      "#{ruby} install.rb --ruby=#{File.join(settings[:bindir], 'ruby')} --no-check-prereqs --bindir=#{settings[:bindir]} --configdir=#{settings[:puppet_configdir]} --sitelibdir=#{settings[:ruby_vendordir]} --configs --quick --man --mandir=#{settings[:mandir]}",
+      "#{settings[:host_ruby]} install.rb --ruby=#{File.join(settings[:bindir], 'ruby')} --no-check-prereqs --bindir=#{settings[:bindir]} --configdir=#{settings[:puppet_configdir]} --sitelibdir=#{settings[:ruby_vendordir]} --configs --quick --man --mandir=#{settings[:mandir]}",
     ]
   end
 
