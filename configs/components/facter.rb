@@ -154,7 +154,7 @@ component "facter" do |pkg, settings, platform|
   end
 
   # Make test will explode horribly in a cross-compile situation
-  # Tests will be skipped on AIX until they are expected to pass
+  # Tests will be skipped on AIX until they are expected to pass (FACT-1239)
   if platform.architecture == 'sparc' || platform.is_aix?
     test = ":"
   else
