@@ -1,1 +1,4 @@
-{"url": "git://github.com/puppetlabs/facter.git", "ref": "1a39ed205c3c34cc66a73731c4d910a3fb3a42db"}
+{
+  "url": "git://github.com/puppetlabs/facter",
+  "ref": "refs/tags/3.1.0"
+}
