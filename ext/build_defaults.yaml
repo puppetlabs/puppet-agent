@@ -2,6 +2,52 @@
 project: 'puppet-agent'
 packaging_url: 'git://github.com/puppetlabs/packaging.git --branch=master'
 packaging_repo: 'packaging'
+# foss_platforms will be shipped to the nightly repos
+foss_platforms:
+  - cumulus-2.2-amd64
+  - debian-7-amd64
+  - debian-7-i386
+  - debian-8-amd64
+  - debian-8-i386
+  - el-5-i386
+  - el-5-x86_64
+  - el-6-i386
+  - el-6-x86_64
+  - el-7-x86_64
+  - eos-4-i386
+  - fedora-f21-i386
+  - fedora-f21-x86_64
+  - fedora-f22-i386
+  - fedora-f22-x86_64
+  - osx-10.9-x86_64
+  - osx-10.10-x86_64
+  - ubuntu-12.04-amd64
+  - ubuntu-12.04-i386
+  - ubuntu-14.04-amd64
+  - ubuntu-14.04-i386
+  - ubuntu-15.04-amd64
+  - ubuntu-15.04-i386
+  - windows-2012-x86
+  - windows-2012-x64
+pe_platforms:
+  - aix-5.3-power
+  - aix-6.1-power
+  - aix-7.1-power
+  - debian-6-amd64
+  - debian-6-i386
+  - el-4-i386
+  - el-4-x86_64
+  - sles-10-i386
+  - sles-10-x86_64
+  - sles-11-i386
+  - sles-11-x86_64
+  - sles-12-x86_64
+  - solaris-10-i386
+  - solaris-10-sparc
+  - solaris-11-i386
+  - solaris-11-sparc
+  - ubuntu-10.04-amd64
+  - ubuntu-10.04-i386
 gpg_name: 'info@puppetlabs.com'
 gpg_key: '4BD6EC30'
 deb_targets: 'lucid-i386 lucid-amd64 precise-i386 precise-amd64 squeeze-i386 squeeze-amd64 trusty-i386 trusty-amd64 wheezy-i386 wheezy-amd64'
