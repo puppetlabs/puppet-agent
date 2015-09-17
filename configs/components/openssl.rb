@@ -17,7 +17,7 @@ component "openssl" do |pkg, settings, platform|
       pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/solaris/10/pl-gcc-4.8.2.#{platform.architecture}.pkg.gz"
       pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/solaris/10/pl-binutils-2.25.#{platform.architecture}.pkg.gz"
     elsif platform.os_version == "11"
-      pkg.build_requires 'pl-gcc'
+      pkg.build_requires "pl-gcc-#{platform.architecture}"
     end
 
     pkg.build_requires 'runtime'
@@ -113,7 +113,7 @@ component "openssl" do |pkg, settings, platform|
     when /sles-12-.*$/
       pkg.link '/etc/ssl/ca-bundle.pem', ca_certfile
     when /el-4-.*$/
-      pkg.link '/usr/share/ssl/certs/ca-bundle.crt', ca_certfile
+      # Do nothing here. We have a minimal root cert bundle.
     else
       pkg.link '/etc/pki/tls/certs/ca-bundle.crt', ca_certfile
     end
