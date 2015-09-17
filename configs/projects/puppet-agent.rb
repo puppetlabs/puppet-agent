@@ -28,6 +28,11 @@ project "puppet-agent" do |proj|
     end
   end
 
+  # For AIX, we use the triple to install a better rbconfig
+  if platform.is_aix?
+    platform_triple = "powerpc-ibm-aix#{platform.os_version}.0.0"
+  end
+
   proj.setting(:platform_triple, platform_triple)
   proj.setting(:host, host)
 
@@ -43,13 +48,16 @@ project "puppet-agent" do |proj|
   # Platform specific
   proj.setting(:cflags, "-I#{proj.includedir} -I/opt/pl-build-tools/include")
   proj.setting(:ldflags, "-L#{proj.libdir} -L/opt/pl-build-tools/lib -Wl,-rpath=#{proj.libdir}")
+  if platform.is_aix?
+    proj.setting(:ldflags, "-Wl,-brtl -L#{proj.libdir} -L/opt/pl-build-tools/lib")
+  end
 
   # First our stuff
   proj.component "puppet"
   proj.component "facter"
   proj.component "hiera"
   proj.component "marionette-collective"
-  if platform.is_rpm? || platform.is_deb?
+  if platform.is_linux?
     proj.component "cpp-pcp-client"
     proj.component "pxp-agent"
   end
@@ -63,7 +71,7 @@ project "puppet-agent" do |proj|
   proj.component "rubygem-deep-merge"
   proj.component "rubygem-net-ssh"
   proj.component "rubygem-hocon"
-  proj.component "ruby-shadow"
+  proj.component "ruby-shadow" unless platform.is_aix?
   proj.component "ruby-augeas"
   proj.component "openssl"
 
@@ -73,12 +81,12 @@ project "puppet-agent" do |proj|
     proj.component "dmidecode"
   end
 
-  if platform.is_solaris? || platform.name =~ /^el-4/
+  if platform.is_solaris? || platform.name =~ /^el-4/ || platform.is_aix?
     proj.component "runtime"
   end
 
-  # Needed to avoid using readline on solaris
-  if platform.is_solaris?
+  # Needed to avoid using readline on solaris and aix
+  if platform.is_solaris? || platform.is_aix?
     proj.component "libedit"
   end
 

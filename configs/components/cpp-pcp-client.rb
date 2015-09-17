@@ -1,10 +1,18 @@
 component "cpp-pcp-client" do |pkg, settings, platform|
   pkg.load_from_json('configs/components/cpp-pcp-client.json')
 
-  pkg.build_requires "openssl"
-  pkg.build_requires "pl-gcc"
-  pkg.build_requires "pl-cmake"
-  pkg.build_requires "pl-boost"
+  if platform.is_aix?
+    pkg.build_requires "openssl"
+    pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-gcc-5.2.0-1.aix#{platform.os_version}.ppc.rpm"
+    pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-cmake-3.2.3-1.aix#{platform.os_version}.ppc.rpm"
+    pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-boost-1.58.0-1.aix#{platform.os_version}.ppc.rpm"
+    pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-yaml-cpp-0.5.1-1.aix#{platform.os_version}.ppc.rpm"
+  else
+    pkg.build_requires "openssl"
+    pkg.build_requires "pl-gcc"
+    pkg.build_requires "pl-cmake"
+    pkg.build_requires "pl-boost"
+  end
 
   pkg.configure do
     ["PATH=#{settings[:bindir]}:$$PATH \

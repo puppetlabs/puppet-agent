@@ -47,6 +47,8 @@ component "marionette-collective" do |pkg, settings, platform|
     pkg.install_service "ext/aio/osx/mcollective.plist", nil, "com.puppetlabs.mcollective"
   when "smf"
     pkg.install_service "ext/aio/solaris/smf/mcollective.xml", nil, "mcollective"
+  when "aix"
+    pkg.install_service "resources/aix/mcollective.service", nil, "mcollective"
   else
     fail "need to know where to put service files"
   end

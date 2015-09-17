@@ -15,6 +15,7 @@ component "facter" do |pkg, settings, platform|
   pkg.replaces 'pe-facter'
 
   pkg.build_requires "ruby"
+  pkg.build_requires 'openssl'
 
   if platform.is_linux?
     # Running facter (as part of testing) expects virt-what is available
@@ -37,8 +38,13 @@ component "facter" do |pkg, settings, platform|
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/solaris/10/pl-boost-1.57.0.#{platform.architecture}.pkg.gz"
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/solaris/10/pl-yaml-cpp-0.5.1.#{platform.architecture}.pkg.gz"
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/solaris/10/pl-cmake-3.2.3.i386.pkg.gz"
+  elsif platform.is_aix?
+    pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-gcc-5.2.0-1.aix#{platform.os_version}.ppc.rpm"
+    pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-cmake-3.2.3-1.aix#{platform.os_version}.ppc.rpm"
+    pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-boost-1.58.0-1.aix#{platform.os_version}.ppc.rpm"
+    pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-yaml-cpp-0.5.1-1.aix#{platform.os_version}.ppc.rpm"
+    pkg.build_requires "runtime"
   else
-    pkg.build_requires "openssl"
     pkg.build_requires "pl-gcc"
     pkg.build_requires "pl-cmake"
     pkg.build_requires "pl-boost"
@@ -86,14 +92,14 @@ component "facter" do |pkg, settings, platform|
   # Skip blkid unless we can ensure it exists at build time. Otherwise we depend
   # on the vagaries of the system we build on.
   skip_blkid = 'ON'
-  if platform.is_deb? or platform.is_nxos? or platform.is_cisco_wrlinux?
+  if platform.is_deb? || platform.is_nxos? || platform.is_cisco_wrlinux?
     pkg.build_requires "libblkid-dev"
     skip_blkid = 'OFF'
   elsif platform.is_rpm?
-    if (platform.is_el? and platform.os_version.to_i >= 6) or (platform.is_sles? and platform.os_version.to_i >= 11) or platform.is_fedora?
+    if (platform.is_el? && platform.os_version.to_i >= 6) || (platform.is_sles? && platform.os_version.to_i >= 11) || platform.is_fedora?
       pkg.build_requires "libblkid-devel"
       skip_blkid = 'OFF'
-    elsif (platform.is_el? and platform.os_version.to_i < 6) or (platform.is_sles? and platform.os_version.to_i < 11)
+    elsif (platform.is_el? && platform.os_version.to_i < 6) || (platform.is_sles? && platform.os_version.to_i < 11)
       pkg.build_requires "e2fsprogs-devel"
       skip_blkid = 'OFF'
     end
@@ -101,7 +107,7 @@ component "facter" do |pkg, settings, platform|
 
   # curl is only used for compute clusters (GCE, EC2); so rpm, deb, and Windows
   skip_curl = 'ON'
-  if platform.is_rpm? || platform.is_deb?
+  if platform.is_linux?
     pkg.build_requires "curl"
     skip_curl = 'OFF'
   end
@@ -148,7 +154,8 @@ component "facter" do |pkg, settings, platform|
   end
 
   # Make test will explode horribly in a cross-compile situation
-  if platform.architecture == 'sparc'
+  # Tests will be skipped on AIX until they are expected to pass (FACT-1239)
+  if platform.architecture == 'sparc' || platform.is_aix?
     test = ":"
   else
     test = "#{platform[:make]} test ARGS=-V"
