@@ -99,7 +99,7 @@ component "ruby" do |pkg, settings, platform|
   # ruby is used, even if the build system has a copy of libyaml available
   pkg.configure do
     [
-      "./configure \
+      "bash configure \
         --prefix=#{settings[:prefix]} \
         --with-opt-dir=#{settings[:prefix]} \
         --enable-shared \
