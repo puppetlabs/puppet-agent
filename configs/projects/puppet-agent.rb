@@ -84,6 +84,7 @@ project "puppet-agent" do |proj|
   if platform.is_linux?
     proj.component "virt-what"
     proj.component "dmidecode"
+    proj.component "shellpath"
   end
 
   if platform.is_solaris? || platform.name =~ /^el-4/
