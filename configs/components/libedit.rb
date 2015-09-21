@@ -14,7 +14,7 @@ component 'libedit' do |pkg, settings, platform|
   end
 
   pkg.configure do
-    "./configure --enable-shared --prefix=#{settings[:prefix]} #{settings[:host]}"
+    "bash configure --enable-shared --prefix=#{settings[:prefix]} #{settings[:host]}"
   end
 
   pkg.build do
