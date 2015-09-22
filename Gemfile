@@ -12,3 +12,5 @@ end
 
 gem 'vanagon', *vanagon_location_for(ENV['VANAGON_LOCATION'] || '~> 0.3.14')
 gem 'packaging', '~> 0.4', :github => 'puppetlabs/packaging'
+gem 'rake'
+gem 'json'
