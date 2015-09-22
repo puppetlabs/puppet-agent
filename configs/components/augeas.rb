@@ -10,12 +10,24 @@ component 'augeas' do |pkg, settings, platform|
     pkg.apply_patch 'resources/patches/augeas/augeas-1.2.0-fix-services-sles10.patch'
   end
 
-  if platform.is_rpm?
+  if platform.is_aix?
+    pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-gcc-5.2.0-1.aix#{platform.os_version}.ppc.rpm"
+    pkg.build_requires "http://osmirror.delivery.puppetlabs.net/AIX_MIRROR/pkg-config-0.19-6.aix5.2.ppc.rpm"
+    pkg.build_requires "http://osmirror.delivery.puppetlabs.net/AIX_MIRROR/libxml2-2.6.21-4.aix5.2.ppc.rpm"
+    pkg.build_requires "http://osmirror.delivery.puppetlabs.net/AIX_MIRROR/libxml2-devel-2.6.21-4.aix5.2.ppc.rpm"
+    pkg.environment "CC" => "/opt/pl-build-tools/bin/gcc"
+    pkg.environment "LDFLAGS" => settings[:ldflags]
+    pkg.environment "CFLAGS" => "-I/opt/puppetlabs/puppet/include/"
+    pkg.build_requires 'libedit'
+    pkg.build_requires 'runtime'
+  end
+
+  if platform.is_rpm? && !platform.is_aix?
     pkg.build_requires 'libxml2-devel'
     pkg.requires 'libxml2'
 
     pkg.build_requires 'readline-devel'
-    if platform.is_nxos? or platform.is_cisco_wrlinux? or platform.is_huaweios?
+    if platform.is_nxos? || platform.is_cisco_wrlinux? || platform.is_huaweios?
       pkg.requires 'libreadline6'
     else
       pkg.requires 'readline'
