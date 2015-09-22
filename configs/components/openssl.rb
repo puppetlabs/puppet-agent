@@ -5,8 +5,10 @@ component "openssl" do |pkg, settings, platform|
 
   pkg.replaces 'pe-openssl'
 
-  # Use our toolchain here. It's not available on osx, so only include it on linux systems.
-  if platform.is_linux?
+  # Use our toolchain on linux systems (it's not available on osx)
+  if platform.is_huaweios?
+    pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/HuaweiOS/#{platform.os_version}/ppce500mc/pl-gcc-4.8.2-1.huaweios6.ppce500mc.rpm"
+  elsif platform.is_linux?
     pkg.build_requires 'pl-binutils'
     pkg.build_requires 'pl-gcc'
     if platform.name =~ /el-4/
@@ -19,7 +21,6 @@ component "openssl" do |pkg, settings, platform|
     elsif platform.os_version == "11"
       pkg.build_requires "pl-gcc-#{platform.architecture}"
     end
-
     pkg.build_requires 'runtime'
     pkg.apply_patch 'resources/patches/openssl/add-shell-to-engines_makefile.patch'
     pkg.apply_patch 'resources/patches/openssl/openssl-1.0.0l-use-gcc-instead-of-makedepend.patch'
