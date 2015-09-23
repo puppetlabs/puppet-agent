@@ -87,6 +87,7 @@ project "puppet-agent" do |proj|
   proj.component "ruby-shadow" unless platform.is_aix?
   proj.component "ruby-augeas"
   proj.component "openssl"
+  proj.component "puppet-ca-bundle"
 
   # These utilites don't really work on unix
   if platform.is_linux?
@@ -107,10 +108,6 @@ project "puppet-agent" do |proj|
   # Components only applicable on OSX
   if platform.is_osx?
     proj.component "cfpropertylist"
-  end
-
-  if platform.is_solaris? || platform.is_osx? || platform.name =~ /^el-4/
-    proj.component "ca-cert"
   end
 
   # We only build ruby-selinux for EL 5-7
