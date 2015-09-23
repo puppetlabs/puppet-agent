@@ -109,7 +109,7 @@ project "puppet-agent" do |proj|
   end
 
   # We only build ruby-selinux for EL 5-7
-  if platform.name =~ /^el-(5|6|7)-.*/
+  if platform.name =~ /^el-(5|6|7)-.*/ || platform.is_fedora?
     proj.component "ruby-selinux"
   end
 
