@@ -70,7 +70,7 @@ project "puppet-agent" do |proj|
   proj.component "facter"
   proj.component "hiera"
   proj.component "marionette-collective"
-  if platform.is_rpm? || platform.is_deb?
+  if platform.is_linux?
     proj.component "cpp-pcp-client"
     proj.component "pxp-agent"
   end
