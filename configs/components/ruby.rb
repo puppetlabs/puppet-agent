@@ -1,6 +1,6 @@
 component "ruby" do |pkg, settings, platform|
-  pkg.version "2.1.6"
-  pkg.md5sum "6e5564364be085c45576787b48eeb75f"
+  pkg.version "2.1.7"
+  pkg.md5sum "2e143b8e19b056df46479ae4412550c9"
   pkg.url "http://buildsources.delivery.puppetlabs.net/ruby-#{pkg.get_version}.tar.gz"
 
   pkg.replaces 'pe-ruby'
@@ -12,23 +12,35 @@ component "ruby" do |pkg, settings, platform|
 
   base = 'resources/patches/ruby'
   pkg.apply_patch "#{base}/libyaml_cve-2014-9130.patch"
-  pkg.apply_patch "#{base}/CVE-2015-4020.patch"
+  pkg.apply_patch "#{base}/2.1.7_pthreads_mem_allocation.patch"
 
+  # These are a pretty smelly hack, and they run the risk of letting tests
+  # based on the generated data (that should otherwise fail) pass
+  # erroneously. We should probably fix the "not shipping our compiler"
+  # problem that led us to do this sooner rather than later.
+  #   Ryan McKern, 26/09/2015
+  #   Reference notes:
+  #   - 6b089ed2: Provide a sane rbconfig for AIX
+  #   - 8e88a51a: (RE-5401) Add rbconfig for solaris 11 sparc
+  #   - 8f10f5f8: (RE-5400) Roll rbconfig for solaris 11 back to 2.1.6
+  #   - 741d18b1: (RE-5400) Update ruby for solaris 11 i386
+  #   - d09ed06f: (RE-5290) Update ruby to replace rbconfig for all solaris
+  #   - bba35c1e: (RE-5290) Update ruby for a cross-compile on solaris 10
   rbconfig_info = {
     'powerpc-ibm-aix5.3.0.0' => {
-      :sum => "6800f474883e2a35b411ddf6275b44cd",
+      :sum => "8d7b25f1b92d960f0cc11ce854d0319d",
       :target_double => "powerpc-aix5.3.0.0",
     },
     'powerpc-ibm-aix6.1.0.0' => {
-      :sum => "9a18a7b4016628b506f55651d93678c2",
+      :sum => "f59d06b19ff1c1d88f672f8bdb492f04",
       :target_double => "powerpc-aix6.1.0.0",
     },
     'powerpc-ibm-aix7.1.0.0' => {
-      :sum => "311c2ab3a3bb9afb8724d2e347136270",
+      :sum => "81581f5fbd8421cfc72f2bcd01c9651d",
       :target_double => "powerpc-aix7.1.0.0",
      },
     'i386-pc-solaris2.10' => {
-      :sum => "5a34dbec6d4b8dbe1a01dedfc60441aa",
+      :sum => "d4d75e7afccbb235fc079f558473c7f9",
       :target_double => 'i386-solaris2.10',
     },
     'sparc-sun-solaris2.10' => {
@@ -36,11 +48,11 @@ component "ruby" do |pkg, settings, platform|
       :target_double => 'sparc-solaris2.10',
     },
     'i386-pc-solaris2.11' => {
-      :sum => "bf62b4ad7b3f74299f7b3f5a0a819798",
+      :sum => "94ccda4d66ada8d301dce0cdd111ea5a",
       :target_double => 'i386-solaris2.11',
     },
     'sparc-sun-solaris2.11' => {
-      :sum => "a699015beb45b4bc5065d69b4610d326",
+      :sum => "b89b342b7d9bf2d8280ec6a52992b404",
       :target_double => 'sparc-solaris2.11',
     }
   }
