@@ -2,6 +2,7 @@ component "cpp-pcp-client" do |pkg, settings, platform|
   pkg.load_from_json('configs/components/cpp-pcp-client.json')
   cmake = "/opt/pl-build-tools/bin/cmake"
   toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/pl-build-toolchain.cmake"
+  pkg.environment "PATH" => "#{settings[:bindir]}:/opt/pl-build-tools/bin:$$PATH"
 
   pkg.build_requires "openssl"
   if platform.is_aix?
@@ -22,15 +23,16 @@ component "cpp-pcp-client" do |pkg, settings, platform|
   end
 
   pkg.configure do
-    ["PATH=#{settings[:bindir]}:$$PATH \
-          #{cmake} \
-          #{toolchain} \
+    [
+      "#{cmake} \
+      #{toolchain} \
           -DCMAKE_VERBOSE_MAKEFILE=ON \
           -DCMAKE_PREFIX_PATH=#{settings[:prefix]} \
           -DCMAKE_INSTALL_PREFIX=#{settings[:prefix]} \
           -DCMAKE_SYSTEM_PREFIX_PATH=#{settings[:prefix]} \
           -DBOOST_STATIC=ON \
-          ."]
+          ."
+    ]
   end
 
   pkg.build do

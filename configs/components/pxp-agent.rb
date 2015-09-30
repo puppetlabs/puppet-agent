@@ -1,8 +1,9 @@
 component "pxp-agent" do |pkg, settings, platform|
   pkg.load_from_json('configs/components/pxp-agent.json')
 
- toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/pl-build-toolchain.cmake"
- cmake = "/opt/pl-build-tools/bin/cmake"
+  toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/pl-build-toolchain.cmake"
+  cmake = "/opt/pl-build-tools/bin/cmake"
+  pkg.environment "PATH" => "#{settings[:bindir]}:/opt/pl-build-tools/bin:$$PATH"
 
   pkg.build_requires "facter"
   pkg.build_requires "openssl"
@@ -22,16 +23,17 @@ component "pxp-agent" do |pkg, settings, platform|
     pkg.build_requires "pl-boost"
   end
 
- pkg.configure do
-    ["PATH=#{settings[:bindir]}:$$PATH \
-          #{cmake}\
-          #{toolchain} \
+  pkg.configure do
+    [
+      "#{cmake}\
+      #{toolchain} \
           -DCMAKE_VERBOSE_MAKEFILE=ON \
           -DCMAKE_PREFIX_PATH=#{settings[:prefix]} \
           -DCMAKE_INSTALL_PREFIX=#{settings[:prefix]} \
           -DCMAKE_SYSTEM_PREFIX_PATH=#{settings[:prefix]} \
           -DBOOST_STATIC=ON \
-          ."]
+          ."
+    ]
   end
 
   pkg.build do
