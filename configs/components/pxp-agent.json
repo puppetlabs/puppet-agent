@@ -1,1 +1,1 @@
-{"url": "git@github.com:puppetlabs/pxp-agent.git", "ref": "27a41ff7ee555276b79f1cf478efec26b3085036"}
+{"url": "git@github.com:puppetlabs/pxp-agent.git", "ref": "$COMPONENT_COMMIT"}
