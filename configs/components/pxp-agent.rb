@@ -43,4 +43,25 @@ component "pxp-agent" do |pkg, settings, platform|
   pkg.install do
     ["#{platform[:make]} -j$(shell expr $(shell #{platform[:num_cores]}) + 1) install"]
   end
+
+  case platform.servicetype
+  when "systemd"
+    pkg.install_service "ext/systemd/pxp-agent.service", "ext/redhat/pxp-agent.sysconfig"
+  when "sysv"
+    if platform.is_deb?
+      pkg.install_service "ext/debian/pxp-agent.init", "ext/debian/pxp-agent.default"
+    elsif platform.is_sles?
+      pkg.install_service "ext/suse/pxp-agent.init", "ext/redhat/pxp-agent.sysconfig"
+    elsif platform.is_rpm?
+      pkg.install_service "ext/redhat/pxp-agent.init", "ext/redhat/pxp-agent.sysconfig"
+    end
+  when "launchd"
+    pkg.install_service "ext/osx/pxp-agent.plist", nil, "com.puppetlabs.pxp-agent"
+  when "smf"
+    pkg.install_service "ext/solaris/smf/pxp-agent.xml", "ext/solaris/smf/pxp-agent"
+  when "aix"
+    pkg.install_service "resources/aix/pxp-agent.service", nil, "pxp-agent"
+  else
+    fail "need to know where to put #{pkg.get_name} service files"
+  end
 end
