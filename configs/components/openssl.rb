@@ -32,8 +32,6 @@ component "openssl" do |pkg, settings, platform|
     pkg.build_requires 'makedepend'
   end
 
-  ca_certfile = File.join(settings[:prefix], 'ssl', 'cert.pem')
-
   if platform.is_osx?
     pkg.environment "PATH" => "/opt/pl-build-tools/bin:$$PATH:/usr/local/bin"
     target = 'darwin64-x86_64-cc'
@@ -118,21 +116,4 @@ component "openssl" do |pkg, settings, platform|
   end
 
   pkg.install_file "LICENSE", "#{settings[:prefix]}/share/doc/openssl-#{pkg.get_version}/LICENSE"
-
-  if platform.is_deb?
-    pkg.link '/etc/ssl/certs/ca-certificates.crt', ca_certfile
-  elsif platform.is_rpm?
-    case platform[:name]
-    when /sles-10-.*$/, /sles-11-.*$/
-      pkg.install do
-        "pushd '#{settings[:prefix]}/ssl/certs' 2>&1 >/dev/null; find /etc/ssl/certs -type f -a -name '\*pem' -print0 | xargs -0 --no-run-if-empty -n1 ln -sf; #{settings[:prefix]}/bin/c_rehash ."
-      end
-    when /sles-12-.*$/
-      pkg.link '/etc/ssl/ca-bundle.pem', ca_certfile
-    when /el-4-.*$/
-      # Do nothing here. We have a minimal root cert bundle.
-    else
-      pkg.link '/etc/pki/tls/certs/ca-bundle.crt', ca_certfile
-    end
-  end
 end
