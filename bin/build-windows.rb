@@ -115,15 +115,23 @@ fail "It looks like the pxp-agent build script failed for some reason. I would s
 # Move all necessary dll's into facter bindir
 Kernel.system("set -vx;#{ssh_command} \"cp /cygdrive/c/tools/mingw#{script_arch}/bin/libgcc_s_#{ARCH == 'x64' ? 'seh' : 'sjlj'}-1.dll /cygdrive/c/tools/mingw#{script_arch}/bin/libstdc++-6.dll /cygdrive/c/tools/mingw#{script_arch}/bin/libwinpthread-1.dll /home/Administrator/facter/release/bin/\"")
 fail "Copying compiler DLLs to build directory failed" unless $?.success?
+# Repeat for pxp-agent (CTH-357)
+Kernel.system("set -vx;#{ssh_command} \"cp /cygdrive/c/tools/mingw#{script_arch}/bin/libgcc_s_#{ARCH == 'x64' ? 'seh' : 'sjlj'}-1.dll /cygdrive/c/tools/mingw#{script_arch}/bin/libstdc++-6.dll /cygdrive/c/tools/mingw#{script_arch}/bin/libwinpthread-1.dll /home/Administrator/pxp-agent/release/bin/\"")
+fail "Copying compiler DLLs to build directory failed" unless $?.success?
 
+archive_dest = "/home/Administrator/archive"
+facter_zipname = "facter"
+pxp_zipname = "pxp-agent"
 # Format everything to prepare to archive it
-Kernel.system("set -vx;#{ssh_command} \"source .bash_profile ; mkdir -p /home/Administrator/archive/lib ; cp -r /home/Administrator/facter/release/bin /home/Administrator/facter/lib/inc /home/Administrator/archive/ ; cp /home/Administrator/facter/release/lib/facter.rb /home/Administrator/archive/lib/ \"")
+Kernel.system("set -vx;#{ssh_command} \"source .bash_profile ; mkdir -p #{archive_dest}/#{facter_zipname}/lib ; cp -r /home/Administrator/facter/release/bin /home/Administrator/facter/lib/inc #{archive_dest}/#{facter_zipname} ; cp /home/Administrator/facter/release/lib/facter.rb #{archive_dest}/#{facter_zipname}/lib \"")
+fail "Copying source files for packaging failed" unless $?.success?
+# repeat for pxp-agent
+Kernel.system("set -vx;#{ssh_command} \"source .bash_profile ; mkdir -p #{archive_dest}/#{pxp_zipname} ; cp -r /home/Administrator/cpp-pcp-client/release/bin /home/Administrator/cpp-pcp-client/lib/inc #{archive_dest}/#{pxp_zipname} ; cp -r /home/Administrator/pxp-agent/release/bin /home/Administrator/pxp-agent/lib/inc #{archive_dest}/#{pxp_zipname} \"")
 fail "Copying source files for packaging failed" unless $?.success?
 
 # Zip up the built archives
-Kernel.system("set -vx;#{ssh_command} \"source .bash_profile ; 7za.exe a -r -tzip facter.zip 'C:\\cygwin64\\home\\Administrator\\archive\\*'\"")
-fail "Creating archive failed" unless $?.success?
-
+Kernel.system("set -vx;#{ssh_command} \"source .bash_profile ; 7za.exe a -r -tzip #{facter_zipname}.zip 'C:\\cygwin64\\home\\Administrator\\archive\\#{facter_zipname}\\*'\"")
+Kernel.system("set -vx;#{ssh_command} \"source .bash_profile ; 7za.exe a -r -tzip #{pxp_zipname}.zip    'C:\\cygwin64\\home\\Administrator\\archive\\#{pxp_zipname}\\*'\"")
 
 ### Build puppet-agent.msi
 
@@ -140,6 +148,10 @@ CONFIG = {
     },
     'facter' => {
       :archive => 'facter.zip',
+      :path    => 'file:///home/Administrator'
+    },
+    'pxp-agent' => {
+      :archive => 'pxp-agent.zip',
       :path    => 'file:///home/Administrator'
     },
     'mcollective' => {
