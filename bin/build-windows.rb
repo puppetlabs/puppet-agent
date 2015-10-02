@@ -2,6 +2,7 @@ require 'yaml'
 require 'json'
 require 'fileutils'
 
+SCRIPT_ROOT = File.expand_path(File.dirname(__FILE__))
 
 # BUILD_TARGET passed through the pipeline
 build_target         = ENV['BUILD_TARGET']
@@ -60,22 +61,12 @@ fail "Unable to connect to the host. Is is possible that you aren't on VPN or co
 
 Kernel.system("set -vx;#{ssh_command} 'source .bash_profile ; echo $PATH'")
 
-# We use the facter ref for downloading a script from Github, and for checking out
-# the correct ref when building. The URL doesn't support refs/tags/<tag>, so if
-# using an explicit tag strip `refs/tags`. We still use the full ref for git checkout.
-if match = FACTER['ref'].match(/^refs\/tags\/(.*)$/)
-    FACTER_ref = match.captures[0]
-else
-    FACTER_ref = FACTER['ref']
-end
-
-# Download and execute the facter build script
-# this script lives in the puppetlabs/facter repo
-facter_build_script = ENV['FACTER_BUILD_SCRIPT'] ||
-  "https://raw.githubusercontent.com/puppetlabs/facter/#{FACTER_ref}/contrib/facter.ps1"
-puts "Downloading Facter build script from #{facter_build_script}"
-result = Kernel.system("set -vx;#{ssh_command} \"curl -O #{facter_build_script} && powershell.exe -NoProfile -ExecutionPolicy Unrestricted -InputFormat None -Command ./facter.ps1 -arch #{script_arch} -buildSource #{BUILD_SOURCE} -facterRef #{FACTER['ref']} -facterFork #{FACTER['url']}\"")
-fail "It looks like the facter build script #{facter_build_script} failed for some reason. I would suggest ssh'ing into the box and poking around" unless result
+puts "Build-Windows.rb... building facter"
+Kernel.system("scp #{File.join(SCRIPT_ROOT, 'build-facter.ps1')} Administrator@#{hostname}:/home/Administrator/")
+fail "Copying build-facter.ps1 to #{hostname} failed" unless $?.success?
+result = Kernel.system("set -vx;#{ssh_command} \"powershell.exe -NoProfile -ExecutionPolicy Unrestricted -InputFormat None -Command ./build-facter.ps1 -arch #{script_arch} -buildSource #{BUILD_SOURCE} -facterRef #{FACTER['ref']} -facterFork #{FACTER['url']}\"")
+fail "It looks like the facter build script build-facter.ps1 failed for some reason. I would suggest ssh'ing into the box and poking around:\n#{result}" unless result
+puts "Build-Windows.rb... facter build Completed!!"
 
 # Move all necessary dll's into facter bindir
 Kernel.system("set -vx;#{ssh_command} \"cp /cygdrive/c/tools/mingw#{script_arch}/bin/libgcc_s_#{ARCH == 'x64' ? 'seh' : 'sjlj'}-1.dll /cygdrive/c/tools/mingw#{script_arch}/bin/libstdc++-6.dll /cygdrive/c/tools/mingw#{script_arch}/bin/libwinpthread-1.dll /home/Administrator/facter/release/bin/\"")
