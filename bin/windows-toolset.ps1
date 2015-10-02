@@ -148,3 +148,13 @@ if ($buildSource) {
   & 7za x "${curlPkg}.7z" | FIND /V "ing "
 }
 cd $toolsDir
+
+# Download openssl
+Write-Host "Downloading http://buildsources.delivery.puppetlabs.net/windows/openssl/${opensslPkg}.tar.lzma"
+(New-Object net.webclient).DownloadFile("http://buildsources.delivery.puppetlabs.net/windows/openssl/${opensslPkg}.tar.lzma", "$toolsDir\${opensslPkg}.tar.lzma")
+& 7za x "$toolsDir\${opensslPkg}.tar.lzma"
+mkdir $toolsDir\${opensslPkg}
+cd $toolsDir\${opensslPkg}
+& 7za x "$toolsDir\${opensslPkg}.tar"
+
+cd $toolsDir

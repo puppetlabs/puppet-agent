@@ -33,6 +33,8 @@ if ($arch -eq 64) {
 }
 $mingwVer = "${mingwArch}_mingw-w64_${mingwVerNum}_${mingwThreads}_${mingwExceptions}"
 
+$opensslPkg = "openssl-1.0.0s-x64-windows"
+
 $boostVer = "boost_1_57_0"
 $boostPkg = "${boostVer}-${mingwVer}"
 
@@ -50,3 +52,6 @@ if ($arch -eq 32) {
 }
 $env:PATH += [Environment]::GetFolderPath('ProgramFilesX86') + "\Git\cmd"
 Write-Host "Updated Path to $env:PATH"
+
+# SSL root pointer.
+$env:OPENSSL_ROOT_DIR = $toolsDir + "\" + $opensslPkg
