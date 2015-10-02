@@ -23,7 +23,7 @@ $toolsDir="${sourceDir}\deps"
 
 $mingwVerNum = "4.8.3"
 $mingwVerChoco = $mingwVerNum
-$mingwThreads = "win32"
+$mingwThreads = "posix"
 if ($arch -eq 64) {
   $mingwExceptions = "seh"
   $mingwArch = "x86_64"

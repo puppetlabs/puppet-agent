@@ -40,15 +40,15 @@ Install-Choco git.install 1.9.5.20150320
 Install-Choco Wix35 $Wix35_VERSION
 
 # For MinGW, we expect specific project defaults
-# - win32 threads, for Windows Server 2003 support
+# - posix threads, given no more Windows Server 2003 support (which required win32)
 # - seh exceptions on 64-bit, to work around an obscure bug loading Ruby in Facter
 # These are the defaults on our myget feed.
 if ($arch -eq 64) {
   Install-Choco ruby 2.1.6
-  Install-Choco mingw-w64 $mingwVerChoco
+  Install-Choco mingw-w64-posix $mingwVerChoco
 } else {
   Install-Choco ruby 2.1.6 @('-x86')
-  Install-Choco mingw-w32 $mingwVerChoco @('-x86')
+  Install-Choco mingw-w32-posix $mingwVerChoco @('-x86')
 }
 $env:PATH = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
 if ($arch -eq 32) {
