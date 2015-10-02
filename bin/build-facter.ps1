@@ -14,54 +14,12 @@ param (
 
 $ErrorActionPreference = 'Stop'
 
-# Ensure TEMP directory is set and exists. Git.install can fail otherwise.
-try {
-    if (!(Test-Path $env:TEMP)) { throw }
-} catch {
-    $env:TEMP = Join-Path $env:SystemDrive 'temp'
-    echo "TEMP not correct, setting to $env:TEMP"
-}
-if (!(Test-Path $env:TEMP)) {
-    mkdir -Path $env:TEMP
-    echo "TEMP dir $env:TEMP created"
-}
-
-if ($env:Path -eq $null) {
-    echo "Path is null?"
-}
-
-# Starting from a base Windows Server 2008r2 or 2012r2 installation, install required tools, setup the PATH, and download and build software.
-# This script can be run directly from the web using "iex ((new-object net.webclient).DownloadString('<url_to_raw>'))"
-
-### Configuration
-## Setup the working directory
-$sourceDir=$pwd
+$scriptDirectory = (Split-Path -parent $MyInvocation.MyCommand.Definition)
+. $scriptDirectory\windows-env.ps1
 
 echo $arch
 echo $cores
 echo $buildSource
-
-
-$mingwVerNum = "4.8.3"
-$mingwVerChoco = $mingwVerNum
-$mingwThreads = "win32"
-if ($arch -eq 64) {
-  $mingwExceptions = "seh"
-  $mingwArch = "x86_64"
-} else {
-  $mingwExceptions = "sjlj"
-  $mingwArch = "i686"
-}
-$mingwVer = "${mingwArch}_mingw-w64_${mingwVerNum}_${mingwThreads}_${mingwExceptions}"
-
-$boostVer = "boost_1_57_0"
-$boostPkg = "${boostVer}-${mingwVer}"
-
-$yamlCppVer = "yaml-cpp-0.5.1"
-$yamlPkg = "${yamlCppVer}-${mingwVer}"
-
-$curlVer = "curl-7.42.1"
-$curlPkg = "${curlVer}-${mingwVer}"
 
 ### Setup, build, and install
 ## Install Chocolatey, then use it to install required tools.
@@ -93,12 +51,7 @@ if ($arch -eq 64) {
   Install-Choco ruby 2.1.6 @('-x86')
   Install-Choco mingw-w32 $mingwVerChoco @('-x86')
 }
-$env:PATH = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
-if ($arch -eq 32) {
-  $env:PATH = "C:\tools\mingw32\bin;" + $env:PATH
-}
-$env:PATH += [Environment]::GetFolderPath('ProgramFilesX86') + "\Git\cmd"
-echo $env:PATH
+
 cd $sourceDir
 
 ## Download facter and setup build directories

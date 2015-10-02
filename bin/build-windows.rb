@@ -61,6 +61,10 @@ fail "Unable to connect to the host. Is is possible that you aren't on VPN or co
 
 Kernel.system("set -vx;#{ssh_command} 'source .bash_profile ; echo $PATH'")
 
+Kernel.system("scp #{File.join(SCRIPT_ROOT, 'windows-env.ps1')} Administrator@#{hostname}:/home/Administrator/")
+fail "Copying windows-env.ps1 to #{hostname} failed" unless $?.success?
+
+
 puts "Build-Windows.rb... building facter"
 Kernel.system("scp #{File.join(SCRIPT_ROOT, 'build-facter.ps1')} Administrator@#{hostname}:/home/Administrator/")
 fail "Copying build-facter.ps1 to #{hostname} failed" unless $?.success?
