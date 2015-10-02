@@ -50,7 +50,7 @@ puts "Acquired #{vm_type} VM from pooler at #{hostname}"
 ssh_command = "ssh #{ssh_key} -tt -o StrictHostKeyChecking=no Administrator@#{hostname}"
 ssh_env = "export PATH=\'/cygdrive/c/Program Files (x86)/Git/cmd:/cygdrive/c/tools/ruby21/bin:/cygdrive/c/ProgramData/chocolatey/bin:/cygdrive/c/Program Files (x86)/Windows Installer XML v3.5/bin:/usr/local/bin:/usr/bin:/cygdrive/c/Windows/system32:/cygdrive/c/Windows:/cygdrive/c/Windows/System32/Wbem:/cygdrive/c/Windows/System32/WindowsPowerShell/v1.0:/bin\'"
 
-result = Kernel.system("#{ssh_command} \"echo \\\"#{ssh_env}\\\" >> ~/.bash_profile\"")
+result = Kernel.system("set -vx;#{ssh_command} \"echo \\\"#{ssh_env}\\\" >> ~/.bash_profile\"")
 fail "Unable to connect to the host. Is is possible that you aren't on VPN or connected to the internal PL network?" unless result
 
 
@@ -58,7 +58,7 @@ fail "Unable to connect to the host. Is is possible that you aren't on VPN or co
 #
 #
 
-Kernel.system("#{ssh_command} 'source .bash_profile ; echo $PATH'")
+Kernel.system("set -vx;#{ssh_command} 'source .bash_profile ; echo $PATH'")
 
 # We use the facter ref for downloading a script from Github, and for checking out
 # the correct ref when building. The URL doesn't support refs/tags/<tag>, so if
@@ -74,17 +74,17 @@ end
 facter_build_script = ENV['FACTER_BUILD_SCRIPT'] ||
   "https://raw.githubusercontent.com/puppetlabs/facter/#{FACTER_ref}/contrib/facter.ps1"
 puts "Downloading Facter build script from #{facter_build_script}"
-result = Kernel.system("#{ssh_command} \"curl -O #{facter_build_script} && powershell.exe -NoProfile -ExecutionPolicy Unrestricted -InputFormat None -Command ./facter.ps1 -arch #{script_arch} -buildSource #{BUILD_SOURCE} -facterRef #{FACTER['ref']} -facterFork #{FACTER['url']}\"")
+result = Kernel.system("set -vx;#{ssh_command} \"curl -O #{facter_build_script} && powershell.exe -NoProfile -ExecutionPolicy Unrestricted -InputFormat None -Command ./facter.ps1 -arch #{script_arch} -buildSource #{BUILD_SOURCE} -facterRef #{FACTER['ref']} -facterFork #{FACTER['url']}\"")
 fail "It looks like the facter build script #{facter_build_script} failed for some reason. I would suggest ssh'ing into the box and poking around" unless result
 
 # Move all necessary dll's into facter bindir
-Kernel.system("#{ssh_command} \"cp /cygdrive/c/tools/mingw#{script_arch}/bin/libgcc_s_#{ARCH == 'x64' ? 'seh' : 'sjlj'}-1.dll /cygdrive/c/tools/mingw#{script_arch}/bin/libstdc++-6.dll /cygdrive/c/tools/mingw#{script_arch}/bin/libwinpthread-1.dll /home/Administrator/facter/release/bin/\"")
+Kernel.system("set -vx;#{ssh_command} \"cp /cygdrive/c/tools/mingw#{script_arch}/bin/libgcc_s_#{ARCH == 'x64' ? 'seh' : 'sjlj'}-1.dll /cygdrive/c/tools/mingw#{script_arch}/bin/libstdc++-6.dll /cygdrive/c/tools/mingw#{script_arch}/bin/libwinpthread-1.dll /home/Administrator/facter/release/bin/\"")
 
 # Format everything to prepare to archive it
-Kernel.system("#{ssh_command} \"source .bash_profile ; mkdir -p /home/Administrator/archive/lib ; cp -r /home/Administrator/facter/release/bin /home/Administrator/facter/lib/inc /home/Administrator/archive/ ; cp /home/Administrator/facter/release/lib/facter.rb /home/Administrator/archive/lib/ \"")
+Kernel.system("set -vx;#{ssh_command} \"source .bash_profile ; mkdir -p /home/Administrator/archive/lib ; cp -r /home/Administrator/facter/release/bin /home/Administrator/facter/lib/inc /home/Administrator/archive/ ; cp /home/Administrator/facter/release/lib/facter.rb /home/Administrator/archive/lib/ \"")
 
 # Zip up the built archives
-Kernel.system("#{ssh_command} \"source .bash_profile ; 7za.exe a -r -tzip facter.zip 'C:\\cygwin64\\home\\Administrator\\archive\\*'\"")
+Kernel.system("set -vx;#{ssh_command} \"source .bash_profile ; 7za.exe a -r -tzip facter.zip 'C:\\cygwin64\\home\\Administrator\\archive\\*'\"")
 
 
 ### Build puppet-agent.msi
@@ -118,28 +118,28 @@ File.open("winconfig.yaml", 'w') { |f| f.write(YAML.dump(CONFIG)) }
 
 # Install Wix35 with chocolatey
 wix_install = "choco install -y Wix35 -source https://www.myget.org/F/puppetlabs -version #{CHOCO_WIX35_VERSION}"
-Kernel.system("#{ssh_command} \"source .bash_profile ; if (! #{wix_install}); then #{wix_install}; fi\"")
+Kernel.system("set -vx;#{ssh_command} \"source .bash_profile ; if (! #{wix_install}); then #{wix_install}; fi\"")
 
 # Clone puppet_for_the_win
-result = Kernel.system("#{ssh_command} \"source .bash_profile ; git clone #{WINDOWS['url']} puppet_for_the_win; cd puppet_for_the_win && git checkout #{WINDOWS['ref']}\"")
+result = Kernel.system("set -vx;#{ssh_command} \"source .bash_profile ; git clone #{WINDOWS['url']} puppet_for_the_win; cd puppet_for_the_win && git checkout #{WINDOWS['ref']}\"")
 fail "It seems there were some issues cloning the puppet_for_the_win repo" unless result
 
 # Send the config file over so we know what to build with
-Kernel.system("scp #{ssh_key} winconfig.yaml Administrator@#{hostname}:/home/Administrator/puppet_for_the_win/")
+Kernel.system("set -vx;scp #{ssh_key} winconfig.yaml Administrator@#{hostname}:/home/Administrator/puppet_for_the_win/")
 
 # Build the MSI with automation in puppet_for_the_win
-result = Kernel.system("#{ssh_command} \"source .bash_profile ; cd /home/Administrator/puppet_for_the_win ; AGENT_VERSION_STRING=#{AGENT_VERSION_STRING} ARCH=#{ARCH} c:/tools/ruby21/bin/rake clobber windows:build config=winconfig.yaml\"")
+result = Kernel.system("set -vx;#{ssh_command} \"source .bash_profile ; cd /home/Administrator/puppet_for_the_win ; AGENT_VERSION_STRING=#{AGENT_VERSION_STRING} ARCH=#{ARCH} c:/tools/ruby21/bin/rake clobber windows:build config=winconfig.yaml\"")
 fail "It seems there were some issues building the puppet-agent msi" unless result
 
 # Fetch back the built installer
 FileUtils.mkdir_p("output/windows")
 msi_file = "puppet-agent-#{AGENT_VERSION_STRING}-#{ARCH}.msi"
-Kernel.system("scp #{ssh_key} Administrator@#{hostname}:/home/Administrator/puppet_for_the_win/pkg/#{msi_file} output/windows/")
+Kernel.system("set -vx;scp #{ssh_key} Administrator@#{hostname}:/home/Administrator/puppet_for_the_win/pkg/#{msi_file} output/windows/")
 
 # delete a vm only if we successfully brought back the msi
 msi_path = "output/windows/#{msi_file}"
 if File.exists?(msi_path)
   FileUtils.ln("./#{msi_path}", "output/windows/puppet-agent-#{ARCH}.msi")
-  Kernel.system("curl -X DELETE --url \"http://vmpooler.delivery.puppetlabs.net/vm/#{hostname}\"")
+  Kernel.system("set -vx;curl -X DELETE --url \"http://vmpooler.delivery.puppetlabs.net/vm/#{hostname}\"")
   FileUtils.rm 'winconfig.yaml'
 end
