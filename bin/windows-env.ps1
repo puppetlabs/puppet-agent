@@ -19,6 +19,8 @@ if ($env:Path -eq $null) {
 ## Setup the working directory
 $sourceDir=$pwd
 
+$toolsDir="${sourceDir}\deps"
+
 $mingwVerNum = "4.8.3"
 $mingwVerChoco = $mingwVerNum
 $mingwThreads = "win32"
@@ -39,6 +41,8 @@ $yamlPkg = "${yamlCppVer}-${mingwVer}"
 
 $curlVer = "curl-7.42.1"
 $curlPkg = "${curlVer}-${mingwVer}"
+
+$Wix35_VERSION = '3.5.2519.20130612'
 
 $env:PATH = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
 if ($arch -eq 32) {

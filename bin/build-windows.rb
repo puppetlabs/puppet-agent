@@ -36,9 +36,6 @@ WINDOWS_RUBY = JSON.parse(File.read('configs/components/windows_ruby.json'))
 
 ssh_key = ENV['VANAGON_SSH_KEY'] ? "-i #{ENV['VANAGON_SSH_KEY']}" : ''
 
-#chocolatey versions
-CHOCO_WIX35_VERSION = '3.5.2519.20130612'
-
 # Retrieve a vm
 vm_type = 'win-2012r2-x86_64'
 auth_token = ENV['VMPOOL_TOKEN'] || ''
@@ -63,7 +60,15 @@ Kernel.system("set -vx;#{ssh_command} 'source .bash_profile ; echo $PATH'")
 
 Kernel.system("scp #{File.join(SCRIPT_ROOT, 'windows-env.ps1')} Administrator@#{hostname}:/home/Administrator/")
 fail "Copying windows-env.ps1 to #{hostname} failed" unless $?.success?
+Kernel.system("scp #{File.join(SCRIPT_ROOT, 'windows-toolset.ps1')} Administrator@#{hostname}:/home/Administrator/")
+fail "Copying windows-toolset.ps1 to #{hostname} failed" unless $?.success?
 
+# Ready the Windows Build Environment, followed by the facter and pxp-agent build scripts
+
+puts "Build-Windows.rb... Setting up windows toolset - windows-toolset.ps1"
+result = Kernel.system("#{ssh_command} \"powershell.exe -NoProfile -ExecutionPolicy Unrestricted -InputFormat None -Command ./windows-toolset.ps1 -arch #{script_arch} -buildSource #{BUILD_SOURCE}\"")
+fail "It looks like the Windows-toolset build script failed for some reason. I would suggest ssh'ing into the box and poking around" unless result
+puts "Build-Windows.rb... Windows Setup Completed!!"
 
 puts "Build-Windows.rb... building facter"
 Kernel.system("scp #{File.join(SCRIPT_ROOT, 'build-facter.ps1')} Administrator@#{hostname}:/home/Administrator/")
@@ -113,10 +118,6 @@ CONFIG = {
   }
 }
 File.open("winconfig.yaml", 'w') { |f| f.write(YAML.dump(CONFIG)) }
-
-# Install Wix35 with chocolatey
-wix_install = "choco install -y Wix35 -source https://www.myget.org/F/puppetlabs -version #{CHOCO_WIX35_VERSION}"
-Kernel.system("set -vx;#{ssh_command} \"source .bash_profile ; if (! #{wix_install}); then #{wix_install}; fi\"")
 
 # Clone puppet_for_the_win
 result = Kernel.system("set -vx;#{ssh_command} \"source .bash_profile ; git clone #{WINDOWS['url']} puppet_for_the_win; cd puppet_for_the_win && git checkout #{WINDOWS['ref']}\"")
