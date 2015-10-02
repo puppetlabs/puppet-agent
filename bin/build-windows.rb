@@ -31,6 +31,7 @@ script_arch          = "#{ARCH =='x64' ? '64' : '32'}"
 PUPPET       = JSON.parse(File.read('configs/components/puppet.json'))
 FACTER       = JSON.parse(File.read('configs/components/facter.json'))
 CPPPCPCLIENT = JSON.parse(File.read('configs/components/cpp-pcp-client.json'))
+PXPAGENT     = JSON.parse(File.read('configs/components/pxp-agent.json'))
 HIERA        = JSON.parse(File.read('configs/components/hiera.json'))
 MCO          = JSON.parse(File.read('configs/components/marionette-collective.json'))
 WINDOWS      = JSON.parse(File.read('configs/components/windows_puppet.json'))
@@ -103,6 +104,13 @@ fail "Copying build-cpp-pcp-client.ps1 to #{hostname} failed" unless $?.success?
 clone_and_rynsc_private_repo(CPPPCPCLIENT['url'], CPPPCPCLIENT['ref'], hostname, ssh_key)
 result = Kernel.system("#{ssh_command} \"powershell.exe -NoProfile -ExecutionPolicy Unrestricted -InputFormat None -Command ./build-cpp-pcp-client.ps1 -arch #{script_arch}\"")
 fail "It looks like the cpp-pcp-client build script failed for some reason. I would suggest ssh'ing into the box and poking around" unless result
+
+puts "Build-Windows.rb... building pxp-agent"
+Kernel.system("scp #{File.join(SCRIPT_ROOT, 'build-pxp-agent.ps1')} Administrator@#{hostname}:/home/Administrator/")
+fail "Copying build-pxp-agent.ps1 to #{hostname} failed" unless $?.success?
+clone_and_rynsc_private_repo(PXPAGENT['url'], PXPAGENT['ref'], hostname, ssh_key)
+result = Kernel.system("#{ssh_command} \"powershell.exe -NoProfile -ExecutionPolicy Unrestricted -InputFormat None -Command ./build-pxp-agent.ps1 -arch #{script_arch}\"")
+fail "It looks like the pxp-agent build script failed for some reason. I would suggest ssh'ing into the box and poking around" unless result
 
 # Move all necessary dll's into facter bindir
 Kernel.system("set -vx;#{ssh_command} \"cp /cygdrive/c/tools/mingw#{script_arch}/bin/libgcc_s_#{ARCH == 'x64' ? 'seh' : 'sjlj'}-1.dll /cygdrive/c/tools/mingw#{script_arch}/bin/libstdc++-6.dll /cygdrive/c/tools/mingw#{script_arch}/bin/libwinpthread-1.dll /home/Administrator/facter/release/bin/\"")
