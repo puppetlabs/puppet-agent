@@ -48,10 +48,12 @@ component "marionette-collective" do |pkg, settings, platform|
   end
 
   pkg.install do
-    ["#{settings[:host_ruby]} install.rb --ruby=#{File.join(settings[:bindir], 'ruby')} --bindir=#{settings[:bindir]} --configdir=#{File.join(settings[:sysconfdir], 'mcollective')} --sitelibdir=#{settings[:ruby_vendordir]} --quick --sbindir=#{settings[:bindir]}"]
+    ["#{settings[:host_ruby]} install.rb --ruby=#{File.join(settings[:bindir], 'ruby')} --bindir=#{settings[:bindir]} --configdir=#{File.join(settings[:sysconfdir], 'mcollective')} --sitelibdir=#{settings[:ruby_vendordir]} --quick --sbindir=#{settings[:bindir]} --plugindir=#{File.join('/opt/puppetlabs', 'mcollective', 'plugins')}"]
   end
 
   pkg.directory File.join(settings[:sysconfdir], "mcollective")
+  pkg.directory File.join('/opt/puppetlabs', 'mcollective')
+  pkg.directory File.join('/opt/puppetlabs', 'mcollective', 'plugins')
 
   # Bring in the client.cfg and server.cfg from ext/aio.
   pkg.install_file "ext/aio/common/client.cfg.dist", File.join(settings[:sysconfdir], 'mcollective', 'client.cfg')
