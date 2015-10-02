@@ -1,6 +1,7 @@
 require 'yaml'
 require 'json'
 require 'fileutils'
+require 'tmpdir'
 
 SCRIPT_ROOT = File.expand_path(File.dirname(__FILE__))
 
@@ -29,6 +30,7 @@ script_arch          = "#{ARCH =='x64' ? '64' : '32'}"
 # The refs we will use when building the MSI
 PUPPET       = JSON.parse(File.read('configs/components/puppet.json'))
 FACTER       = JSON.parse(File.read('configs/components/facter.json'))
+CPPPCPCLIENT = JSON.parse(File.read('configs/components/cpp-pcp-client.json'))
 HIERA        = JSON.parse(File.read('configs/components/hiera.json'))
 MCO          = JSON.parse(File.read('configs/components/marionette-collective.json'))
 WINDOWS      = JSON.parse(File.read('configs/components/windows_puppet.json'))
@@ -43,6 +45,24 @@ curl_output = `curl --data --url http://vmpooler.delivery.puppetlabs.net/vm/#{vm
 host_json = JSON.parse(curl_output)
 hostname = host_json[vm_type]['hostname'] + '.' + host_json['domain']
 puts "Acquired #{vm_type} VM from pooler at #{hostname}"
+
+# uses above variables ssh_key and hostname
+def clone_and_rynsc_private_repo(fork, ref, hostname, ssh_key)
+  Dir.mktmpdir do |tmp_dir|
+    name = fork.split('/').last.split('.').first
+    result = Kernel.system("set -vx; cd #{tmp_dir} && git clone #{fork} && cd #{name} && git checkout #{ref} && git submodule update --init --recursive")
+    fail "It seems there were some issues cloning the repo: #{fork}\n#{result}" unless $?.success?
+
+    # rsync to windows requires protocol=29 and ssh command w/o -tt option to work.
+    rsync_command = "rsync -e 'ssh #{ssh_key} -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null' -Hl --protocol 29 --verbose --recursive --no-perms --no-owner --no-group"
+
+    # Push the repos over to the build pooler machine.
+    cmd = "#{rsync_command} #{tmp_dir}/#{name} 'Administrator@#{hostname}:~/'"
+    puts cmd
+    result = Kernel.system(cmd)
+    fail "It seems there were some issues rsyncing the repo: #{fork}\n#{result}" unless $?.success?
+  end
+end
 
 # Set up the environment so I don't keep crying
 ssh_command = "ssh #{ssh_key} -tt -o StrictHostKeyChecking=no Administrator@#{hostname}"
@@ -76,6 +96,13 @@ fail "Copying build-facter.ps1 to #{hostname} failed" unless $?.success?
 result = Kernel.system("set -vx;#{ssh_command} \"powershell.exe -NoProfile -ExecutionPolicy Unrestricted -InputFormat None -Command ./build-facter.ps1 -arch #{script_arch} -buildSource #{BUILD_SOURCE} -facterRef #{FACTER['ref']} -facterFork #{FACTER['url']}\"")
 fail "It looks like the facter build script build-facter.ps1 failed for some reason. I would suggest ssh'ing into the box and poking around:\n#{result}" unless result
 puts "Build-Windows.rb... facter build Completed!!"
+
+puts "Build-Windows.rb... building cpp-pcp-client"
+Kernel.system("scp #{File.join(SCRIPT_ROOT, 'build-cpp-pcp-client.ps1')} Administrator@#{hostname}:/home/Administrator/")
+fail "Copying build-cpp-pcp-client.ps1 to #{hostname} failed" unless $?.success?
+clone_and_rynsc_private_repo(CPPPCPCLIENT['url'], CPPPCPCLIENT['ref'], hostname, ssh_key)
+result = Kernel.system("#{ssh_command} \"powershell.exe -NoProfile -ExecutionPolicy Unrestricted -InputFormat None -Command ./build-cpp-pcp-client.ps1 -arch #{script_arch}\"")
+fail "It looks like the cpp-pcp-client build script failed for some reason. I would suggest ssh'ing into the box and poking around" unless result
 
 # Move all necessary dll's into facter bindir
 Kernel.system("set -vx;#{ssh_command} \"cp /cygdrive/c/tools/mingw#{script_arch}/bin/libgcc_s_#{ARCH == 'x64' ? 'seh' : 'sjlj'}-1.dll /cygdrive/c/tools/mingw#{script_arch}/bin/libstdc++-6.dll /cygdrive/c/tools/mingw#{script_arch}/bin/libwinpthread-1.dll /home/Administrator/facter/release/bin/\"")
