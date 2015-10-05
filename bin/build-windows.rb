@@ -34,6 +34,7 @@ CPPPCPCLIENT = JSON.parse(File.read('configs/components/cpp-pcp-client.json'))
 PXPAGENT     = JSON.parse(File.read('configs/components/pxp-agent.json'))
 HIERA        = JSON.parse(File.read('configs/components/hiera.json'))
 MCO          = JSON.parse(File.read('configs/components/marionette-collective.json'))
+NSSM         = JSON.parse(File.read('configs/components/nssm.json'))
 WINDOWS      = JSON.parse(File.read('configs/components/windows_puppet.json'))
 WINDOWS_RUBY = JSON.parse(File.read('configs/components/windows_ruby.json'))
 
@@ -161,6 +162,10 @@ CONFIG = {
     'sys' => {
       :ref  => WINDOWS_RUBY['ref'][ARCH],
       :repo => WINDOWS_RUBY['url']
+    },
+    'nssm' => {
+      :archive => NSSM['archive'],
+      :path    => NSSM['path']
     },
   }
 }
