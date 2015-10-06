@@ -6,22 +6,6 @@ AllCops:
     - 'resources/**/*.rb'
 
 
-Lint/ConditionPosition:
-  Enabled: true
-
-Lint/ElseLayout:
-  Enabled: true
-
-Lint/UnreachableCode:
-  Enabled: true
-
-Lint/UselessComparison:
-  Enabled: true
-
-# MAYBE useful - no return inside ensure block.
-Lint/EnsureReturn:
-  Enabled: true
-
 # MAYBE useful - errors when rescue {} happens.
 Lint/HandleExceptions:
   Enabled: false
@@ -30,14 +14,6 @@ Lint/HandleExceptions:
 Lint/LiteralInCondition:
   Enabled: false
 
-Lint/ShadowingOuterLocalVariable:
-  Enabled: true
-
-# Can catch complicated strings.
-Lint/LiteralInInterpolation:
-  Enabled: true
-
-
 # DISABLED really useless. Detects return as last statement.
 Style/RedundantReturn:
   Enabled: false
@@ -45,12 +21,6 @@ Style/RedundantReturn:
 # DISABLED since the instances do not seem to indicate any specific errors.
 Lint/AmbiguousOperator:
   Enabled: false
-
-# DISABLED since for all the checked, we are basically checking nil
-# TODO: Change the checking so that if the variable being assigned to has
-# a value ALREADY, then raise an error.
-Lint/AssignmentInCondition:
-  Enabled: true
 
 # DISABLED - not useful
 Style/SpaceBeforeComment:
@@ -206,60 +176,11 @@ Style/UnneededPercentQ:
 Style/Tab:
   Enabled: false
 
-Style/SpaceBeforeSemicolon:
-  Enabled: true
-
 Style/TrailingBlankLines:
   Enabled: false
 
-Style/SpaceInsideBlockBraces:
-  Enabled: true
-
-Style/SpaceInsideBrackets:
-  Enabled: true
-
-Style/SpaceInsideHashLiteralBraces:
-  Enabled: true
-
-Style/SpaceInsideParens:
-  Enabled: true
-
 Style/LeadingCommentSpace:
   Enabled: false
-
-Style/SingleSpaceBeforeFirstArg:
-  Enabled: true
-
-Style/SpaceAfterColon:
-  Enabled: true
-
-Style/SpaceAfterComma:
-  Enabled: true
-
-Style/SpaceAfterControlKeyword:
-  Enabled: true
-
-Style/SpaceAfterMethodName:
-  Enabled: true
-
-Style/SpaceAfterNot:
-  Enabled: true
-
-Style/SpaceAfterSemicolon:
-  Enabled: true
-
-Style/SpaceAroundEqualsInParameterDefault:
-  Enabled: true
-
-Style/SpaceAroundOperators:
-  Enabled: true
-
-Style/SpaceBeforeBlockBraces:
-  Enabled: true
-
-Style/SpaceBeforeComma:
-  Enabled: true
-
 
 Style/CollectionMethods:
   Enabled: false
@@ -307,12 +228,6 @@ Style/IndentArray:
 Style/IndentHash:
   Enabled: false
 
-Style/IndentationConsistency:
-  Enabled: true
-
-Style/IndentationWidth:
-  Enabled: true
-
 Style/EmptyLines:
   Enabled: false
 
@@ -328,17 +243,8 @@ Style/EmptyLiteral:
 Metrics/LineLength:
   Enabled: false
 
-Style/MethodCallParentheses:
-  Enabled: true
-
-Style/MethodDefParentheses:
-  Enabled: true
-
 Style/LineEndConcatenation:
   Enabled: false
-
-Style/TrailingWhitespace:
-  Enabled: true
 
 Style/StringLiterals:
   Enabled: false
@@ -355,15 +261,6 @@ Style/GuardClause:
 Style/IfUnlessModifier:
   Enabled: false
 
-Style/MultilineIfThen:
-  Enabled: true
-
-Style/NegatedIf:
-  Enabled: true
-
-Style/NegatedWhile:
-  Enabled: true
-
 Style/Next:
   Enabled: false
 
@@ -376,34 +273,12 @@ Style/SingleLineMethods:
 Style/SpecialGlobalVars:
   Enabled: false
 
-
 Style/TrivialAccessors:
   Enabled: false
-
-Style/UnlessElse:
-  Enabled: true
 
 # This pushes preference for shell commands as backticks instead of %x
 Style/UnneededPercentX:
   Enabled: false
-
-Style/VariableInterpolation:
-  Enabled: true
-
-Style/VariableName:
-  Enabled: true
-
-Style/WhileUntilDo:
-  Enabled: true
-
-Style/EvenOdd:
-  Enabled: true
-
-Style/FileName:
-  Enabled: true
-
-Style/For:
-  Enabled: true
 
 Style/Lambda:
   Enabled: false
@@ -411,47 +286,8 @@ Style/Lambda:
 Style/MethodName:
   Enabled: false
 
-Style/MultilineTernaryOperator:
-  Enabled: true
-
-Style/NestedTernaryOperator:
-  Enabled: true
-
-Style/NilComparison:
-  Enabled: true
-
-Style/FormatString:
-  Enabled: true
-
-Style/MultilineBlockChain:
-  Enabled: true
-
-Style/Semicolon:
-  Enabled: true
-
 Style/SignalException:
   Enabled: false
-
-Style/NonNilCheck:
-  Enabled: true
-
-Style/Not:
-  Enabled: true
-
-Style/NumericLiterals:
-  Enabled: true
-
-Style/OneLineConditional:
-  Enabled: true
-
-Style/OpMethod:
-  Enabled: true
-
-Style/ParenthesesAroundCondition:
-  Enabled: true
-
-Style/PercentLiteralDelimiters:
-  Enabled: true
 
 Style/PerlBackrefs:
   Enabled: false
@@ -459,51 +295,11 @@ Style/PerlBackrefs:
 Style/PredicateName:
   Enabled: false
 
-Style/RedundantException:
-  Enabled: true
-
-Style/SelfAssignment:
-  Enabled: true
-
-
-Style/Proc:
-  Enabled: true
-
-Style/RaiseArgs:
-  Enabled: true
-
-Style/RedundantBegin:
-  Enabled: true
-
-Style/RescueModifier:
-  Enabled: true
-
 Style/RegexpLiteral:
   Enabled: false
-
-Lint/UnderscorePrefixedVariableName:
-  Enabled: true
-
-Metrics/ParameterLists:
-  Enabled: true
-
-Lint/RequireParentheses:
-  Enabled: true
-
-Lint/SpaceBeforeFirstArg:
-  Enabled: true
 
 Style/ModuleFunction:
   Enabled: false
 
 Lint/Debugger:
   Enabled: false
-
-Style/IfWithSemicolon:
-  Enabled: true
-
-Style/Encoding:
-  Enabled: false
-
-Metrics/PerceivedComplexity:
-  Enabled: true
