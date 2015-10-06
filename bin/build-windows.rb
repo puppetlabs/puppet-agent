@@ -15,7 +15,7 @@ else
 end
 
 # The version of this build
-AGENT_VERSION_STRING = ENV['AGENT_VERSION_STRING'] || %x{git describe --tags}.chomp.gsub('-', '.')
+AGENT_VERSION_STRING = ENV['AGENT_VERSION_STRING'] || %x(git describe --tags).chomp.gsub('-', '.')
 
 # Whether or not we are going to build boost and yaml-cpp or copy them from existing builds
 # If `TRUE`, this will build boost and yaml-cpp according to the specifications in
@@ -25,7 +25,7 @@ BUILD_SOURCE         = ENV['BUILD_SOURCE'] || '0'
 
 # Parsed information that we need to specify in order to know where to find different built facter bits
 # and correctly pass information to the facter build script
-script_arch          = "#{ARCH =='x64' ? '64' : '32'}"
+script_arch          = "#{ARCH == 'x64' ? '64' : '32'}"
 
 # The refs we will use when building the MSI
 PUPPET       = JSON.parse(File.read('configs/components/puppet.json'))

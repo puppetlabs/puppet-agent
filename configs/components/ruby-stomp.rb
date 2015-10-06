@@ -12,6 +12,6 @@ component "ruby-stomp" do |pkg, settings, platform|
   pkg.environment "GEM_HOME" => settings[:gem_home]
 
   pkg.install do
-    ["#{settings[:gem_install]} stomp-1.3.3.gem" ]
+    ["#{settings[:gem_install]} stomp-1.3.3.gem"]
   end
 end

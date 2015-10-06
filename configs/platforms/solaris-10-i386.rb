@@ -7,7 +7,7 @@ platform "solaris-10-i386" do |plat|
   base_pkgs = ['arc', 'gnu-idn', 'gpch', 'gtar', 'hea', 'libm', 'wgetu', 'xcu4']
   base_url = 'http://pl-build-tools.delivery.puppetlabs.net/solaris/10/depends'
 
-  plat.provision_with %Q[echo "# Write the noask file to a temporary directory
+  plat.provision_with %[echo "# Write the noask file to a temporary directory
 # please see man -s 4 admin for details about this file:
 # http://www.opensolarisforum.org/man/man4/admin.html
 #
@@ -44,7 +44,7 @@ basedir=default" > /var/tmp/vanagon-noask;
   /opt/csw/bin/pkgutil -l readline | xargs -I{} pkgrm -n -a /var/tmp/vanagon-noask {};
 
   # Install base build dependencies
-  for pkg in #{base_pkgs.map {|pkg| "SUNW#{pkg}.pkg.gz" }.join(' ')}; do \
+  for pkg in #{base_pkgs.map { |pkg| "SUNW#{pkg}.pkg.gz" }.join(' ')}; do \
   tmpdir=$(mktemp -p /var/tmp -d); (cd ${tmpdir} && curl -O #{base_url}/${pkg} && gunzip -c ${pkg} | pkgadd -d /dev/stdin -a /var/tmp/vanagon-noask all); \
   done
   ntpdate pool.ntp.org]
