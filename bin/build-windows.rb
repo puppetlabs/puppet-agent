@@ -2,6 +2,7 @@ require 'yaml'
 require 'json'
 require 'fileutils'
 
+SCRIPT_ROOT = File.expand_path(File.dirname(__FILE__))
 
 # BUILD_TARGET passed through the pipeline
 build_target         = ENV['BUILD_TARGET']
@@ -16,8 +17,7 @@ end
 AGENT_VERSION_STRING = ENV['AGENT_VERSION_STRING'] || %x{git describe --tags}.chomp.gsub('-', '.')
 
 # Whether or not we are going to build boost and yaml-cpp or copy them from existing builds
-# If `TRUE`, this will build boost and yaml-cpp according to the specifications in
-# git://github.com/puppetlabs/facter/master/contrib/facter.ps1
+# If `TRUE`, this will build boost and yaml-cpp according to the specifications in facter.ps1
 # If `FALSE`, this will download and unpack prebuilt boost and yaml-cpp arcives.
 BUILD_SOURCE         = ENV['BUILD_SOURCE'] || '0'
 
@@ -39,7 +39,7 @@ ssh_key = ENV['VANAGON_SSH_KEY'] ? "-i #{ENV['VANAGON_SSH_KEY']}" : ''
 CHOCO_WIX35_VERSION = '3.5.2519.20130612'
 
 # Retrieve a vm
-vm_type = 'win-2012-x86_64'
+vm_type = 'win-2012r2-x86_64'
 curl_output=`curl -d --url http://vmpooler.delivery.puppetlabs.net/vm/#{vm_type}`
 host_json = JSON.parse(curl_output)
 hostname = host_json[vm_type]['hostname'] + '.' + host_json['domain']
@@ -68,22 +68,22 @@ else
     FACTER_ref = FACTER['ref']
 end
 
-# Download and execute the facter build script
-# this script lives in the puppetlabs/facter repo
-facter_build_script = ENV['FACTER_BUILD_SCRIPT'] ||
-  "https://raw.githubusercontent.com/puppetlabs/facter/#{FACTER_ref}/contrib/facter.ps1"
-puts "Downloading Facter build script from #{facter_build_script}"
-result = Kernel.system("#{ssh_command} \"curl -O #{facter_build_script} && powershell.exe -NoProfile -ExecutionPolicy Unrestricted -InputFormat None -Command ./facter.ps1 -arch #{script_arch} -buildSource #{BUILD_SOURCE} -facterRef #{FACTER['ref']} -facterFork #{FACTER['url']}\"")
-fail "It looks like the facter build script #{facter_build_script} failed for some reason. I would suggest ssh'ing into the box and poking around" unless result
+Kernel.system("scp #{File.join(SCRIPT_ROOT, 'facter.ps1')} Administrator@#{hostname}:/home/Administrator/")
+fail "Copying facter.ps1 to #{hostname} failed" unless $?.success?
+result = Kernel.system("#{ssh_command} \"powershell.exe -NoProfile -ExecutionPolicy Unrestricted -InputFormat None -Command ./facter.ps1 -arch #{script_arch} -buildSource #{BUILD_SOURCE} -facterRef #{FACTER['ref']} -facterFork #{FACTER['url']}\"")
+fail "It looks like the facter build script facter.ps1 failed for some reason. I would suggest ssh'ing into the box and poking around:\n#{result}" unless result
 
 # Move all necessary dll's into facter bindir
 Kernel.system("#{ssh_command} \"cp /cygdrive/c/tools/mingw#{script_arch}/bin/libgcc_s_#{ARCH == 'x64' ? 'seh' : 'sjlj'}-1.dll /cygdrive/c/tools/mingw#{script_arch}/bin/libstdc++-6.dll /cygdrive/c/tools/mingw#{script_arch}/bin/libwinpthread-1.dll /home/Administrator/facter/release/bin/\"")
+fail "Copying compiler DLLs to build directory failed" unless $?.success?
 
 # Format everything to prepare to archive it
 Kernel.system("#{ssh_command} \"source .bash_profile ; mkdir -p /home/Administrator/archive/lib ; cp -r /home/Administrator/facter/release/bin /home/Administrator/facter/lib/inc /home/Administrator/archive/ ; cp /home/Administrator/facter/release/lib/facter.rb /home/Administrator/archive/lib/ \"")
+fail "Copying source files for packaging failed" unless $?.success?
 
 # Zip up the built archives
 Kernel.system("#{ssh_command} \"source .bash_profile ; 7za.exe a -r -tzip facter.zip 'C:\\cygwin64\\home\\Administrator\\archive\\*'\"")
+fail "Creating archive failed" unless $?.success?
 
 
 ### Build puppet-agent.msi
