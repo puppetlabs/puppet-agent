@@ -3,6 +3,6 @@ component "puppet-ca-bundle" do |pkg, settings, platform|
   pkg.build_requires "openssl"
 
   pkg.install do
-    ["#{platform[:make]} install OPENSSL=#{settings[:bindir]}/openssl"]
+    "#{platform[:make]} install OPENSSL=#{settings[:bindir]}/openssl USER=root GROUP=root"
   end
 end
