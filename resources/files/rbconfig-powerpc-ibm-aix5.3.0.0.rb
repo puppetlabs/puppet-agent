@@ -1,10 +1,10 @@
 
-# This file was created by mkconfig.rb when ruby was built.  Any
+# This file was created by PuppetAgent for AIX 5.3 powerpc.  Any
 # changes made to this file will be lost the next time ruby is built.
 
 module RbConfig
-  RUBY_VERSION == "2.1.6" or
-    raise "ruby lib version (2.1.6) doesn't match executable version (#{RUBY_VERSION})"
+  RUBY_VERSION == "2.1.7" or
+    raise "ruby lib version (2.1.7) doesn't match executable version (#{RUBY_VERSION})"
 
   TOPDIR = File.dirname(__FILE__).chomp!("/lib/ruby/2.1.0/powerpc-aix5.3.0.0")
   DESTDIR = '' unless defined? DESTDIR
@@ -13,7 +13,7 @@ module RbConfig
   CONFIG["MAJOR"] = "2"
   CONFIG["MINOR"] = "1"
   CONFIG["TEENY"] = "0"
-  CONFIG["PATCHLEVEL"] = "336"
+  CONFIG["PATCHLEVEL"] = "400"
   CONFIG["INSTALL"] = ''
   CONFIG["EXEEXT"] = ""
   CONFIG["prefix"] = (TOPDIR || DESTDIR + "/opt/puppetlabs/puppet")

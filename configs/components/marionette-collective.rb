@@ -34,6 +34,26 @@ component "marionette-collective" do |pkg, settings, platform|
     elsif platform.is_rpm?
       pkg.install_service "ext/aio/redhat/mcollective.init", "ext/aio/redhat/mcollective.sysconfig", "mcollective"
     end
+    if platform.is_rpm?
+      puppet_bin = "/opt/puppetlabs/bin/puppet"
+      rpm_statedir = "%{_localstatedir}/lib/rpm-state/#{pkg.get_name}"
+      service_statefile = "#{rpm_statedir}/service.pp"
+      pkg.add_preinstall_action <<-HERE.undent
+        if [ $1 -gt 1 ]; then
+          install --owner root --mode 0700 --directory #{rpm_statedir} || :
+          if [ -x #{puppet_bin} ] ; then
+            #{puppet_bin} resource service mcollective > #{service_statefile} || :
+          fi
+        fi
+      HERE
+
+      pkg.add_postinstall_action <<-HERE.undent
+        if [ -f #{service_statefile} ] ; then 
+          #{puppet_bin} apply #{service_statefile} > /dev/null 2>&1 || :
+          rm -rf #{rpm_statedir} || :
+        fi
+      HERE
+    end
 
     pkg.install_file "ext/aio/redhat/mcollective-sysv.logrotate", "/etc/logrotate.d/mcollective"
 
@@ -48,10 +68,12 @@ component "marionette-collective" do |pkg, settings, platform|
   end
 
   pkg.install do
-    ["#{settings[:host_ruby]} install.rb --ruby=#{File.join(settings[:bindir], 'ruby')} --bindir=#{settings[:bindir]} --configdir=#{File.join(settings[:sysconfdir], 'mcollective')} --sitelibdir=#{settings[:ruby_vendordir]} --quick --sbindir=#{settings[:bindir]}"]
+    ["#{settings[:host_ruby]} install.rb --ruby=#{File.join(settings[:bindir], 'ruby')} --bindir=#{settings[:bindir]} --configdir=#{File.join(settings[:sysconfdir], 'mcollective')} --sitelibdir=#{settings[:ruby_vendordir]} --quick --sbindir=#{settings[:bindir]} --plugindir=#{File.join('/opt/puppetlabs', 'mcollective', 'plugins')}"]
   end
 
   pkg.directory File.join(settings[:sysconfdir], "mcollective")
+  pkg.directory File.join('/opt/puppetlabs', 'mcollective')
+  pkg.directory File.join('/opt/puppetlabs', 'mcollective', 'plugins')
 
   # Bring in the client.cfg and server.cfg from ext/aio.
   pkg.install_file "ext/aio/common/client.cfg.dist", File.join(settings[:sysconfdir], 'mcollective', 'client.cfg')
