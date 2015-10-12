@@ -40,7 +40,7 @@ Install-Choco git.install 1.9.5.20150320
 Install-Choco Wix35 $Wix35_VERSION
 
 # For MinGW, we expect specific project defaults
-# - win32 threads - reverting back from posix threads
+# - win32 threads, as the libpthread library is buggy
 # - seh exceptions on 64-bit, to work around an obscure bug loading Ruby in Facter
 # These are the defaults on our myget feed.
 if ($arch -eq 64) {
