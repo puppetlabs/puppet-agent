@@ -67,24 +67,16 @@ component "facter" do |pkg, settings, platform|
   java_home = ''
   java_includedir = ''
   case platform.name
-  when /el-(6|7)/
-    pkg.build_requires 'java-1.8.0-openjdk-devel'
-  when /debian-(7|8)-amd64/
-    pkg.build_requires 'openjdk-7-jdk'
-    java_home = "/usr/lib/jvm/java-7-openjdk-amd64"
-  when /debian-(7|8)-i386/
-    pkg.build_requires 'openjdk-7-jdk'
-    java_home = "/usr/lib/jvm/java-7-openjdk-i386"
-  when /ubuntu-(12\.04|14\.\d{2})-amd64/
-    pkg.build_requires 'openjdk-7-jdk'
-    java_home = "/usr/lib/jvm/java-7-openjdk-amd64"
-  when /ubuntu-(12\.04|14\.\d{2})-i386/
-    pkg.build_requires 'openjdk-7-jdk'
-    java_home = "/usr/lib/jvm/java-7-openjdk-i386"
   when /fedora-f20/
     pkg.build_requires 'java-1.7.0-openjdk-devel'
-  when /fedora-f21/
+  when /(el-(6|7)|fedora-(f21|f22))/
     pkg.build_requires 'java-1.8.0-openjdk-devel'
+  when /(debian-(7|8)|ubuntu-(12|14))/
+    pkg.build_requires 'openjdk-7-jdk'
+    java_home = "/usr/lib/jvm/java-7-openjdk-#{platform.architecture}"
+  when /(debian-9|ubuntu-15)/
+    pkg.build_requires 'openjdk-8-jdk'
+    java_home = "/usr/lib/jvm/java-8-openjdk-#{platform.architecture}"
   when /sles-12/
     pkg.build_requires 'java-1_7_0-openjdk-devel'
     java_home = "/usr/lib64/jvm/java-1.7.0-openjdk"
