@@ -6,7 +6,7 @@ platform "cumulus-22-amd64" do |plat|
 
   plat.apt_repo "http://pl-build-tools.delivery.puppetlabs.net/debian/pl-build-tools-release-wheezy.deb"
 
-  plat.provision_with %Q{
+  plat.provision_with %(
 echo 'deb http://enterprise.delivery.puppetlabs.net/build-tools/debian/CumulusLinux CumulusLinux-2.2 build-tools
 deb http://osmirror.delivery.puppetlabs.net/cumulus/ CumulusLinux-2.2 main addons security-updates testing updates' > /etc/apt/sources.list
 echo 'Package: *
@@ -19,7 +19,7 @@ echo 'deb http://osmirror.delivery.puppetlabs.net/debian/ wheezy main
 deb http://osmirror.delivery.puppetlabs.net/debian/ wheezy-updates main' >> /etc/apt/sources.list
 apt-get update -qq
 apt-get install -qy --no-install-recommends build-essential make quilt pkg-config debhelper devscripts
-}
+)
 
   plat.install_build_dependencies_with "DEBIAN_FRONTEND=noninteractive; apt-get install -qy --no-install-recommends "
   plat.vcloud_name "debian-7-x86_64"

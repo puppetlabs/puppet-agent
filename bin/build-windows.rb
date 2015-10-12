@@ -6,16 +6,16 @@ require 'tmpdir'
 SCRIPT_ROOT = File.expand_path(File.dirname(__FILE__))
 
 # BUILD_TARGET passed through the pipeline
-build_target         = ENV['BUILD_TARGET']
+build_target = ENV['BUILD_TARGET']
 # The architecture of facter/the installer we are going to build
 if build_target && /win\-(?<build_arch>x86|x64)/ =~ build_target
-  ARCH               = build_arch
+  ARCH = build_arch
 else
-  ARCH               = ENV['ARCH'] || 'x64'
+  ARCH = ENV['ARCH'] || 'x64'
 end
 
 # The version of this build
-AGENT_VERSION_STRING = ENV['AGENT_VERSION_STRING'] || %x{git describe --tags}.chomp.gsub('-', '.')
+AGENT_VERSION_STRING = ENV['AGENT_VERSION_STRING'] || `git describe --tags`.chomp.tr('-', '.')
 
 # Whether or not we are going to build boost and yaml-cpp or copy them from existing builds
 # If `TRUE`, this will build boost and yaml-cpp according to the specifications in
@@ -25,7 +25,7 @@ BUILD_SOURCE         = ENV['BUILD_SOURCE'] || '0'
 
 # Parsed information that we need to specify in order to know where to find different built facter bits
 # and correctly pass information to the facter build script
-script_arch          = "#{ARCH =='x64' ? '64' : '32'}"
+script_arch          = "#{ARCH == 'x64' ? '64' : '32'}"
 
 # The refs we will use when building the MSI
 PUPPET       = JSON.parse(File.read('configs/components/puppet.json'))
