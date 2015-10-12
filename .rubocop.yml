@@ -129,7 +129,7 @@ Style/AsciiComments:
 Style/Attr:
   Enabled: false
 
-Style/Blocks:
+Style/BlockDelimiters:
   Enabled: false
 
 Style/BracesAroundHashParameters:
@@ -234,7 +234,16 @@ Style/EmptyLines:
 Style/EmptyLinesAroundAccessModifier:
   Enabled: false
 
-Style/EmptyLinesAroundBody:
+Style/EmptyLinesAroundBlockBody:
+  Enabled: false
+
+Style/EmptyLinesAroundClassBody:
+  Enabled: false
+
+Style/EmptyLinesAroundModuleBody:
+  Enabled: false
+
+Style/EmptyLinesAroundMethodBody:
   Enabled: false
 
 Style/EmptyLiteral:
@@ -277,8 +286,8 @@ Style/TrivialAccessors:
   Enabled: false
 
 # This pushes preference for shell commands as backticks instead of %x
-Style/UnneededPercentX:
-  Enabled: false
+Style/CommandLiteral:
+  EnforcedStyle: mixed
 
 Style/Lambda:
   Enabled: false
