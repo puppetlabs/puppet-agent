@@ -23,6 +23,8 @@ AGENT_VERSION_STRING = ENV['AGENT_VERSION_STRING'] || `git describe --tags`.chom
 # If `FALSE`, this will download and unpack prebuilt boost and yaml-cpp arcives.
 BUILD_SOURCE         = ENV['BUILD_SOURCE'] || '0'
 
+PRESERVE             = ENV['PRESERVE'] || false
+
 # Parsed information that we need to specify in order to know where to find different built facter bits
 # and correctly pass information to the facter build script
 script_arch          = "#{ARCH == 'x64' ? '64' : '32'}"
@@ -186,6 +188,6 @@ Kernel.system("set -vx;scp #{ssh_key} Administrator@#{hostname}:/home/Administra
 msi_path = "output/windows/#{msi_file}"
 if File.exists?(msi_path)
   FileUtils.ln("./#{msi_path}", "output/windows/puppet-agent-#{ARCH}.msi")
-  Kernel.system("set -vx;curl -X DELETE --url \"http://vmpooler.delivery.puppetlabs.net/vm/#{hostname}\"")
+  Kernel.system("set -vx;curl -X DELETE --url \"http://vmpooler.delivery.puppetlabs.net/vm/#{hostname}\"") unless PRESERVE
   FileUtils.rm 'winconfig.yaml'
 end
