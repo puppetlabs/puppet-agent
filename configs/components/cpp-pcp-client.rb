@@ -13,6 +13,8 @@ component "cpp-pcp-client" do |pkg, settings, platform|
   elsif platform.is_osx?
     cmake = "/usr/local/bin/cmake"
     toolchain = ""
+    cmake_extra_args = "-DCMAKE_MACOSX_RPATH=ON \
+        -DCMAKE_INSTALL_RPATH=#{settings[:prefix]}/lib"
   elsif platform.is_solaris?
     cmake = "/opt/pl-build-tools/i386-pc-solaris2.#{platform.os_version}/bin/cmake"
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/#{settings[:platform_triple]}/pl-build-toolchain.cmake"
@@ -31,6 +33,7 @@ component "cpp-pcp-client" do |pkg, settings, platform|
           -DCMAKE_INSTALL_PREFIX=#{settings[:prefix]} \
           -DCMAKE_SYSTEM_PREFIX_PATH=#{settings[:prefix]} \
           -DBOOST_STATIC=ON \
+          #{cmake_extra_args} \
           ."
     ]
   end
