@@ -8,7 +8,7 @@ component 'curl' do |pkg, settings, platform|
   pkg.configure do
     ["LDFLAGS='#{settings[:ldflags]}' \
      ./configure --prefix=#{settings[:prefix]} \
-     --with-ssl=#{settings[:prefix]} --enable-threaded-resolver --disable-ldap --disable-ldaps"]
+     --with-ssl=#{settings[:prefix]} --enable-threaded-resolver --disable-ldap --disable-ldaps --with-ca-bundle=#{settings[:prefix]}/ssl/cert.pem"]
   end
 
   pkg.build do
