@@ -56,7 +56,12 @@ project "puppet-agent" do |proj|
   proj.vendor "Puppet Labs <info@puppetlabs.com>"
   proj.homepage "https://www.puppetlabs.com"
   proj.target_repo "PC1"
-  proj.identifier "com.puppetlabs"
+
+  if platform.is_solaris?
+    proj.identifier "puppetlabs.com"
+  elsif platform.is_osx?
+    proj.identifier "com.puppetlabs"
+  end
 
   # Platform specific
   proj.setting(:cflags, "-I#{proj.includedir} -I/opt/pl-build-tools/include")
