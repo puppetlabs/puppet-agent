@@ -30,6 +30,7 @@ component "pxp-agent" do |pkg, settings, platform|
           -DCMAKE_PREFIX_PATH=#{settings[:prefix]} \
           -DCMAKE_INSTALL_PREFIX=#{settings[:prefix]} \
           -DCMAKE_SYSTEM_PREFIX_PATH=#{settings[:prefix]} \
+          -DMODULES_INSTALL_PATH=#{File.join(settings[:install_root], 'pxp-agent', 'modules')} \
           -DBOOST_STATIC=ON \
           ."
     ]

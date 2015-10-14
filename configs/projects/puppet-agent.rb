@@ -1,6 +1,7 @@
 project "puppet-agent" do |proj|
   # Project level settings our components will care about
-  proj.setting(:prefix, "/opt/puppetlabs/puppet")
+  proj.setting(:install_root, "/opt/puppetlabs")
+  proj.setting(:prefix, File.join(proj.install_root, "puppet"))
   proj.setting(:sysconfdir, "/etc/puppetlabs")
   proj.setting(:puppet_configdir, File.join(proj.sysconfdir, 'puppet'))
   proj.setting(:puppet_codedir, "/etc/puppetlabs/code")
@@ -115,7 +116,7 @@ project "puppet-agent" do |proj|
     proj.component "ruby-selinux"
   end
 
-  proj.directory "/opt/puppetlabs"
+  proj.directory proj.install_root
   proj.directory proj.prefix
   proj.directory proj.sysconfdir
   proj.directory proj.logdir
