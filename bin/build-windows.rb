@@ -36,6 +36,7 @@ CPPPCPCLIENT = JSON.parse(File.read('configs/components/cpp-pcp-client.json'))
 PXPAGENT     = JSON.parse(File.read('configs/components/pxp-agent.json'))
 HIERA        = JSON.parse(File.read('configs/components/hiera.json'))
 MCO          = JSON.parse(File.read('configs/components/marionette-collective.json'))
+NSSM         = JSON.parse(File.read('configs/components/nssm.json'))
 WINDOWS      = JSON.parse(File.read('configs/components/windows_puppet.json'))
 WINDOWS_RUBY = JSON.parse(File.read('configs/components/windows_ruby.json'))
 
@@ -128,12 +129,17 @@ pxp_zipname = "pxp-agent"
 Kernel.system("set -vx;#{ssh_command} \"source .bash_profile ; mkdir -p #{archive_dest}/#{facter_zipname}/lib ; cp -r /home/Administrator/facter/release/bin /home/Administrator/facter/lib/inc #{archive_dest}/#{facter_zipname} ; cp /home/Administrator/facter/release/lib/facter.rb #{archive_dest}/#{facter_zipname}/lib \"")
 fail "Copying source files for packaging failed" unless $?.success?
 # repeat for pxp-agent
-Kernel.system("set -vx;#{ssh_command} \"source .bash_profile ; mkdir -p #{archive_dest}/#{pxp_zipname}/pxp-modules ; cp -r /home/Administrator/cpp-pcp-client/release/bin /home/Administrator/cpp-pcp-client/lib/inc #{archive_dest}/#{pxp_zipname} ; cp -r /home/Administrator/pxp-agent/release/bin /home/Administrator/pxp-agent/lib/inc #{archive_dest}/#{pxp_zipname}; cp -r /home/Administrator/pxp-agent/modules/pxp-module-puppet #{archive_dest}/#{pxp_zipname}/pxp-modules \"")
+Kernel.system("set -vx;#{ssh_command} \"source .bash_profile ; mkdir -p #{archive_dest}/#{pxp_zipname}/modules ; cp -r /home/Administrator/cpp-pcp-client/release/bin /home/Administrator/cpp-pcp-client/lib/inc #{archive_dest}/#{pxp_zipname} ; cp -r /home/Administrator/pxp-agent/release/bin /home/Administrator/pxp-agent/lib/inc #{archive_dest}/#{pxp_zipname}; cp -r /home/Administrator/pxp-agent/modules/pxp-module-puppet #{archive_dest}/#{pxp_zipname}/modules \"")
 fail "Copying source files for packaging failed" unless $?.success?
 
 # Zip up the built archives
 Kernel.system("set -vx;#{ssh_command} \"source .bash_profile ; 7za.exe a -r -tzip #{facter_zipname}.zip 'C:\\cygwin64\\home\\Administrator\\archive\\#{facter_zipname}\\*'\"")
 Kernel.system("set -vx;#{ssh_command} \"source .bash_profile ; 7za.exe a -r -tzip #{pxp_zipname}.zip    'C:\\cygwin64\\home\\Administrator\\archive\\#{pxp_zipname}\\*'\"")
+
+# And SCP built archives to host
+Kernel.system("set -vx;scp #{ssh_key} Administrator@#{hostname}:/home/Administrator/archive/#{facter_zipname}.zip output/windows/")
+Kernel.system("set -vx;scp #{ssh_key} Administrator@#{hostname}:/home/Administrator/archive/#{pxp_zipname}.zip output/windows/")
+
 
 ### Build puppet-agent.msi
 
@@ -164,9 +170,14 @@ CONFIG = {
       :ref  => WINDOWS_RUBY['ref'][ARCH],
       :repo => WINDOWS_RUBY['url']
     },
+    'nssm' => {
+      :archive => NSSM['url'].rpartition('/').last,
+      :path    => NSSM['url'].rpartition('/').first + '/'
+    },
   }
 }
 File.open("winconfig.yaml", 'w') { |f| f.write(YAML.dump(CONFIG)) }
+puts "Generated build config:\n#{CONFIG}\n\n"
 
 # Clone puppet_for_the_win
 result = Kernel.system("set -vx;#{ssh_command} \"source .bash_profile ; git clone #{WINDOWS['url']} puppet_for_the_win; cd puppet_for_the_win && git checkout #{WINDOWS['ref']}\"")
