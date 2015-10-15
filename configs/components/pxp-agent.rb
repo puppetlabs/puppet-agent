@@ -44,6 +44,9 @@ component "pxp-agent" do |pkg, settings, platform|
     ["#{platform[:make]} -j$(shell expr $(shell #{platform[:num_cores]}) + 1) install"]
   end
 
+  pkg.directory File.join(settings[:sysconfdir], 'pxp-agent')
+  pkg.directory File.join(settings[:sysconfdir], 'pxp-agent', 'modules')
+
   case platform.servicetype
   when "systemd"
     pkg.install_service "ext/systemd/pxp-agent.service", "ext/redhat/pxp-agent.sysconfig"
