@@ -137,8 +137,8 @@ Kernel.system("set -vx;#{ssh_command} \"source .bash_profile ; 7za.exe a -r -tzi
 Kernel.system("set -vx;#{ssh_command} \"source .bash_profile ; 7za.exe a -r -tzip #{pxp_zipname}.zip    'C:\\cygwin64\\home\\Administrator\\archive\\#{pxp_zipname}\\*'\"")
 
 # And SCP built archives to host
-Kernel.system("set -vx;scp #{ssh_key} Administrator@#{hostname}:/home/Administrator/archive/#{facter_zipname}.zip output/windows/")
-Kernel.system("set -vx;scp #{ssh_key} Administrator@#{hostname}:/home/Administrator/archive/#{pxp_zipname}.zip output/windows/")
+Kernel.system("set -vx;scp #{ssh_key} Administrator@#{hostname}:/home/Administrator/#{facter_zipname}.zip output/windows/")
+Kernel.system("set -vx;scp #{ssh_key} Administrator@#{hostname}:/home/Administrator/#{pxp_zipname}.zip output/windows/")
 
 
 ### Build puppet-agent.msi
