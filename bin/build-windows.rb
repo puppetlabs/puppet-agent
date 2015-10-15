@@ -170,6 +170,7 @@ CONFIG = {
   }
 }
 File.open("winconfig.yaml", 'w') { |f| f.write(YAML.dump(CONFIG)) }
+puts "Generated build config:\n#{CONFIG}\n\n"
 
 # Clone puppet_for_the_win
 result = Kernel.system("set -vx;#{ssh_command} \"source .bash_profile ; git clone #{WINDOWS['url']} puppet_for_the_win; cd puppet_for_the_win && git checkout #{WINDOWS['ref']}\"")
