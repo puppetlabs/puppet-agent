@@ -129,7 +129,7 @@ pxp_zipname = "pxp-agent"
 Kernel.system("set -vx;#{ssh_command} \"source .bash_profile ; mkdir -p #{archive_dest}/#{facter_zipname}/lib ; cp -r /home/Administrator/facter/release/bin /home/Administrator/facter/lib/inc #{archive_dest}/#{facter_zipname} ; cp /home/Administrator/facter/release/lib/facter.rb #{archive_dest}/#{facter_zipname}/lib \"")
 fail "Copying source files for packaging failed" unless $?.success?
 # repeat for pxp-agent
-Kernel.system("set -vx;#{ssh_command} \"source .bash_profile ; mkdir -p #{archive_dest}/#{pxp_zipname}/modules ; cp -r /home/Administrator/cpp-pcp-client/release/bin /home/Administrator/cpp-pcp-client/lib/inc #{archive_dest}/#{pxp_zipname} ; cp -r /home/Administrator/pxp-agent/release/bin /home/Administrator/pxp-agent/lib/inc #{archive_dest}/#{pxp_zipname}; cp -r /home/Administrator/pxp-agent/modules/pxp-module-puppet #{archive_dest}/#{pxp_zipname}/modules \"")
+Kernel.system("set -vx;#{ssh_command} \"source .bash_profile ; mkdir -p #{archive_dest}/#{pxp_zipname}/modules ; cp -r /home/Administrator/cpp-pcp-client/release/bin #{archive_dest}/#{pxp_zipname} ; cp -r /home/Administrator/pxp-agent/release/bin #{archive_dest}/#{pxp_zipname}; cp -r /home/Administrator/pxp-agent/modules/pxp-module-puppet #{archive_dest}/#{pxp_zipname}/modules \"")
 fail "Copying source files for packaging failed" unless $?.success?
 
 # Zip up the built archives
