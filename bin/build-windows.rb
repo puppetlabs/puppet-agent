@@ -137,6 +137,7 @@ Kernel.system("set -vx;#{ssh_command} \"source .bash_profile ; 7za.exe a -r -tzi
 Kernel.system("set -vx;#{ssh_command} \"source .bash_profile ; 7za.exe a -r -tzip #{pxp_zipname}.zip    'C:\\cygwin64\\home\\Administrator\\archive\\#{pxp_zipname}\\*'\"")
 
 # And SCP built archives to host
+FileUtils.mkdir_p("output/windows")
 Kernel.system("set -vx;scp #{ssh_key} Administrator@#{hostname}:/home/Administrator/#{facter_zipname}.zip output/windows/")
 Kernel.system("set -vx;scp #{ssh_key} Administrator@#{hostname}:/home/Administrator/#{pxp_zipname}.zip output/windows/")
 
@@ -191,7 +192,6 @@ result = Kernel.system("set -vx;#{ssh_command} \"source .bash_profile ; cd /home
 fail "It seems there were some issues building the puppet-agent msi" unless result
 
 # Fetch back the built installer
-FileUtils.mkdir_p("output/windows")
 msi_file = "puppet-agent-#{AGENT_VERSION_STRING}-#{ARCH}.msi"
 Kernel.system("set -vx;scp #{ssh_key} Administrator@#{hostname}:/home/Administrator/puppet_for_the_win/pkg/#{msi_file} output/windows/")
 
