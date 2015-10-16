@@ -4,6 +4,7 @@ component "ruby" do |pkg, settings, platform|
   pkg.url "http://buildsources.delivery.puppetlabs.net/ruby-#{pkg.get_version}.tar.gz"
 
   pkg.replaces 'pe-ruby'
+  pkg.replaces 'pe-ruby-mysql'
   pkg.replaces 'pe-rubygems'
   pkg.replaces 'pe-libyaml'
   pkg.replaces 'pe-libldap'
