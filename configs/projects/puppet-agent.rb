@@ -3,7 +3,7 @@ project "puppet-agent" do |proj|
   proj.setting(:prefix, "/opt/puppetlabs/puppet")
   proj.setting(:sysconfdir, "/etc/puppetlabs")
   proj.setting(:puppet_configdir, File.join(proj.sysconfdir, 'puppet'))
-  proj.setting(:puppet_codedir, "/etc/puppetlabs/code")
+  proj.setting(:puppet_codedir, File.join(proj.sysconfdir, 'code'))
   proj.setting(:logdir, "/var/log/puppetlabs")
   proj.setting(:piddir, "/var/run/puppetlabs")
   proj.setting(:bindir, File.join(proj.prefix, "bin"))
