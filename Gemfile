@@ -5,8 +5,8 @@ def vanagon_location_for(place)
     [{ :git => $1, :branch => $2, :require => false }]
   elsif place =~ /^file:\/\/(.*)/
     ['>= 0', { :path => File.expand_path($1), :require => false }]
-  elsif place =~ /(\d+\.\d+\.\d+)/
-    [$1, {:git => 'git@github.com:puppetlabs/vanagon', :tag => $1}]
+  else
+    [place, { :require => false }]
   end
 end
 
