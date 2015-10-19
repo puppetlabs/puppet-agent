@@ -1,0 +1,19 @@
+sudo: false
+language: ruby
+bundler_args: --without development
+before_script:
+  - 'git config --global user.email "you@example.com"'
+  - 'git config --global user.name "Your Name"'
+script: "bundle exec $CHECK"
+notifications:
+  email: false
+
+matrix:
+  include:
+    - rvm: 2.2.0
+      env: "CHECK='rubocop -D'"
+
+branches:
+  except:
+    - stable
+    - aardwolf
