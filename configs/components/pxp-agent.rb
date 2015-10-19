@@ -47,6 +47,10 @@ component "pxp-agent" do |pkg, settings, platform|
   pkg.directory File.join(settings[:sysconfdir], 'pxp-agent')
   pkg.directory File.join(settings[:sysconfdir], 'pxp-agent', 'modules')
 
+  if platform.is_linux?
+    pkg.install_configfile "ext/pxp-agent.logrotate", "/etc/logrotate.d/pxp-agent"
+  end
+
   case platform.servicetype
   when "systemd"
     pkg.install_service "ext/systemd/pxp-agent.service", "ext/redhat/pxp-agent.sysconfig"
