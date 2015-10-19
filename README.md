@@ -24,6 +24,15 @@ The [Gemfile](Gemfile) specifies all of the needed ruby libraries to build a pup
 package. Additionally, puppet-agent requires a VM to build within for each
 desired package.
 
+## Environment variables
+#### VANAGON\_LOCATION
+The location of Vanagon in the Gemfile can be overridden with the environment variable `VANAGON_LOCATION`. Can be set prior to `bundle install` or updated with `bundle update`.
+
+* `0.3.14` - Specific tag from the Vanagon git repo
+* `git@github.com:puppetlabs/vanagon#master` - Remote git location and tag
+* `file:///workspace/vanagon` - Absolute file path
+* `file://../vanagon` - File path relative to the project directory
+
 Building puppet-agent
 ---
 If you wish to build puppet-agent yourself, it should be relatively easy. First
