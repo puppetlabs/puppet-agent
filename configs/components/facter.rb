@@ -95,7 +95,7 @@ component "facter" do |pkg, settings, platform|
   # Skip blkid unless we can ensure it exists at build time. Otherwise we depend
   # on the vagaries of the system we build on.
   skip_blkid = 'ON'
-  if platform.is_deb? || platform.is_nxos? || platform.is_cisco_wrlinux?
+  if platform.is_deb? || platform.is_cisco_wrlinux?
     pkg.build_requires "libblkid-dev"
     skip_blkid = 'OFF'
   elsif platform.is_rpm?
