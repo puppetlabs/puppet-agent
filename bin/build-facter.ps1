@@ -13,6 +13,7 @@ param (
 $ErrorActionPreference = 'Stop'
 
 $scriptDirectory = (Split-Path -parent $MyInvocation.MyCommand.Definition)
+. $scriptDirectory\build-helpers.ps1
 . $scriptDirectory\windows-env.ps1
 
 Write-Host "Arch=$arch, Cores=$cores"
@@ -22,15 +23,15 @@ Write-Host "Starting facter build"
 cd $sourceDir
 
 ## Download facter and setup build directories
-git clone $facterFork facter
+Invoke-External { git clone $facterFork facter }
 cd facter
-git checkout $facterRef
-git submodule update --init --recursive
+Invoke-External { git checkout $facterRef }
+Invoke-External { git submodule update --init --recursive }
 mkdir -Force release
 cd release
 
 ## Build Facter
-$args = @(
+$cmake_args = @(
   '-G',
   "MinGW Makefiles",
   "-DBOOST_ROOT=`"$toolsDir\$boostPkg`"",
@@ -40,13 +41,13 @@ $args = @(
   "-DCURL_STATIC=ON",
   ".."
 )
-cmake $args
-mingw32-make -j $cores
+Invoke-External { cmake $cmake_args }
+Invoke-External { mingw32-make -j $cores }
 Write-Host "facter Build completed."
 
 ## Write out the version that was just built.
-git describe --long | Out-File -FilePath 'bin/VERSION' -Encoding ASCII -Force
+Invoke-External { git describe --long | Out-File -FilePath 'bin/VERSION' -Encoding ASCII -Force }
 
 ## Test the results.
 Write-Host "Starting Tests"
-mingw32-make test ARGS=-V
+Invoke-External { mingw32-make test ARGS=-V }
