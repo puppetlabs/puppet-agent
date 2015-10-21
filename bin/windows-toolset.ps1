@@ -11,6 +11,7 @@ param (
 $ErrorActionPreference = 'Stop'
 
 $scriptDirectory = (Split-Path -parent $MyInvocation.MyCommand.Definition);
+. $scriptDirectory\build-helpers.ps1
 . $scriptDirectory\windows-env.ps1
 
 mkdir -Force $toolsDir
@@ -63,10 +64,10 @@ if ($buildSource) {
   ## Download, build, and install Boost
   Write-Host "Downloading http://downloads.sourceforge.net/boost/$boostVer.7z"
   (New-Object net.webclient).DownloadFile("http://downloads.sourceforge.net/boost/$boostVer.7z", "$toolsDir\$boostVer.7z")
-  & 7za x "${boostVer}.7z" | FIND /V "ing "
+  Invoke-External { & 7za x "${boostVer}.7z" | FIND /V "ing " }
   cd $boostVer
 
-  .\bootstrap mingw
+  Invoke-External { .\bootstrap mingw }
   $boost_args = @(
     'toolset=gcc',
     "--build-type=minimal",
@@ -97,14 +98,14 @@ if ($buildSource) {
     "boost.locale.iconv=off"
     "-j$cores"
   )
-  .\b2 $boost_args
+  Invoke-External { .\b2 $boost_args }
   cd $toolsDir
 
   ## Download, build, and install yaml-cpp
   Write-Host "Downloading https://yaml-cpp.googlecode.com/files/${yamlCppVer}.tar.gz"
   (New-Object net.webclient).DownloadFile("https://yaml-cpp.googlecode.com/files/${yamlCppVer}.tar.gz", "$toolsDir\${yamlCppVer}.tar.gz")
-  & 7za x "${yamlCppVer}.tar.gz"
-  & 7za x "${yamlCppVer}.tar" | FIND /V "ing "
+  Invoke-External { & 7za x "${yamlCppVer}.tar.gz" }
+  Invoke-External { & 7za x "${yamlCppVer}.tar" | FIND /V "ing " }
   cd $yamlCppVer
   mkdir build
   cd build
@@ -116,16 +117,16 @@ if ($buildSource) {
     "-DCMAKE_INSTALL_PREFIX=`"$toolsDir\$yamlPkg`"",
     ".."
   )
-  cmake $cmake_args
-  mingw32-make install -j $cores
+  Invoke-External { cmake $cmake_args }
+  Invoke-External { mingw32-make install -j $cores }
   cd $toolsDir
 
   Write-Host "Downloading http://curl.haxx.se/download/${curlVer}.zip"
   (New-Object net.webclient).DownloadFile("http://curl.haxx.se/download/${curlVer}.zip", "$toolsDir\${curlVer}.zip")
-  & 7za x "${curlVer}.zip" | FIND /V "ing "
+  Invoke-External { & 7za x "${curlVer}.zip" | FIND /V "ing " }
   cd $curlVer
 
-  mingw32-make mingw32
+  Invoke-External { mingw32-make mingw32 }
   mkdir -Path $toolsDir\$curlPkg\include
   cp -r include\curl $toolsDir\$curlPkg\include
   mkdir -Path $toolsDir\$curlPkg\lib
@@ -135,26 +136,26 @@ if ($buildSource) {
   ## Download and unpack Boost from a pre-built package in S3
   Write-Host "Downloading https://s3.amazonaws.com/kylo-pl-bucket/${boostPkg}.7z"
   (New-Object net.webclient).DownloadFile("https://s3.amazonaws.com/kylo-pl-bucket/${boostPkg}.7z", "$toolsDir\${boostPkg}.7z")
-  & 7za x "${boostPkg}.7z" | FIND /V "ing "
+  Invoke-External { & 7za x "${boostPkg}.7z" | FIND /V "ing " }
 
   ## Download and unpack yaml-cpp from a pre-built package in S3
   Write-Host "Downloading https://s3.amazonaws.com/kylo-pl-bucket/${yamlPkg}.7z"
   (New-Object net.webclient).DownloadFile("https://s3.amazonaws.com/kylo-pl-bucket/${yamlPkg}.7z", "$toolsDir\${yamlPkg}.7z")
-  & 7za x "${yamlPkg}.7z" | FIND /V "ing "
+  Invoke-External { & 7za x "${yamlPkg}.7z" | FIND /V "ing " }
 
   ## Download and unpack curl from a pre-built package in S3
   Write-Host "Downloading https://s3.amazonaws.com/kylo-pl-bucket/${curlPkg}.7z"
   (New-Object net.webclient).DownloadFile("https://s3.amazonaws.com/kylo-pl-bucket/${curlPkg}.7z", "$toolsDir\${curlPkg}.7z")
-  & 7za x "${curlPkg}.7z" | FIND /V "ing "
+  Invoke-External { & 7za x "${curlPkg}.7z" | FIND /V "ing " }
 }
 cd $toolsDir
 
 # Download openssl
 Write-Host "Downloading http://buildsources.delivery.puppetlabs.net/windows/openssl/${opensslPkg}.tar.lzma"
 (New-Object net.webclient).DownloadFile("http://buildsources.delivery.puppetlabs.net/windows/openssl/${opensslPkg}.tar.lzma", "$toolsDir\${opensslPkg}.tar.lzma")
-& 7za x "$toolsDir\${opensslPkg}.tar.lzma"
+Invoke-External { & 7za x "$toolsDir\${opensslPkg}.tar.lzma" }
 mkdir $toolsDir\${opensslPkg}
 cd $toolsDir\${opensslPkg}
-& 7za x "$toolsDir\${opensslPkg}.tar"
+Invoke-External { & 7za x "$toolsDir\${opensslPkg}.tar" }
 
 cd $toolsDir

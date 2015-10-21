@@ -82,6 +82,8 @@ fail "Unable to connect to the host. Is is possible that you aren't on VPN or co
 
 Kernel.system("set -vx;#{ssh_command} 'source .bash_profile ; echo $PATH'")
 
+Kernel.system("scp #{File.join(SCRIPT_ROOT, 'build-helpers.ps1')} Administrator@#{hostname}:/home/Administrator/")
+fail "Copying build-helpers.ps1 to #{hostname} failed" unless $?.success?
 Kernel.system("scp #{File.join(SCRIPT_ROOT, 'windows-env.ps1')} Administrator@#{hostname}:/home/Administrator/")
 fail "Copying windows-env.ps1 to #{hostname} failed" unless $?.success?
 Kernel.system("scp #{File.join(SCRIPT_ROOT, 'windows-toolset.ps1')} Administrator@#{hostname}:/home/Administrator/")
