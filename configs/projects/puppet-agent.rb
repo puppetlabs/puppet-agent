@@ -71,7 +71,7 @@ project "puppet-agent" do |proj|
   proj.component "facter"
   proj.component "hiera"
   proj.component "marionette-collective"
-  unless (platform.is_solaris? && platform.architecture != 'i386' && platform.os_version == "11") || platform.is_aix?
+  unless (platform.is_solaris? && platform.architecture != 'i386' && platform.os_version == "11")
     proj.component "cpp-pcp-client"
     proj.component "pxp-agent"
   end
