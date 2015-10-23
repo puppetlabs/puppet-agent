@@ -15,6 +15,7 @@ component "facter" do |pkg, settings, platform|
   pkg.replaces 'pe-facter'
 
   pkg.build_requires "ruby"
+  pkg.build_requires 'openssl'
 
   if platform.is_linux?
     # Running facter (as part of testing) expects virt-what is available
@@ -32,17 +33,28 @@ component "facter" do |pkg, settings, platform|
     pkg.build_requires "cmake"
     pkg.build_requires "boost"
     pkg.build_requires "yaml-cpp --with-static-lib"
+  elsif platform.name =~ /huaweios/
+    pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/HuaweiOS/#{platform.os_version}/ppce500mc/pl-gcc-4.8.2-1.huaweios6.ppce500mc.rpm"
+    pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/HuaweiOS/#{platform.os_version}/ppce500mc/pl-cmake-3.2.3-1.huaweios6.ppce500mc.rpm"
+    pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/HuaweiOS/#{platform.os_version}/ppce500mc/pl-boost-1.58.0-1.huaweios6.ppce500mc.rpm"
+    pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/HuaweiOS/#{platform.os_version}/ppce500mc/pl-yaml-cpp-0.5.1-1.huaweios6.ppce500mc.rpm"
   elsif platform.name =~ /solaris-10/
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/solaris/10/pl-gcc-4.8.2.#{platform.architecture}.pkg.gz"
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/solaris/10/pl-binutils-2.25.#{platform.architecture}.pkg.gz"
-    pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/solaris/10/pl-boost-1.57.0.#{platform.architecture}.pkg.gz"
+    pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/solaris/10/pl-boost-1.58.0-1.#{platform.architecture}.pkg.gz"
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/solaris/10/pl-yaml-cpp-0.5.1.#{platform.architecture}.pkg.gz"
-    pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/solaris/10/pl-cmake-3.2.3.i386.pkg.gz"
+    pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/solaris/10/pl-cmake-3.2.3-2.i386.pkg.gz"
   elsif platform.name =~ /solaris-11/
     pkg.build_requires "pl-gcc-#{platform.architecture}"
     pkg.build_requires "pl-cmake"
     pkg.build_requires "pl-boost-#{platform.architecture}"
     pkg.build_requires "pl-yaml-cpp-#{platform.architecture}"
+  elsif platform.is_aix?
+    pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-gcc-5.2.0-1.aix#{platform.os_version}.ppc.rpm"
+    pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-cmake-3.2.3-2.aix#{platform.os_version}.ppc.rpm"
+    pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-boost-1.58.0-1.aix#{platform.os_version}.ppc.rpm"
+    pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-yaml-cpp-0.5.1-1.aix#{platform.os_version}.ppc.rpm"
+    pkg.build_requires "runtime"
   else
     pkg.build_requires "pl-gcc"
     pkg.build_requires "pl-cmake"
@@ -55,24 +67,16 @@ component "facter" do |pkg, settings, platform|
   java_home = ''
   java_includedir = ''
   case platform.name
-  when /el-(6|7)/
-    pkg.build_requires 'java-1.8.0-openjdk-devel'
-  when /debian-(7|8)-amd64/
-    pkg.build_requires 'openjdk-7-jdk'
-    java_home = "/usr/lib/jvm/java-7-openjdk-amd64"
-  when /debian-(7|8)-i386/
-    pkg.build_requires 'openjdk-7-jdk'
-    java_home = "/usr/lib/jvm/java-7-openjdk-i386"
-  when /ubuntu-(12\.04|14\.\d{2})-amd64/
-    pkg.build_requires 'openjdk-7-jdk'
-    java_home = "/usr/lib/jvm/java-7-openjdk-amd64"
-  when /ubuntu-(12\.04|14\.\d{2})-i386/
-    pkg.build_requires 'openjdk-7-jdk'
-    java_home = "/usr/lib/jvm/java-7-openjdk-i386"
   when /fedora-f20/
     pkg.build_requires 'java-1.7.0-openjdk-devel'
-  when /fedora-f21/
+  when /(el-(6|7)|fedora-(f21|f22))/
     pkg.build_requires 'java-1.8.0-openjdk-devel'
+  when /(debian-(7|8)|ubuntu-(12|14))/
+    pkg.build_requires 'openjdk-7-jdk'
+    java_home = "/usr/lib/jvm/java-7-openjdk-#{platform.architecture}"
+  when /(debian-9|ubuntu-15)/
+    pkg.build_requires 'openjdk-8-jdk'
+    java_home = "/usr/lib/jvm/java-8-openjdk-#{platform.architecture}"
   when /sles-12/
     pkg.build_requires 'java-1_7_0-openjdk-devel'
     java_home = "/usr/lib64/jvm/java-1.7.0-openjdk"
@@ -91,14 +95,14 @@ component "facter" do |pkg, settings, platform|
   # Skip blkid unless we can ensure it exists at build time. Otherwise we depend
   # on the vagaries of the system we build on.
   skip_blkid = 'ON'
-  if platform.is_deb? or platform.is_nxos? or platform.is_cisco_wrlinux?
+  if platform.is_deb? || platform.is_cisco_wrlinux?
     pkg.build_requires "libblkid-dev"
     skip_blkid = 'OFF'
   elsif platform.is_rpm?
-    if (platform.is_el? and platform.os_version.to_i >= 6) or (platform.is_sles? and platform.os_version.to_i >= 11) or platform.is_fedora?
+    if (platform.is_el? && platform.os_version.to_i >= 6) || (platform.is_sles? && platform.os_version.to_i >= 11) || platform.is_fedora?
       pkg.build_requires "libblkid-devel"
       skip_blkid = 'OFF'
-    elsif (platform.is_el? and platform.os_version.to_i < 6) or (platform.is_sles? and platform.os_version.to_i < 11)
+    elsif (platform.is_el? && platform.os_version.to_i < 6) || (platform.is_sles? && platform.os_version.to_i < 11)
       pkg.build_requires "e2fsprogs-devel"
       skip_blkid = 'OFF'
     end
@@ -106,7 +110,7 @@ component "facter" do |pkg, settings, platform|
 
   # curl is only used for compute clusters (GCE, EC2); so rpm, deb, and Windows
   skip_curl = 'ON'
-  if platform.is_rpm? || platform.is_deb?
+  if platform.is_linux?
     pkg.build_requires "curl"
     skip_curl = 'OFF'
   end
@@ -153,7 +157,8 @@ component "facter" do |pkg, settings, platform|
   end
 
   # Make test will explode horribly in a cross-compile situation
-  if platform.architecture == 'sparc'
+  # Tests will be skipped on AIX until they are expected to pass
+  if platform.architecture == 'sparc' || platform.is_aix?
     test = ":"
   else
     test = "#{platform[:make]} test ARGS=-V"

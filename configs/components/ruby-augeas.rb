@@ -9,6 +9,13 @@ component "ruby-augeas" do |pkg, settings, platform|
   pkg.build_requires "augeas"
 
   pkg.environment "PATH" => "$$PATH:/opt/pl-build-tools/bin:/usr/local/bin:/opt/csw/bin:/usr/ccs/bin:/usr/sfw/bin"
+  if platform.is_aix?
+    pkg.build_requires "http://osmirror.delivery.puppetlabs.net/AIX_MIRROR/pkg-config-0.19-6.aix5.2.ppc.rpm"
+    pkg.environment "CC" => "/opt/pl-build-tools/bin/gcc"
+    pkg.environment "RUBY" => "/opt/puppetlabs/puppet/bin/ruby"
+    pkg.environment "LDFLAGS" => " -brtl #{settings[:ldflags]}"
+  end
+
   pkg.environment "CONFIGURE_ARGS" => '--vendor'
   pkg.environment "PKG_CONFIG_PATH" => "#{File.join(settings[:libdir], 'pkgconfig')}:/usr/lib/pkgconfig"
 

@@ -60,16 +60,20 @@ component "marionette-collective" do |pkg, settings, platform|
   when "launchd"
     pkg.install_service "ext/aio/osx/mcollective.plist", nil, "com.puppetlabs.mcollective"
   when "smf"
-    pkg.install_service "ext/aio/solaris/smf/mcollective.xml", nil, "mcollective"
+    pkg.install_service "ext/aio/solaris/smf/mcollective.xml", nil, "mcollective", service_type: "network"
+  when "aix"
+    pkg.install_service "resources/aix/mcollective.service", nil, "mcollective"
   else
     fail "need to know where to put service files"
   end
 
   pkg.install do
-    ["#{settings[:host_ruby]} install.rb --ruby=#{File.join(settings[:bindir], 'ruby')} --bindir=#{settings[:bindir]} --configdir=#{File.join(settings[:sysconfdir], 'mcollective')} --sitelibdir=#{settings[:ruby_vendordir]} --quick --sbindir=#{settings[:bindir]}"]
+    ["#{settings[:host_ruby]} install.rb --ruby=#{File.join(settings[:bindir], 'ruby')} --bindir=#{settings[:bindir]} --configdir=#{File.join(settings[:sysconfdir], 'mcollective')} --sitelibdir=#{settings[:ruby_vendordir]} --quick --sbindir=#{settings[:bindir]} --plugindir=#{File.join('/opt/puppetlabs', 'mcollective', 'plugins')}"]
   end
 
   pkg.directory File.join(settings[:sysconfdir], "mcollective")
+  pkg.directory File.join('/opt/puppetlabs', 'mcollective')
+  pkg.directory File.join('/opt/puppetlabs', 'mcollective', 'plugins')
 
   # Bring in the client.cfg and server.cfg from ext/aio.
   pkg.install_file "ext/aio/common/client.cfg.dist", File.join(settings[:sysconfdir], 'mcollective', 'client.cfg')
