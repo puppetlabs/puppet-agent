@@ -13,6 +13,8 @@ component "hiera" do |pkg, settings, platform|
     "#{settings[:host_ruby]} install.rb --ruby=#{File.join(settings[:bindir], 'ruby')} --bindir=#{settings[:bindir]} --configdir=#{settings[:puppet_codedir]} --sitelibdir=#{settings[:ruby_vendordir]} --configs --quick --man --mandir=#{settings[:mandir]}"
   end
 
+  pkg.install_file ".gemspec", "#{settings[:gem_home]}/specifications/#{pkg.get_name}-#{pkg.get_version}.gemspec"
+
   pkg.configfile File.join(settings[:puppet_codedir], 'hiera.yaml')
 
   pkg.link "#{settings[:bindir]}/hiera", "#{settings[:link_bindir]}/hiera"
