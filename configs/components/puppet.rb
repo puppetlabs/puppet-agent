@@ -45,7 +45,7 @@ component "puppet" do |pkg, settings, platform|
       HERE
 
       pkg.add_postinstall_action <<-HERE.undent
-        if [ -f #{service_statefile} ] ; then 
+        if [ -f #{service_statefile} ] ; then
           #{puppet_bin} apply #{service_statefile} > /dev/null 2>&1 || :
           rm -rf #{rpm_statedir} || :
         fi
@@ -54,7 +54,9 @@ component "puppet" do |pkg, settings, platform|
   when "launchd"
     pkg.install_service "ext/osx/puppet.plist", nil, "com.puppetlabs.puppet"
   when "smf"
-    pkg.install_service "ext/solaris/smf/puppet.xml", "ext/solaris/smf/puppet"
+    pkg.install_service "ext/solaris/smf/puppet.xml", "ext/solaris/smf/puppet", service_type: "network"
+  when "aix"
+    pkg.install_service "resources/aix/puppet.service", nil, "puppet"
   else
     fail "need to know where to put service files"
   end
