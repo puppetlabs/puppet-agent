@@ -176,8 +176,6 @@ component "facter" do |pkg, settings, platform|
     ["#{platform[:make]} -j$(shell expr $(shell #{platform[:num_cores]}) + 1) install"]
   end
 
-  pkg.install_file ".gemspec", "#{settings[:gem_home]}/specifications/#{pkg.get_name}.gemspec"
-
   pkg.link "#{settings[:bindir]}/facter", "#{settings[:link_bindir]}/facter"
   pkg.directory File.join('/opt/puppetlabs', 'facter')
   pkg.directory File.join('/opt/puppetlabs', 'facter', 'facts.d')
