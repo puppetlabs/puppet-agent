@@ -4,6 +4,9 @@ AllCops:
     - 'configs/**/*.rb'
   Exclude:
     - 'resources/**/*.rb'
+    - 'ext/**/*'
+    - 'vendor/**/*'
+    - 'bundle/**/*'
 
 
 # MAYBE useful - errors when rescue {} happens.
