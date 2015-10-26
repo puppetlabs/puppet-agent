@@ -196,6 +196,7 @@ fail "It seems there were some issues building the puppet-agent msi" unless resu
 # Fetch back the built installer
 msi_file = "puppet-agent-#{AGENT_VERSION_STRING}-#{ARCH}.msi"
 Kernel.system("set -vx;scp #{ssh_key} Administrator@#{hostname}:/home/Administrator/puppet_for_the_win/pkg/#{msi_file} output/windows/")
+Kernel.system("set -vx;scp #{ssh_key} Administrator@#{hostname}:/home/Administrator/puppet_for_the_win/stagedir/misc/versions.txt output/windows/versions-#{ARCH}.txt")
 
 # delete a vm only if we successfully brought back the msi
 msi_path = "output/windows/#{msi_file}"
