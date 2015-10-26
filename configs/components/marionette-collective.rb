@@ -60,7 +60,7 @@ component "marionette-collective" do |pkg, settings, platform|
   when "launchd"
     pkg.install_service "ext/aio/osx/mcollective.plist", nil, "com.puppetlabs.mcollective"
   when "smf"
-    pkg.install_service "ext/aio/solaris/smf/mcollective.xml", nil, "mcollective"
+    pkg.install_service "ext/aio/solaris/smf/mcollective.xml", nil, "mcollective", service_type: "network"
   when "aix"
     pkg.install_service "resources/aix/mcollective.service", nil, "mcollective"
   else
