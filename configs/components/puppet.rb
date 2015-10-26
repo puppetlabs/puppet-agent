@@ -93,6 +93,9 @@ component "puppet" do |pkg, settings, platform|
     ]
   end
 
+
+  pkg.install_file ".gemspec", "#{settings[:gem_home]}/specifications/#{pkg.get_name}.gemspec"
+
   pkg.configfile File.join(settings[:puppet_configdir], 'puppet.conf')
   pkg.configfile File.join(settings[:puppet_configdir], 'auth.conf')
 
