@@ -9,11 +9,6 @@ component "virt-what" do |pkg, settings, platform|
   unless platform.is_deb?
     requires "util-linux"
   end
-  # Dmidecode is not available on "old" platforms (el4, sles 10/11) or network devices (eos, cisco, huawei)
-  # FACT-1241: the runtime dependency on dmidecode can be removed once this facter ticket is resolved
-  unless platform.name =~ /^el-4-.*$/ || platform.name =~ /^sles-(10|11)-.*$/ || platform.is_cisco_wrlinux? || platform.is_eos? || platform.is_huaweios?
-    requires "dmidecode"
-  end
   if platform.name =~ /^sles-(10|11)-.*$/
     requires "pmtools"
   end
