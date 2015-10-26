@@ -54,7 +54,7 @@ component "puppet" do |pkg, settings, platform|
   when "launchd"
     pkg.install_service "ext/osx/puppet.plist", nil, "com.puppetlabs.puppet"
   when "smf"
-    pkg.install_service "ext/solaris/smf/puppet.xml", "ext/solaris/smf/puppet"
+    pkg.install_service "ext/solaris/smf/puppet.xml", "ext/solaris/smf/puppet", service_type: "network"
   when "aix"
     pkg.install_service "resources/aix/puppet.service", nil, "puppet"
   else

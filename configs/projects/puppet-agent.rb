@@ -4,7 +4,7 @@ project "puppet-agent" do |proj|
   proj.setting(:prefix, File.join(proj.install_root, "puppet"))
   proj.setting(:sysconfdir, "/etc/puppetlabs")
   proj.setting(:puppet_configdir, File.join(proj.sysconfdir, 'puppet'))
-  proj.setting(:puppet_codedir, "/etc/puppetlabs/code")
+  proj.setting(:puppet_codedir, File.join(proj.sysconfdir, 'code'))
   proj.setting(:logdir, "/var/log/puppetlabs")
   proj.setting(:piddir, "/var/run/puppetlabs")
   proj.setting(:bindir, File.join(proj.prefix, "bin"))
@@ -57,7 +57,12 @@ project "puppet-agent" do |proj|
   proj.vendor "Puppet Labs <info@puppetlabs.com>"
   proj.homepage "https://www.puppetlabs.com"
   proj.target_repo "PC1"
-  proj.identifier "com.puppetlabs"
+
+  if platform.is_solaris?
+    proj.identifier "puppetlabs.com"
+  elsif platform.is_osx?
+    proj.identifier "com.puppetlabs"
+  end
 
   # Platform specific
   proj.setting(:cflags, "-I#{proj.includedir} -I/opt/pl-build-tools/include")
