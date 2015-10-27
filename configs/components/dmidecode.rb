@@ -10,6 +10,7 @@ component 'dmidecode' do |pkg, settings, platform|
   pkg.apply_patch "resources/patches/dmidecode/dmidecode-1.181.patch"
   pkg.apply_patch "resources/patches/dmidecode/dmidecode-1.182.patch"
   pkg.apply_patch "resources/patches/dmidecode/dmidecode-1.195.patch"
+  pkg.apply_patch "resources/patches/dmidecode/dmidecode-install-to-bin.patch"
 
   pkg.build do
     ["#{platform[:make]} -j$(shell expr $(shell #{platform[:num_cores]}) + 1)"]
