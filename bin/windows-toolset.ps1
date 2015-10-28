@@ -23,10 +23,10 @@ Write-Host "arch=$arch, cores=$cores, buildsource=$buildsource"
 Function Install-Choco ($pkg, $ver, $opts = "") {
     Write-Host "Installing $pkg $ver from https://www.myget.org/F/puppetlabs"
     try {
-        choco install -y $pkg -version $ver -source https://www.myget.org/F/puppetlabs -debug $opts
+        Invoke-External { choco install -y $pkg -version $ver -source https://www.myget.org/F/puppetlabs -debug $opts }
     } catch {
         Write-Host "Error: $_, trying again."
-        choco install -y $pkg -version $ver -source https://www.myget.org/F/puppetlabs -debug $opts
+        Invoke-External { choco install -y $pkg -version $ver -source https://www.myget.org/F/puppetlabs -debug $opts }
     }
 }
 
