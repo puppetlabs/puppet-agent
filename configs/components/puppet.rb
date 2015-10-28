@@ -83,12 +83,10 @@ component "puppet" do |pkg, settings, platform|
     if platform.os_version == "11"
       pkg.requires 'archiver/gnu-tar'
     end
-  elsif platform.is_aix?
+  else
     # PMT doesn't work on AIX, don't add a useless dependency
     # We will need to revisit when we update PMT support
-    next
-  else
-    pkg.requires 'tar'
+    pkg.requires 'tar' unless platform.is_aix?
   end
 
   pkg.install do
