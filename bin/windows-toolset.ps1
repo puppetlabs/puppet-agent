@@ -31,7 +31,7 @@ Function Install-Choco ($pkg, $ver, $opts = "") {
 }
 
 if (!(Get-Command choco -ErrorAction SilentlyContinue)) {
-    iex ((new-object net.webclient).DownloadString('https://chocolatey.org/install.ps1'))
+    & $scriptDirectory\install-chocolatey.ps1
 }
 
 Install-Choco 7zip.commandline 9.20.0.20150210

@@ -88,6 +88,8 @@ Kernel.system("scp #{File.join(SCRIPT_ROOT, 'windows-env.ps1')} Administrator@#{
 fail "Copying windows-env.ps1 to #{hostname} failed" unless $?.success?
 Kernel.system("scp #{File.join(SCRIPT_ROOT, 'windows-toolset.ps1')} Administrator@#{hostname}:/home/Administrator/")
 fail "Copying windows-toolset.ps1 to #{hostname} failed" unless $?.success?
+Kernel.system("scp #{File.join(SCRIPT_ROOT, 'install-chocolatey.ps1')} Administrator@#{hostname}:/home/Administrator/")
+fail "Copying install-chocolatey.ps1 to #{hostname} failed" unless $?.success?
 
 # Ready the Windows Build Environment, followed by the facter and pxp-agent build scripts
 
