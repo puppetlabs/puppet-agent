@@ -30,6 +30,12 @@ Function Install-Choco ($pkg, $ver, $opts = "") {
     }
 }
 
+Function Verify-Tool ($name, $versionSwitch = '--version') {
+  $path = Get-Command -Name $name | Select -ExpandProperty Path
+  Write-Host "`n$name - Path : $path"
+  Invoke-External { & $name $versionSwitch }
+}
+
 if (!(Get-Command choco -ErrorAction SilentlyContinue)) {
     & $scriptDirectory\install-chocolatey.ps1
 }
@@ -59,6 +65,12 @@ $env:PATH += [Environment]::GetFolderPath('ProgramFiles') + "\Git\cmd"
 Write-Host "Updated Path to $env:PATH"
 
 cd $toolsDir
+
+Write-Host "Tool Versions Installed:`n`n"
+$PSVersionTable.Keys | % { Write-Host "$_ : $($PSVersionTable[$_])" }
+@('git', 'cmake', 'mingw32-make', 'ruby', 'rake') |
+  % { Verify-Tool $_ }
+Verify-Tool '7za' ''
 
 if ($buildSource) {
   ## Download, build, and install Boost
