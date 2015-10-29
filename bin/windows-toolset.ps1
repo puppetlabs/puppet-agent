@@ -55,7 +55,7 @@ $env:PATH = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";"
 if ($arch -eq 32) {
   $env:PATH = "C:\tools\mingw32\bin;" + $env:PATH
 }
-$env:PATH += [Environment]::GetFolderPath('ProgramFilesX86') + "\Git\cmd"
+$env:PATH += [Environment]::GetFolderPath('ProgramFiles') + "\Git\cmd"
 Write-Host "Updated Path to $env:PATH"
 
 cd $toolsDir
