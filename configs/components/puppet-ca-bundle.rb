@@ -5,8 +5,15 @@ component "puppet-ca-bundle" do |pkg, settings, platform|
   # make the keystore
   pkg.build_requires 'facter'
 
-  pkg.install do
+  install_commands = [
     "#{platform[:make]} install OPENSSL=#{settings[:bindir]}/openssl USER=0 GROUP=0 DESTDIR=#{File.join(settings[:prefix], 'ssl')}"
-    "#{platform[:make]} keystore"
+  ]
+
+  if settings[:java_available]
+    install_commands << "#{platform[:make]} keystore"
+  end
+
+  pkg.install do
+    install_commands
   end
 end
