@@ -1,0 +1,30 @@
+diff --git a/Makefile b/Makefile
+index 55378bb..b43b218 100644
+--- a/Makefile
++++ b/Makefile
+@@ -27,7 +27,7 @@ LDFLAGS =
+ 
+ DESTDIR =
+ prefix  = /usr/local
+-sbindir = $(prefix)/sbin
++bindir  = $(prefix)/bin
+ mandir  = $(prefix)/share/man
+ man8dir = $(mandir)/man8
+ docdir  = $(prefix)/share/doc/dmidecode
+@@ -110,13 +110,13 @@ install : install-bin install-man install-doc
+ uninstall : uninstall-bin uninstall-man uninstall-doc
+ 
+ install-bin : $(PROGRAMS)
+-	$(INSTALL_DIR) $(DESTDIR)$(sbindir)
++	$(INSTALL_DIR) $(DESTDIR)$(bindir)
+ 	for program in $(PROGRAMS) ; do \
+-	$(INSTALL_PROGRAM) $$program $(DESTDIR)$(sbindir) ; done
++	$(INSTALL_PROGRAM) $$program $(DESTDIR)$(bindir) ; done
+ 
+ uninstall-bin :
+ 	for program in $(PROGRAMS) ; do \
+-	$(RM) $(DESTDIR)$(sbindir)/$$program ; done
++	$(RM) $(DESTDIR)$(bindir)/$$program ; done
+ 
+ install-man :
+ 	$(INSTALL_DIR) $(DESTDIR)$(man8dir)
