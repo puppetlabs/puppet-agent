@@ -10,7 +10,7 @@ component "puppet-ca-bundle" do |pkg, settings, platform|
   ]
 
   if settings[:java_available]
-    install_commands << "#{platform[:make]} keystore"
+    install_commands << "#{platform[:make]} keystore DESTDIR=#{File.join(settings[:prefix], 'ssl')}"
   end
 
   pkg.install do
