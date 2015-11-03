@@ -50,6 +50,24 @@ project "puppet-agent" do |proj|
   proj.setting(:platform_triple, platform_triple)
   proj.setting(:host, host)
 
+  # If building internally, we want to use internal mirrors for speed and
+  # reduced chances of failure
+  if ENV["INTERNAL_PL_BUILD"].to_s.downcase == "true"
+    # Here we rewrite public http urls to use our internal source host instead.
+    # Something like https://www.openssl.org/source/openssl-1.0.0r.tar.gz gets
+    # rewritten as
+    # http://buildsources.delivery.puppetlabs.net/openssl-1.0.0r.tar.gz
+    proj.register_rewrite_rule 'http', 'http://buildsources.delivery.puppetlabs.net'
+
+    # Here we rewrite public git urls to use our internal git mirror It turns
+    # urls that look like git://github.com/puppetlabs/puppet.git into
+    # git://github.delivery.puppetlabs.net/puppetlabs-puppet.git
+    proj.register_rewrite_rule 'git', Proc.new { |url|
+      match = url.match(/github.com\/(.*)$/)
+      "git://github.delivery.puppetlabs.net/#{match[1].gsub('/', '-')}" if match
+    }
+  end
+
   proj.description "The Puppet Agent package contains all of the elements needed to run puppet, including ruby, facter, hiera and mcollective."
   proj.version_from_git
   proj.write_version_file File.join(proj.prefix, 'VERSION')
