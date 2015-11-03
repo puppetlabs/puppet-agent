@@ -88,6 +88,12 @@ component "facter" do |pkg, settings, platform|
     skip_jruby = 'ON'
   end
 
+  if skip_jruby == 'OFF'
+    settings[:java_available] = true
+  else
+    settings[:java_available] = false
+  end
+
   if java_home
     pkg.environment "JAVA_HOME" => java_home
   end
