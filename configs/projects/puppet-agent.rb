@@ -93,6 +93,11 @@ project "puppet-agent" do |proj|
   proj.component "openssl"
   proj.component "puppet-ca-bundle"
 
+  # HuaweiOS dependencies for net-netconf
+  if platform.is_huaweios?
+    proj.component "libxml2"
+  end
+
   # These utilites don't really work on unix
   if platform.is_linux?
     proj.component "virt-what"
