@@ -91,7 +91,7 @@ component "puppet" do |pkg, settings, platform|
 
   pkg.install do
     [
-      "#{settings[:host_ruby]} install.rb --ruby=#{File.join(settings[:bindir], 'ruby')} --no-check-prereqs --bindir=#{settings[:bindir]} --configdir=#{settings[:puppet_configdir]} --sitelibdir=#{settings[:ruby_vendordir]} --configs --quick --man --mandir=#{settings[:mandir]}",
+      "#{settings[:host_ruby]} install.rb --ruby=#{File.join(settings[:bindir], 'ruby')} --no-check-prereqs --bindir=#{settings[:bindir]} --configdir=#{settings[:puppet_configdir]} --sitelibdir=#{settings[:ruby_vendordir]} --codedir=#{settings[:puppet_codedir]} --configs --quick --man --mandir=#{settings[:mandir]}",
     ]
   end
 
@@ -111,4 +111,7 @@ component "puppet" do |pkg, settings, platform|
   pkg.directory File.join(settings[:logdir], 'puppet'), mode: "0750"
 
   pkg.link "#{settings[:bindir]}/puppet", "#{settings[:link_bindir]}/puppet"
+  if platform.is_eos?
+    pkg.link "#{settings[:sysconfdir]}", "#{settings[:link_sysconfdir]}"
+  end
 end
