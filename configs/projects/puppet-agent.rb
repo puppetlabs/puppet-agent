@@ -96,6 +96,7 @@ project "puppet-agent" do |proj|
   # HuaweiOS dependencies for net-netconf
   if platform.is_huaweios?
     proj.component "libxml2"
+    proj.component "libxslt"
   end
 
   # These utilites don't really work on unix
