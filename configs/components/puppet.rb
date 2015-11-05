@@ -35,21 +35,23 @@ component "puppet" do |pkg, settings, platform|
       puppet_bin = "/opt/puppetlabs/bin/puppet"
       rpm_statedir = "%{_localstatedir}/lib/rpm-state/#{pkg.get_name}"
       service_statefile = "#{rpm_statedir}/service.pp"
-      pkg.add_preinstall_action <<-HERE.undent
-        if [ $1 -gt 1 ]; then
+      pkg.add_preinstall_action ["upgrade"],
+        [<<-HERE.undent
           install --owner root --mode 0700 --directory #{rpm_statedir} || :
           if [ -x #{puppet_bin} ] ; then
             #{puppet_bin} resource service puppet > #{service_statefile} || :
           fi
-        fi
-      HERE
+          HERE
+        ]
 
-      pkg.add_postinstall_action <<-HERE.undent
-        if [ -f #{service_statefile} ] ; then
-          #{puppet_bin} apply #{service_statefile} > /dev/null 2>&1 || :
-          rm -rf #{rpm_statedir} || :
-        fi
-      HERE
+      pkg.add_postinstall_action ["upgrade"],
+        [<<-HERE.undent
+          if [ -f #{service_statefile} ] ; then
+            #{puppet_bin} apply #{service_statefile} > /dev/null 2>&1 || :
+            rm -rf #{rpm_statedir} || :
+          fi
+          HERE
+        ]
     end
   when "launchd"
     pkg.install_service "ext/osx/puppet.plist", nil, "com.puppetlabs.puppet"
