@@ -66,7 +66,7 @@ component 'augeas' do |pkg, settings, platform|
   end
 
   pkg.configure do
-    [ "./configure --prefix=#{settings[:prefix]} #{settings[:host]}" ]
+    ["./configure --prefix=#{settings[:prefix]} #{settings[:host]}"]
   end
 
   pkg.build do

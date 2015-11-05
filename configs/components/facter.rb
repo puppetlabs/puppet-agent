@@ -88,6 +88,12 @@ component "facter" do |pkg, settings, platform|
     skip_jruby = 'ON'
   end
 
+  if skip_jruby == 'OFF'
+    settings[:java_available] = true
+  else
+    settings[:java_available] = false
+  end
+
   if java_home
     pkg.environment "JAVA_HOME" => java_home
   end
@@ -175,6 +181,8 @@ component "facter" do |pkg, settings, platform|
   pkg.install do
     ["#{platform[:make]} -j$(shell expr $(shell #{platform[:num_cores]}) + 1) install"]
   end
+
+  pkg.install_file ".gemspec", "#{settings[:gem_home]}/specifications/#{pkg.get_name}.gemspec"
 
   pkg.link "#{settings[:bindir]}/facter", "#{settings[:link_bindir]}/facter"
   pkg.directory File.join('/opt/puppetlabs', 'facter')

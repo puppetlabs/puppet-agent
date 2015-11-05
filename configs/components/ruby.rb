@@ -158,5 +158,4 @@ component "ruby" do |pkg, settings, platform|
       ]
     end
   end
-
 end

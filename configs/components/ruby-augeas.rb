@@ -29,8 +29,8 @@ component "ruby-augeas" do |pkg, settings, platform|
   end
 
   pkg.build do
-     [ "#{ruby} ext/augeas/extconf.rb",
-       "#{platform[:make]} -e -j$(shell expr $(shell #{platform[:num_cores]}) + 1)" ]
+    ["#{ruby} ext/augeas/extconf.rb",
+       "#{platform[:make]} -e -j$(shell expr $(shell #{platform[:num_cores]}) + 1)"]
   end
 
   pkg.install_file 'lib/augeas.rb', File.join(settings[:ruby_vendordir], 'augeas.rb')

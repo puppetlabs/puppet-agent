@@ -1,6 +1,7 @@
 project "puppet-agent" do |proj|
   # Project level settings our components will care about
-  proj.setting(:prefix, "/opt/puppetlabs/puppet")
+  proj.setting(:install_root, "/opt/puppetlabs")
+  proj.setting(:prefix, File.join(proj.install_root, "puppet"))
   proj.setting(:sysconfdir, "/etc/puppetlabs")
   proj.setting(:puppet_configdir, File.join(proj.sysconfdir, 'puppet'))
   proj.setting(:puppet_codedir, File.join(proj.sysconfdir, 'code'))
@@ -75,6 +76,8 @@ project "puppet-agent" do |proj|
   proj.component "facter"
   proj.component "hiera"
   proj.component "marionette-collective"
+  proj.component "cpp-pcp-client"
+  proj.component "pxp-agent"
 
   # Then the dependencies
   proj.component "augeas"
@@ -88,11 +91,13 @@ project "puppet-agent" do |proj|
   proj.component "ruby-shadow" unless platform.is_aix?
   proj.component "ruby-augeas"
   proj.component "openssl"
+  proj.component "puppet-ca-bundle"
 
   # These utilites don't really work on unix
   if platform.is_linux?
     proj.component "virt-what"
     proj.component "dmidecode"
+    proj.component "shellpath"
   end
 
   if platform.is_solaris? || platform.name =~ /^el-4/ || platform.is_aix?
@@ -109,16 +114,12 @@ project "puppet-agent" do |proj|
     proj.component "cfpropertylist"
   end
 
-  if platform.is_solaris? || platform.is_osx? || platform.name =~ /^el-4/
-    proj.component "ca-cert"
-  end
-
   # We only build ruby-selinux for EL 5-7
   if platform.name =~ /^el-(5|6|7)-.*/ || platform.is_fedora?
     proj.component "ruby-selinux"
   end
 
-  proj.directory "/opt/puppetlabs"
+  proj.directory proj.install_root
   proj.directory proj.prefix
   proj.directory proj.sysconfdir
   proj.directory proj.logdir

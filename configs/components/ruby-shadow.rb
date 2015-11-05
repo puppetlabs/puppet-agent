@@ -19,7 +19,7 @@ component "ruby-shadow" do |pkg, settings, platform|
   end
 
   pkg.build do
-     [ "#{ruby} extconf.rb",
+    ["#{ruby} extconf.rb",
      "#{platform[:make]} -e -j$(shell expr $(shell #{platform[:num_cores]}) + 1)"]
   end
 
