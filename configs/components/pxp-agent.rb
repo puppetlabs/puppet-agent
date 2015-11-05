@@ -69,7 +69,7 @@ component "pxp-agent" do |pkg, settings, platform|
   when "launchd"
     pkg.install_service "ext/osx/pxp-agent.plist", nil, "com.puppetlabs.pxp-agent"
   when "smf"
-    pkg.install_service "ext/solaris/smf/pxp-agent.xml"
+    pkg.install_service "ext/solaris/smf/pxp-agent.xml", service_type: "network"
   when "aix"
     pkg.install_service "resources/aix/pxp-agent.service", nil, "pxp-agent"
   else
