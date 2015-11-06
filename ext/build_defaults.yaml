@@ -21,6 +21,7 @@ foss_platforms:
   - fedora-f22-x86_64
   - osx-10.9-x86_64
   - osx-10.10-x86_64
+  - osx-10.11-x86_64
   - ubuntu-12.04-amd64
   - ubuntu-12.04-i386
   - ubuntu-14.04-amd64
