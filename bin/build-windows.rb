@@ -82,13 +82,13 @@ fail "Unable to connect to the host. Is is possible that you aren't on VPN or co
 
 Kernel.system("set -vx;#{ssh_command} 'source .bash_profile ; echo $PATH'")
 
-Kernel.system("scp #{File.join(SCRIPT_ROOT, 'build-helpers.ps1')} Administrator@#{hostname}:/home/Administrator/")
+Kernel.system("scp #{ssh_key} #{File.join(SCRIPT_ROOT, 'build-helpers.ps1')} Administrator@#{hostname}:/home/Administrator/")
 fail "Copying build-helpers.ps1 to #{hostname} failed" unless $?.success?
-Kernel.system("scp #{File.join(SCRIPT_ROOT, 'windows-env.ps1')} Administrator@#{hostname}:/home/Administrator/")
+Kernel.system("scp #{ssh_key} #{File.join(SCRIPT_ROOT, 'windows-env.ps1')} Administrator@#{hostname}:/home/Administrator/")
 fail "Copying windows-env.ps1 to #{hostname} failed" unless $?.success?
-Kernel.system("scp #{File.join(SCRIPT_ROOT, 'windows-toolset.ps1')} Administrator@#{hostname}:/home/Administrator/")
+Kernel.system("scp #{ssh_key} #{File.join(SCRIPT_ROOT, 'windows-toolset.ps1')} Administrator@#{hostname}:/home/Administrator/")
 fail "Copying windows-toolset.ps1 to #{hostname} failed" unless $?.success?
-Kernel.system("scp #{File.join(SCRIPT_ROOT, 'install-chocolatey.ps1')} Administrator@#{hostname}:/home/Administrator/")
+Kernel.system("scp #{ssh_key} #{File.join(SCRIPT_ROOT, 'install-chocolatey.ps1')} Administrator@#{hostname}:/home/Administrator/")
 fail "Copying install-chocolatey.ps1 to #{hostname} failed" unless $?.success?
 
 # Ready the Windows Build Environment, followed by the facter and pxp-agent build scripts
@@ -99,21 +99,21 @@ fail "It looks like the Windows-toolset build script failed for some reason. I w
 puts "Build-Windows.rb... Windows Setup Completed!!"
 
 puts "Build-Windows.rb... building facter"
-Kernel.system("scp #{File.join(SCRIPT_ROOT, 'build-facter.ps1')} Administrator@#{hostname}:/home/Administrator/")
+Kernel.system("scp #{ssh_key} #{File.join(SCRIPT_ROOT, 'build-facter.ps1')} Administrator@#{hostname}:/home/Administrator/")
 fail "Copying build-facter.ps1 to #{hostname} failed" unless $?.success?
 result = Kernel.system("set -vx;#{ssh_command} \"powershell.exe -NoProfile -ExecutionPolicy Unrestricted -InputFormat None -Command ./build-facter.ps1 -arch #{script_arch} -buildSource #{BUILD_SOURCE} -facterRef #{FACTER['ref']} -facterFork #{FACTER['url']}\"")
 fail "It looks like the facter build script build-facter.ps1 failed for some reason. I would suggest ssh'ing into the box and poking around:\n#{result}" unless result
 puts "Build-Windows.rb... facter build Completed!!"
 
 puts "Build-Windows.rb... building cpp-pcp-client"
-Kernel.system("scp #{File.join(SCRIPT_ROOT, 'build-cpp-pcp-client.ps1')} Administrator@#{hostname}:/home/Administrator/")
+Kernel.system("scp #{ssh_key} #{File.join(SCRIPT_ROOT, 'build-cpp-pcp-client.ps1')} Administrator@#{hostname}:/home/Administrator/")
 fail "Copying build-cpp-pcp-client.ps1 to #{hostname} failed" unless $?.success?
 clone_and_rynsc_private_repo(CPPPCPCLIENT['url'], CPPPCPCLIENT['ref'], hostname, ssh_key)
 result = Kernel.system("#{ssh_command} \"powershell.exe -NoProfile -ExecutionPolicy Unrestricted -InputFormat None -Command ./build-cpp-pcp-client.ps1 -arch #{script_arch}\"")
 fail "It looks like the cpp-pcp-client build script failed for some reason. I would suggest ssh'ing into the box and poking around" unless result
 
 puts "Build-Windows.rb... building pxp-agent"
-Kernel.system("scp #{File.join(SCRIPT_ROOT, 'build-pxp-agent.ps1')} Administrator@#{hostname}:/home/Administrator/")
+Kernel.system("scp #{ssh_key} #{File.join(SCRIPT_ROOT, 'build-pxp-agent.ps1')} Administrator@#{hostname}:/home/Administrator/")
 fail "Copying build-pxp-agent.ps1 to #{hostname} failed" unless $?.success?
 clone_and_rynsc_private_repo(PXPAGENT['url'], PXPAGENT['ref'], hostname, ssh_key)
 result = Kernel.system("#{ssh_command} \"powershell.exe -NoProfile -ExecutionPolicy Unrestricted -InputFormat None -Command ./build-pxp-agent.ps1 -arch #{script_arch}\"")
