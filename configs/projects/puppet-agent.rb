@@ -93,6 +93,14 @@ project "puppet-agent" do |proj|
   proj.component "openssl"
   proj.component "puppet-ca-bundle"
 
+  # HuaweiOS needs these gems included since it can't build native extensions
+  if platform.is_huaweios?
+    proj.component "rubygem-net-netconf"
+    proj.component "rubygem-net-scp"
+    proj.component "rubygem-nokogiri"
+    proj.component "rubygem-mini_portile"
+  end
+
   # These utilites don't really work on unix
   if platform.is_linux?
     proj.component "virt-what"
