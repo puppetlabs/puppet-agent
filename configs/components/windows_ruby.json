@@ -1,7 +1,7 @@
 {
   "url": "git://github.delivery.puppetlabs.net/puppetlabs-puppet-win32-ruby.git",
   "ref": {
-    "x86": "15f21c66bd503bc62769f3ababe8e2b9cd9f6999",
-    "x64": "74627d32deaec9b15b310b78d0f09903ac2ff6e5"
+    "x86": "refs/tags/2.1.7.1-x86",
+    "x64": "refs/tags/2.1.7.1-x64"
   }
 }
