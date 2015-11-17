@@ -26,7 +26,7 @@ component "libxslt" do |pkg, settings, platform|
   end
 
   pkg.configure do
-    ["./configure --prefix=#{settings[:prefix]} --with-libxml-prefix=#{settings[:prefix]}"]
+    ["./configure --prefix=#{settings[:prefix]} --docdir=/tmp --with-libxml-prefix=#{settings[:prefix]}"]
   end
 
   pkg.build do
@@ -35,10 +35,9 @@ component "libxslt" do |pkg, settings, platform|
 
   pkg.install do
     [
-     "#{platform[:make]} VERBOSE=1 -j$(shell expr $(shell #{platform[:num_cores]}) + 1) install",
-     "rm -rf #{settings[:datadir]}/gtk-doc",
-     "rm -rf #{settings[:datadir]}/doc",
-     "rm -rf #{settings[:datadir]}/man"
+      "#{platform[:make]} VERBOSE=1 -j$(shell expr $(shell #{platform[:num_cores]}) + 1) install",
+      "rm -rf #{settings[:datadir]}/gtk-doc",
+      "rm -rf #{settings[:datadir]}/doc/#{pkg.get_name}*"
     ]
   end
 

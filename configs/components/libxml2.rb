@@ -31,10 +31,9 @@ component "libxml2" do |pkg, settings, platform|
 
   pkg.install do
     [
-     "#{platform[:make]} VERBOSE=1 -j$(shell expr $(shell #{platform[:num_cores]}) + 1) install",
-     "rm -rf #{settings[:datadir]}/gtk-doc",
-     "rm -rf #{settings[:datadir]}/doc",
-     "rm -rf #{settings[:datadir]}/man"
+      "#{platform[:make]} VERBOSE=1 -j$(shell expr $(shell #{platform[:num_cores]}) + 1) install",
+      "rm -rf #{settings[:datadir]}/gtk-doc",
+      "rm -rf #{settings[:datadir]}/doc/#{pkg.get_name}*"
     ]
   end
 
