@@ -2,7 +2,14 @@ project "puppet-agent" do |proj|
   # Project level settings our components will care about
   proj.setting(:install_root, "/opt/puppetlabs")
   proj.setting(:prefix, File.join(proj.install_root, "puppet"))
-  proj.setting(:sysconfdir, "/etc/puppetlabs")
+
+  if platform.is_eos?
+    proj.setting(:sysconfdir, "/persist/sys/etc/puppetlabs")
+    proj.setting(:link_sysconfdir, "/etc/puppetlabs")
+  else
+    proj.setting(:sysconfdir, "/etc/puppetlabs")
+  end
+
   proj.setting(:puppet_configdir, File.join(proj.sysconfdir, 'puppet'))
   proj.setting(:puppet_codedir, File.join(proj.sysconfdir, 'code'))
   proj.setting(:logdir, "/var/log/puppetlabs")
