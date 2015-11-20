@@ -22,7 +22,7 @@ component "libxml2" do |pkg, settings, platform|
   end
 
   pkg.configure do
-    ["./configure --prefix=#{settings[:prefix]} --without-python"]
+    ["./configure --prefix=#{settings[:prefix]} --without-python #{settings[:host]}"]
   end
 
   pkg.build do

@@ -26,7 +26,7 @@ component "libxslt" do |pkg, settings, platform|
   end
 
   pkg.configure do
-    ["./configure --prefix=#{settings[:prefix]} --docdir=/tmp --with-libxml-prefix=#{settings[:prefix]}"]
+    ["./configure --prefix=#{settings[:prefix]} --docdir=/tmp --with-libxml-prefix=#{settings[:prefix]} #{settings[:host]}"]
   end
 
   pkg.build do
