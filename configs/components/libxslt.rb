@@ -14,7 +14,7 @@ component "libxslt" do |pkg, settings, platform|
     pkg.environment "LDFLAGS" => settings[:ldflags]
     # Configure on Solaris incorrectly passes flags to ld
     pkg.apply_patch 'resources/patches/libxslt/disable-version-script.patch'
-  else
+  elsif !platform.is_osx?
     pkg.build_requires "pl-gcc"
     pkg.build_requires "make"
     pkg.environment "LDFLAGS" => settings[:ldflags]
