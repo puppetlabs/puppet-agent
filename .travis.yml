@@ -10,5 +10,5 @@ notifications:
 
 matrix:
   include:
-    - rvm: 2.2.0
+    - rvm: 2.1.7
       env: "CHECK='rubocop -D'"

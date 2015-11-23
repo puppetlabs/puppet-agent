@@ -1,1 +1,1 @@
-'/opt/puppetlabs/puppet/bin/pxp-agent --foreground' -s pxp-agent -u root
+'/opt/puppetlabs/puppet/bin/pxp-agent' -a '--foreground' -s pxp-agent -u root
