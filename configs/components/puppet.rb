@@ -92,9 +92,10 @@ component "puppet" do |pkg, settings, platform|
   end
 
   if platform.is_osx?
-    pkg.install_file("resources/files/osx_paths", "/etc/paths.d/puppet-agent")
+    pkg.add_source("file://resources/files/osx_paths.txt", sum: "3bc8d7d0ada6440e625bb4ab96b1a149")
+    pkg.install_file("../osx_paths.txt", "/etc/paths.d/puppet-agent")
   end
-  
+
   pkg.install do
     [
       "#{settings[:host_ruby]} install.rb --ruby=#{File.join(settings[:bindir], 'ruby')} --no-check-prereqs --bindir=#{settings[:bindir]} --configdir=#{settings[:puppet_configdir]} --sitelibdir=#{settings[:ruby_vendordir]} --configs --quick --man --mandir=#{settings[:mandir]}",
