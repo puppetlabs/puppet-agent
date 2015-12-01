@@ -59,6 +59,8 @@ component "puppet" do |pkg, settings, platform|
     pkg.install_service "ext/solaris/smf/puppet.xml", "ext/solaris/smf/puppet", service_type: "network"
   when "aix"
     pkg.install_service "resources/aix/puppet.service", nil, "puppet"
+  when "windows"
+    puts "Windows Services not implemented yet"
   else
     fail "need to know where to put service files"
   end
