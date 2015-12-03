@@ -98,7 +98,7 @@ Here's a sample snippet used for a stable -> aardwolf merge:
 
 ```
 git merge --no-commit --no-ff stable
-for i in {hiera,facter,puppet,marionette-collective}; do git checkout aardwolf -- configs/components/$i.json;done
+for i in {hiera,facter,puppet,marionette-collective,pxp-agent,cpp-pcp-client}; do git checkout aardwolf -- configs/components/$i.json;done
 git checkout aardwolf -- configs/components/windows_*.json
 git commit -m "(maint) Restore promoted components refs after merge from stable"
 ```
