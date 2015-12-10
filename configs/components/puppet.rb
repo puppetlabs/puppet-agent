@@ -92,7 +92,7 @@ component "puppet" do |pkg, settings, platform|
   end
 
   if platform.is_osx?
-    pkg.add_source("file://resources/files/osx_paths.txt", sum: "3bc8d7d0ada6440e625bb4ab96b1a149")
+    pkg.add_source("file://resources/files/osx_paths.txt", sum: "077ceb5e2f71cf733190a61d2fd221fb")
     pkg.install_file("../osx_paths.txt", "/etc/paths.d/puppet-agent")
   end
 
