@@ -2,7 +2,7 @@ platform "solaris-10-sparc" do |plat|
   plat.servicedir "/var/svc/manifest"
   plat.defaultdir "/lib/svc/method"
   plat.servicetype "smf"
-  plat.vcloud_name "solaris-10-x86_64"
+  plat.vmpooler_template "solaris-10-x86_64"
   plat.tar "/usr/sfw/bin/gtar"
   plat.patch "/usr/bin/gpatch"
   plat.num_cores "/usr/bin/kstat cpu_info | /opt/csw/bin/ggrep -E '[[:space:]]+core_id[[:space:]]' | wc -l"
