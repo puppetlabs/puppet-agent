@@ -73,6 +73,11 @@ project "puppet-agent" do |proj|
     proj.identifier "com.puppetlabs"
   end
 
+  # For some platforms the default doc location for the BOM does not exist or is incorrect - move it to specified directory
+  if platform.name =~ /cisco-wrlinux/
+    proj.bill_of_materials File.join(proj.datadir, "doc")
+  end
+
   # Platform specific
   proj.setting(:cflags, "-I#{proj.includedir} -I/opt/pl-build-tools/include")
   proj.setting(:ldflags, "-L#{proj.libdir} -L/opt/pl-build-tools/lib -Wl,-rpath=#{proj.libdir}")
