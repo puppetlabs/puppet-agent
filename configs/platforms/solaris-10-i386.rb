@@ -2,7 +2,7 @@ platform "solaris-10-i386" do |plat|
   plat.servicedir "/var/svc/manifest"
   plat.defaultdir "/lib/svc/method"
   plat.servicetype "smf"
-  plat.vcloud_name "solaris-10-x86_64"
+  plat.vmpooler_template "solaris-10-x86_64"
 
   base_pkgs = ['arc', 'gnu-idn', 'gpch', 'gtar', 'hea', 'libm', 'wgetu', 'xcu4']
   base_url = 'http://pl-build-tools.delivery.puppetlabs.net/solaris/10/depends'

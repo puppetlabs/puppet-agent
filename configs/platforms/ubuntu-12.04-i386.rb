@@ -7,5 +7,5 @@ platform "ubuntu-12.04-i386" do |plat|
   plat.apt_repo "http://pl-build-tools.delivery.puppetlabs.net/debian/pl-build-tools-release-precise.deb"
   plat.provision_with "export DEBIAN_FRONTEND=noninteractive; apt-get update -qq; apt-get install -qy --no-install-recommends build-essential devscripts make quilt pkg-config debhelper "
   plat.install_build_dependencies_with "DEBIAN_FRONTEND=noninteractive; apt-get install -qy --no-install-recommends "
-  plat.vcloud_name "ubuntu-1204-i386"
+  plat.vmpooler_template "ubuntu-1204-i386"
 end
