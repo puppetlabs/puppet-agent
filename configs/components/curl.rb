@@ -4,6 +4,7 @@ component 'curl' do |pkg, settings, platform|
   pkg.url "http://buildsources.delivery.puppetlabs.net/curl-#{pkg.get_version}.tar.gz"
 
   pkg.build_requires "openssl"
+  pkg.build_requires "puppet-ca-bundle"
 
   prefix = settings[:prefix]
   pem_file = "#{settings[:prefix]}/ssl/cert.pem"
