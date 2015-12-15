@@ -22,5 +22,5 @@ apt-get install -qy --no-install-recommends build-essential make quilt pkg-confi
 )
 
   plat.install_build_dependencies_with "DEBIAN_FRONTEND=noninteractive; apt-get install -qy --no-install-recommends "
-  plat.vcloud_name "debian-7-x86_64"
+  plat.vmpooler_template "debian-7-x86_64"
 end

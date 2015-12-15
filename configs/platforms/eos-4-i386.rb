@@ -8,5 +8,5 @@ platform "eos-4-i386" do |plat|
   plat.provision_with "yum install -y --nogpgcheck autoconf automake createrepo rsync gcc make rpm-build rpm-libs yum-utils zip"
 
   plat.install_build_dependencies_with "yum install -y --nogpgcheck"
-  plat.vcloud_name "fedora-14-i386"
+  plat.vmpooler_template "fedora-14-i386"
 end

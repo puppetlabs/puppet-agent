@@ -3,7 +3,10 @@ project "puppet-agent" do |proj|
   proj.setting(:install_root, "/opt/puppetlabs")
   proj.setting(:prefix, File.join(proj.install_root, "puppet"))
 
-  if platform.is_osx?
+  if platform.is_eos?
+    proj.setting(:sysconfdir, "/persist/sys/etc/puppetlabs")
+    proj.setting(:link_sysconfdir, "/etc/puppetlabs")
+  elsif platform.is_osx?
     proj.setting(:sysconfdir, "/private/etc/puppetlabs")
   elsif platform.is_eos?
     proj.setting(:sysconfdir, "/persist/sys/etc/puppetlabs")
@@ -106,6 +109,8 @@ project "puppet-agent" do |proj|
   proj.component "ruby-augeas"
   proj.component "openssl"
   proj.component "puppet-ca-bundle"
+  proj.component "libxml2"
+  proj.component "libxslt"
 
   # These utilites don't really work on unix
   if platform.is_linux?

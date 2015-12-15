@@ -5,5 +5,5 @@ platform "osx-10.11-x86_64" do |plat|
 
   plat.provision_with 'cd /usr/local; git clone https://github.com/Homebrew/homebrew.git .; /usr/local/bin/brew install pkgconfig'
   plat.install_build_dependencies_with "PATH=$PATH:/usr/local/bin brew install "
-  plat.vcloud_name "osx-1011-x86_64"
+  plat.vmpooler_template "osx-1011-x86_64"
 end
