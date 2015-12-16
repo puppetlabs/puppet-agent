@@ -1,7 +1,7 @@
-component "rubygem-hocon" do |pkg, settings, platform|
-  pkg.version "0.9.3"
-  pkg.md5sum "af89595899c3b893787045039ff02ee0"
-  pkg.url "http://buildsources.delivery.puppetlabs.net/hocon-#{pkg.get_version}.gem"
+component "rubygem-win32-dir" do |pkg, settings, platform|
+  pkg.version "0.4.9"
+  pkg.md5sum "df14aa01bd6011f4b6332a05e15b7fb8"
+  pkg.url "http://buildsources.delivery.puppetlabs.net/win32-dir-#{pkg.get_version}.gem"
 
   pkg.build_requires "ruby"
 
@@ -22,6 +22,6 @@ component "rubygem-hocon" do |pkg, settings, platform|
   pkg.environment "RUBYLIB" => "#{settings[:ruby_vendordir]}:$$RUBYLIB"
 
   pkg.install do
-    ["#{settings[:gem_install]} hocon-#{pkg.get_version}.gem"]
+    ["#{settings[:gem_install]} win32-dir-#{pkg.get_version}.gem"]
   end
 end
