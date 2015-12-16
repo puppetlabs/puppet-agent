@@ -152,7 +152,7 @@ project "puppet-agent" do |proj|
     proj.component "shellpath"
   end
 
-  if platform.is_solaris? || platform.name =~ /^el-4/ || platform.is_aix?
+  if platform.is_solaris? || platform.name =~ /^el-4/ || platform.is_aix? || platform.is_windows?
     proj.component "runtime"
   end
 
