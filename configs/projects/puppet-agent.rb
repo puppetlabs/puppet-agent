@@ -138,6 +138,15 @@ project "puppet-agent" do |proj|
   proj.component "rubygem-deep-merge"
   proj.component "rubygem-net-ssh"
   proj.component "rubygem-hocon"
+  if platform.is_windows?
+    proj.component "rubygem-ffi"
+    proj.component "rubygem-minitar"
+    proj.component "rubygem-win32-dir"
+    proj.component "rubygem-win32-eventlog"
+    proj.component "rubygem-win32-process"
+    proj.component "rubygem-win32-security"
+    proj.component "rubygem-win32-service"
+  end
   proj.component "ruby-shadow" unless platform.is_aix? || platform.is_windows?
   proj.component "ruby-augeas" unless platform.is_windows?
   proj.component "openssl"
