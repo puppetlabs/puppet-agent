@@ -16,6 +16,7 @@ component "facter" do |pkg, settings, platform|
 
   pkg.build_requires "ruby"
   pkg.build_requires 'openssl'
+  pkg.build_requires 'leatherman'
 
   if platform.is_linux?
     # Running facter (as part of testing) expects virt-what is available
