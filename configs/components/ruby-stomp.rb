@@ -18,6 +18,6 @@ component "ruby-stomp" do |pkg, settings, platform|
   pkg.environment "RUBYLIB" => "#{settings[:ruby_vendordir]}:$$RUBYLIB"
 
   pkg.install do
-    ["#{settings[:gem_install]} stomp-1.3.3.gem"]
+    ["#{settings[:gem_install]} stomp-#{pkg.get_version}.gem"]
   end
 end
