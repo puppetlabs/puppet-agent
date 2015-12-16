@@ -75,6 +75,13 @@ component "ruby" do |pkg, settings, platform|
     special_flags = "--build=#{settings[:platform_triple]}"
   end
 
+  if platform.is_windows?
+    pkg.apply_patch "#{base}/windows_ruby_2.1_update_to_rubygems_2.4.5.patch"
+    pkg.apply_patch "#{base}/windows_fixup_generated_batch_files.patch"
+    pkg.apply_patch "#{base}/windows_remove_DL_deprecated_warning.patch"
+    pkg.apply_patch "#{base}/windows_ruby_2.1_update_to_rubygems_2.4.5.1.patch"
+  end
+
   # Cross-compiles require a hand-built rbconfig from the target system
   if platform.is_solaris? || platform.is_aix? || platform.is_huaweios?
     pkg.add_source "file://resources/files/rbconfig-#{settings[:platform_triple]}.rb", sum: rbconfig_info[settings[:platform_triple]][:sum]
@@ -88,6 +95,8 @@ component "ruby" do |pkg, settings, platform|
     pkg.build_requires "http://osmirror.delivery.puppetlabs.net/AIX_MIRROR/zlib-devel-1.2.3-4.aix5.2.ppc.rpm"
   elsif platform.is_rpm?
     pkg.build_requires "zlib-devel"
+  elsif platform.is_windows?
+    pkg.build_requires "pl-zlib-#{platform.architecture}"
   end
 
   if platform.is_huaweios?
@@ -117,13 +126,36 @@ component "ruby" do |pkg, settings, platform|
     pkg.environment "LDFLAGS" => "-Wl,-rpath=/opt/puppetlabs/puppet/lib"
   end
 
+  prefix = settings[:prefix]
+  make = platform[:make]
+
+  if platform.is_windows?
+    pkg.build_requires "pl-gdbm-#{platform.architecture}"
+    pkg.build_requires "pl-iconv-#{platform.architecture}"
+    pkg.build_requires "pl-libffi-#{platform.architecture}"
+    pkg.build_requires "pl-pdcurses-#{platform.architecture}"
+    pkg.environment "PATH" => "#{settings[:gcc_bindir]}:#{settings[:tools_root]}/bin:#{settings[:bindir]}:$$PATH"
+    pkg.environment "CYGWIN" => settings[:cygwin]
+    pkg.environment "CC" => settings[:cc]
+    pkg.environment "CXX" => settings[:cxx]
+    pkg.environment "LDFLAGS" => settings[:ldflags]
+    pkg.environment "CFLAGS" => settings[:cflags]
+    prefix = platform.convert_to_windows_path(settings[:prefix])
+
+    make = "/usr/bin/make"
+    pkg.environment "MAKE" => make
+
+    special_flags = "CPPFLAGS='-DFD_SETSIZE=2048' debugflags=-g"
+  end
+
+
   # Here we set --enable-bundled-libyaml to ensure that the libyaml included in
   # ruby is used, even if the build system has a copy of libyaml available
   pkg.configure do
     [
       "bash configure \
-        --prefix=#{settings[:prefix]} \
-        --with-opt-dir=#{settings[:prefix]} \
+        --prefix=#{prefix} \
+        --with-opt-dir=#{prefix} \
         --enable-shared \
         --enable-bundled-libyaml \
         --disable-install-doc \
@@ -134,11 +166,11 @@ component "ruby" do |pkg, settings, platform|
   end
 
   pkg.build do
-    "#{platform[:make]} -j$(shell expr $(shell #{platform[:num_cores]}) + 1)"
+    "#{make} -j$(shell expr $(shell #{platform[:num_cores]}) + 1)"
   end
 
   pkg.install do
-    "#{platform[:make]} -j$(shell expr $(shell #{platform[:num_cores]}) + 1) install"
+    "#{make} -j$(shell expr $(shell #{platform[:num_cores]}) + 1) install"
   end
 
   if platform.is_solaris? || platform.is_aix? || platform.is_huaweios?
