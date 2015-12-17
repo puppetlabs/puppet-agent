@@ -35,12 +35,6 @@ $mingwVer = "${mingwArch}_mingw-w64_${mingwVerNum}_${mingwThreads}_${mingwExcept
 
 $opensslPkg = "openssl-1.0.0s-x64-windows"
 
-$boostVer = "boost_1_58_0"
-$boostPkg = "${boostVer}-${mingwVer}"
-
-$yamlCppVer = "yaml-cpp-0.5.1"
-$yamlPkg = "${yamlCppVer}-${mingwVer}"
-
 $curlVer = "curl-7.42.1"
 $curlPkg = "${curlVer}-${mingwVer}"
 

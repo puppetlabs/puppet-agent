@@ -34,9 +34,9 @@ cd release
 $cmake_args = @(
   '-G',
   "MinGW Makefiles",
-  "-DBOOST_ROOT=`"$toolsDir\$boostPkg`"",
+  "-DCMAKE_TOOLCHAIN_FILE=C:/tools/pl-build-tools/pl-build-toolchain.cmake",
   "-DBOOST_STATIC=ON",
-  "-DYAMLCPP_ROOT=`"$toolsDir\$yamlPkg`"",
+  "-DYAMLCPP_STATIC=ON",
   "-DCMAKE_PREFIX_PATH=`"$toolsDir\$curlPkg`"",
   "-DCURL_STATIC=ON",
   ".."

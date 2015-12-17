@@ -26,9 +26,8 @@ cd release
 $cmake_args = @(
   '-G',
   "MinGW Makefiles",
-  "-DBOOST_ROOT=`"$toolsDir\$boostPkg`"",
+  "-DCMAKE_TOOLCHAIN_FILE=C:/tools/pl-build-tools/pl-build-toolchain.cmake",
   "-DBOOST_STATIC=ON",
-  "-DYAMLCPP_ROOT=`"$toolsDir\$yamlPkg`"",
   "-DCMAKE_PREFIX_PATH=`"$toolsDir\pcp-client`"",
   "-DCMAKE_INSTALL_PREFIX=`"$toolsDir\pcp-client`"",
   "-DCURL_STATIC=ON",
