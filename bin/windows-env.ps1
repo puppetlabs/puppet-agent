@@ -21,7 +21,7 @@ $sourceDir=$pwd
 
 $toolsDir="${sourceDir}\deps"
 
-$mingwVerNum = "4.8.3"
+$mingwVerNum = "5.2.0"
 $mingwVerChoco = $mingwVerNum
 $mingwThreads = "win32"
 if ($arch -eq 64) {
