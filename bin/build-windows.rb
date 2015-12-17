@@ -17,10 +17,10 @@ end
 # The version of this build
 AGENT_VERSION_STRING = ENV['AGENT_VERSION_STRING'] || `git describe --tags`.chomp.tr('-', '.')
 
-# Whether or not we are going to build boost and yaml-cpp or copy them from existing builds
-# If `TRUE`, this will build boost and yaml-cpp according to the specifications in
+# Whether or not we are going to build curl and yaml-cpp or copy them from existing builds
+# If `TRUE`, this will build curl and openssl according to the specifications in
 # git://github.com/puppetlabs/facter/master/contrib/facter.ps1
-# If `FALSE`, this will download and unpack prebuilt boost and yaml-cpp arcives.
+# If `FALSE`, this will download and unpack prebuilt curl and openssl archives.
 BUILD_SOURCE         = ENV['BUILD_SOURCE'] || '0'
 
 PRESERVE             = ENV['PRESERVE'] || false
