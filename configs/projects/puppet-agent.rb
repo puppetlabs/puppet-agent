@@ -8,6 +8,9 @@ project "puppet-agent" do |proj|
     proj.setting(:link_sysconfdir, "/etc/puppetlabs")
   elsif platform.is_osx?
     proj.setting(:sysconfdir, "/private/etc/puppetlabs")
+  elsif platform.is_eos?
+    proj.setting(:sysconfdir, "/persist/sys/etc/puppetlabs")
+    proj.setting(:link_sysconfdir, "/etc/puppetlabs")
   else
     proj.setting(:sysconfdir, "/etc/puppetlabs")
   end
@@ -71,6 +74,11 @@ project "puppet-agent" do |proj|
     proj.identifier "puppetlabs.com"
   elsif platform.is_osx?
     proj.identifier "com.puppetlabs"
+  end
+
+  # For some platforms the default doc location for the BOM does not exist or is incorrect - move it to specified directory
+  if platform.name =~ /cisco-wrlinux/
+    proj.bill_of_materials File.join(proj.datadir, "doc")
   end
 
   # Platform specific
