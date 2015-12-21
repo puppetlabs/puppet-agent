@@ -38,6 +38,8 @@ basedir=default" > /var/tmp/vanagon-noask;
   pkgadd -n -a /var/tmp/vanagon-noask -G -d http://get.opencsw.org/now all;
   /opt/csw/bin/pkgutil -y -i curl rsync gmake pkgconfig ggrep;
   ln -sf /opt/csw/bin/rsync /usr/bin/rsync;
+  # RE-6121 openssl 1.0.2e requires functionality not in sytem grep
+  ln -sf /opt/csw/bin/ggrep /usr/bin/grep;
   # RE-5250 - Solaris 10 templates are awful
   /opt/csw/bin/pkgutil -l gcc | xargs -I{} pkgrm -n -a /var/tmp/vanagon-noask {};
   /opt/csw/bin/pkgutil -l ruby | xargs -I{} pkgrm -n -a /var/tmp/vanagon-noask {};
