@@ -8,9 +8,6 @@ project "puppet-agent" do |proj|
     proj.setting(:link_sysconfdir, "/etc/puppetlabs")
   elsif platform.is_osx?
     proj.setting(:sysconfdir, "/private/etc/puppetlabs")
-  elsif platform.is_eos?
-    proj.setting(:sysconfdir, "/persist/sys/etc/puppetlabs")
-    proj.setting(:link_sysconfdir, "/etc/puppetlabs")
   else
     proj.setting(:sysconfdir, "/etc/puppetlabs")
   end
