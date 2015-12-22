@@ -21,7 +21,7 @@ component 'curl' do |pkg, settings, platform|
     pkg.environment "CXX" => settings[:cxx]
 
     prefix = platform.convert_to_windows_path(settings[:prefix])
-    pem_file = platform.convert_to_windows_path("#{settings[:puppet_configdir]}/ssl/cert.pem")
+    pem_file = platform.convert_to_windows_path("#{settings[:prefix]}/ssl/cert.pem")
 
     make = "/usr/bin/make"
   end
