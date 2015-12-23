@@ -52,31 +52,19 @@ Install-Choco Wix35 $Wix35_VERSION $nugetTempFeed
 # - win32 threads, as the libpthread library is buggy
 # - seh exceptions on 64-bit, to work around an obscure bug loading Ruby in Facter
 if ($arch -eq 64) {
-  Install-Choco ruby 2.1.6 $nugetTempFeed
   Install-Choco mingw-w64 $mingwVerChoco $nugetTempFeed
   Install-Choco pl-boost-x64 1.58.0.2
   Install-Choco pl-toolchain-x64 2015.12.01.1
   Install-Choco pl-yaml-cpp-x64 0.5.1.2
 } else {
-  Install-Choco ruby 2.1.6  $nugetTempFeed @('-x86')
   Install-Choco mingw-w32 $mingwVerChoco  $nugetTempFeed @('-x86')
   Install-Choco pl-boost-x86 1.58.0.2
   Install-Choco pl-toolchain-x86 2015.12.01.1
   Install-Choco pl-yaml-cpp-x86 0.5.1.2
 }
-$env:PATH = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
-if ($arch -eq 32) {
-  $env:PATH = "C:\tools\mingw32\bin;" + $env:PATH
-}
-$env:PATH += [Environment]::GetFolderPath('ProgramFiles') + "\Git\cmd"
-Write-Host "Updated Path to $env:PATH"
 
 cd $toolsDir
 
-Write-Host "Tool Versions Installed:`n`n"
-$PSVersionTable.Keys | % { Write-Host "$_ : $($PSVersionTable[$_])" }
-@('git', 'cmake', 'mingw32-make', 'ruby', 'rake') |
-  % { Verify-Tool $_ }
 Verify-Tool '7za' ''
 
 if ($buildSource) {
@@ -100,11 +88,29 @@ if ($buildSource) {
 cd $toolsDir
 
 # Download openssl
-Write-Host "Downloading http://buildsources.delivery.puppetlabs.net/windows/openssl/${opensslPkg}.tar.lzma"
-(New-Object net.webclient).DownloadFile("http://buildsources.delivery.puppetlabs.net/windows/openssl/${opensslPkg}.tar.lzma", "$toolsDir\${opensslPkg}.tar.lzma")
+Write-Host "Downloading https://s3.amazonaws.com/kylo-pl-bucket/${opensslPkg}.tar.lzma"
+(New-Object net.webclient).DownloadFile("https://s3.amazonaws.com/kylo-pl-bucket/${opensslPkg}.tar.lzma", "$toolsDir\${opensslPkg}.tar.lzma")
 Invoke-External { & 7za x "$toolsDir\${opensslPkg}.tar.lzma" }
 mkdir $toolsDir\${opensslPkg}
 cd $toolsDir\${opensslPkg}
 Invoke-External { & 7za x "$toolsDir\${opensslPkg}.tar" }
 
 cd $toolsDir
+# Download ruby
+Write-Host "Downloading https://s3.amazonaws.com/kylo-pl-bucket/${rubyPkg}.7z"
+(New-Object net.webclient).DownloadFile("https://s3.amazonaws.com/kylo-pl-bucket/${rubyPkg}.7z", "$toolsDir\${rubyPkg}.7z")
+Invoke-External { & 7za x "$toolsDir\${rubyPkg}.7z" | FIND /V "ing " }
+
+$env:PATH = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
+if ($arch -eq 32) {
+    $env:PATH = "C:\tools\mingw32\bin;" + $env:PATH
+} else {
+    $env:PATH = "C:\tools\mingw64\bin;" + $env:PATH
+}
+$env:PATH += [Environment]::GetFolderPath('ProgramFiles') + "\Git\cmd" + ";" + "$toolsDir\$rubyPkg\bin" + ";" + "$toolsDir\$opensslPkg\bin"
+Write-Host "Updated Path to $env:PATH"
+
+Write-Host "Tool Versions Installed:`n`n"
+$PSVersionTable.Keys | % { Write-Host "$_ : $($PSVersionTable[$_])" }
+@('git', 'cmake', 'mingw32-make', 'ruby', 'rake', 'openssl') |
+  % { Verify-Tool $_ }

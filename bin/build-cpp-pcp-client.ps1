@@ -28,7 +28,7 @@ $cmake_args = @(
   "MinGW Makefiles",
   "-DCMAKE_TOOLCHAIN_FILE=C:/tools/pl-build-tools/pl-build-toolchain.cmake",
   "-DBOOST_STATIC=ON",
-  "-DCMAKE_PREFIX_PATH=`"$toolsDir\pcp-client`"",
+  "-DCMAKE_PREFIX_PATH=`"$toolsDir\pcp-client;$toolsDir\$opensslPkg`"",
   "-DCMAKE_INSTALL_PREFIX=`"$toolsDir\pcp-client`"",
   "-DCURL_STATIC=ON",
   ".."

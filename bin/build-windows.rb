@@ -28,6 +28,7 @@ PRESERVE             = ENV['PRESERVE'] || false
 # Parsed information that we need to specify in order to know where to find different built facter bits
 # and correctly pass information to the facter build script
 script_arch          = "#{ARCH == 'x64' ? '64' : '32'}"
+ruby_arch            = ARCH == 'x64' ? 'x64' : 'i386'
 
 # The refs we will use when building the MSI
 PUPPET       = JSON.parse(File.read('configs/components/puppet.json'))
@@ -70,7 +71,7 @@ end
 
 # Set up the environment so I don't keep crying
 ssh_command = "ssh #{ssh_key} -tt -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null Administrator@#{hostname}"
-ssh_env = "export PATH=\'/cygdrive/c/Program Files/Git/cmd:/cygdrive/c/tools/ruby21/bin:/cygdrive/c/ProgramData/chocolatey/bin:/cygdrive/c/Program Files (x86)/Windows Installer XML v3.5/bin:/usr/local/bin:/usr/bin:/cygdrive/c/Windows/system32:/cygdrive/c/Windows:/cygdrive/c/Windows/System32/Wbem:/cygdrive/c/Windows/System32/WindowsPowerShell/v1.0:/bin\'"
+ssh_env = "export PATH=\'/cygdrive/c/Program Files/Git/cmd:/cygdrive/c/ProgramData/chocolatey/bin:/cygdrive/c/Program Files (x86)/Windows Installer XML v3.5/bin:/usr/local/bin:/usr/bin:/cygdrive/c/Windows/system32:/cygdrive/c/Windows:/cygdrive/c/Windows/System32/Wbem:/cygdrive/c/Windows/System32/WindowsPowerShell/v1.0:/bin:/home/Administrator/deps/ruby-2.1.7-#{ruby_arch}-mingw32/bin\'"
 scp_command = "scp #{ssh_key} -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
 
 result = Kernel.system("set -vx;#{ssh_command} \"echo \\\"#{ssh_env}\\\" >> ~/.bash_profile\"")
@@ -193,7 +194,7 @@ fail "It seems there were some issues cloning the puppet_for_the_win repo" unles
 Kernel.system("set -vx;#{scp_command} winconfig.yaml Administrator@#{hostname}:/home/Administrator/puppet_for_the_win/")
 
 # Build the MSI with automation in puppet_for_the_win
-result = Kernel.system("set -vx;#{ssh_command} \"source .bash_profile ; cd /home/Administrator/puppet_for_the_win ; AGENT_VERSION_STRING=#{AGENT_VERSION_STRING} ARCH=#{ARCH} c:/tools/ruby21/bin/rake clobber windows:build config=winconfig.yaml\"")
+result = Kernel.system("set -vx;#{ssh_command} \"source .bash_profile ; cd /home/Administrator/puppet_for_the_win ; AGENT_VERSION_STRING=#{AGENT_VERSION_STRING} ARCH=#{ARCH} C:/cygwin64/home/Administrator/deps/ruby-2.1.7-#{ruby_arch}-mingw32/bin/rake clobber windows:build config=winconfig.yaml\"")
 fail "It seems there were some issues building the puppet-agent msi" unless result
 
 # Fetch back the built installer
