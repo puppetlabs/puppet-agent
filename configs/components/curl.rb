@@ -9,8 +9,6 @@ component 'curl' do |pkg, settings, platform|
   prefix = settings[:prefix]
   pem_file = "#{settings[:prefix]}/ssl/cert.pem"
 
-  make = platform[:make]
-
   if platform.is_windows?
     pkg.build_requires "pl-zlib-#{platform.architecture}"
     pkg.build_requires "runtime"
@@ -22,8 +20,6 @@ component 'curl' do |pkg, settings, platform|
 
     prefix = platform.convert_to_windows_path(settings[:prefix])
     pem_file = platform.convert_to_windows_path("#{settings[:prefix]}/ssl/cert.pem")
-
-    make = "/usr/bin/make"
   end
 
   pkg.configure do
@@ -38,10 +34,10 @@ component 'curl' do |pkg, settings, platform|
   end
 
   pkg.build do
-    ["#{make} -j$(shell expr $(shell #{platform[:num_cores]}) + 1)"]
+    ["#{platform[:make]} -j$(shell expr $(shell #{platform[:num_cores]}) + 1)"]
   end
 
   pkg.install do
-    ["#{make} -j$(shell expr $(shell #{platform[:num_cores]}) + 1) install"]
+    ["#{platform[:make]} -j$(shell expr $(shell #{platform[:num_cores]}) + 1) install"]
   end
 end

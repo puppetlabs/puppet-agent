@@ -46,7 +46,6 @@ component "openssl" do |pkg, settings, platform|
   end
 
   prefix = settings[:prefix]
-  make = platform[:make]
 
   if platform.is_osx?
     pkg.environment "PATH" => "/opt/pl-build-tools/bin:$$PATH:/usr/local/bin"
@@ -83,8 +82,7 @@ component "openssl" do |pkg, settings, platform|
     pkg.environment "CYGWIN" => settings[:cygwin]
     pkg.environment "CC" => settings[:cc]
     pkg.environment "CXX" => settings[:cxx]
-    make = "/usr/bin/make"
-    pkg.environment "MAKE" => make
+    pkg.environment "MAKE" => platform[:make]
     prefix = platform.convert_to_windows_path(settings[:prefix])
     cflags = settings[:cflags]
     ldflags = settings[:ldflags]
@@ -137,8 +135,8 @@ component "openssl" do |pkg, settings, platform|
   end
 
   pkg.build do
-    ["#{make} depend",
-    "#{make}"]
+    ["#{platform[:make]} depend",
+    "#{platform[:make]}"]
   end
 
   if platform.is_aix?
@@ -150,7 +148,7 @@ component "openssl" do |pkg, settings, platform|
   install_prefix = "INSTALL_PREFIX=/" unless platform.is_windows?
 
   pkg.install do
-    ["#{make} #{install_prefix} install"]
+    ["#{platform[:make]} #{install_prefix} install"]
   end
 
   pkg.install_file "LICENSE", "#{settings[:prefix]}/share/doc/openssl-#{pkg.get_version}/LICENSE"

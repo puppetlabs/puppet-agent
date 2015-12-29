@@ -14,7 +14,7 @@ platform "win-2012-x64" do |plat|
 
   plat.install_build_dependencies_with "C:/ProgramData/chocolatey/bin/choco.exe install -y"
 
-  plat.make "/cygdrive/c/tools/mingw64/bin/mingw32-make"
+  plat.make "/usr/bin/make"
   plat.patch "TMP=/var/tmp /usr/bin/patch.exe --binary"
 
   plat.platform_triple "x86_64-unknown-mingw32"
