@@ -32,6 +32,7 @@ script_arch          = "#{ARCH == 'x64' ? '64' : '32'}"
 # The refs we will use when building the MSI
 PUPPET       = JSON.parse(File.read('configs/components/puppet.json'))
 FACTER       = JSON.parse(File.read('configs/components/facter.json'))
+LEATHERMAN   = JSON.parse(File.read('configs/components/leatherman.json'))
 CPPPCPCLIENT = JSON.parse(File.read('configs/components/cpp-pcp-client.json'))
 PXPAGENT     = JSON.parse(File.read('configs/components/pxp-agent.json'))
 HIERA        = JSON.parse(File.read('configs/components/hiera.json'))
@@ -98,6 +99,13 @@ puts "Build-Windows.rb... Setting up windows toolset - windows-toolset.ps1"
 result = Kernel.system("#{ssh_command} \"powershell.exe -NoProfile -ExecutionPolicy Unrestricted -InputFormat None -Command ./windows-toolset.ps1 -arch #{script_arch} -buildSource #{BUILD_SOURCE}\"")
 fail "It looks like the Windows-toolset build script failed for some reason. I would suggest ssh'ing into the box and poking around" unless result
 puts "Build-Windows.rb... Windows Setup Completed!!"
+
+puts "Build-Windows.rb... building leatherman"
+Kernel.system("#{scp_command} #{File.join(SCRIPT_ROOT, 'build-leatherman.ps1')} Administrator@#{hostname}:/home/Administrator/")
+fail "Copying build-leatherman.ps1 to #{hostname} failed" unless $?.success?
+result = Kernel.system("set -vx;#{ssh_command} \"powershell.exe -NoProfile -ExecutionPolicy Unrestricted -InputFormat None -Command ./build-leatherman.ps1 -arch #{script_arch} -buildSource #{BUILD_SOURCE} -leathermanRef #{LEATHERMAN['ref']} -leathermanFork #{LEATHERMAN['url']}\"")
+fail "It looks like the leatherman build script build-leatherman.ps1 failed for some reason. I would suggest ssh'ing into the box and poking around:\n#{result}" unless result
+puts "Build-Windows.rb... leatherman build Completed!!"
 
 puts "Build-Windows.rb... building facter"
 Kernel.system("#{scp_command} #{File.join(SCRIPT_ROOT, 'build-facter.ps1')} Administrator@#{hostname}:/home/Administrator/")
