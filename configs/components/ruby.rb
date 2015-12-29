@@ -118,7 +118,6 @@ component "ruby" do |pkg, settings, platform|
   end
 
   prefix = settings[:prefix]
-  make = platform[:make]
 
   if platform.is_windows?
     pkg.build_requires "pl-gdbm-#{platform.architecture}"
@@ -133,8 +132,7 @@ component "ruby" do |pkg, settings, platform|
     pkg.environment "CFLAGS" => settings[:cflags]
     prefix = platform.convert_to_windows_path(settings[:prefix])
 
-    make = "/usr/bin/make"
-    pkg.environment "MAKE" => make
+    pkg.environment "MAKE" => platform[:make]
 
     special_flags = "CPPFLAGS='-DFD_SETSIZE=2048' debugflags=-g"
   end
@@ -157,11 +155,11 @@ component "ruby" do |pkg, settings, platform|
   end
 
   pkg.build do
-    "#{make} -j$(shell expr $(shell #{platform[:num_cores]}) + 1)"
+    "#{platform[:make]} -j$(shell expr $(shell #{platform[:num_cores]}) + 1)"
   end
 
   pkg.install do
-    "#{make} -j$(shell expr $(shell #{platform[:num_cores]}) + 1) install"
+    "#{platform[:make]} -j$(shell expr $(shell #{platform[:num_cores]}) + 1) install"
   end
 
   if platform.is_solaris? || platform.is_aix?
