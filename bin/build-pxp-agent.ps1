@@ -32,7 +32,7 @@ $cmake_args = @(
   "-DCMAKE_TOOLCHAIN_FILE=C:/tools/pl-build-tools/pl-build-toolchain.cmake",
   "-DBOOST_STATIC=ON",
   "-DCMAKE_INSTALL_PREFIX=`"$sourceDir`"",
-  "-DCMAKE_PREFIX_PATH=`"$toolsDir\$curlPkg;$toolsDir\pcp-client`"",
+  "-DCMAKE_PREFIX_PATH=`"$toolsDir\$curlPkg;$toolsDir\pcp-client;$toolsDir\$opensslPkg`"",
   "-DCURL_STATIC=ON",
   ".."
 )
