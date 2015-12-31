@@ -74,7 +74,7 @@ component "leatherman" do |pkg, settings, platform|
   # Make test will explode horribly in a cross-compile situation
   # Tests will be skipped on AIX until they are expected to pass
   if platform.architecture == 'sparc' || platform.is_aix?
-    test = ":"
+    test = "/bin/true"
   else
     test = "LEATHERMAN_RUBY=#{settings[:libdir]}/$(shell #{ruby} -e 'print RbConfig::CONFIG[\"LIBRUBY_SO\"]') #{platform[:make]} test ARGS=-V"
   end
