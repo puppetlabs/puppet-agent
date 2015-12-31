@@ -27,7 +27,7 @@ PRESERVE             = ENV['PRESERVE'] || false
 
 # Parsed information that we need to specify in order to know where to find different built facter bits
 # and correctly pass information to the facter build script
-script_arch          = "#{ARCH == 'x64' ? '64' : '32'}"
+script_arch          = ARCH == 'x64' ? '64' : '32'
 
 # The refs we will use when building the MSI
 PUPPET       = JSON.parse(File.read('configs/components/puppet.json'))
