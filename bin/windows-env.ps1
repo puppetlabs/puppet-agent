@@ -27,13 +27,15 @@ $mingwThreads = "win32"
 if ($arch -eq 64) {
   $mingwExceptions = "seh"
   $mingwArch = "x86_64"
+  $opensslArch = "x64"
 } else {
   $mingwExceptions = "sjlj"
   $mingwArch = "i686"
+  $opensslArch = "x86"
 }
 $mingwVer = "${mingwArch}_mingw-w64_${mingwVerNum}_${mingwThreads}_${mingwExceptions}"
 
-$opensslPkg = "openssl-1.0.0s-x64-windows"
+$opensslPkg = "openssl-1.0.0s-${opensslArch}-windows"
 
 $boostVer = "boost_1_58_0"
 $boostPkg = "${boostVer}-${mingwVer}"
