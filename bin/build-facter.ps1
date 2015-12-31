@@ -37,7 +37,7 @@ $cmake_args = @(
   "-DBOOST_ROOT=`"$toolsDir\$boostPkg`"",
   "-DBOOST_STATIC=ON",
   "-DYAMLCPP_ROOT=`"$toolsDir\$yamlPkg`"",
-  "-DCMAKE_PREFIX_PATH=`"$toolsDir\$curlPkg;$toolsDir\$opensslPkg`"",
+  "-DCMAKE_PREFIX_PATH=`"$toolsDir\$curlPkg;$toolsDir\$opensslPkg;$toolsDir\$rubyPkg`"",
   "-DCURL_STATIC=ON",
   ".."
 )

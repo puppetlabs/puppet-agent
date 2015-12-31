@@ -51,10 +51,8 @@ Install-Choco Wix35 $Wix35_VERSION
 # - seh exceptions on 64-bit, to work around an obscure bug loading Ruby in Facter
 # These are the defaults on our myget feed.
 if ($arch -eq 64) {
-  Install-Choco ruby 2.1.6
   Install-Choco mingw-w64 $mingwVerChoco
 } else {
-  Install-Choco ruby 2.1.6 @('-x86')
   Install-Choco mingw-w32 $mingwVerChoco @('-x86')
 }
 
@@ -161,10 +159,15 @@ cd $toolsDir\${opensslPkg}
 Invoke-External { & 7za x "$toolsDir\${opensslPkg}.tar" }
 
 cd $toolsDir
+# Download ruby
+Write-Host "Downloading http://buildsources.delivery.puppetlabs.net/windows/ruby/${rubyPkg}.7z"
+(New-Object net.webclient).DownloadFile("http://buildsources.delivery.puppetlabs.net/windows/ruby/${rubyPkg}.7z", "$toolsDir\${rubyPkg}.7z")
+Invoke-External { & 7za x "$toolsDir\${rubyPkg}.7z" | FIND /V "ing " }
 
 $env:PATH = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
 $env:PATH = "C:\tools\mingw$arch\bin;" + $env:PATH
 @([Environment]::GetFolderPath('ProgramFiles') + "\Git\cmd",
+"$toolsDir\$rubyPkg\bin",
 "$toolsDir\$opensslPkg\bin") |
   % { $Env:PATH += ";$($_)" }
 Write-Host "Updated Path to $env:PATH"

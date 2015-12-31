@@ -28,14 +28,18 @@ if ($arch -eq 64) {
   $mingwExceptions = "seh"
   $mingwArch = "x86_64"
   $opensslArch = "x64"
+  $rubyArch = "x64"
 } else {
   $mingwExceptions = "sjlj"
   $mingwArch = "i686"
   $opensslArch = "x86"
+  $rubyArch = "i386"
 }
 $mingwVer = "${mingwArch}_mingw-w64_${mingwVerNum}_${mingwThreads}_${mingwExceptions}"
 
-$opensslPkg = "openssl-1.0.0s-${opensslArch}-windows"
+$rubyPkg = "ruby-2.1.7-${rubyArch}-mingw32"
+
+$opensslPkg = "openssl-1.0.2e-${opensslArch}-windows"
 
 $boostVer = "boost_1_58_0"
 $boostPkg = "${boostVer}-${mingwVer}"
@@ -51,6 +55,7 @@ $Wix35_VERSION = '3.5.2519.20130612'
 $env:PATH = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
 $env:PATH = "C:\tools\mingw$arch\bin;" + $env:PATH
 @([Environment]::GetFolderPath('ProgramFiles') + "\Git\cmd",
+"$toolsDir\$rubyPkg\bin",
 "$toolsDir\$opensslPkg\bin") |
  % { $Env:PATH += ";$($_)" }
 Write-Host "Updated Path to $env:PATH"
