@@ -57,19 +57,9 @@ if ($arch -eq 64) {
   Install-Choco ruby 2.1.6 @('-x86')
   Install-Choco mingw-w32 $mingwVerChoco @('-x86')
 }
-$env:PATH = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
-if ($arch -eq 32) {
-  $env:PATH = "C:\tools\mingw32\bin;" + $env:PATH
-}
-$env:PATH += [Environment]::GetFolderPath('ProgramFiles') + "\Git\cmd"
-Write-Host "Updated Path to $env:PATH"
 
 cd $toolsDir
 
-Write-Host "Tool Versions Installed:`n`n"
-$PSVersionTable.Keys | % { Write-Host "$_ : $($PSVersionTable[$_])" }
-@('git', 'cmake', 'mingw32-make', 'ruby', 'rake') |
-  % { Verify-Tool $_ }
 Verify-Tool '7za' ''
 
 if ($buildSource) {
@@ -171,3 +161,15 @@ cd $toolsDir\${opensslPkg}
 Invoke-External { & 7za x "$toolsDir\${opensslPkg}.tar" }
 
 cd $toolsDir
+
+$env:PATH = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
+$env:PATH = "C:\tools\mingw$arch\bin;" + $env:PATH
+@([Environment]::GetFolderPath('ProgramFiles') + "\Git\cmd",
+"$toolsDir\$opensslPkg\bin") |
+  % { $Env:PATH += ";$($_)" }
+Write-Host "Updated Path to $env:PATH"
+
+Write-Host "Tool Versions Installed:`n`n"
+$PSVersionTable.Keys | % { Write-Host "$_ : $($PSVersionTable[$_])" }
+@('git', 'cmake', 'mingw32-make', 'ruby', 'rake', 'openssl') |
+  % { Verify-Tool $_ }

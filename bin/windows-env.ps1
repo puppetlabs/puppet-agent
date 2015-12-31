@@ -47,10 +47,10 @@ $curlPkg = "${curlVer}-${mingwVer}"
 $Wix35_VERSION = '3.5.2519.20130612'
 
 $env:PATH = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
-if ($arch -eq 32) {
-  $env:PATH = "C:\tools\mingw32\bin;" + $env:PATH
-}
-$env:PATH += [Environment]::GetFolderPath('ProgramFiles') + "\Git\cmd"
+$env:PATH = "C:\tools\mingw$arch\bin;" + $env:PATH
+@([Environment]::GetFolderPath('ProgramFiles') + "\Git\cmd",
+"$toolsDir\$opensslPkg\bin") |
+ % { $Env:PATH += ";$($_)" }
 Write-Host "Updated Path to $env:PATH"
 
 # SSL root pointer.
