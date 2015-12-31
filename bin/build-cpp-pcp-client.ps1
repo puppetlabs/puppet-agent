@@ -22,7 +22,7 @@ Write-Host "Starting cpp-pcp-client build"
 mkdir -Force release
 cd release
 
-## Build pxp_agent
+## Build cpp_pcp_client
 $cmake_args = @(
   '-G',
   "MinGW Makefiles",
