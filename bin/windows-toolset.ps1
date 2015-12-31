@@ -60,6 +60,9 @@ cd $toolsDir
 
 Verify-Tool '7za' ''
 
+$buildSourcesURL = "http://buildsources.delivery.puppetlabs.net/windows"
+$s3URL = "https://s3.amazonaws.com/kylo-pl-bucket"
+
 if ($buildSource) {
   ## Download, build, and install Boost
   Write-Host "Downloading http://downloads.sourceforge.net/boost/$boostVer.7z"
@@ -134,25 +137,25 @@ if ($buildSource) {
   cd $toolsDir
 } else {
   ## Download and unpack Boost from a pre-built package in S3
-  Write-Host "Downloading https://s3.amazonaws.com/kylo-pl-bucket/${boostPkg}.7z"
-  (New-Object net.webclient).DownloadFile("https://s3.amazonaws.com/kylo-pl-bucket/${boostPkg}.7z", "$toolsDir\${boostPkg}.7z")
+  Write-Host "Downloading $s3URL/${boostPkg}.7z"
+  (New-Object net.webclient).DownloadFile("$s3URL/${boostPkg}.7z", "$toolsDir\${boostPkg}.7z")
   Invoke-External { & 7za x "${boostPkg}.7z" | FIND /V "ing " }
 
   ## Download and unpack yaml-cpp from a pre-built package in S3
-  Write-Host "Downloading https://s3.amazonaws.com/kylo-pl-bucket/${yamlPkg}.7z"
-  (New-Object net.webclient).DownloadFile("https://s3.amazonaws.com/kylo-pl-bucket/${yamlPkg}.7z", "$toolsDir\${yamlPkg}.7z")
+  Write-Host "Downloading $s3URL/${yamlPkg}.7z"
+  (New-Object net.webclient).DownloadFile("$s3URL/${yamlPkg}.7z", "$toolsDir\${yamlPkg}.7z")
   Invoke-External { & 7za x "${yamlPkg}.7z" | FIND /V "ing " }
 
   ## Download and unpack curl from a pre-built package in S3
-  Write-Host "Downloading https://s3.amazonaws.com/kylo-pl-bucket/${curlPkg}.7z"
-  (New-Object net.webclient).DownloadFile("https://s3.amazonaws.com/kylo-pl-bucket/${curlPkg}.7z", "$toolsDir\${curlPkg}.7z")
+  Write-Host "Downloading $s3URL/${curlPkg}.7z"
+  (New-Object net.webclient).DownloadFile("$s3URL/${curlPkg}.7z", "$toolsDir\${curlPkg}.7z")
   Invoke-External { & 7za x "${curlPkg}.7z" | FIND /V "ing " }
 }
 cd $toolsDir
 
 # Download openssl
-Write-Host "Downloading http://buildsources.delivery.puppetlabs.net/windows/openssl/${opensslPkg}.tar.lzma"
-(New-Object net.webclient).DownloadFile("http://buildsources.delivery.puppetlabs.net/windows/openssl/${opensslPkg}.tar.lzma", "$toolsDir\${opensslPkg}.tar.lzma")
+Write-Host "Downloading $buildSourcesURL/openssl/${opensslPkg}.tar.lzma"
+(New-Object net.webclient).DownloadFile("$buildSourcesURL/openssl/${opensslPkg}.tar.lzma", "$toolsDir\${opensslPkg}.tar.lzma")
 Invoke-External { & 7za x "$toolsDir\${opensslPkg}.tar.lzma" }
 mkdir $toolsDir\${opensslPkg}
 cd $toolsDir\${opensslPkg}
@@ -160,8 +163,8 @@ Invoke-External { & 7za x "$toolsDir\${opensslPkg}.tar" }
 
 cd $toolsDir
 # Download ruby
-Write-Host "Downloading http://buildsources.delivery.puppetlabs.net/windows/ruby/${rubyPkg}.7z"
-(New-Object net.webclient).DownloadFile("http://buildsources.delivery.puppetlabs.net/windows/ruby/${rubyPkg}.7z", "$toolsDir\${rubyPkg}.7z")
+Write-Host "Downloading $buildSourcesURL/ruby/${rubyPkg}.7z"
+(New-Object net.webclient).DownloadFile("$buildSourcesURL/ruby/${rubyPkg}.7z", "$toolsDir\${rubyPkg}.7z")
 Invoke-External { & 7za x "$toolsDir\${rubyPkg}.7z" | FIND /V "ing " }
 
 $env:PATH = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
