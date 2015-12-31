@@ -52,6 +52,3 @@ $env:PATH = "C:\tools\mingw$arch\bin;" + $env:PATH
 "$toolsDir\$opensslPkg\bin") |
  % { $Env:PATH += ";$($_)" }
 Write-Host "Updated Path to $env:PATH"
-
-# SSL root pointer.
-$env:OPENSSL_ROOT_DIR = $toolsDir + "\" + $opensslPkg
