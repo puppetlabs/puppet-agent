@@ -29,7 +29,7 @@ $cmake_args = @(
   "-DBOOST_ROOT=`"$toolsDir\$boostPkg`"",
   "-DBOOST_STATIC=ON",
   "-DYAMLCPP_ROOT=`"$toolsDir\$yamlPkg`"",
-  "-DCMAKE_PREFIX_PATH=`"$toolsDir\pcp-client;$toolsDir\$opensslPkg`"",
+  "-DCMAKE_PREFIX_PATH=`"$toolsDir\$opensslPkg`"",
   "-DCMAKE_INSTALL_PREFIX=`"$toolsDir\pcp-client`"",
   "-DCURL_STATIC=ON",
   ".."
