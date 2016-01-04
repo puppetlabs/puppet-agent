@@ -7,9 +7,15 @@ component "ruby-stomp" do |pkg, settings, platform|
 
   pkg.build_requires "ruby"
 
+  pkg.environment "PATH" => "#{settings[:bindir]}:$$PATH"
+
   # Because we are cross-compiling on sparc, we can't use the rubygems we just built.
   # Instead we use the host gem installation and override GEM_HOME. Yay?
-  pkg.environment "GEM_HOME" => settings[:gem_home]
+  if platform.is_windows?
+    pkg.environment "GEM_HOME" => platform.convert_to_windows_path(settings[:gem_home])
+  else
+    pkg.environment "GEM_HOME" => settings[:gem_home]
+  end
 
   # PA-25 in order to install gems in a cross-compiled environment we need to
   # set RUBYLIB to include puppet and hiera, so that their gemspecs can resolve
@@ -18,6 +24,6 @@ component "ruby-stomp" do |pkg, settings, platform|
   pkg.environment "RUBYLIB" => "#{settings[:ruby_vendordir]}:$$RUBYLIB"
 
   pkg.install do
-    ["#{settings[:gem_install]} stomp-1.3.3.gem"]
+    ["#{settings[:gem_install]} stomp-#{pkg.get_version}.gem"]
   end
 end
