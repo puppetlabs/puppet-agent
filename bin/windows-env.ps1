@@ -52,10 +52,17 @@ $curlPkg = "${curlVer}-${mingwVer}"
 
 $Wix35_VERSION = '3.5.2519.20130612'
 
-$env:PATH = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
-$env:PATH = "C:\tools\mingw$arch\bin;" + $env:PATH
-@([Environment]::GetFolderPath('ProgramFiles') + "\Git\cmd",
-"$toolsDir\$rubyPkg\bin",
-"$toolsDir\$opensslPkg\bin") |
- % { $Env:PATH += ";$($_)" }
-Write-Host "Updated Path to $env:PATH"
+Function Set-Path {
+  $path = [Environment]::GetFolderPath('ProgramFiles') + "\Git\cmd"
+  @([System.Environment]::GetEnvironmentVariable("Path","Machine"),
+  [System.Environment]::GetEnvironmentVariable("Path","User"),
+  "$toolsDir\$rubyPkg\bin",
+  "$toolsDir\$opensslPkg\bin",
+  "C:\tools\mingw$arch\bin",
+  "C:\ProgramData\chocolatey\bin") |
+    % { $path = "$_;" + $path }
+  $env:PATH = $path
+  Write-Host "Updated Path to $env:PATH"
+}
+
+Set-Path

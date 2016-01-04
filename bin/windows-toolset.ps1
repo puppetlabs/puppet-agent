@@ -167,13 +167,7 @@ Write-Host "Downloading $buildSourcesURL/ruby/${rubyPkg}.7z"
 (New-Object net.webclient).DownloadFile("$buildSourcesURL/ruby/${rubyPkg}.7z", "$toolsDir\${rubyPkg}.7z")
 Invoke-External { & 7za x "$toolsDir\${rubyPkg}.7z" | FIND /V "ing " }
 
-$env:PATH = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
-$env:PATH = "C:\tools\mingw$arch\bin;" + $env:PATH
-@([Environment]::GetFolderPath('ProgramFiles') + "\Git\cmd",
-"$toolsDir\$rubyPkg\bin",
-"$toolsDir\$opensslPkg\bin") |
-  % { $Env:PATH += ";$($_)" }
-Write-Host "Updated Path to $env:PATH"
+Set-Path
 
 Write-Host "Tool Versions Installed:`n`n"
 $PSVersionTable.Keys | % { Write-Host "$_ : $($PSVersionTable[$_])" }
