@@ -37,7 +37,7 @@ $cmake_args = @(
   "-DCMAKE_TOOLCHAIN_FILE=C:/tools/pl-build-tools/pl-build-toolchain.cmake",
   "-DBOOST_STATIC=ON",
   "-DYAMLCPP_STATIC=ON",
-  "-DCMAKE_PREFIX_PATH=`"$toolsDir\$curlPkg`"",
+  "-DCMAKE_PREFIX_PATH=`"$toolsDir\$curlPkg;$toolsDir\leatherman`"",
   "-DCURL_STATIC=ON",
   ".."
 )
