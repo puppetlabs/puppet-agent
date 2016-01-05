@@ -9,11 +9,7 @@ component "rubygem-hocon" do |pkg, settings, platform|
 
   # Because we are cross-compiling on sparc, we can't use the rubygems we just built.
   # Instead we use the host gem installation and override GEM_HOME. Yay?
-  if platform.is_windows?
-    pkg.environment "GEM_HOME" => platform.convert_to_windows_path(settings[:gem_home])
-  else
-    pkg.environment "GEM_HOME" => settings[:gem_home]
-  end
+  pkg.environment "GEM_HOME" => settings[:gem_home]
 
   # PA-25 in order to install gems in a cross-compiled environment we need to
   # set RUBYLIB to include puppet and hiera, so that their gemspecs can resolve
