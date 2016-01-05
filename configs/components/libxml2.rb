@@ -1,6 +1,6 @@
 component "libxml2" do |pkg, settings, platform|
-  pkg.version "2.9.2"
-  pkg.md5sum "9e6a9aca9d155737868b3dc5fd82f788"
+  pkg.version "2.9.3"
+  pkg.md5sum "daece17e045f1c107610e137ab50c179"
   pkg.url "http://buildsources.delivery.puppetlabs.net/#{pkg.get_name}-#{pkg.get_version}.tar.gz"
 
   if platform.is_aix?

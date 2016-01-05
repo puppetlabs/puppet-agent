@@ -1,5 +1,5 @@
 platform "ubuntu-15.10-amd64" do |plat|
-  plat.servicedir "/etc/init.d"
+  plat.servicedir "/lib/systemd/system"
   plat.defaultdir "/etc/default"
   plat.servicetype "systemd"
   plat.codename "wily"
