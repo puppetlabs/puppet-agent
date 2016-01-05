@@ -35,7 +35,7 @@ $cmake_args = @(
   "MinGW Makefiles",
   "-DCMAKE_TOOLCHAIN_FILE=C:/tools/pl-build-tools/pl-build-toolchain.cmake",
   "-DBOOST_STATIC=ON",
-  "-DCMAKE_PREFIX_PATH=`"$toolsDir\$curlPkg`"",
+  "-DCMAKE_PREFIX_PATH=`"$toolsDir\$curlPkg;$toolsDir\$opensslPkg;$toolsDir\$rubyPkg`"",
   "-DCMAKE_INSTALL_PREFIX=`"$toolsDir\leatherman`"",
   "-DCURL_STATIC=ON",
   ".."
