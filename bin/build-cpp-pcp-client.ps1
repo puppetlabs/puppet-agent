@@ -22,14 +22,14 @@ Write-Host "Starting cpp-pcp-client build"
 mkdir -Force release
 cd release
 
-## Build pxp_agent
+## Build cpp_pcp_client
 $cmake_args = @(
   '-G',
   "MinGW Makefiles",
   "-DBOOST_ROOT=`"$toolsDir\$boostPkg`"",
   "-DBOOST_STATIC=ON",
   "-DYAMLCPP_ROOT=`"$toolsDir\$yamlPkg`"",
-  "-DCMAKE_PREFIX_PATH=`"$toolsDir\pcp-client`"",
+  "-DCMAKE_PREFIX_PATH=`"$toolsDir\$curlPkg;$toolsDir\$opensslPkg;$toolsDir\$rubyPkg`"",
   "-DCMAKE_INSTALL_PREFIX=`"$toolsDir\pcp-client`"",
   "-DCURL_STATIC=ON",
   ".."

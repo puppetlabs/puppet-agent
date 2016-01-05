@@ -27,13 +27,19 @@ $mingwThreads = "win32"
 if ($arch -eq 64) {
   $mingwExceptions = "seh"
   $mingwArch = "x86_64"
+  $opensslArch = "x64"
+  $rubyArch = "x64"
 } else {
   $mingwExceptions = "sjlj"
   $mingwArch = "i686"
+  $opensslArch = "x86"
+  $rubyArch = "i386"
 }
 $mingwVer = "${mingwArch}_mingw-w64_${mingwVerNum}_${mingwThreads}_${mingwExceptions}"
 
-$opensslPkg = "openssl-1.0.0s-x64-windows"
+$rubyPkg = "ruby-2.1.7-${rubyArch}-mingw32"
+
+$opensslPkg = "openssl-1.0.2e-${opensslArch}-windows"
 
 $boostVer = "boost_1_58_0"
 $boostPkg = "${boostVer}-${mingwVer}"
@@ -46,12 +52,17 @@ $curlPkg = "${curlVer}-${mingwVer}"
 
 $Wix35_VERSION = '3.5.2519.20130612'
 
-$env:PATH = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
-if ($arch -eq 32) {
-  $env:PATH = "C:\tools\mingw32\bin;" + $env:PATH
+Function Set-Path {
+  $path = [Environment]::GetFolderPath('ProgramFiles') + "\Git\cmd"
+  @([System.Environment]::GetEnvironmentVariable("Path","Machine"),
+  [System.Environment]::GetEnvironmentVariable("Path","User"),
+  "$toolsDir\$rubyPkg\bin",
+  "$toolsDir\$opensslPkg\bin",
+  "C:\tools\mingw$arch\bin",
+  "C:\ProgramData\chocolatey\bin") |
+    % { $path = "$_;" + $path }
+  $env:PATH = $path
+  Write-Host "Updated Path to $env:PATH"
 }
-$env:PATH += [Environment]::GetFolderPath('ProgramFiles') + "\Git\cmd"
-Write-Host "Updated Path to $env:PATH"
 
-# SSL root pointer.
-$env:OPENSSL_ROOT_DIR = $toolsDir + "\" + $opensslPkg
+Set-Path
