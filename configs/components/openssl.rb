@@ -1,6 +1,6 @@
 component "openssl" do |pkg, settings, platform|
-  pkg.version "1.0.2d"
-  pkg.md5sum "38dd619b2e77cbac69b99f52a053d25a"
+  pkg.version "1.0.2e"
+  pkg.md5sum "5262bfa25b60ed9de9f28d5d52d77fc5"
   pkg.url "http://buildsources.delivery.puppetlabs.net/openssl-#{pkg.get_version}.tar.gz"
 
   pkg.replaces 'pe-openssl'
