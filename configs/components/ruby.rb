@@ -13,7 +13,6 @@ component "ruby" do |pkg, settings, platform|
 
   base = 'resources/patches/ruby'
   pkg.apply_patch "#{base}/libyaml_cve-2014-9130.patch"
-  pkg.apply_patch "#{base}/2.1.7_pthreads_mem_allocation.patch"
 
   # These are a pretty smelly hack, and they run the risk of letting tests
   # based on the generated data (that should otherwise fail) pass
