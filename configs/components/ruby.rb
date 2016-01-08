@@ -76,9 +76,6 @@ component "ruby" do |pkg, settings, platform|
     pkg.add_source "file://resources/files/rbconfig-#{settings[:platform_triple]}.rb", sum: rbconfig_info[settings[:platform_triple]][:sum]
   end
 
-  # This is needed for date_core to correctly compile on solaris 10. Breaks gem installations.
-  pkg.apply_patch "resources/patches/ruby/fix-date-compilation.patch" if platform.is_solaris?
-
   pkg.build_requires "openssl"
 
   if platform.is_deb?
