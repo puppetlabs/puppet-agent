@@ -1,6 +1,6 @@
 component "ruby" do |pkg, settings, platform|
-  pkg.version "2.1.7"
-  pkg.md5sum "2e143b8e19b056df46479ae4412550c9"
+  pkg.version "2.1.8"
+  pkg.md5sum "091b62f0a9796a3c55de2a228a0e6ef3"
   pkg.url "http://buildsources.delivery.puppetlabs.net/ruby-#{pkg.get_version}.tar.gz"
 
   pkg.replaces 'pe-ruby'
