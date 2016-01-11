@@ -27,7 +27,7 @@ component 'augeas' do |pkg, settings, platform|
 
   if platform.is_rpm? && !platform.is_aix?
     pkg.build_requires 'readline-devel'
-    if platform.is_cisco_wrlinux? || platform.is_huaweios?
+    if platform.is_cisco_wrlinux?
       pkg.requires 'libreadline6'
     else
       pkg.requires 'readline'
