@@ -29,7 +29,7 @@ PRESERVE             = ENV['PRESERVE'] || false
 # and correctly pass information to the facter build script
 script_arch          = ARCH == 'x64' ? '64' : '32'
 ruby_arch            = ARCH == 'x64' ? 'x64' : 'i386'
-ruby_version         = "2.1.7"
+ruby_version         = "2.1.8"
 
 # The refs we will use when building the MSI
 PUPPET       = JSON.parse(File.read('configs/components/puppet.json'))
