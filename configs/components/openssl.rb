@@ -6,9 +6,7 @@ component "openssl" do |pkg, settings, platform|
   pkg.replaces 'pe-openssl'
 
   # Use our toolchain on linux systems (it's not available on osx)
-  if platform.is_huaweios?
-    pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/HuaweiOS/#{platform.os_version}/ppce500mc/pl-gcc-4.8.2-1.huaweios6.ppce500mc.rpm"
-  elsif platform.is_linux?
+  if platform.is_linux?
     pkg.build_requires 'pl-binutils'
     pkg.build_requires 'pl-gcc'
     if platform.name =~ /el-4/

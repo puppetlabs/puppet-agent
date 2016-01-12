@@ -1,6 +1,6 @@
 component "ruby" do |pkg, settings, platform|
-  pkg.version "2.1.7"
-  pkg.md5sum "2e143b8e19b056df46479ae4412550c9"
+  pkg.version "2.1.8"
+  pkg.md5sum "091b62f0a9796a3c55de2a228a0e6ef3"
   pkg.url "http://buildsources.delivery.puppetlabs.net/ruby-#{pkg.get_version}.tar.gz"
 
   pkg.replaces 'pe-ruby'
@@ -13,7 +13,6 @@ component "ruby" do |pkg, settings, platform|
 
   base = 'resources/patches/ruby'
   pkg.apply_patch "#{base}/libyaml_cve-2014-9130.patch"
-  pkg.apply_patch "#{base}/2.1.7_pthreads_mem_allocation.patch"
 
   # These are a pretty smelly hack, and they run the risk of letting tests
   # based on the generated data (that should otherwise fail) pass
@@ -29,31 +28,31 @@ component "ruby" do |pkg, settings, platform|
   #   - bba35c1e: (RE-5290) Update ruby for a cross-compile on solaris 10
   rbconfig_info = {
     'powerpc-ibm-aix5.3.0.0' => {
-      :sum => "2a9bd0a96479ae181a4309feb5ebe7b0",
+      :sum => "b024a1170d0f0201d3e5fd6e760c3aa9",
       :target_double => "powerpc-aix5.3.0.0",
     },
     'powerpc-ibm-aix6.1.0.0' => {
-      :sum => "9de66272562fb3afe126e14e36cae4c1",
+      :sum => "81ff5d356716c960f031801de20fc69b",
       :target_double => "powerpc-aix6.1.0.0",
     },
     'powerpc-ibm-aix7.1.0.0' => {
-      :sum => "f3babb139c1508e241762877062712c4",
+      :sum => "eff5300471153608f30cd76a318c052b",
       :target_double => "powerpc-aix7.1.0.0",
      },
     'i386-pc-solaris2.10' => {
-      :sum => "d4d75e7afccbb235fc079f558473c7f9",
+      :sum => "5242445b8669b2153c00574e64a922db",
       :target_double => 'i386-solaris2.10',
     },
     'sparc-sun-solaris2.10' => {
-      :sum => "6066a03bf1c04facbbbcfa86049834da",
+      :sum => "ee915c47a377e43ea16d70732a60009b",
       :target_double => 'sparc-solaris2.10',
     },
     'i386-pc-solaris2.11' => {
-      :sum => "3ed0601b9953bf0a5e4aff7bcb03a972",
+      :sum => "1a0c0ba7105a8fd66139daeb09447280",
       :target_double => 'i386-solaris2.11',
     },
     'sparc-sun-solaris2.11' => {
-      :sum => "c5a12faec1ac3302d4ae662a516445f5",
+      :sum => "169fc603bd78b889a49b18dbd82c9069",
       :target_double => 'sparc-solaris2.11',
     }
   }
@@ -76,9 +75,6 @@ component "ruby" do |pkg, settings, platform|
   if platform.is_solaris? || platform.is_aix?
     pkg.add_source "file://resources/files/rbconfig-#{settings[:platform_triple]}.rb", sum: rbconfig_info[settings[:platform_triple]][:sum]
   end
-
-  # This is needed for date_core to correctly compile on solaris 10. Breaks gem installations.
-  pkg.apply_patch "resources/patches/ruby/fix-date-compilation.patch" if platform.is_solaris?
 
   pkg.build_requires "openssl"
 
