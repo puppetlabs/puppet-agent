@@ -83,8 +83,6 @@ component "leatherman" do |pkg, settings, platform|
     test = "LANG=C #{test}"
   end
 
-  test = "env #{test}"
-
   pkg.build do
     # Until a `check` target exists, run tests are part of the build.
     [
