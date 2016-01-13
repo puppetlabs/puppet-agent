@@ -6,9 +6,6 @@ component 'curl' do |pkg, settings, platform|
   pkg.build_requires "openssl"
   pkg.build_requires "puppet-ca-bundle"
 
-  prefix = settings[:prefix]
-  pem_file = "#{settings[:prefix]}/ssl/cert.pem"
-
   if platform.is_windows?
     pkg.build_requires "pl-zlib-#{platform.architecture}"
     pkg.build_requires "runtime"
@@ -17,19 +14,16 @@ component 'curl' do |pkg, settings, platform|
     pkg.environment "CYGWIN" => settings[:cygwin]
     pkg.environment "CC" => settings[:cc]
     pkg.environment "CXX" => settings[:cxx]
-
-    prefix = platform.convert_to_windows_path(settings[:prefix])
-    pem_file = platform.convert_to_windows_path("#{settings[:prefix]}/ssl/cert.pem")
   end
 
   pkg.configure do
     ["LDFLAGS='#{settings[:ldflags]}' \
-     ./configure --prefix=#{prefix} \
-        --with-ssl=#{prefix} \
+     ./configure --prefix=#{settings[:prefix]} \
+        --with-ssl=#{settings[:prefix]} \
         --enable-threaded-resolver \
         --disable-ldap \
         --disable-ldaps \
-        --with-ca-bundle=#{pem_file} \
+        --with-ca-bundle=#{settings[:prefix]}/ssl/cert.pem \
         #{settings[:host]}"]
   end
 
