@@ -126,8 +126,6 @@ component "ruby" do |pkg, settings, platform|
     pkg.environment "LDFLAGS" => "-Wl,-rpath=/opt/puppetlabs/puppet/lib"
   end
 
-  prefix = settings[:prefix]
-
   if platform.is_windows?
     pkg.build_requires "pl-gdbm-#{platform.architecture}"
     pkg.build_requires "pl-iconv-#{platform.architecture}"
@@ -139,8 +137,6 @@ component "ruby" do |pkg, settings, platform|
     pkg.environment "CXX" => settings[:cxx]
     pkg.environment "LDFLAGS" => settings[:ldflags]
     pkg.environment "CFLAGS" => settings[:cflags]
-    prefix = platform.convert_to_windows_path(settings[:prefix])
-
     pkg.environment "MAKE" => platform[:make]
 
     special_flags = "CPPFLAGS='-DFD_SETSIZE=2048' debugflags=-g"
@@ -152,8 +148,8 @@ component "ruby" do |pkg, settings, platform|
   pkg.configure do
     [
       "bash configure \
-        --prefix=#{prefix} \
-        --with-opt-dir=#{prefix} \
+        --prefix=#{settings[:prefix]} \
+        --with-opt-dir=#{settings[:prefix]} \
         --enable-shared \
         --enable-bundled-libyaml \
         --disable-install-doc \
