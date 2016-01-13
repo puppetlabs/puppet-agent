@@ -18,7 +18,7 @@ apt-get dist-upgrade -qy --force-yes -o Dpkg::Options::="--force-confold" --allo
 echo 'deb http://osmirror.delivery.puppetlabs.net/debian/ wheezy main
 deb http://osmirror.delivery.puppetlabs.net/debian/ wheezy-updates main' >> /etc/apt/sources.list
 apt-get update -qq
-apt-get install -qy --no-install-recommends build-essential make quilt pkg-config debhelper devscripts
+apt-get install -qy --no-install-recommends build-essential make quilt pkg-config debhelper devscripts rsync
 )
 
   plat.install_build_dependencies_with "DEBIAN_FRONTEND=noninteractive; apt-get install -qy --no-install-recommends "
