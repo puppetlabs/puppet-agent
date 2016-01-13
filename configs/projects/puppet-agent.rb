@@ -2,11 +2,11 @@ project "puppet-agent" do |proj|
   platform = proj.get_platform
 
   # Project level settings our components will care about
-  # Windows has its own seperate layout
+  # Windows has its own separate layout
   if platform.is_windows?
     # Our install prefix can't have spaces in it, so we take advantage of short cuts.
-    # However, in order to take advantage of these shortcuts, we need to explicitely
-    # create the directories.
+    # However, in order to take advantage of these shortcuts, we need to explicitly
+    # create the directories before using any shortcuts
     proj.setting(:install_root, "#{platform.drive_root}/Progra~1/Puppet~1")
     proj.directory "#{platform.drive_root}/Program Files/Puppet Labs"
     proj.setting(:prefix, File.join(proj.install_root, "Puppet"))
