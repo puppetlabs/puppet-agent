@@ -1,4 +1,4 @@
-platform "win-2012-x86" do |plat|
+platform "windows-2012r2-x64" do |plat|
   plat.vmpooler_template "win-2012r2-x86_64.make"
 
   plat.servicetype "windows"
@@ -10,12 +10,14 @@ platform "win-2012-x86" do |plat|
 
   # We don't want to install any packages from the chocolatey repo by accident
   plat.provision_with "C:/ProgramData/chocolatey/bin/choco.exe sources remove -name chocolatey"
-  plat.provision_with "C:/ProgramData/chocolatey/bin/choco.exe install -y mingw-w32 -version 5.2.0 -debug -x86"
+  plat.provision_with "C:/ProgramData/chocolatey/bin/choco.exe install -y mingw-w64 -version 5.2.0 -debug"
 
   plat.install_build_dependencies_with "C:/ProgramData/chocolatey/bin/choco.exe install -y"
 
   plat.make "/usr/bin/make"
   plat.patch "TMP=/var/tmp /usr/bin/patch.exe --binary"
 
-  plat.platform_triple "i686-unknown-mingw32"
+  plat.platform_triple "x86_64-unknown-mingw32"
+
+  plat.package_type "nuget"
 end
