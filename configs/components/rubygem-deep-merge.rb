@@ -7,8 +7,6 @@ component "rubygem-deep-merge" do |pkg, settings, platform|
 
   pkg.build_requires "ruby"
 
-  pkg.environment "PATH" => "#{settings[:bindir]}:$$PATH"
-
   # Because we are cross-compiling on sparc, we can't use the rubygems we just built.
   # Instead we use the host gem installation and override GEM_HOME. Yay?
   pkg.environment "GEM_HOME" => settings[:gem_home]
