@@ -67,8 +67,6 @@ component "openssl" do |pkg, settings, platform|
     pkg.build_requires "runtime"
   end
 
-  prefix = settings[:prefix]
-
   if platform.is_osx?
     pkg.environment "PATH" => "/opt/pl-build-tools/bin:$$PATH:/usr/local/bin"
     target = 'darwin64-x86_64-cc'
@@ -100,12 +98,11 @@ component "openssl" do |pkg, settings, platform|
     pkg.environment "CC" => "/opt/pl-build-tools/bin/gcc"
   elsif platform.is_windows?
     target = platform.architecture == "x64" ? "mingw64" : "mingw"
-    pkg.environment "PATH" => "#{settings[:gcc_bindir]}:$$PATH"
+    pkg.environment "PATH" => "$$(cygpath -u #{settings[:gcc_bindir]}):$$PATH"
     pkg.environment "CYGWIN" => settings[:cygwin]
     pkg.environment "CC" => settings[:cc]
     pkg.environment "CXX" => settings[:cxx]
     pkg.environment "MAKE" => platform[:make]
-    prefix = platform.convert_to_windows_path(settings[:prefix])
     cflags = settings[:cflags]
     ldflags = settings[:ldflags]
   else
@@ -132,9 +129,9 @@ component "openssl" do |pkg, settings, platform|
     # since configure uses the existence of a lib64 directory to determine
     # if it should install its own libs into a multilib dir. Yay OpenSSL!
     "./Configure \
-      --prefix=#{prefix} \
+      --prefix=#{settings[:prefix]} \
       --libdir=lib \
-      --openssldir=#{prefix}/ssl \
+      --openssldir=#{settings[:prefix]}/ssl \
       shared \
       no-asm \
       #{target} \
