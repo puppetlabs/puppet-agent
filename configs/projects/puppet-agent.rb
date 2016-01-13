@@ -7,15 +7,15 @@ project "puppet-agent" do |proj|
     # Our install prefix can't have spaces in it, so we take advantage of short cuts.
     # However, in order to take advantage of these shortcuts, we need to explicitly
     # create the directories before using any shortcuts
-    proj.setting(:install_root, "#{platform.drive_root}/Progra~1/Puppet~1")
-    proj.directory "#{platform.drive_root}/Program Files/Puppet Labs"
+    proj.directory "C:/Program Files/Puppet Labs"
+    proj.setting(:install_root, "C:/Progra~1/Puppet~1")
     proj.setting(:prefix, File.join(proj.install_root, "Puppet"))
-    proj.setting(:sysconfdir, "#{platform.drive_root}/ProgramData/PuppetLabs")
+    proj.setting(:sysconfdir, "C:/ProgramData/PuppetLabs")
     proj.setting(:puppet_configdir, File.join(proj.sysconfdir, 'puppet', 'etc'))
     proj.setting(:link_bindir, File.join(proj.prefix, "bin"))
     proj.setting(:logdir, File.join(proj.sysconfdir, "puppet", "var", "log"))
     proj.setting(:piddir, File.join(proj.sysconfdir, "puppet", "var", "run"))
-    proj.setting(:tmpfilesdir, "#{platform.drive_root}/Windows/Temp")
+    proj.setting(:tmpfilesdir, "C:/Windows/Temp")
   else
     proj.setting(:install_root, "/opt/puppetlabs")
     proj.setting(:prefix, File.join(proj.install_root, "puppet"))
