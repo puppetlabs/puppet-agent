@@ -1,7 +1,28 @@
 component "openssl" do |pkg, settings, platform|
   pkg.version "1.0.2e"
-  pkg.md5sum "5262bfa25b60ed9de9f28d5d52d77fc5"
-  pkg.url "http://buildsources.delivery.puppetlabs.net/openssl-#{pkg.get_version}.tar.gz"
+  if platform.is_windows?
+    # OpenSSL on windows is exciting
+    # If we use the openssl tarball provided by upstream, we get failures when we try to unpack it.
+    # The failures are fixed if we do not set CYGWIN with winsymlinks:native. However, if we do not
+    # set CYGWIN with that value, even though the tarball successfully unpacks, the build itself
+    # fails due to inconsistencies between the files (as a result of the symlinks being in a state
+    # that cygwin/windwos cannot understand). In order to deal with this, we have to unpack and
+    # repack openssl.
+    #   * gunzip -c openssl.tar.gz | tar xf -
+    #   * mv openssl openssl-windows
+    #   * manually remove all of the symlinks so the symlink targets are the same as their sources
+    #     - To do this, I removed the symlink, and copied the source file into the location where
+    #       the symlink was.
+    #     - These symlinks are mainly found in the test directory, though there is one in the app
+    #       directory.
+    #   * tar -czf openssl-windows.tar.gz openssl-windows
+    # Please don't hate me, this was the best solution I could come up with :(
+    pkg.md5sum "74c599905f9929f6b42658fe0f396393"
+    pkg.url "http://buildsources.delivery.puppetlabs.net/openssl-#{pkg.get_version}-windows.tar.gz"
+  else
+    pkg.md5sum "5262bfa25b60ed9de9f28d5d52d77fc5"
+    pkg.url "http://buildsources.delivery.puppetlabs.net/openssl-#{pkg.get_version}.tar.gz"
+  end
 
   pkg.replaces 'pe-openssl'
 
@@ -39,8 +60,6 @@ component "openssl" do |pkg, settings, platform|
     pkg.build_requires "runtime"
   end
 
-  prefix = settings[:prefix]
-
   if platform.is_osx?
     pkg.environment "PATH" => "/opt/pl-build-tools/bin:$$PATH:/usr/local/bin"
     target = 'darwin64-x86_64-cc'
@@ -65,12 +84,8 @@ component "openssl" do |pkg, settings, platform|
     pkg.environment "CC" => "/opt/pl-build-tools/bin/gcc"
   elsif platform.is_windows?
     target = platform.architecture == "x64" ? "mingw64" : "mingw"
-    pkg.environment "PATH" => "#{settings[:gcc_bindir]}:$$PATH"
+    pkg.environment "PATH" => "$$(cygpath -u #{settings[:gcc_bindir]}):$$PATH"
     pkg.environment "CYGWIN" => settings[:cygwin]
-    pkg.environment "CC" => settings[:cc]
-    pkg.environment "CXX" => settings[:cxx]
-    pkg.environment "MAKE" => platform[:make]
-    prefix = platform.convert_to_windows_path(settings[:prefix])
     cflags = settings[:cflags]
     ldflags = settings[:ldflags]
   else
@@ -97,9 +112,9 @@ component "openssl" do |pkg, settings, platform|
     # since configure uses the existence of a lib64 directory to determine
     # if it should install its own libs into a multilib dir. Yay OpenSSL!
     "./Configure \
-      --prefix=#{prefix} \
+      --prefix=#{settings[:prefix]} \
       --libdir=lib \
-      --openssldir=#{prefix}/ssl \
+      --openssldir=#{settings[:prefix]}/ssl \
       shared \
       no-asm \
       #{target} \

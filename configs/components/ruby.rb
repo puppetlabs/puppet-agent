@@ -113,22 +113,14 @@ component "ruby" do |pkg, settings, platform|
     pkg.environment "LDFLAGS" => "-Wl,-rpath=/opt/puppetlabs/puppet/lib"
   end
 
-  prefix = settings[:prefix]
-
   if platform.is_windows?
     pkg.build_requires "pl-gdbm-#{platform.architecture}"
     pkg.build_requires "pl-iconv-#{platform.architecture}"
     pkg.build_requires "pl-libffi-#{platform.architecture}"
     pkg.build_requires "pl-pdcurses-#{platform.architecture}"
-    pkg.environment "PATH" => "#{settings[:gcc_bindir]}:#{settings[:tools_root]}/bin:#{settings[:bindir]}:$$PATH"
-    pkg.environment "CYGWIN" => settings[:cygwin]
-    pkg.environment "CC" => settings[:cc]
-    pkg.environment "CXX" => settings[:cxx]
-    pkg.environment "LDFLAGS" => settings[:ldflags]
-    pkg.environment "CFLAGS" => settings[:cflags]
-    prefix = platform.convert_to_windows_path(settings[:prefix])
 
-    pkg.environment "MAKE" => platform[:make]
+    pkg.environment "PATH" => "$$(cygpath -u #{settings[:gcc_bindir]}):$$(cygpath -u #{settings[:tools_root]}/bin):$$(cygpath -u #{settings[:bindir]}):$$PATH"
+    pkg.environment "CYGWIN" => settings[:cygwin]
 
     special_flags = "CPPFLAGS='-DFD_SETSIZE=2048' debugflags=-g"
   end
@@ -139,8 +131,8 @@ component "ruby" do |pkg, settings, platform|
   pkg.configure do
     [
       "bash configure \
-        --prefix=#{prefix} \
-        --with-opt-dir=#{prefix} \
+        --prefix=#{settings[:prefix]} \
+        --with-opt-dir=#{settings[:prefix]} \
         --enable-shared \
         --enable-bundled-libyaml \
         --disable-install-doc \

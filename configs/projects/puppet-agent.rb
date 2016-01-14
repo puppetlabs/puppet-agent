@@ -2,20 +2,20 @@ project "puppet-agent" do |proj|
   platform = proj.get_platform
 
   # Project level settings our components will care about
-  # Windows has its own seperate layout
+  # Windows has its own separate layout
   if platform.is_windows?
     # Our install prefix can't have spaces in it, so we take advantage of short cuts.
-    # However, in order to take advantage of these shortcuts, we need to explicitely
-    # create the directories.
-    proj.setting(:install_root, "#{platform.drive_root}/Progra~1/Puppet~1")
-    proj.directory "#{platform.drive_root}/Program Files/Puppet Labs"
+    # However, in order to take advantage of these shortcuts, we need to explicitly
+    # create the directories before using any shortcuts
+    proj.directory "C:/Program Files/Puppet Labs"
+    proj.setting(:install_root, "C:/Progra~1/Puppet~1")
     proj.setting(:prefix, File.join(proj.install_root, "Puppet"))
-    proj.setting(:sysconfdir, "#{platform.drive_root}/ProgramData/PuppetLabs")
+    proj.setting(:sysconfdir, "C:/ProgramData/PuppetLabs")
     proj.setting(:puppet_configdir, File.join(proj.sysconfdir, 'puppet', 'etc'))
     proj.setting(:link_bindir, File.join(proj.prefix, "bin"))
     proj.setting(:logdir, File.join(proj.sysconfdir, "puppet", "var", "log"))
     proj.setting(:piddir, File.join(proj.sysconfdir, "puppet", "var", "run"))
-    proj.setting(:tmpfilesdir, "#{platform.drive_root}/Windows/Temp")
+    proj.setting(:tmpfilesdir, "C:/Windows/Temp")
   else
     proj.setting(:install_root, "/opt/puppetlabs")
     proj.setting(:prefix, File.join(proj.install_root, "puppet"))
@@ -40,14 +40,13 @@ project "puppet-agent" do |proj|
   proj.setting(:includedir, File.join(proj.prefix, "include"))
   proj.setting(:datadir, File.join(proj.prefix, "share"))
   proj.setting(:mandir, File.join(proj.datadir, "man"))
+  proj.setting(:gem_home, File.join(proj.libdir, "ruby", "gems", "2.1.0"))
   proj.setting(:ruby_vendordir, File.join(proj.libdir, "ruby", "vendor_ruby"))
 
   if platform.is_windows?
-    proj.setting(:gem_home, platform.convert_to_windows_path(File.join(proj.libdir, "ruby", "gems", "2.1.0")))
     proj.setting(:host_ruby, File.join(proj.bindir, "ruby.exe"))
     proj.setting(:host_gem, File.join(proj.bindir, "gem.bat"))
   else
-    proj.setting(:gem_home, File.join(proj.libdir, "ruby", "gems", "2.1.0"))
     proj.setting(:host_ruby, File.join(proj.bindir, "ruby"))
     proj.setting(:host_gem, File.join(proj.bindir, "gem"))
   end
@@ -71,7 +70,8 @@ project "puppet-agent" do |proj|
     end
   elsif platform.is_windows?
     # For windows, we need to ensure we are building for mingw not cygwin
-    host = "--host #{platform.platform_triple}"
+    platform_triple = platform.platform_triple
+    host = "--host #{platform_triple}"
   end
 
   proj.setting(:gem_install, "#{proj.host_gem} install --no-rdoc --no-ri --local ")
@@ -106,17 +106,15 @@ project "puppet-agent" do |proj|
   # Platform specific
   if platform.is_windows?
     arch = platform.architecture == "x64" ? "64" : "32"
-    proj.setting(:cflags, "-IC:/tools/pl-build-tools/include -IC:/tools/mingw#{arch}/include -I#{platform.convert_to_windows_path(proj.includedir)}")
-    proj.setting(:ldflags, "-LC:/tools/pl-build-tools/lib -LC:/tools/mingw#{arch}/lib -L#{platform.convert_to_windows_path(proj.libdir)}")
-    proj.setting(:gcc_bindir, "#{platform.drive_root}/tools/mingw#{arch}/bin")
+    proj.setting(:gcc_root, "C:/tools/mingw#{arch}")
+    proj.setting(:gcc_bindir, "#{proj.gcc_root}/bin")
+    proj.setting(:tools_root, "C:/tools/pl-build-tools")
+    proj.setting(:cflags, "-I#{proj.tools_root}/include -I#{proj.gcc_root}/include -I#{proj.includedir}")
+    proj.setting(:ldflags, "-L#{proj.tools_root}/lib -L#{proj.gcc_root}/lib -L#{proj.libdir}")
     proj.setting(:cygwin, "nodosfilewarning winsymlinks:native")
-    proj.setting(:cc, "C:/tools/mingw#{arch}/bin/gcc")
-    proj.setting(:cxx, "C:/tools/mingw#{arch}/bin/g++")
-    proj.setting(:tools_root, "#{platform.drive_root}/tools/pl-build-tools")
   else
     proj.setting(:cflags, "-I#{proj.includedir} -I/opt/pl-build-tools/include")
     proj.setting(:ldflags, "-L#{proj.libdir} -L/opt/pl-build-tools/lib -Wl,-rpath=#{proj.libdir}")
-    proj.setting(:tools_root, "/opt/pl-build-tools")
   end
   if platform.is_aix?
     proj.setting(:ldflags, "-Wl,-brtl -L#{proj.libdir} -L/opt/pl-build-tools/lib")
@@ -188,5 +186,7 @@ project "puppet-agent" do |proj|
   proj.directory proj.sysconfdir
   proj.directory proj.logdir
   proj.directory proj.piddir
-  proj.directory proj.link_bindir
+
+  # We don't have the ability to create links on windows yet
+  proj.directory proj.link_bindir unless platform.is_windows?
 end

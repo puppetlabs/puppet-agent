@@ -5,23 +5,12 @@ component "puppet-ca-bundle" do |pkg, settings, platform|
   # make the keystore
   pkg.build_requires 'facter'
 
-  if platform.is_windows?
-    pkg.environment "PATH" => "#{settings[:gcc_bindir]}:#{settings[:bindir]}:$$PATH"
-    sslpath = platform.convert_to_windows_path(File.join(settings[:bindir], "openssl"))
-    ssl_certspath = platform.convert_to_windows_path(File.join(settings[:prefix], "ssl"))
-
-    # We need to use cygwin make for the makefile to run correctly
-  else
-    sslpath = "#{settings[:bindir]}/openssl"
-    ssl_certspath = File.join(settings[:prefix], 'ssl')
-  end
-
   install_commands = [
-    "#{platform[:make]} install OPENSSL=#{sslpath} USER=0 GROUP=0 DESTDIR=#{ssl_certspath}"
+    "#{platform[:make]} install OPENSSL=#{settings[:bindir]}/openssl USER=0 GROUP=0 DESTDIR=#{File.join(settings[:prefix], 'ssl')}"
   ]
 
   if settings[:java_available]
-    install_commands << "#{platform[:make]} keystore DESTDIR=#{ssl_certspath}"
+    install_commands << "#{platform[:make]} keystore DESTDIR=#{File.join(settings[:prefix], 'ssl')}"
   end
 
   pkg.install do
