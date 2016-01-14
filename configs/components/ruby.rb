@@ -131,13 +131,9 @@ component "ruby" do |pkg, settings, platform|
     pkg.build_requires "pl-iconv-#{platform.architecture}"
     pkg.build_requires "pl-libffi-#{platform.architecture}"
     pkg.build_requires "pl-pdcurses-#{platform.architecture}"
-    pkg.environment "PATH" => "#{settings[:gcc_bindir]}:#{settings[:tools_root]}/bin:#{settings[:bindir]}:$$PATH"
+
+    pkg.environment "PATH" => "$$(cygpath -u #{settings[:gcc_bindir]}):$$(cygpath -u #{settings[:tools_root]}/bin):$$(cygpath -u #{settings[:bindir]}):$$PATH"
     pkg.environment "CYGWIN" => settings[:cygwin]
-    pkg.environment "CC" => settings[:cc]
-    pkg.environment "CXX" => settings[:cxx]
-    pkg.environment "LDFLAGS" => settings[:ldflags]
-    pkg.environment "CFLAGS" => settings[:cflags]
-    pkg.environment "MAKE" => platform[:make]
 
     special_flags = "CPPFLAGS='-DFD_SETSIZE=2048' debugflags=-g"
   end

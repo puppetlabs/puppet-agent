@@ -7,13 +7,10 @@ component 'curl' do |pkg, settings, platform|
   pkg.build_requires "puppet-ca-bundle"
 
   if platform.is_windows?
-    pkg.build_requires "pl-zlib-#{platform.architecture}"
     pkg.build_requires "runtime"
 
-    pkg.environment "PATH" => "#{settings[:gcc_bindir]}:$$PATH"
+    pkg.environment "PATH" => "$$(cygpath -u #{settings[:gcc_bindir]}):$$PATH"
     pkg.environment "CYGWIN" => settings[:cygwin]
-    pkg.environment "CC" => settings[:cc]
-    pkg.environment "CXX" => settings[:cxx]
   end
 
   pkg.configure do
