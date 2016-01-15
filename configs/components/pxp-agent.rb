@@ -3,11 +3,17 @@ component "pxp-agent" do |pkg, settings, platform|
 
   toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/pl-build-toolchain.cmake"
   cmake = "/opt/pl-build-tools/bin/cmake"
-  pkg.environment "PATH" => "#{settings[:bindir]}:/opt/pl-build-tools/bin:$$PATH"
+
+  unless platform.is_windows?
+    pkg.environment "PATH" => "#{settings[:bindir]}:/opt/pl-build-tools/bin:$$PATH"
+  end
 
   pkg.build_requires "openssl"
   pkg.build_requires "leatherman"
   pkg.build_requires "cpp-pcp-client"
+
+  make = platform[:make]
+
   if platform.is_aix?
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-gcc-5.2.0-1.aix#{platform.os_version}.ppc.rpm"
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-cmake-3.2.3-2.aix#{platform.os_version}.ppc.rpm"
@@ -24,6 +30,17 @@ component "pxp-agent" do |pkg, settings, platform|
 
     # PCP-87: If we build with -O3, solaris segfaults due to something in std::vector
     special_flags = "-DCMAKE_CXX_FLAGS_RELEASE='-O2 -DNDEBUG'"
+  elsif platform.is_windows?
+    pkg.build_requires "cmake"
+    pkg.build_requires "pl-toolchain-#{platform.architecture}"
+    pkg.build_requires "pl-boost-#{platform.architecture}"
+
+    make = "#{settings[:gcc_bindir]}/mingw32-make"
+    pkg.environment "PATH" => "$$(cygpath -u #{settings[:gcc_bindir]}):/cygdrive/c/Windows/system32:/cygdrive/c/Windows:/cygdrive/c/Windows/System32/WindowsPowerShell/v1.0"
+    pkg.environment "CYGWIN" => settings[:cygwin]
+
+    cmake = "C:/ProgramData/chocolatey/bin/cmake.exe -G \"MinGW Makefiles\""
+    toolchain = "-DCMAKE_TOOLCHAIN_FILE=#{settings[:tools_root]}/pl-build-toolchain.cmake"
   else
     pkg.build_requires "pl-gcc"
     pkg.build_requires "pl-cmake"
@@ -46,11 +63,11 @@ component "pxp-agent" do |pkg, settings, platform|
   end
 
   pkg.build do
-    ["#{platform[:make]} -j$(shell expr $(shell #{platform[:num_cores]}) + 1)"]
+    ["#{make} -j$(shell expr $(shell #{platform[:num_cores]}) + 1)"]
   end
 
   pkg.install do
-    ["#{platform[:make]} -j$(shell expr $(shell #{platform[:num_cores]}) + 1) install"]
+    ["#{make} -j$(shell expr $(shell #{platform[:num_cores]}) + 1) install"]
   end
 
   pkg.directory File.join(settings[:sysconfdir], 'pxp-agent')
@@ -77,6 +94,8 @@ component "pxp-agent" do |pkg, settings, platform|
     pkg.install_service "ext/solaris/smf/pxp-agent.xml", service_type: "network"
   when "aix"
     pkg.install_service "resources/aix/pxp-agent.service", nil, "pxp-agent"
+  when "windows"
+    puts "Service files not enabled on windows"
   else
     fail "need to know where to put #{pkg.get_name} service files"
   end
