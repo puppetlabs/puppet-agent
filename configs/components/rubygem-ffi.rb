@@ -1,12 +1,12 @@
 component "rubygem-ffi" do |pkg, settings, platform|
-  pkg.version "1.9.6"
+  pkg.version "1.9.10"
 
   if platform.is_windows?
     if platform.architecture == "x64"
-      pkg.md5sum "daf0d310a5c498906f94f8c10006fd39"
+      pkg.md5sum "e3ba1afc17b47ad261bf290b31ce46d7"
       pkg.url "http://buildsources.delivery.puppetlabs.net/ffi-#{pkg.get_version}-x64-mingw32.gem"
     else
-      pkg.md5sum "5a0b3f3602f65a2b7fe6569a3333a068"
+      pkg.md5sum "e83fb2971a03e52ab3b00e8662ac20ea"
       pkg.url "http://buildsources.delivery.puppetlabs.net/ffi-#{pkg.get_version}-x86-mingw32.gem"
     end
 
