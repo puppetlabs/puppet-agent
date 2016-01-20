@@ -97,6 +97,8 @@ component "openssl" do |pkg, settings, platform|
       target = 'linux-x86_64'
     elsif platform.architecture =~ /ppce500mc$/
       target = 'linux-ppc'
+    elsif platform.architecture =~ /ppc64le$/
+      target = 'linux-ppc64le'
     elsif platform.architecture =~ /s390/
       target = 'linux64-s390x'
     end

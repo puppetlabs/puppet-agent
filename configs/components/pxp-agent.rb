@@ -9,6 +9,8 @@ component "pxp-agent" do |pkg, settings, platform|
   end
 
   pkg.build_requires "openssl"
+  pkg.build_requires "leatherman"
+  pkg.build_requires "cpp-pcp-client"
 
   make = platform[:make]
 
