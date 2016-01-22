@@ -204,11 +204,6 @@ component "facter" do |pkg, settings, platform|
 
   pkg.install_file ".gemspec", "#{settings[:gem_home]}/specifications/#{pkg.get_name}.gemspec"
 
-  if platform.is_windows?
-    pkg.directory File.join(settings[:sysconfdir], "facter", "facts.d")
-  else
-    pkg.link "#{settings[:bindir]}/facter", "#{settings[:link_bindir]}/facter"
-    pkg.directory File.join('/opt/puppetlabs', 'facter')
-    pkg.directory File.join('/opt/puppetlabs', 'facter', 'facts.d')
-  end
+  pkg.link "#{settings[:bindir]}/facter", "#{settings[:link_bindir]}/facter" unless platform.is_windows?
+  pkg.directory File.join(settings[:install_root], 'facter', 'facts.d')
 end
