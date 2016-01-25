@@ -85,8 +85,10 @@ project "puppet-agent" do |proj|
     host = "--host #{platform_triple}"
   end
 
-  proj.setting(:gem_install, "#{proj.host_gem} install --no-rdoc --no-ri --local --bindir #{proj.bindir} ")
-
+  proj.setting(:gem_install, "#{proj.host_gem} install --no-rdoc --no-ri --local ")
+  if platform.is_windows?
+    proj.setting(:gem_install, "#{proj.gem_install} --bindir #{proj.bindir} ")
+  end
 
   # For AIX, we use the triple to install a better rbconfig
   if platform.is_aix?
