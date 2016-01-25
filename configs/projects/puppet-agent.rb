@@ -4,21 +4,17 @@ project "puppet-agent" do |proj|
   # Project level settings our components will care about
   # Windows has its own separate layout
   if platform.is_windows?
-    # Our install prefix can't have spaces in it, so we take advantage of short cuts.
+    # Our install root can't have spaces in it, so we take advantage of short cuts.
     # However, in order to take advantage of these shortcuts, we need to explicitly
     # create the directories before using any shortcuts
     proj.directory "C:/Program Files/Puppet Labs"
     proj.setting(:install_root, "C:/Progra~1/Puppet~1")
-    proj.setting(:prefix, File.join(proj.install_root, "Puppet"))
     proj.setting(:sysconfdir, "C:/ProgramData/PuppetLabs")
-    proj.setting(:puppet_configdir, File.join(proj.sysconfdir, 'puppet', 'etc'))
-    proj.setting(:link_bindir, File.join(proj.prefix, "bin"))
-    proj.setting(:logdir, File.join(proj.sysconfdir, "puppet", "var", "log"))
-    proj.setting(:piddir, File.join(proj.sysconfdir, "puppet", "var", "run"))
+    proj.setting(:logdir, File.join(proj.sysconfdir, "var", "log"))
+    proj.setting(:piddir, File.join(proj.sysconfdir,  "var", "run"))
     proj.setting(:tmpfilesdir, "C:/Windows/Temp")
   else
     proj.setting(:install_root, "/opt/puppetlabs")
-    proj.setting(:prefix, File.join(proj.install_root, "puppet"))
     if platform.is_eos?
       proj.setting(:sysconfdir, "/persist/sys/etc/puppetlabs")
       proj.setting(:link_sysconfdir, "/etc/puppetlabs")
@@ -27,15 +23,16 @@ project "puppet-agent" do |proj|
     else
       proj.setting(:sysconfdir, "/etc/puppetlabs")
     end
-    proj.setting(:puppet_configdir, File.join(proj.sysconfdir, 'puppet'))
-    proj.setting(:link_bindir, "/opt/puppetlabs/bin")
     proj.setting(:logdir, "/var/log/puppetlabs")
     proj.setting(:piddir, "/var/run/puppetlabs")
     proj.setting(:tmpfilesdir, "/usr/lib/tmpfiles.d")
   end
 
+  proj.setting(:prefix, File.join(proj.install_root, "puppet"))
+  proj.setting(:puppet_configdir, File.join(proj.sysconfdir, 'puppet'))
   proj.setting(:puppet_codedir, File.join(proj.sysconfdir, 'code'))
   proj.setting(:bindir, File.join(proj.prefix, "bin"))
+  proj.setting(:link_bindir, File.join(proj.install_root, "bin"))
   proj.setting(:libdir, File.join(proj.prefix, "lib"))
   proj.setting(:includedir, File.join(proj.prefix, "include"))
   proj.setting(:datadir, File.join(proj.prefix, "share"))
@@ -74,7 +71,8 @@ project "puppet-agent" do |proj|
     host = "--host #{platform_triple}"
   end
 
-  proj.setting(:gem_install, "#{proj.host_gem} install --no-rdoc --no-ri --local ")
+  proj.setting(:gem_install, "#{proj.host_gem} install --no-rdoc --no-ri --local --bindir #{proj.bindir} ")
+
 
   # For AIX, we use the triple to install a better rbconfig
   if platform.is_aix?
