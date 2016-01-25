@@ -27,7 +27,9 @@ component "facter" do |pkg, settings, platform|
   pkg.build_requires 'augeas' unless platform.is_windows?
   pkg.build_requires "openssl"
 
-  unless platform.is_windows?
+  if platform.is_windows?
+    pkg.environment "PATH" => "$$(cygpath -u #{settings[:gcc_bindir]}):$$(cygpath -u #{settings[:bindir]}):/cygdrive/c/Windows/system32:/cygdrive/c/Windows:/cygdrive/c/Windows/System32/WindowsPowerShell/v1.0"
+  else
     pkg.environment "PATH" => "#{settings[:bindir]}:$$PATH"
   end
 
@@ -153,7 +155,6 @@ component "facter" do |pkg, settings, platform|
     special_flags = "-DCMAKE_CXX_FLAGS_RELEASE='-O2 -DNDEBUG'"
   elsif platform.is_windows?
     make = "#{settings[:gcc_bindir]}/mingw32-make"
-    pkg.environment "PATH" => "$$(cygpath -u #{settings[:gcc_bindir]}):$$(cygpath -u #{settings[:bindir]}):/cygdrive/c/Windows/system32:/cygdrive/c/Windows:/cygdrive/c/Windows/System32/WindowsPowerShell/v1.0"
     pkg.environment "CYGWIN" => settings[:cygwin]
 
     cmake = "C:/ProgramData/chocolatey/bin/cmake.exe -G \"MinGW Makefiles\""
