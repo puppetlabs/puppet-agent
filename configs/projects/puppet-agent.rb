@@ -194,13 +194,11 @@ project "puppet-agent" do |proj|
     proj.component "ruby-selinux"
   end
 
-  # We're creating this directory on windows in the above windows block
-  proj.directory proj.install_root unless platform.is_windows?
+  proj.directory proj.install_root
   proj.directory proj.prefix
   proj.directory proj.sysconfdir
   proj.directory proj.logdir
   proj.directory proj.piddir
+  proj.directory proj.link_bindir
 
-  # We don't have the ability to create links on windows yet
-  proj.directory proj.link_bindir unless platform.is_windows?
 end
