@@ -71,8 +71,10 @@ project "puppet-agent" do |proj|
     host = "--host #{platform_triple}"
   end
 
-  proj.setting(:gem_install, "#{proj.host_gem} install --no-rdoc --no-ri --local --bindir #{proj.bindir} ")
-
+  proj.setting(:gem_install, "#{proj.host_gem} install --no-rdoc --no-ri --local ")
+  if platform.is_windows?
+    proj.setting(:gem_install, "#{proj.gem_install} --bindir #{proj.bindir} ")
+  end
 
   # For AIX, we use the triple to install a better rbconfig
   if platform.is_aix?
@@ -178,13 +180,11 @@ project "puppet-agent" do |proj|
     proj.component "ruby-selinux"
   end
 
-  # We're creating this directory on windows in the above windows block
-  proj.directory proj.install_root unless platform.is_windows?
+  proj.directory proj.install_root
   proj.directory proj.prefix
   proj.directory proj.sysconfdir
   proj.directory proj.logdir
   proj.directory proj.piddir
+  proj.directory proj.link_bindir
 
-  # We don't have the ability to create links on windows yet
-  proj.directory proj.link_bindir unless platform.is_windows?
 end

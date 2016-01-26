@@ -5,7 +5,9 @@ component "cpp-pcp-client" do |pkg, settings, platform|
   toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/pl-build-toolchain.cmake"
   make = platform[:make]
 
-  unless platform.is_windows?
+  if platform.is_windows?
+    pkg.environment "PATH" => "$$(cygpath -u #{settings[:gcc_bindir]}):$$(cygpath -u #{settings[:bindir]}):/cygdrive/c/Windows/system32:/cygdrive/c/Windows:/cygdrive/c/Windows/System32/WindowsPowerShell/v1.0"
+  else
     pkg.environment "PATH" => "#{settings[:bindir]}:/opt/pl-build-tools/bin:$$PATH"
   end
 
@@ -31,7 +33,6 @@ component "cpp-pcp-client" do |pkg, settings, platform|
     pkg.build_requires "pl-boost-#{platform.architecture}"
 
     make = "#{settings[:gcc_root]}/bin/mingw32-make"
-    pkg.environment "PATH" => "$$(cygpath -u #{settings[:gcc_bindir]}):/cygdrive/c/Windows/system32:/cygdrive/c/Windows:/cygdrive/c/Windows/System32/WindowsPowerShell/v1.0"
     pkg.environment "CYGWIN" => settings[:cygwin]
 
     cmake = "C:/ProgramData/chocolatey/bin/cmake.exe -G \"MinGW Makefiles\""
