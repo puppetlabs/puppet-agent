@@ -3,6 +3,11 @@ component "ruby" do |pkg, settings, platform|
   pkg.md5sum "091b62f0a9796a3c55de2a228a0e6ef3"
   pkg.url "http://buildsources.delivery.puppetlabs.net/ruby-#{pkg.get_version}.tar.gz"
 
+  if platform.is_windows?
+    pkg.add_source "http://buildsources.delivery.puppetlabs.net/windows/elevate/elevate.exe", sum: "bd81807a5c13da32dd2a7157f66fa55d"
+    pkg.add_source "file://resources/files/windows/elevate.exe.config", sum: "a5aecf3f7335fa1250a0f691d754d561"
+  end
+
   pkg.replaces 'pe-ruby'
   pkg.replaces 'pe-ruby-mysql'
   pkg.replaces 'pe-rubygems'
@@ -163,6 +168,10 @@ component "ruby" do |pkg, settings, platform|
     "#{platform[:make]} -j$(shell expr $(shell #{platform[:num_cores]}) + 1) install"
   end
 
+  if platform.is_windows?
+    pkg.install_file "../elevate.exe", "#{settings[:bindir]}/elevate.exe"
+    pkg.install_file "../elevate.exe.config", "#{settings[:bindir]}/elevate.exe.config"
+  end
   if platform.is_solaris? || platform.is_aix? || platform.is_huaweios?
     # Here we replace the rbconfig from our ruby compiled with our toolchain
     # with an rbconfig from a ruby of the same version compiled with the system
