@@ -1,6 +1,10 @@
 component "puppet" do |pkg, settings, platform|
   pkg.load_from_json("configs/components/puppet.json")
 
+  if platform.is_windows?
+    pkg.add_source("file://resources/files/windows/environment.bat", sum: "c698da37e559935e904f8690dd5c26fa")
+  end
+
   pkg.build_requires "ruby"
   pkg.build_requires "facter"
   pkg.build_requires "hiera"
@@ -142,6 +146,9 @@ component "puppet" do |pkg, settings, platform|
 
   pkg.install_file ".gemspec", "#{settings[:gem_home]}/specifications/#{pkg.get_name}.gemspec"
 
+  if platform.is_windows?
+    pkg.install_file "../environment.bat", "#{settings[:bindir]}/environment.bat"
+  end
 
   pkg.configfile File.join(configdir, 'puppet.conf')
   pkg.configfile File.join(configdir, 'auth.conf')
