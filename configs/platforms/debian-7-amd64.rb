@@ -4,7 +4,7 @@ platform "debian-7-amd64" do |plat|
   plat.servicetype "sysv"
   plat.codename "wheezy"
 
-  plat.apt_repo "http://pl-build-tools.delivery.puppetlabs.net/debian/pl-build-tools-release-wheezy.deb"
+  plat.add_build_repository "http://pl-build-tools.delivery.puppetlabs.net/debian/pl-build-tools-release-#{plat.get_codename}.deb"
   plat.provision_with "export DEBIAN_FRONTEND=noninteractive; apt-get update -qq; apt-get install -qy --no-install-recommends build-essential devscripts make quilt pkg-config debhelper rsync "
   plat.install_build_dependencies_with "DEBIAN_FRONTEND=noninteractive; apt-get install -qy --no-install-recommends "
   plat.vmpooler_template "debian-7-x86_64"
