@@ -64,7 +64,9 @@ component "puppet" do |pkg, settings, platform|
   when "aix"
     pkg.install_service "resources/aix/puppet.service", nil, "puppet"
   when "windows"
-    puts "Service files not enabled on windows"
+    # Sample - service definition for rubyw.
+    # 2nd argumenent is the Wix service specific file to be included.
+    pkg.install_service "SourceDir\\ProgramFiles64Folder\\PuppetLabs\\Puppet\\bin\\ruby.exe"
   else
     fail "need to know where to put service files"
   end
