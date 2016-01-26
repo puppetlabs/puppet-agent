@@ -197,6 +197,12 @@ component "facter" do |pkg, settings, platform|
 
   pkg.install_file ".gemspec", "#{settings[:gem_home]}/specifications/#{pkg.get_name}.gemspec"
 
+  if platform.is_windows?
+    pkg.install_file "ext/windows/facter.bat", "#{settings[:bindir]}/facter.bat"
+    pkg.install_file "ext/windows/facter_interactive.bat", "#{settings[:bindir]}/facter_interactive.bat"
+    pkg.install_file "ext/windows/run_facter_interactive.bat", "#{settings[:bindir]}/run_facter_interactive.bat"
+  end
+
   pkg.link "#{settings[:bindir]}/facter", "#{settings[:link_bindir]}/facter" unless platform.is_windows?
   pkg.directory File.join(settings[:install_root], 'facter', 'facts.d')
 end
