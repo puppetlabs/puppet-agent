@@ -6,6 +6,7 @@ project "puppet-agent" do |proj|
     proj.setting(:company_name, "Puppet Labs")
     proj.setting(:company_id, "PuppetLabs")
     proj.setting(:common_product_id, "PuppetInstaller")
+    proj.setting(:puppet_service_name, "puppet")
     proj.setting(:product_id, "Puppet")
     proj.setting(:upgrade_code, "2AD3D11C-61B3-4710-B106-B4FDEC5FA358")
     if platform.architecture == "x64"
