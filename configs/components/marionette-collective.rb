@@ -66,7 +66,9 @@ component "marionette-collective" do |pkg, settings, platform|
   when "aix"
     pkg.install_service "resources/aix/mcollective.service", nil, "mcollective"
   when "windows"
-    puts "Service files not enabled on windows"
+    # Note - this definition indicates that the file should be filtered out from the Wix
+    # harvest. A corresponding service definition file is also required in resources/windows/wix
+    pkg.install_service "SourceDir\\#{settings[:base_dir]}\\#{settings[:company_id]}\\#{settings[:product_id]}\\puppet\\bin\\rubyw.exe"
   else
     fail "need to know where to put service files"
   end
