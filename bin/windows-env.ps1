@@ -37,7 +37,7 @@ if ($arch -eq 64) {
 }
 $mingwVer = "${mingwArch}_mingw-w64_${mingwVerNum}_${mingwThreads}_${mingwExceptions}"
 
-$rubyPkg = "ruby-2.1.7-${rubyArch}-mingw32"
+$rubyPkg = "ruby-2.1.8-${rubyArch}-mingw32"
 
 $opensslPkg = "openssl-1.0.2e-${opensslArch}-windows"
 
