@@ -66,7 +66,33 @@ component "marionette-collective" do |pkg, settings, platform|
   when "aix"
     pkg.install_service "resources/aix/mcollective.service", nil, "mcollective"
   when "windows"
-    puts "Service files not enabled on windows"
+    service_hash = [{
+      :directory_ref => settings[:bindir_id],
+      :id => "MCOService",
+      :guid => "7601FCEA-90B3-CC69-6A69-4087FBC7292D",
+      :win64 => settings[:win64],
+      :file => {
+        :id => "RubyWExe",
+        :source => settings[:rubyw],
+      },
+      # This service is installed with start set to demand because
+      # it won't be correctly configured to start right away. The
+      # puppet run that configures mcollective will allow it to start
+      # and set it to automatic
+      :serviceinstall => {
+        :id => "MCOServiceInstaller",
+        :description => "Puppet Labs server orchestration framework",
+        :displayname => "Marionette Collective Server",
+        :name => "mcollective",
+        :start => "demand",
+        :arguments => '-I&quot;[INSTALLDIR]\\lib&quot; -rubygems &quot;[INSTALLDIR]\\bin\\mcollectived&quot; --daemonize',
+      },
+      :servicecontrol => {
+        :id => "MCOStartService",
+        :name => "mcollective",
+      },
+    }]
+    pkg.install_service nil, service_hash: service_hash
   else
     fail "need to know where to put service files"
   end
