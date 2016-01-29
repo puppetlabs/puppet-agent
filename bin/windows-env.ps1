@@ -39,7 +39,7 @@ $mingwVer = "${mingwArch}_mingw-w64_${mingwVerNum}_${mingwThreads}_${mingwExcept
 
 $rubyPkg = "ruby-2.1.8-${rubyArch}-mingw32"
 
-$opensslPkg = "openssl-1.0.2e-${opensslArch}-windows"
+$opensslPkg = "openssl-1.0.2f-${opensslArch}-windows"
 
 $boostVer = "boost_1_58_0"
 $boostPkg = "${boostVer}-${mingwVer}"
