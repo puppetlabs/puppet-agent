@@ -2,19 +2,46 @@ project "puppet-agent" do |proj|
   platform = proj.get_platform
 
   # Project level settings our components will care about
-  # Windows has its own separate layout
   if platform.is_windows?
-    # Our install root can't have spaces in it, so we take advantage of short cuts.
-    # However, in order to take advantage of these shortcuts, we need to explicitly
-    # create the directories before using any shortcuts
-    proj.directory "C:/Program Files/Puppet Labs"
-    proj.setting(:install_root, "C:/Progra~1/Puppet~1")
-    proj.setting(:sysconfdir, "C:/ProgramData/PuppetLabs")
+    proj.setting(:company_name, "Puppet Labs")
+    proj.setting(:company_id, "PuppetLabs")
+    proj.setting(:common_product_id, "PuppetInstaller")
+    proj.setting(:product_id, "Puppet")
+    proj.setting(:upgrade_code, "2AD3D11C-61B3-4710-B106-B4FDEC5FA358")
+    if platform.architecture == "x64"
+      proj.setting(:product_name, "Puppet Agent (64-bit)")
+      proj.setting(:win64, "yes")
+      proj.setting(:base_dir, "ProgramFiles64Folder")
+      proj.setting(:RememberedInstallDirRegKey, "RememberedInstallDir64")
+    else
+      proj.setting(:product_name, "Puppet Agent")
+      proj.setting(:win64, "no")
+      proj.setting(:base_dir, "ProgramFilesFolder")
+      proj.setting(:RememberedInstallDirRegKey, "RememberedInstallDir")
+    end
+    proj.setting(:links, {
+        :HelpLink => "http://links.puppetlabs.com/customer-support-foss",
+        :CommunityLink => "http://links.puppetlabs.com/windows-installer-starting-out",
+        :ForgeLink => "http://links.puppetlabs.com/forge-windows",
+        :NextStepLink => "http://links.puppetlabs.com/windows-installer-next-steps-foss",
+        :ManualLink => "http://links.puppetlabs.com/windows-manual-foss",
+      })
+    proj.setting(:UI_exitdialogtext, "Manage your first resources on this node, explore the Puppet community and get support using the shortcuts in the Documentation folder of your Start Menu.")
+
+    # Directory IDs
+    proj.setting(:bindir_id, "bindir")
+
+    # We build for windows not in the final destination, but in the paths that correspond
+    # to the directory ids expected by WIX. This will allow for a portable installation (ideally).
+    proj.setting(:install_root, File.join("C:", proj.base_dir, proj.company_id))
+    proj.setting(:prefix, File.join(proj.install_root, proj.product_id))
+    proj.setting(:sysconfdir, File.join("C:", "CommonAppDataFolder", proj.company_id))
     proj.setting(:logdir, File.join(proj.sysconfdir, "var", "log"))
     proj.setting(:piddir, File.join(proj.sysconfdir,  "var", "run"))
     proj.setting(:tmpfilesdir, "C:/Windows/Temp")
   else
     proj.setting(:install_root, "/opt/puppetlabs")
+    proj.setting(:prefix, File.join(proj.install_root, "puppet"))
     if platform.is_eos?
       proj.setting(:sysconfdir, "/persist/sys/etc/puppetlabs")
       proj.setting(:link_sysconfdir, "/etc/puppetlabs")
@@ -28,7 +55,6 @@ project "puppet-agent" do |proj|
     proj.setting(:tmpfilesdir, "/usr/lib/tmpfiles.d")
   end
 
-  proj.setting(:prefix, File.join(proj.install_root, "puppet"))
   proj.setting(:puppet_configdir, File.join(proj.sysconfdir, 'puppet'))
   proj.setting(:puppet_codedir, File.join(proj.sysconfdir, 'code'))
   proj.setting(:bindir, File.join(proj.prefix, "bin"))
@@ -197,8 +223,8 @@ project "puppet-agent" do |proj|
   proj.directory proj.install_root
   proj.directory proj.prefix
   proj.directory proj.sysconfdir
+  proj.directory proj.link_bindir
   proj.directory proj.logdir
   proj.directory proj.piddir
-  proj.directory proj.link_bindir
 
 end
