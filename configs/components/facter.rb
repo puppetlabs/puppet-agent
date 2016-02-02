@@ -199,5 +199,9 @@ component "facter" do |pkg, settings, platform|
   pkg.install_file ".gemspec", "#{settings[:gem_home]}/specifications/#{pkg.get_name}.gemspec"
 
   pkg.link "#{settings[:bindir]}/facter", "#{settings[:link_bindir]}/facter" unless platform.is_windows?
-  pkg.directory File.join(settings[:install_root], 'facter', 'facts.d')
+  if platform.is_windows?
+    pkg.directory File.join(settings[:sysconfdir], 'facter', 'facts.d')
+  else
+    pkg.directory File.join(settings[:install_root], 'facter', 'facts.d')
+  end
 end

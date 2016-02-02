@@ -69,8 +69,13 @@ component "pxp-agent" do |pkg, settings, platform|
   end
 
   pkg.directory File.join(settings[:sysconfdir], 'pxp-agent')
-  pkg.directory File.join(settings[:sysconfdir], 'pxp-agent', 'modules')
-  pkg.directory File.join(settings[:install_root], 'pxp-agent', 'spool')
+  if platform.is_windows?
+    pkg.directory File.join(settings[:sysconfdir], 'pxp-agent', 'etc', 'modules')
+    pkg.directory File.join(settings[:sysconfdir], 'pxp-agent', 'var', 'spool')
+  else
+    pkg.directory File.join(settings[:sysconfdir], 'pxp-agent', 'modules')
+    pkg.directory File.join(settings[:install_root], 'pxp-agent', 'spool')
+  end
   pkg.directory File.join(settings[:logdir], 'pxp-agent')
 
   case platform.servicetype

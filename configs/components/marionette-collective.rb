@@ -75,29 +75,37 @@ component "marionette-collective" do |pkg, settings, platform|
     extra_flags = "--no-service-files"
   end
 
+  if platform.is_windows?
+    configdir = File.join(settings[:sysconfdir], 'mcollective', 'etc')
+    plugindir = File.join(settings[:sysconfdir], 'mcollective', 'plugins')
+  else
+    configdir = File.join(settings[:sysconfdir], 'mcollective')
+    plugindir = File.join(settings[:install_root], 'mcollective', 'plugins')
+  end
+
+
   pkg.install do
     ["#{settings[:host_ruby]} install.rb \
         --ruby=#{File.join(settings[:bindir], 'ruby')} \
         --bindir=#{settings[:bindir]} \
-        --configdir=#{File.join(settings[:sysconfdir], 'mcollective')} \
+        --configdir=#{configdir} \
         --sitelibdir=#{settings[:ruby_vendordir]} \
         --quick \
         --sbindir=#{settings[:bindir]} \
-        --plugindir=#{File.join(settings[:install_root], 'mcollective', 'plugins')} \
+        --plugindir=#{plugindir} \
         #{extra_flags}"]
   end
 
-  pkg.directory File.join(settings[:sysconfdir], "mcollective")
-  pkg.directory File.join(settings[:install_root], 'mcollective')
-  pkg.directory File.join(settings[:install_root], 'mcollective', 'plugins')
+  pkg.directory configdir
+  pkg.directory plugindir
 
   # Bring in the client.cfg and server.cfg from ext/aio.
-  pkg.install_file "ext/aio/common/client.cfg.dist", File.join(settings[:sysconfdir], 'mcollective', 'client.cfg')
-  pkg.install_file "ext/aio/common/server.cfg.dist", File.join(settings[:sysconfdir], 'mcollective', 'server.cfg')
+  pkg.install_file "ext/aio/common/client.cfg.dist", File.join(configdir, 'client.cfg')
+  pkg.install_file "ext/aio/common/server.cfg.dist", File.join(configdir, 'server.cfg')
 
-  pkg.configfile File.join(settings[:sysconfdir], 'mcollective', 'client.cfg')
-  pkg.configfile File.join(settings[:sysconfdir], 'mcollective', 'server.cfg')
-  pkg.configfile File.join(settings[:sysconfdir], 'mcollective', 'facts.yaml')
+  pkg.configfile File.join(configdir, 'client.cfg')
+  pkg.configfile File.join(configdir, 'server.cfg')
+  pkg.configfile File.join(configdir, 'facts.yaml')
   pkg.configfile "/etc/logrotate.d/mcollective" if platform.is_linux?
 
   pkg.link "#{settings[:bindir]}/mco", "#{settings[:link_bindir]}/mco" unless platform.is_windows?
