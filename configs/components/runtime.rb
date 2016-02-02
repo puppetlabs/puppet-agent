@@ -1,7 +1,7 @@
 # This component exists to link in the gcc and stdc++ runtime libraries as well as libssp.
 component "runtime" do |pkg, settings, platform|
   if platform.name =~ /solaris-10/
-    pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/solaris/10/pl-gcc-4.8.2.#{platform.architecture}.pkg.gz"
+    pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/solaris/10/pl-gcc-4.8.2-1.#{platform.architecture}.pkg.gz"
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/solaris/10/pl-binutils-2.25.#{platform.architecture}.pkg.gz"
   elsif platform.name =~ /solaris-11/
     pkg.build_requires "pl-gcc-#{platform.architecture}"
