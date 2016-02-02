@@ -205,5 +205,9 @@ component "facter" do |pkg, settings, platform|
   end
 
   pkg.link "#{settings[:bindir]}/facter", "#{settings[:link_bindir]}/facter" unless platform.is_windows?
-  pkg.directory File.join(settings[:install_root], 'facter', 'facts.d')
+  if platform.is_windows?
+    pkg.directory File.join(settings[:sysconfdir], 'facter', 'facts.d')
+  else
+    pkg.directory File.join(settings[:install_root], 'facter', 'facts.d')
+  end
 end

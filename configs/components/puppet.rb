@@ -102,16 +102,23 @@ component "puppet" do |pkg, settings, platform|
     pkg.environment "FACTERDIR" => settings[:prefix]
   end
 
+  if platform.is_windows?
+    vardir = File.join(settings[:sysconfdir], 'puppet', 'cache')
+    configdir = File.join(settings[:sysconfdir], 'puppet', 'etc')
+  else
+    vardir = File.join(settings[:prefix], 'cache')
+    configdir = settings[:puppet_configdir]
+  end
   pkg.install do
     [
       "#{settings[:host_ruby]} install.rb \
         --ruby=#{File.join(settings[:bindir], 'ruby')} \
         --check-prereqs \
         --bindir=#{settings[:bindir]} \
-        --configdir=#{settings[:puppet_configdir]} \
+        --configdir=#{configdir} \
         --sitelibdir=#{settings[:ruby_vendordir]} \
         --codedir=#{settings[:puppet_codedir]} \
-        --vardir=#{File.join(settings[:prefix], 'cache')} \
+        --vardir=#{vardir} \
         --rundir=#{settings[:piddir]} \
         --logdir=#{settings[:logdir]} \
         --configs \
@@ -135,11 +142,12 @@ component "puppet" do |pkg, settings, platform|
 
   pkg.install_file ".gemspec", "#{settings[:gem_home]}/specifications/#{pkg.get_name}.gemspec"
 
-  pkg.configfile File.join(settings[:puppet_configdir], 'puppet.conf')
-  pkg.configfile File.join(settings[:puppet_configdir], 'auth.conf')
 
-  pkg.directory File.join(settings[:prefix], 'cache'), mode: '0750'
-  pkg.directory settings[:puppet_configdir]
+  pkg.configfile File.join(configdir, 'puppet.conf')
+  pkg.configfile File.join(configdir, 'auth.conf')
+
+  pkg.directory vardir, mode: '0750'
+  pkg.directory configdir
   pkg.directory settings[:puppet_codedir]
   pkg.directory File.join(settings[:puppet_codedir], "modules")
   pkg.directory File.join(settings[:prefix], "modules")
