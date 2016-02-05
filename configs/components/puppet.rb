@@ -109,15 +109,17 @@ component "puppet" do |pkg, settings, platform|
   if platform.is_windows?
     vardir = File.join(settings[:sysconfdir], 'puppet', 'cache')
     configdir = File.join(settings[:sysconfdir], 'puppet', 'etc')
+    prereqs = "--check-prereqs"
   else
     vardir = File.join(settings[:prefix], 'cache')
     configdir = settings[:puppet_configdir]
+    prereqs = "--no-check-prereqs"
   end
   pkg.install do
     [
       "#{settings[:host_ruby]} install.rb \
         --ruby=#{File.join(settings[:bindir], 'ruby')} \
-        --check-prereqs \
+        #{prereqs} \
         --bindir=#{settings[:bindir]} \
         --configdir=#{configdir} \
         --sitelibdir=#{settings[:ruby_vendordir]} \
