@@ -64,7 +64,82 @@ component "puppet" do |pkg, settings, platform|
   when "aix"
     pkg.install_service "resources/aix/puppet.service", nil, "puppet"
   when "windows"
-    puts "Service files not enabled on windows"
+    description = "Periodically fetches and applies configurations from a Puppet master server."
+    service_hash = [
+      # Seriously?... http://stackoverflow.com/questions/9419411/wix-setting-service-startup-type-using-a-property-property-not-recognized
+      # Yep, Seriously - http://sourceforge.net/mailarchive/forum.php?thread_name=CANJN1a6gDE2tUUnP4SE05m8Ojh2q0Y8LrWOxbrF89YyJJCHn1A%40mail.gmail.com&forum_name=wix-users
+      {
+        :directory_ref => settings[:bindir_id],
+        :id => "PuppetServiceAutomatic",
+        :guid => "639ECD7F-6186-43D5-9E1A-FC0278DBEE15",
+        :win64 => settings[:win64],
+        :conditions => ['<![CDATA[ (PUPPET_AGENT_STARTUP_MODE ~<> "manual") AND (PUPPET_AGENT_STARTUP_MODE ~<> "disabled") ]]>'],
+        :file => {
+          :id => "RubyExeAutomatic",
+          :source => settings[:host_ruby],
+        },
+        :serviceinstall => {
+          :id => "ServiceInstaller",
+          :description => description,
+          :displayname => "Puppet Agent",
+          :name => "puppet",
+          :start => "auto",
+          :arguments => '-rubygems &quot;[INSTALLDIR]service\\daemon.rb&quot;',
+        },
+        :servicecontrol => {
+          :id => "ServiceControlOptions",
+          :start => "install",
+          :name => "puppet",
+        },
+      },
+      {
+        :directory_ref => settings[:bindir_id],
+        :id => "PuppetServiceManual",
+        :guid => "752A5A25-9619-4EBA-AA8B-12D8C8688236",
+        :win64 => settings[:win64],
+        :conditions => ['<![CDATA[PUPPET_AGENT_STARTUP_MODE ~= "manual"]]>'],
+        :file => {
+          :id => "RubyExeManual",
+          :source => settings[:host_ruby],
+        },
+        :serviceinstall => {
+          :id => "ServiceInstallerManual",
+          :description => description,
+          :displayname => "Puppet Agent",
+          :name => "puppet",
+          :start => "demand",
+          :arguments => '-rubygems &quot;[INSTALLDIR]service\\daemon.rb&quot;',
+        },
+        :servicecontrol => {
+          :id => "ServiceControlOptionsManual",
+          :name => "puppet",
+        },
+      },
+      {
+        :directory_ref => settings[:bindir_id],
+        :id => "PuppetServiceDisabled",
+        :guid => "4D3A8CAF-C675-46AC-B3AD-75F00581D0DB",
+        :win64 => settings[:win64],
+        :conditions => ['<![CDATA[PUPPET_AGENT_STARTUP_MODE ~= "disabled"]]>'],
+        :file => {
+          :id => "RubyExeDisabled",
+          :source => settings[:host_ruby],
+        },
+        :serviceinstall => {
+          :id => "ServiceInstallerDisabled",
+          :description => description,
+          :displayname => "Puppet Agent",
+          :name => "puppet",
+          :start => "disabled",
+          :arguments => '-rubygems &quot;[INSTALLDIR]service\\daemon.rb&quot;',
+        },
+        :servicecontrol => {
+          :id => "ServiceControlOptionsDisabled",
+          :name => "puppet",
+        },
+      },
+    ]
+    pkg.install_service nil, service_hash: service_hash
   else
     fail "need to know where to put service files"
   end
