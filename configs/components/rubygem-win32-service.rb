@@ -1,9 +1,7 @@
-component "ruby-stomp" do |pkg, settings, platform|
-  pkg.version "1.3.3"
-  pkg.md5sum "50a2c1b66982b426d67a83f56f4bc0e2"
-  pkg.url "http://buildsources.delivery.puppetlabs.net/stomp-1.3.3.gem"
-
-  pkg.replaces 'pe-ruby-stomp'
+component "rubygem-win32-service" do |pkg, settings, platform|
+  pkg.version "0.8.6"
+  pkg.md5sum "b9b410177485069f5e4c3e1afac0779c"
+  pkg.url "http://buildsources.delivery.puppetlabs.net/win32-service-#{pkg.get_version}.gem"
 
   pkg.build_requires "ruby"
 
@@ -17,7 +15,9 @@ component "ruby-stomp" do |pkg, settings, platform|
   # will fail by blowing out the stack.
   pkg.environment "RUBYLIB" => "#{settings[:ruby_vendordir]}:$$RUBYLIB"
 
+  pkg.apply_patch "resources/patches/rubygem-win32-service/PUP-4390-win32-service-0.8.6-restore_win_2003_compat.patch", destination: "#{settings[:gem_home]}/gems/win32-service-#{pkg.get_version}", after: "install"
+
   pkg.install do
-    ["#{settings[:gem_install]} stomp-#{pkg.get_version}.gem"]
+    ["#{settings[:gem_install]} win32-service-#{pkg.get_version}.gem"]
   end
 end

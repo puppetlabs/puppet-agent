@@ -1,0 +1,128 @@
+<?xml version='1.0' encoding='windows-1252'?>
+<Wix xmlns='http://schemas.microsoft.com/wix/2006/wi' xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
+
+  <!-- catch-all-bag file meant to go away at some point -->
+  <Fragment>
+
+    <UI>
+      <UIRef Id="WixUI_PuppetInstallDir"/>
+      <Property Id="WIXUI_INSTALLDIR" Value="INSTALLDIR" />
+      <Property Id="WIXUI_EXITDIALOGOPTIONALTEXT" Value="<%= settings[:UI_exitdialogtext] %>" />
+    </UI>
+
+    <WixVariable Id="WixUILicenseRtf" Value="conf\windows\stage\misc\LICENSE.rtf" Overridable="yes" />
+    <WixVariable Id="WixUIBannerBmp" Value="wix\ui\bitmaps\bannrbmp.bmp" />
+    <WixVariable Id="WixUIDialogBmp" Value="wix\ui\bitmaps\dlgbmp-foss.bmp" />
+    <WixVariable Id="WixUIExclamationIco" Value="wix\ui\bitmaps\exclamic.ico" />
+    <WixVariable Id="WixUIInfoIco" Value="wix\ui\bitmaps\info.ico" />
+    <WixVariable Id="WixUINewIco" Value="wix\ui\bitmaps\new.ico" />
+    <WixVariable Id="WixUIUpIco" Value="wix\ui\bitmaps\up.ico" />
+
+    <Icon Id="<%= settings[:company_word] %>.ico" SourceFile="wix\<%= settings[:company_word] %>.ico"/>
+    <Property Id="ARPPRODUCTICON" Value="<%= settings[:company_word] %>.ico" />
+    <Property Id="VersionUIString" Value="<%= @version %>" />
+    <Property Id="ARPHELPLINK" Value="<%= settings[:links][:HelpLink] %>" />
+
+    <!--  can this be moved to line 32? -->
+    <util:Group Id="AdminGroup" Name="Administrators"/>
+
+    <DirectoryRef id="TARGETDIR">
+      <!--
+      If puppet is configured to run as someone other than LocalSystem
+      and we are installing or upgrading, then allow the account to
+      logon as a service and add the account to the local Administrators
+      account. If the account doesn't exist, the install will fail.
+      -->
+      <Component Id="PuppetServiceUser" Guid="0CCA1CDC-CD25-43A5-BE8A-0D455C63D1BE" Win64="$(var.Win64)">
+        <Condition><![CDATA[NOT Installed AND PUPPET_AGENT_ACCOUNT_USER <> "LocalSystem"]]></Condition>
+        <util:User Id="puppetServiceUser" Domain="[PUPPET_AGENT_ACCOUNT_DOMAIN]" Name="[PUPPET_AGENT_ACCOUNT_USER]" Password="[PUPPET_AGENT_ACCOUNT_PASSWORD]" LogonAsService="yes" CreateUser="no" UpdateIfExists="yes" RemoveOnUninstall="no">
+          <util:GroupRef Id="AdminGroup"/>
+        </util:User>
+      </Component>
+
+      <!-- This section inspired by: http://wix.sourceforge.net/manual-wix3/write_a_registry_entry.htm -->
+      <!-- We write to $(var.OurCompanyName)\$(var.OurCommonProductNameWord)
+      (Puppet Labs\CommonProduct)
+      in order to restore the PUPPET_MASTER_SERVER property -->
+      <Component Id="RegistryEntries" Guid="68F5D91C-49C8-43F7-940A-481007689E79" Win64="no">
+        <RegistryKey Root="HKLM" Key="SOFTWARE\$(var.OurCompanyName)\$(var.OurCommonProductNameWord)" Action="create" >
+          <!-- This is the default (aka 'unnamed') key value of this path -->
+          <RegistryValue Type="integer" Value="0"/>
+          <!-- This is the specified value of a key at this path -->
+          <RegistryValue Name="InstalledFlag" Value="1" Type="integer" KeyPath="yes"/>
+          <!-- Store properties for later recall during uninstall, upgrade, repair -->
+          <RegistryValue Name="RememberedPuppetMasterServer" Type="string" Value="[PUPPET_MASTER_SERVER]" />
+          <RegistryValue Name="RememberedPuppetAgentEnvironment" Type="string" Value="[PUPPET_AGENT_ENVIRONMENT]" />
+          <RegistryValue Name="RememberedPuppetCaServer" Type="string" Value="[PUPPET_CA_SERVER]" />
+          <RegistryValue Name="RememberedPuppetAgentCertname" Type="string" Value="[PUPPET_AGENT_CERTNAME]" />
+          <RegistryValue Name="RememberedPuppetAgentStartupMode" Type="string" Value="[PUPPET_AGENT_STARTUP_MODE]" />
+        </RegistryKey>
+        <RegistryKey Root="HKLM" Key="SYSTEM\CurrentControlSet\services\eventlog\Application\Puppet" Action="createAndRemoveOnUninstall">
+          <RegistryValue Type="string" Name="EventMessageFile" Value="[INSTALLDIR]misc\puppetres.dll"/>
+          <RegistryValue Type="integer" Name="TypesSupported" Value="7"/>
+        </RegistryKey>
+      </Component>
+      <?if $(var.Platform) = x86 ?>
+        <Component Id="RegistryEntriesArchitectureDependent" Guid="E6D5AF4F-ACC4-4D11-AFCE-299A9ED2152C" Win64="no" Permanent="yes">
+          <!-- Product Specific Properties.  We keep INSTALLDIR here. -->
+          <RegistryKey Root="HKLM" Key="SOFTWARE\$(var.OurCompanyName)\$(var.OurProductNameWord)" Action="create" >
+            <!-- This is the default (aka 'unnamed') key value of this path -->
+            <RegistryValue Type="integer" Value="0"/>
+            <!-- RememberedInstallDir -->
+            <RegistryValue Name="RememberedInstallDir" Type="string" Value="[INSTALLDIR]"  KeyPath="yes" />
+            <!--
+            x86 install on top of x64 cannot capture the custom install path, because WIN64DUALFOLDERS will
+            string substitute, and replace 'Program Files' with 'Program Files (x86)'
+
+            Fortunately, x64 installers have always had Permanent set for the x64 custom install path
+            so it will never be removed during uninstall.
+            -->
+          </RegistryKey>
+        </Component>
+      <?else?>
+        <Component Id="RegistryEntriesArchitectureDependent" Guid="E6D5AF4F-ACC4-4D11-AFCE-299A9ED2152C" Win64="no" Permanent="yes">
+        <RegistryKey Root="HKLM" Key="SOFTWARE\$(var.OurCompanyName)\$(var.OurProductNameWord)" Action="create" >
+          <RegistryValue Type="integer" Value="0"/>
+            <!-- When upgrading from Puppet 3.6.x to Puppet 3.7 x64, the 3.6 x86 uninstall will remove the remembered x86
+            install location, which is problematic if a user chooses to switch back to 3.7 x86.  Going forward this
+            wouldn't be an issue since Permanent is set, but our hands are tied given prior art.
+
+            Fortunately, when Wix recalls the old property value with 'Program Files (x86)', it will not be automatically
+            string substituted to 'Program Files', which is a problem when going from x64 -> x86. -->
+            <RegistryValue Name="RememberedInstallDir" Type="string" Value="[INSTALLDIR_X86]" />
+            <RegistryValue Name="RememberedInstallDir64" Type="string" Value="[INSTALLDIR]" KeyPath="yes" />
+          </RegistryKey>
+        </Component>
+      <?endif?>
+    </DirectoryRef>
+
+    <!-- These properties should be included as long as file references some property in main.wxs -->
+    <!-- By default, install puppet agent to run as LocalSystem. Password
+    is hidden to prevent it from appearing in msiexec log files -->
+    <Property Id="PUPPET_AGENT_ACCOUNT_DOMAIN" Value="."/>
+    <Property Id="PUPPET_AGENT_ACCOUNT_USER" Value="LocalSystem"/>
+    <Property Id="PUPPET_AGENT_ACCOUNT_PASSWORD" Hidden="yes"/>
+    <!-- Note the static default value of "puppet".  This will be overriden by
+    the command line. -->
+    <Property Id="PUPPET_MASTER_SERVER">
+      <!-- Recall the property in repair, upgrade, and uninstall scenarios -->
+      <RegistrySearch Id="RecallPuppetMasterServer" Root="HKLM" Key="SOFTWARE\$(var.OurCompanyName)\$(var.OurCommonProductNameWord)" Name="RememberedPuppetMasterServer" Type="raw" Win64="no" />
+    </Property>
+    <Property Id="PUPPET_AGENT_ENVIRONMENT">
+      <!-- Recall the property in repair, upgrade, and uninstall scenarios -->
+      <RegistrySearch Id="RecallPuppetAgentEnvironment" Root="HKLM" Key="SOFTWARE\$(var.OurCompanyName)\$(var.OurCommonProductNameWord)" Name="RememberedPuppetAgentEnvironment" Type="raw" Win64="no" />
+    </Property>
+    <Property Id="PUPPET_AGENT_CERTNAME">
+      <!-- Recall the property in repair, upgrade, and uninstall scenarios -->
+      <RegistrySearch Id="RecallPuppetAgentCertname" Root="HKLM" Key="SOFTWARE\$(var.OurCompanyName)\$(var.OurCommonProductNameWord)" Name="RememberedPuppetAgentCertname" Type="raw" Win64="no" />
+    </Property>
+    <Property Id="PUPPET_CA_SERVER">
+      <RegistrySearch Id="RecallPuppetCAServer" Root="HKLM" Key="SOFTWARE\$(var.OurCompanyName)\$(var.OurCommonProductNameWord)" Name="RememberedPuppetCaServer" Type="raw" Win64="no" />
+    </Property>
+    <Property Id="PUPPET_AGENT_STARTUP_MODE">
+      <RegistrySearch Id="RecallPuppetAgentStartupMode" Root="HKLM" Key="SOFTWARE\$(var.OurCompanyName)\$(var.OurCommonProductNameWord)" Name="RememberedPuppetAgentStartupMode" Type="raw" Win64="no" />
+    </Property>
+
+
+  </Fragment>
+</Wix>

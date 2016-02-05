@@ -1,9 +1,7 @@
-component "ruby-stomp" do |pkg, settings, platform|
-  pkg.version "1.3.3"
-  pkg.md5sum "50a2c1b66982b426d67a83f56f4bc0e2"
-  pkg.url "http://buildsources.delivery.puppetlabs.net/stomp-1.3.3.gem"
-
-  pkg.replaces 'pe-ruby-stomp'
+component "rubygem-win32-security" do |pkg, settings, platform|
+  pkg.version "0.2.5"
+  pkg.md5sum "97c4b971ea19ca48cea7dec1d21d506a"
+  pkg.url "http://buildsources.delivery.puppetlabs.net/win32-security-#{pkg.get_version}.gem"
 
   pkg.build_requires "ruby"
 
@@ -18,6 +16,6 @@ component "ruby-stomp" do |pkg, settings, platform|
   pkg.environment "RUBYLIB" => "#{settings[:ruby_vendordir]}:$$RUBYLIB"
 
   pkg.install do
-    ["#{settings[:gem_install]} stomp-#{pkg.get_version}.gem"]
+    ["#{settings[:gem_install]} win32-security-#{pkg.get_version}.gem"]
   end
 end

@@ -59,6 +59,8 @@ component "puppet" do |pkg, settings, platform|
     pkg.install_service "ext/solaris/smf/puppet.xml", "ext/solaris/smf/puppet", service_type: "network"
   when "aix"
     pkg.install_service "resources/aix/puppet.service", nil, "puppet"
+  when "windows"
+    puts "Service files not enabled on windows"
   else
     fail "need to know where to put service files"
   end
@@ -96,9 +98,26 @@ component "puppet" do |pkg, settings, platform|
     pkg.install_file("../osx_paths.txt", "/etc/paths.d/puppet-agent")
   end
 
+  if platform.is_windows?
+    pkg.environment "FACTERDIR" => settings[:prefix]
+  end
+
   pkg.install do
     [
-      "#{settings[:host_ruby]} install.rb --ruby=#{File.join(settings[:bindir], 'ruby')} --no-check-prereqs --bindir=#{settings[:bindir]} --configdir=#{settings[:puppet_configdir]} --sitelibdir=#{settings[:ruby_vendordir]} --codedir=#{settings[:puppet_codedir]} --configs --quick --man --mandir=#{settings[:mandir]}",
+      "#{settings[:host_ruby]} install.rb \
+        --ruby=#{File.join(settings[:bindir], 'ruby')} \
+        --check-prereqs \
+        --bindir=#{settings[:bindir]} \
+        --configdir=#{settings[:puppet_configdir]} \
+        --sitelibdir=#{settings[:ruby_vendordir]} \
+        --codedir=#{settings[:puppet_codedir]} \
+        --vardir=#{File.join(settings[:prefix], 'cache')} \
+        --rundir=#{settings[:piddir]} \
+        --logdir=#{settings[:logdir]} \
+        --configs \
+        --quick \
+        --man \
+        --mandir=#{settings[:mandir]}"
     ]
   end
 
@@ -131,7 +150,7 @@ component "puppet" do |pkg, settings, platform|
   pkg.install_configfile 'conf/environment.conf', File.join(settings[:puppet_codedir], 'environments', 'production', 'environment.conf')
   pkg.directory File.join(settings[:logdir], 'puppet'), mode: "0750"
 
-  pkg.link "#{settings[:bindir]}/puppet", "#{settings[:link_bindir]}/puppet"
+  pkg.link "#{settings[:bindir]}/puppet", "#{settings[:link_bindir]}/puppet" unless platform.is_windows?
   if platform.is_eos?
     pkg.link "#{settings[:sysconfdir]}", "#{settings[:link_sysconfdir]}"
   end

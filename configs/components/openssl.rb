@@ -1,7 +1,28 @@
 component "openssl" do |pkg, settings, platform|
   pkg.version "1.0.2e"
-  pkg.md5sum "5262bfa25b60ed9de9f28d5d52d77fc5"
-  pkg.url "http://buildsources.delivery.puppetlabs.net/openssl-#{pkg.get_version}.tar.gz"
+  if platform.is_windows?
+    # OpenSSL on windows is exciting
+    # If we use the openssl tarball provided by upstream, we get failures when we try to unpack it.
+    # The failures are fixed if we do not set CYGWIN with winsymlinks:native. However, if we do not
+    # set CYGWIN with that value, even though the tarball successfully unpacks, the build itself
+    # fails due to inconsistencies between the files (as a result of the symlinks being in a state
+    # that cygwin/windwos cannot understand). In order to deal with this, we have to unpack and
+    # repack openssl.
+    #   * gunzip -c openssl.tar.gz | tar xf -
+    #   * mv openssl openssl-windows
+    #   * manually remove all of the symlinks so the symlink targets are the same as their sources
+    #     - To do this, I removed the symlink, and copied the source file into the location where
+    #       the symlink was.
+    #     - These symlinks are mainly found in the test directory, though there is one in the app
+    #       directory.
+    #   * tar -czf openssl-windows.tar.gz openssl-windows
+    # Please don't hate me, this was the best solution I could come up with :(
+    pkg.md5sum "74c599905f9929f6b42658fe0f396393"
+    pkg.url "http://buildsources.delivery.puppetlabs.net/openssl-#{pkg.get_version}-windows.tar.gz"
+  else
+    pkg.md5sum "5262bfa25b60ed9de9f28d5d52d77fc5"
+    pkg.url "http://buildsources.delivery.puppetlabs.net/openssl-#{pkg.get_version}.tar.gz"
+  end
 
   pkg.replaces 'pe-openssl'
 
@@ -28,6 +49,15 @@ component "openssl" do |pkg, settings, platform|
     pkg.build_requires 'runtime'
   elsif platform.is_osx?
     pkg.build_requires 'makedepend'
+  elsif platform.is_windows?
+    pkg.apply_patch 'resources/patches/openssl/openssl-1.0.0l-use-gcc-instead-of-makedepend.patch'
+    # This patch removes the option `-DOPENSSL_USE_APPLINK` from the mingw openssl congifure target
+    # This brings mingw more in line with what is happening with mingw64. All applink does it makes
+    # it possible to use the .dll compiled with one compiler with an application compiled with a
+    # different compiler. Given our openssl should only be interacting with things that we build,
+    # we can ensure everything is build with the same compiler.
+    pkg.apply_patch 'resources/patches/openssl/openssl-mingw-do-not-build-applink.patch'
+    pkg.build_requires "runtime"
   end
 
   if platform.is_osx?
@@ -52,6 +82,12 @@ component "openssl" do |pkg, settings, platform|
     ldflags = ''
     cflags = "$${CFLAGS} -static-libgcc"
     pkg.environment "CC" => "/opt/pl-build-tools/bin/gcc"
+  elsif platform.is_windows?
+    target = platform.architecture == "x64" ? "mingw64" : "mingw"
+    pkg.environment "PATH" => "$$(cygpath -u #{settings[:gcc_bindir]}):$$PATH"
+    pkg.environment "CYGWIN" => settings[:cygwin]
+    cflags = settings[:cflags]
+    ldflags = settings[:ldflags]
   else
     pkg.environment "PATH" => "/opt/pl-build-tools/bin:$$PATH:/usr/local/bin"
     if platform.architecture =~ /86$/
@@ -113,8 +149,10 @@ component "openssl" do |pkg, settings, platform|
     end
   end
 
+  install_prefix = "INSTALL_PREFIX=/" unless platform.is_windows?
+
   pkg.install do
-    ["#{platform[:make]} INSTALL_PREFIX=/ install"]
+    ["#{platform[:make]} #{install_prefix} install"]
   end
 
   pkg.install_file "LICENSE", "#{settings[:prefix]}/share/doc/openssl-#{pkg.get_version}/LICENSE"

@@ -1,34 +1,52 @@
 project "puppet-agent" do |proj|
-  # Project level settings our components will care about
-  proj.setting(:install_root, "/opt/puppetlabs")
-  proj.setting(:prefix, File.join(proj.install_root, "puppet"))
+  platform = proj.get_platform
 
-  if platform.is_eos?
-    proj.setting(:sysconfdir, "/persist/sys/etc/puppetlabs")
-    proj.setting(:link_sysconfdir, "/etc/puppetlabs")
-  elsif platform.is_osx?
-    proj.setting(:sysconfdir, "/private/etc/puppetlabs")
+  # Project level settings our components will care about
+  # Windows has its own separate layout
+  if platform.is_windows?
+    # Our install root can't have spaces in it, so we take advantage of short cuts.
+    # However, in order to take advantage of these shortcuts, we need to explicitly
+    # create the directories before using any shortcuts
+    proj.directory "C:/Program Files/Puppet Labs"
+    proj.setting(:install_root, "C:/Progra~1/Puppet~1")
+    proj.setting(:sysconfdir, "C:/ProgramData/PuppetLabs")
+    proj.setting(:logdir, File.join(proj.sysconfdir, "var", "log"))
+    proj.setting(:piddir, File.join(proj.sysconfdir,  "var", "run"))
+    proj.setting(:tmpfilesdir, "C:/Windows/Temp")
   else
-    proj.setting(:sysconfdir, "/etc/puppetlabs")
+    proj.setting(:install_root, "/opt/puppetlabs")
+    if platform.is_eos?
+      proj.setting(:sysconfdir, "/persist/sys/etc/puppetlabs")
+      proj.setting(:link_sysconfdir, "/etc/puppetlabs")
+    elsif platform.is_osx?
+      proj.setting(:sysconfdir, "/private/etc/puppetlabs")
+    else
+      proj.setting(:sysconfdir, "/etc/puppetlabs")
+    end
+    proj.setting(:logdir, "/var/log/puppetlabs")
+    proj.setting(:piddir, "/var/run/puppetlabs")
+    proj.setting(:tmpfilesdir, "/usr/lib/tmpfiles.d")
   end
 
+  proj.setting(:prefix, File.join(proj.install_root, "puppet"))
   proj.setting(:puppet_configdir, File.join(proj.sysconfdir, 'puppet'))
   proj.setting(:puppet_codedir, File.join(proj.sysconfdir, 'code'))
-  proj.setting(:logdir, "/var/log/puppetlabs")
-  proj.setting(:piddir, "/var/run/puppetlabs")
   proj.setting(:bindir, File.join(proj.prefix, "bin"))
-  proj.setting(:link_bindir, "/opt/puppetlabs/bin")
+  proj.setting(:link_bindir, File.join(proj.install_root, "bin"))
   proj.setting(:libdir, File.join(proj.prefix, "lib"))
   proj.setting(:includedir, File.join(proj.prefix, "include"))
   proj.setting(:datadir, File.join(proj.prefix, "share"))
   proj.setting(:mandir, File.join(proj.datadir, "man"))
-  proj.setting(:gem_home, File.join(proj.libdir, "ruby/gems/2.1.0"))
-  proj.setting(:tmpfilesdir, "/usr/lib/tmpfiles.d")
+  proj.setting(:gem_home, File.join(proj.libdir, "ruby", "gems", "2.1.0"))
   proj.setting(:ruby_vendordir, File.join(proj.libdir, "ruby", "vendor_ruby"))
-  proj.setting(:host_ruby, File.join(proj.bindir, "ruby"))
-  proj.setting(:host_gem, File.join(proj.bindir, "gem"))
 
-  platform = proj.get_platform
+  if platform.is_windows?
+    proj.setting(:host_ruby, File.join(proj.bindir, "ruby.exe"))
+    proj.setting(:host_gem, File.join(proj.bindir, "gem.bat"))
+  else
+    proj.setting(:host_ruby, File.join(proj.bindir, "ruby"))
+    proj.setting(:host_gem, File.join(proj.bindir, "gem"))
+  end
 
   # For solaris, we build cross-compilers
   if platform.is_solaris?
@@ -47,9 +65,16 @@ project "puppet-agent" do |proj|
         proj.setting(:host_gem, "/opt/pl-build-tools/bin/gem")
       end
     end
+  elsif platform.is_windows?
+    # For windows, we need to ensure we are building for mingw not cygwin
+    platform_triple = platform.platform_triple
+    host = "--host #{platform_triple}"
   end
 
   proj.setting(:gem_install, "#{proj.host_gem} install --no-rdoc --no-ri --local ")
+  if platform.is_windows?
+    proj.setting(:gem_install, "#{proj.gem_install} --bindir #{proj.bindir} ")
+  end
 
   # For AIX, we use the triple to install a better rbconfig
   if platform.is_aix?
@@ -79,8 +104,18 @@ project "puppet-agent" do |proj|
   end
 
   # Platform specific
-  proj.setting(:cflags, "-I#{proj.includedir} -I/opt/pl-build-tools/include")
-  proj.setting(:ldflags, "-L#{proj.libdir} -L/opt/pl-build-tools/lib -Wl,-rpath=#{proj.libdir}")
+  if platform.is_windows?
+    arch = platform.architecture == "x64" ? "64" : "32"
+    proj.setting(:gcc_root, "C:/tools/mingw#{arch}")
+    proj.setting(:gcc_bindir, "#{proj.gcc_root}/bin")
+    proj.setting(:tools_root, "C:/tools/pl-build-tools")
+    proj.setting(:cflags, "-I#{proj.tools_root}/include -I#{proj.gcc_root}/include -I#{proj.includedir}")
+    proj.setting(:ldflags, "-L#{proj.tools_root}/lib -L#{proj.gcc_root}/lib -L#{proj.libdir}")
+    proj.setting(:cygwin, "nodosfilewarning winsymlinks:native")
+  else
+    proj.setting(:cflags, "-I#{proj.includedir} -I/opt/pl-build-tools/include")
+    proj.setting(:ldflags, "-L#{proj.libdir} -L/opt/pl-build-tools/lib -Wl,-rpath=#{proj.libdir}")
+  end
   if platform.is_aix?
     proj.setting(:ldflags, "-Wl,-brtl -L#{proj.libdir} -L/opt/pl-build-tools/lib")
   end
@@ -95,20 +130,29 @@ project "puppet-agent" do |proj|
   proj.component "pxp-agent"
 
   # Then the dependencies
-  proj.component "augeas"
+  proj.component "augeas" unless platform.is_windows?
   # Curl is only needed for compute clusters (GCE, EC2); so rpm, deb, and Windows
-  proj.component "curl" if platform.is_linux?
+  proj.component "curl" if platform.is_linux? || platform.is_windows?
   proj.component "ruby"
   proj.component "ruby-stomp"
   proj.component "rubygem-deep-merge"
   proj.component "rubygem-net-ssh"
   proj.component "rubygem-hocon"
-  proj.component "ruby-shadow" unless platform.is_aix?
-  proj.component "ruby-augeas"
+  if platform.is_windows?
+    proj.component "rubygem-ffi"
+    proj.component "rubygem-minitar"
+    proj.component "rubygem-win32-dir"
+    proj.component "rubygem-win32-eventlog"
+    proj.component "rubygem-win32-process"
+    proj.component "rubygem-win32-security"
+    proj.component "rubygem-win32-service"
+  end
+  proj.component "ruby-shadow" unless platform.is_aix? || platform.is_windows?
+  proj.component "ruby-augeas" unless platform.is_windows?
   proj.component "openssl"
   proj.component "puppet-ca-bundle"
-  proj.component "libxml2"
-  proj.component "libxslt"
+  proj.component "libxml2" unless platform.is_windows?
+  proj.component "libxslt" unless platform.is_windows?
 
   # These utilites don't really work on unix
   if platform.is_linux?
@@ -117,7 +161,7 @@ project "puppet-agent" do |proj|
     proj.component "shellpath"
   end
 
-  if platform.is_solaris? || platform.name =~ /^el-4/ || platform.is_aix?
+  if platform.is_solaris? || platform.name =~ /^el-4/ || platform.is_aix? || platform.is_windows?
     proj.component "runtime"
   end
 

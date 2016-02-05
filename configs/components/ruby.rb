@@ -71,6 +71,13 @@ component "ruby" do |pkg, settings, platform|
     special_flags = "--build=#{settings[:platform_triple]}"
   end
 
+  if platform.is_windows?
+    pkg.apply_patch "#{base}/windows_ruby_2.1_update_to_rubygems_2.4.5.patch"
+    pkg.apply_patch "#{base}/windows_fixup_generated_batch_files.patch"
+    pkg.apply_patch "#{base}/windows_remove_DL_deprecated_warning.patch"
+    pkg.apply_patch "#{base}/windows_ruby_2.1_update_to_rubygems_2.4.5.1.patch"
+  end
+
   # Cross-compiles require a hand-built rbconfig from the target system
   if platform.is_solaris? || platform.is_aix?
     pkg.add_source "file://resources/files/rbconfig-#{settings[:platform_triple]}.rb", sum: rbconfig_info[settings[:platform_triple]][:sum]
@@ -84,6 +91,8 @@ component "ruby" do |pkg, settings, platform|
     pkg.build_requires "http://osmirror.delivery.puppetlabs.net/AIX_MIRROR/zlib-devel-1.2.3-4.aix5.2.ppc.rpm"
   elsif platform.is_rpm?
     pkg.build_requires "zlib-devel"
+  elsif platform.is_windows?
+    pkg.build_requires "pl-zlib-#{platform.architecture}"
   end
 
   if platform.is_solaris?
@@ -103,6 +112,19 @@ component "ruby" do |pkg, settings, platform|
     pkg.environment "CC" => "/opt/pl-build-tools/bin/#{settings[:platform_triple]}-gcc"
     pkg.environment "LDFLAGS" => "-Wl,-rpath=/opt/puppetlabs/puppet/lib"
   end
+
+  if platform.is_windows?
+    pkg.build_requires "pl-gdbm-#{platform.architecture}"
+    pkg.build_requires "pl-iconv-#{platform.architecture}"
+    pkg.build_requires "pl-libffi-#{platform.architecture}"
+    pkg.build_requires "pl-pdcurses-#{platform.architecture}"
+
+    pkg.environment "PATH" => "$$(cygpath -u #{settings[:gcc_bindir]}):$$(cygpath -u #{settings[:tools_root]}/bin):$$(cygpath -u #{settings[:bindir]}):$$PATH"
+    pkg.environment "CYGWIN" => settings[:cygwin]
+
+    special_flags = "CPPFLAGS='-DFD_SETSIZE=2048' debugflags=-g"
+  end
+
 
   # Here we set --enable-bundled-libyaml to ensure that the libyaml included in
   # ruby is used, even if the build system has a copy of libyaml available

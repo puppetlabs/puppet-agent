@@ -1,6 +1,8 @@
 component "leatherman" do |pkg, settings, platform|
   pkg.load_from_json('configs/components/leatherman.json')
 
+  make = platform[:make]
+
   if platform.is_osx?
     pkg.build_requires "cmake"
     pkg.build_requires "boost"
@@ -21,6 +23,10 @@ component "leatherman" do |pkg, settings, platform|
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-gcc-5.2.0-1.aix#{platform.os_version}.ppc.rpm"
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-cmake-3.2.3-2.aix#{platform.os_version}.ppc.rpm"
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-boost-1.58.0-1.aix#{platform.os_version}.ppc.rpm"
+  elsif platform.is_windows?
+    pkg.build_requires "cmake"
+    pkg.build_requires "pl-toolchain-#{platform.architecture}"
+    pkg.build_requires "pl-boost-#{platform.architecture}"
   else
     pkg.build_requires "pl-gcc"
     pkg.build_requires "pl-cmake"
@@ -29,7 +35,7 @@ component "leatherman" do |pkg, settings, platform|
 
   # curl is only used for compute clusters (GCE, EC2); so rpm, deb, and Windows
   use_curl = 'FALSE'
-  if platform.is_linux?
+  if platform.is_linux? || platform.is_windows?
     pkg.build_requires "curl"
     use_curl = 'TRUE'
   end
@@ -37,6 +43,7 @@ component "leatherman" do |pkg, settings, platform|
   pkg.build_requires "ruby"
 
   ruby = "#{settings[:host_ruby]} -rrbconfig"
+  build_shared = "TRUE"
 
   # cmake on OSX is provided by brew
   # a toolchain is not currently required for OSX since we're building with clang.
@@ -53,6 +60,15 @@ component "leatherman" do |pkg, settings, platform|
 
     # FACT-1156: If we build with -O3, solaris segfaults due to something in std::vector
     special_flags = "-DCMAKE_CXX_FLAGS_RELEASE='-O2 -DNDEBUG'"
+  elsif platform.is_windows?
+    make = "#{settings[:gcc_bindir]}/mingw32-make"
+    pkg.environment "PATH" => "$$(cygpath -u #{settings[:gcc_bindir]}):$$(cygpath -u #{settings[:bindir]}):/cygdrive/c/Windows/system32:/cygdrive/c/Windows:/cygdrive/c/Windows/System32/WindowsPowerShell/v1.0"
+    pkg.environment "CYGWIN" => settings[:cygwin]
+
+    cmake = "C:/ProgramData/chocolatey/bin/cmake.exe -G \"MinGW Makefiles\""
+    toolchain = "-DCMAKE_TOOLCHAIN_FILE=#{settings[:tools_root]}/pl-build-toolchain.cmake"
+
+    build_shared = "FALSE"
   else
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/pl-build-toolchain.cmake"
     cmake = "/opt/pl-build-tools/bin/cmake"
@@ -64,7 +80,7 @@ component "leatherman" do |pkg, settings, platform|
         -DCMAKE_VERBOSE_MAKEFILE=ON \
         -DCMAKE_PREFIX_PATH=#{settings[:prefix]} \
         -DCMAKE_INSTALL_PREFIX=#{settings[:prefix]} \
-        -DLEATHERMAN_SHARED=TRUE \
+        -DLEATHERMAN_SHARED=#{build_shared} \
         #{special_flags} \
         -DBOOST_STATIC=ON \
         -DLEATHERMAN_USE_CURL=#{use_curl} \
@@ -76,7 +92,7 @@ component "leatherman" do |pkg, settings, platform|
   if platform.architecture == 'sparc' || platform.is_aix?
     test = "/bin/true"
   else
-    test = "LEATHERMAN_RUBY=#{settings[:libdir]}/$(shell #{ruby} -e 'print RbConfig::CONFIG[\"LIBRUBY_SO\"]') #{platform[:make]} test ARGS=-V"
+    test = "LEATHERMAN_RUBY=#{settings[:libdir]}/$(shell #{ruby} -e 'print RbConfig::CONFIG[\"LIBRUBY_SO\"]') #{make} test ARGS=-V"
   end
 
   if platform.is_solaris? && platform.architecture != 'sparc'
@@ -86,12 +102,12 @@ component "leatherman" do |pkg, settings, platform|
   pkg.build do
     # Until a `check` target exists, run tests are part of the build.
     [
-      "#{platform[:make]} -j$(shell expr $(shell #{platform[:num_cores]}) + 1)",
+      "#{make} -j$(shell expr $(shell #{platform[:num_cores]}) + 1)",
       "#{test}"
     ]
   end
 
   pkg.install do
-    ["#{platform[:make]} -j$(shell expr $(shell #{platform[:num_cores]}) + 1) install"]
+    ["#{make} -j$(shell expr $(shell #{platform[:num_cores]}) + 1) install"]
   end
 end
