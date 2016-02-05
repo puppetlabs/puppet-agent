@@ -225,6 +225,8 @@ component "puppet" do |pkg, settings, platform|
 
   if platform.is_windows?
     pkg.install_file "../environment.bat", "#{settings[:bindir]}/environment.bat"
+    pkg.install_file "ext/windows/service/daemon.bat", "#{settings[:bindir]}/daemon.bat"
+    pkg.install_file "ext/windows/service/daemon.rb", "#{settings[:bindir]}/daemon.rb"
   end
 
   pkg.configfile File.join(configdir, 'puppet.conf')

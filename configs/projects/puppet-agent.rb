@@ -162,6 +162,7 @@ project "puppet-agent" do |proj|
   # Curl is only needed for compute clusters (GCE, EC2); so rpm, deb, and Windows
   proj.component "curl" if platform.is_linux? || platform.is_windows?
   proj.component "ruby"
+  proj.component "nssm" if platform.is_windows?
   proj.component "ruby-stomp"
   proj.component "rubygem-deep-merge"
   proj.component "rubygem-net-ssh"
