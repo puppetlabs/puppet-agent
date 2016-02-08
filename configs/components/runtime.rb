@@ -3,7 +3,7 @@ component "runtime" do |pkg, settings, platform|
   if platform.name =~ /solaris-10/
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/solaris/10/pl-gcc-4.8.2-1.#{platform.architecture}.pkg.gz"
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/solaris/10/pl-binutils-2.25.#{platform.architecture}.pkg.gz"
-  elsif platform.name =~ /solaris-11/
+  elsif platform.name =~ /huaweios|solaris-11/
     pkg.build_requires "pl-gcc-#{platform.architecture}"
   elsif platform.is_aix?
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-gcc-5.2.0-1.aix#{platform.os_version}.ppc.rpm"
@@ -15,7 +15,7 @@ component "runtime" do |pkg, settings, platform|
     pkg.build_requires "pl-gcc"
   end
 
-  if platform.architecture == "sparc"
+  if platform.architecture == "sparc" || platform.name =~ /huaweios/
     libdir = File.join("/opt/pl-build-tools", settings[:platform_triple], "lib")
   elsif platform.is_solaris? || platform.architecture =~ /i\d86/
     libdir = "/opt/pl-build-tools/lib"
