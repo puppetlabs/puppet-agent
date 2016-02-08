@@ -99,6 +99,10 @@ component "marionette-collective" do |pkg, settings, platform|
   pkg.directory configdir
   pkg.directory plugindir
 
+  if platform.is_windows?
+    pkg.directory File.join(settings[:sysconfdir], 'mcollective', 'var', 'log')
+  end
+
   # Bring in the client.cfg and server.cfg from ext/aio.
   pkg.install_file "ext/aio/common/client.cfg.dist", File.join(configdir, 'client.cfg')
   pkg.install_file "ext/aio/common/server.cfg.dist", File.join(configdir, 'server.cfg')

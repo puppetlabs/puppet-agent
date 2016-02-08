@@ -109,10 +109,14 @@ component "puppet" do |pkg, settings, platform|
   if platform.is_windows?
     vardir = File.join(settings[:sysconfdir], 'puppet', 'cache')
     configdir = File.join(settings[:sysconfdir], 'puppet', 'etc')
+    logdir = File.join(settings[:sysconfdir], 'puppet', 'var', 'log')
+    piddir = File.join(settings[:sysconfdir], 'puppet', 'var', 'run')
     prereqs = "--check-prereqs"
   else
     vardir = File.join(settings[:prefix], 'cache')
     configdir = settings[:puppet_configdir]
+    logdir = settings[:logdir]
+    piddir = settings[:piddir]
     prereqs = "--no-check-prereqs"
   end
   pkg.install do
@@ -125,8 +129,8 @@ component "puppet" do |pkg, settings, platform|
         --sitelibdir=#{settings[:ruby_vendordir]} \
         --codedir=#{settings[:puppet_codedir]} \
         --vardir=#{vardir} \
-        --rundir=#{settings[:piddir]} \
-        --logdir=#{settings[:logdir]} \
+        --rundir=#{piddir} \
+        --logdir=#{logdir} \
         --configs \
         --quick \
         --man \
@@ -167,7 +171,13 @@ component "puppet" do |pkg, settings, platform|
   pkg.directory File.join(settings[:puppet_codedir], 'environments', 'production', 'manifests')
   pkg.directory File.join(settings[:puppet_codedir], 'environments', 'production', 'modules')
   pkg.install_configfile 'conf/environment.conf', File.join(settings[:puppet_codedir], 'environments', 'production', 'environment.conf')
-  pkg.directory File.join(settings[:logdir], 'puppet'), mode: "0750"
+
+  if platform.is_windows?
+    pkg.directory File.join(settings[:sysconfdir], 'puppet', 'var', 'log')
+    pkg.directory File.join(settings[:sysconfdir], 'puppet', 'var', 'run')
+  else
+    pkg.directory File.join(settings[:logdir], 'puppet'), mode: "0750"
+  end
 
   pkg.link "#{settings[:bindir]}/puppet", "#{settings[:link_bindir]}/puppet" unless platform.is_windows?
   if platform.is_eos?
