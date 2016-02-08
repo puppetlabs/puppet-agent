@@ -6,7 +6,13 @@ component "openssl" do |pkg, settings, platform|
   pkg.replaces 'pe-openssl'
 
   # Use our toolchain on linux systems (it's not available on osx)
-  if platform.is_linux?
+  if platform.is_huaweios?
+    pkg.build_requires "pl-binutils-#{platform.architecture}"
+    pkg.build_requires "pl-gcc-#{platform.architecture}"
+    pkg.build_requires 'runtime'
+    # xutils-dev contains makedepend
+    pkg.build_requires 'xutils-dev'
+  elsif platform.is_linux?
     pkg.build_requires 'pl-binutils'
     pkg.build_requires 'pl-gcc'
     if platform.name =~ /el-4/
@@ -35,6 +41,13 @@ component "openssl" do |pkg, settings, platform|
     target = 'darwin64-x86_64-cc'
     cflags = settings[:cflags]
     ldflags = ''
+  elsif platform.is_huaweios?
+    pkg.environment "PATH" => "/opt/pl-build-tools/bin:$$PATH"
+    pkg.environment "CC" => "/opt/pl-build-tools/bin/#{settings[:platform_triple]}-gcc"
+
+    target = 'linux-ppc'
+    ldflags = "-R/opt/pl-build-tools/#{settings[:platform_triple]}/lib -Wl,-rpath=#{settings[:libdir]} -L/opt/pl-build-tools/#{settings[:platform_triple]}/lib"
+    cflags = "#{settings[:cflags]} -fPIC"
   elsif platform.is_solaris?
     pkg.environment "PATH" => "/opt/pl-build-tools/bin:$$PATH:/usr/local/bin:/usr/ccs/bin:/usr/sfw/bin"
     pkg.environment "CC" => "/opt/pl-build-tools/bin/#{settings[:platform_triple]}-gcc"
@@ -59,8 +72,6 @@ component "openssl" do |pkg, settings, platform|
       sslflags = '386'
     elsif platform.architecture =~ /64$/
       target = 'linux-x86_64'
-    elsif platform.architecture =~ /ppce500mc$/
-      target = 'linux-ppc'
     elsif platform.architecture =~ /ppc64le$/
       target = 'linux-ppc64le'
     elsif platform.architecture =~ /s390/
