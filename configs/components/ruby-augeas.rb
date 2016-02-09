@@ -24,6 +24,10 @@ component "ruby-augeas" do |pkg, settings, platform|
       pkg.environment "RUBY" => settings[:host_ruby]
     end
     ruby = "#{settings[:host_ruby]} -r#{settings[:datadir]}/doc/rbconfig.rb"
+  elsif platform.is_huaweios?
+    pkg.environment "RUBY" => settings[:host_ruby]
+    ruby = "#{settings[:host_ruby]} -r#{settings[:datadir]}/doc/rbconfig.rb"
+    pkg.environment "LDFLAGS" => settings[:ldflags]
   else
     ruby = File.join(settings[:bindir], 'ruby')
   end
