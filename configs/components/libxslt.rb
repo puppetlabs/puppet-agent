@@ -8,6 +8,13 @@ component "libxslt" do |pkg, settings, platform|
   if platform.is_aix?
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-gcc-5.2.0-1.aix#{platform.os_version}.ppc.rpm"
     pkg.environment "PATH" => "/opt/pl-build-tools/bin:$$PATH"
+  elsif platform.is_huaweios?
+    pkg.environment "PATH" => "/opt/pl-build-tools/bin:$$PATH:#{settings[:bindir]}"
+    pkg.environment "CFLAGS" => settings[:cflags]
+    pkg.environment "LDFLAGS" => settings[:ldflags]
+
+    # libxslt is picky about manually specifying the build host
+    build = "--build x86_64-unknown-linux-gnu"
   elsif platform.is_solaris?
     pkg.environment "PATH" => "/opt/pl-build-tools/bin:$$PATH:/usr/local/bin:/usr/ccs/bin:/usr/sfw/bin:#{settings[:bindir]}"
     pkg.environment "CFLAGS" => settings[:cflags]
@@ -21,18 +28,20 @@ component "libxslt" do |pkg, settings, platform|
     pkg.environment "CFLAGS" => settings[:cflags]
   end
 
-  if platform.name =~ /solaris-11/
+  if platform.name =~ /huaweios|solaris-11/
     pkg.build_requires "pl-gcc-#{platform.architecture}"
   end
 
   if platform.is_linux?
-    if platform.architecture =~ /ppc64le$/
+    if platform.architecture =~ /ppc$/
+      target = 'powerpc-unknown-linux-gnu'
+    elsif platform.architecture =~ /ppc64le$/
       target = 'powerpc64le-unknown-linux-gnu'
     end
   end
 
   pkg.configure do
-    ["./configure --prefix=#{settings[:prefix]} --docdir=/tmp --with-libxml-prefix=#{settings[:prefix]} #{settings[:host]} #{target}"]
+    ["./configure --prefix=#{settings[:prefix]} --docdir=/tmp --with-libxml-prefix=#{settings[:prefix]} #{settings[:host]} #{build} #{target}"]
   end
 
   pkg.build do
