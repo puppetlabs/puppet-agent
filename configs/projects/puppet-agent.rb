@@ -36,8 +36,6 @@ project "puppet-agent" do |proj|
     proj.setting(:install_root, File.join("C:", proj.base_dir, proj.company_id))
     proj.setting(:prefix, File.join(proj.install_root, proj.product_id))
     proj.setting(:sysconfdir, File.join("C:", "CommonAppDataFolder", proj.company_id))
-    proj.setting(:logdir, File.join(proj.sysconfdir, "var", "log"))
-    proj.setting(:piddir, File.join(proj.sysconfdir,  "var", "run"))
     proj.setting(:tmpfilesdir, "C:/Windows/Temp")
   else
     proj.setting(:install_root, "/opt/puppetlabs")
@@ -213,7 +211,7 @@ project "puppet-agent" do |proj|
   proj.directory proj.prefix
   proj.directory proj.sysconfdir
   proj.directory proj.link_bindir
-  proj.directory proj.logdir
-  proj.directory proj.piddir
+  proj.directory proj.logdir unless platform.is_windows?
+  proj.directory proj.piddir unless platform.is_windows?
 
 end
