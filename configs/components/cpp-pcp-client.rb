@@ -18,6 +18,9 @@ component "cpp-pcp-client" do |pkg, settings, platform|
   elsif platform.is_osx?
     cmake = "/usr/local/bin/cmake"
     toolchain = ""
+  elsif platform.is_huaweios?
+    cmake = "/opt/pl-build-tools/bin/cmake"
+    toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/#{settings[:platform_triple]}/pl-build-toolchain.cmake"
   elsif platform.is_solaris?
     cmake = "/opt/pl-build-tools/i386-pc-solaris2.#{platform.os_version}/bin/cmake"
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/#{settings[:platform_triple]}/pl-build-toolchain.cmake"
