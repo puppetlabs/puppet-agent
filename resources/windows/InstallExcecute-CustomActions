@@ -1,0 +1,43 @@
+<!-- PUPPET_MASTER_SERVER -->
+<Custom Action='SaveCmdLinePuppetMasterServer' Before='AppSearch' />
+<Custom Action='SetFromCmdLinePuppetMasterServer' After='AppSearch'>
+  CMDLINE_PUPPET_MASTER_SERVER
+</Custom>
+<Custom Action='SetDefaultPuppetMasterServer' After='AppSearch'>
+  PUPPET_MASTER_SERVER=""
+</Custom>
+
+<!-- PUPPET_AGENT_ENVIRONMENT -->
+<Custom Action='SaveCmdLinePuppetAgentEnvironment' Before='AppSearch' />
+<Custom Action='SetFromCmdLinePuppetAgentEnvironment' After='AppSearch'>
+  CMDLINE_PUPPET_AGENT_ENVIRONMENT
+</Custom>
+<Custom Action='SetDefaultPuppetAgentEnvironment' After='AppSearch'>
+  PUPPET_AGENT_ENVIRONMENT=""
+</Custom>
+
+<!-- PUPPET_AGENT_CERTNAME -->
+<Custom Action='SaveCmdLinePuppetAgentCertname' Before='AppSearch' />
+<Custom Action='SetFromCmdLinePuppetAgentCertname' After='AppSearch'>
+  CMDLINE_PUPPET_AGENT_CERTNAME
+</Custom>
+
+<!-- PUPPET_CA_SERVER -->
+<Custom Action='SaveCmdLinePuppetCaServer' Before='AppSearch' />
+<Custom Action='SetFromCmdLinePuppetCaServer' After='AppSearch'>
+  CMDLINE_PUPPET_CA_SERVER
+</Custom>
+
+<!-- PUPPET_AGENT_START_MODE -->
+<Custom Action='SaveCmdLinePuppetAgentStartupMode' Before='AppSearch' />
+<Custom Action='SetFromCmdLinePuppetAgentStartupMode' After='AppSearch'>
+  CMDLINE_PUPPET_AGENT_STARTUP_MODE
+</Custom>
+
+<!-- PUPPET_AGENT_ACCOUNT_DOMAIN -->
+<Custom Action='SetDomainToLocalComputer' After='AppSearch'>
+  PUPPET_AGENT_ACCOUNT_DOMAIN = "."
+</Custom>
+<Custom Action='SetDomainToNtAuthority' After='SetDomainToLocalComputer'>
+  (PUPPET_AGENT_ACCOUNT_USER ~= "LocalService") OR (PUPPET_AGENT_ACCOUNT_USER ~= "NetworkService")
+</Custom>
