@@ -33,7 +33,7 @@ component "facter" do |pkg, settings, platform|
   if platform.is_osx?
     pkg.build_requires "cmake"
     pkg.build_requires "boost"
-    pkg.build_requires "yaml-cpp --with-static-lib"
+    pkg.build_requires "yaml-cpp"
   elsif platform.name =~ /solaris-10/
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/solaris/10/pl-gcc-4.8.2-1.#{platform.architecture}.pkg.gz"
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/solaris/10/pl-binutils-2.25.#{platform.architecture}.pkg.gz"
