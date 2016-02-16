@@ -1,28 +1,7 @@
 component "openssl" do |pkg, settings, platform|
-  pkg.version "1.0.2e"
-  if platform.is_windows?
-    # OpenSSL on windows is exciting
-    # If we use the openssl tarball provided by upstream, we get failures when we try to unpack it.
-    # The failures are fixed if we do not set CYGWIN with winsymlinks:native. However, if we do not
-    # set CYGWIN with that value, even though the tarball successfully unpacks, the build itself
-    # fails due to inconsistencies between the files (as a result of the symlinks being in a state
-    # that cygwin/windwos cannot understand). In order to deal with this, we have to unpack and
-    # repack openssl.
-    #   * gunzip -c openssl.tar.gz | tar xf -
-    #   * mv openssl openssl-windows
-    #   * manually remove all of the symlinks so the symlink targets are the same as their sources
-    #     - To do this, I removed the symlink, and copied the source file into the location where
-    #       the symlink was.
-    #     - These symlinks are mainly found in the test directory, though there is one in the app
-    #       directory.
-    #   * tar -czf openssl-windows.tar.gz openssl-windows
-    # Please don't hate me, this was the best solution I could come up with :(
-    pkg.md5sum "74c599905f9929f6b42658fe0f396393"
-    pkg.url "http://buildsources.delivery.puppetlabs.net/openssl-#{pkg.get_version}-windows.tar.gz"
-  else
-    pkg.md5sum "5262bfa25b60ed9de9f28d5d52d77fc5"
-    pkg.url "http://buildsources.delivery.puppetlabs.net/openssl-#{pkg.get_version}.tar.gz"
-  end
+  pkg.version "1.0.2f"
+  pkg.md5sum "b3bf73f507172be9292ea2a8c28b659d"
+  pkg.url "http://buildsources.delivery.puppetlabs.net/openssl-#{pkg.get_version}.tar.gz"
 
   pkg.replaces 'pe-openssl'
 
