@@ -100,51 +100,7 @@ component "pxp-agent" do |pkg, settings, platform|
   when "aix"
     pkg.install_service "resources/aix/pxp-agent.service", nil, "pxp-agent"
   when "windows"
-    service_hash = [{
-      :directory_ref => settings[:bindir_id],
-      :id => "service_nssm",
-      :guid => "52B1CD57-95A2-4CA4-AB8E-9DDD6DE8FC66",
-      :file => {
-        :id => "NSSM",
-        :source => settings[:nssm],
-      },
-      :serviceinstall => {
-        :id => "PXPServiceInstaller",
-        :description => "Puppet Execution Protocol (PXP) Service",
-        :displayname => "Puppet PXP Agent",
-        :name => "pxp-agent",
-        :start => "demand",
-      },
-      # Various registry keys documented at https://nssm.cc/usage
-      :registries => {
-        :root => "HKLM",
-        :key => "SYSTEM\\CurrentControlSet\\Services\\pxp-agent\\Parameters",
-        :values => [
-          { :name => "AppDirectory", :value => "[INSTALLDIR]\\bin", :type => "expandable" },
-          { :name => "Application", :value => "[INSTALLDIR]\\bin\\pxp-agent.exe", :type => "expandable" },
-          { :name => "AppParameters", :value => "", :type => "expandable" },
-          { :name => "AppEnvironmentExtra", :value => "PATH=[INSTALLDIR]\\bin;%PATH%", :type => "multiString", :action => "append" },
-          # Skip responding to WM_QUIT and WM_CLOSE
-          { :name => "AppStopMethodSkip", :type => "integer" },
-        ],
-        :keys => [
-          {
-            :name => "AppExit",
-            :values => [
-              # Stop the service completely on exit(2) (Invalid configuration) otherwise restart with NSSM service throttling
-              # nssm AppExit codes reference https://nssm.cc/usage#exit
-              { :value => "Restart", :type => "string" },
-              { :name => "2", :value => "Exit", :type => "string" },
-            ],
-          },
-        ],
-      },
-      :servicecontrol => {
-        :id => "PXPStartService",
-        :name => "pxp-agent",
-      },
-    }]
-    pkg.install_service nil, service_hash: service_hash
+    puts "Service files not enabled on windows"
   else
     fail "need to know where to put #{pkg.get_name} service files"
   end
