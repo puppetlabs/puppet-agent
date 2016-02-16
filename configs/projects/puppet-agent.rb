@@ -33,13 +33,11 @@ project "puppet-agent" do |proj|
 
     # We build for windows not in the final destination, but in the paths that correspond
     # to the directory ids expected by WIX. This will allow for a portable installation (ideally).
-    proj.setting(:install_root, File.join("C:", proj.base_dir, proj.company_id))
-    proj.setting(:prefix, File.join(proj.install_root, proj.product_id))
+    proj.setting(:install_root, File.join("C:", proj.base_dir, proj.company_id, proj.product_id))
     proj.setting(:sysconfdir, File.join("C:", "CommonAppDataFolder", proj.company_id))
     proj.setting(:tmpfilesdir, "C:/Windows/Temp")
   else
     proj.setting(:install_root, "/opt/puppetlabs")
-    proj.setting(:prefix, File.join(proj.install_root, "puppet"))
     if platform.is_eos?
       proj.setting(:sysconfdir, "/persist/sys/etc/puppetlabs")
       proj.setting(:link_sysconfdir, "/etc/puppetlabs")
@@ -53,6 +51,7 @@ project "puppet-agent" do |proj|
     proj.setting(:tmpfilesdir, "/usr/lib/tmpfiles.d")
   end
 
+  proj.setting(:prefix, File.join(proj.install_root, "puppet"))
   proj.setting(:puppet_configdir, File.join(proj.sysconfdir, 'puppet'))
   proj.setting(:puppet_codedir, File.join(proj.sysconfdir, 'code'))
   proj.setting(:bindir, File.join(proj.prefix, "bin"))
