@@ -3,6 +3,7 @@
   <Fragment>
     <ComponentGroup Id="Include_CustomActions" />
 
+    <!-- INSTALLDIR -->
     <CustomAction Id="SaveCmdLineInstallDir"
       Property="CMDLINE_INSTALLDIR"
       Value="[INSTALLDIR]"
@@ -69,6 +70,8 @@
       Property="PUPPET_AGENT_STARTUP_MODE"
       Value="[CMDLINE_PUPPET_AGENT_STARTUP_MODE]"
       Execute="firstSequence" />
+
+    <!-- PUPPET_AGENT_ACCOUNT_DOMAIN -->
     <CustomAction Id="SetDomainToLocalComputer"
        Property="PUPPET_AGENT_ACCOUNT_DOMAIN"
        Value="[ComputerName]"
@@ -77,16 +80,6 @@
        Property="PUPPET_AGENT_ACCOUNT_DOMAIN"
        Value="NT AUTHORITY"
        Execute="firstSequence"/>
-
-       <!-- INSTALLDIR -->
-     <CustomAction Id="SaveCmdLineInstallDir"
-       Property="CMDLINE_INSTALLDIR"
-       Value="[INSTALLDIR]"
-       Execute="firstSequence" />
-     <CustomAction Id="SetFromCmdLineInstallDir"
-       Property="INSTALLDIR"
-       Value="[CMDLINE_INSTALLDIR]"
-       Execute="firstSequence" />
 
   </Fragment>
 </Wix>
