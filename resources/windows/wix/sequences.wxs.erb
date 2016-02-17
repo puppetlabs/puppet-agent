@@ -120,12 +120,6 @@
     </InstallExecuteSequence>
 
     <SetProperty Id="ARPINSTALLLOCATION" Value="[INSTALLDIR]" After="CostFinalize" />
-    <Property Id="INSTALLDIR">
-      <RegistrySearch Id="RecallInstallDir" Root="HKLM" Key="SOFTWARE\<%= settings[:company_name] %>\<%= settings[:product_id] %>" Name="<%= settings[:RememberedInstallDirRegKey] %>" Type="raw" Win64="<%= settings[:win64] %>" />
-    </Property>
-    <Property Id="INSTALLDIR_X86" >
-      <RegistrySearch Id="RecallInstallDirx86" Root="HKLM" Key="SOFTWARE\<%= settings[:company_name] %>\<%= settings[:product_id] %>" Name="<%= settings[:RememberedInstallDirRegKey] %>" Type="raw" Win64="<%= settings[:win64] %>" />
-    </Property>
 
   </Fragment>
 </Wix>
