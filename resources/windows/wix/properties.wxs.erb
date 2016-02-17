@@ -8,8 +8,6 @@
     <Icon Id="<%= settings[:company_id] %>.ico" SourceFile="conf\windows\stage\misc\puppetlabs.ico"/>
     <Property Id="ARPPRODUCTICON" Value="<%= settings[:company_id] %>.ico" />
     <Property Id="ARPHELPLINK" Value="<%= settings[:HelpLink] %>" />
-    <!-- Save destination folder in Add/Remove programs (ARP) registry key -->
-    <SetProperty Id="ARPINSTALLLOCATION" Value="[INSTALLDIR]" After="CostFinalize" />
 
     <!-- This property is used in the localization strings for the GUI -->
     <Property Id="VersionUIString" Value="<%= @version.sub(/\.g[0-9a-z]{7}$/, '') %>" />
