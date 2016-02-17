@@ -100,10 +100,10 @@
       <Custom Action='Remove64BitPath_SetProp' After='CostFinalize' />
       <Custom Action='Remove64BitProgramFiles_SetProp' After='CostFinalize' />
       <Custom Action='Remove64BitProgramFiles' After='InstallFiles'>
-        <![CDATA[VersionNT64 >= 100 AND $(var.Win64) = no AND NOT (&$(var.OurProductNameWord)Runtime = 2)]]>
+        <![CDATA[VersionNT64 >= 100 AND <%= settings[:win64] %> = no AND NOT (&<%= settings[:product_id] %>Runtime = 2)]]>
       </Custom>
       <Custom Action='Remove64BitPath' After='InstallFiles'>
-        <![CDATA[VersionNT64 >= 100 AND $(var.Win64) = no AND NOT (&$(var.OurProductNameWord)Runtime = 2)]]>
+        <![CDATA[VersionNT64 >= 100 AND <%= settings[:win64] %> = no AND NOT (&<%= settings[:product_id] %>Runtime = 2)]]>
       </Custom>
       <?endif?>
       <!-- Make sure pxp-agent service is shutdown before we validate the install -->
@@ -121,10 +121,10 @@
 
     <SetProperty Id="ARPINSTALLLOCATION" Value="[INSTALLDIR]" After="CostFinalize" />
     <Property Id="INSTALLDIR">
-      <RegistrySearch Id="RecallInstallDir" Root="HKLM" Key="SOFTWARE\<%= settings[:company_name] %>\<%= settings[:product_word] %>" Name="<%= settings[:RememberedInstallDirRegKey] %>" Type="raw" Win64="<%= settings[:win64] %>" />
+      <RegistrySearch Id="RecallInstallDir" Root="HKLM" Key="SOFTWARE\<%= settings[:company_name] %>\<%= settings[:product_id] %>" Name="<%= settings[:RememberedInstallDirRegKey] %>" Type="raw" Win64="<%= settings[:win64] %>" />
     </Property>
     <Property Id="INSTALLDIR_X86" >
-      <RegistrySearch Id="RecallInstallDirx86" Root="HKLM" Key="SOFTWARE\<%= settings[:company_name] %>\<%= settings[:product_word] %>" Name="<%= settings[:RememberedInstallDirRegKey] %>" Type="raw" Win64="<%= settings[:win64] %>" />
+      <RegistrySearch Id="RecallInstallDirx86" Root="HKLM" Key="SOFTWARE\<%= settings[:company_name] %>\<%= settings[:product_id] %>" Name="<%= settings[:RememberedInstallDirRegKey] %>" Type="raw" Win64="<%= settings[:win64] %>" />
     </Property>
 
   </Fragment>
