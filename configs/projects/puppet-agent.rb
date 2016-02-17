@@ -30,6 +30,18 @@ project "puppet-agent" do |proj|
 
   platform = proj.get_platform
 
+  # HuaweiOS is a cross-compiled platform
+  if platform.is_huaweios?
+    platform_triple = "powerpc-unknown-linux-gnu"
+    host = "--host #{platform_triple}"
+
+    # Use a standalone ruby for cross-compilation
+    proj.setting(:host_ruby, "/opt/pl-build-tools/bin/ruby")
+    proj.setting(:host_gem, "/opt/pl-build-tools/bin/gem")
+
+    proj.noarch
+  end
+
   # For solaris, we build cross-compilers
   if platform.is_solaris?
     if platform.architecture == 'i386'
@@ -97,7 +109,7 @@ project "puppet-agent" do |proj|
   # Then the dependencies
   proj.component "augeas"
   # Curl is only needed for compute clusters (GCE, EC2); so rpm, deb, and Windows
-  proj.component "curl" if platform.is_linux?
+  proj.component "curl" if platform.is_linux? && !platform.is_huaweios?
   proj.component "ruby"
   proj.component "ruby-stomp"
   proj.component "rubygem-deep-merge"
@@ -117,7 +129,7 @@ project "puppet-agent" do |proj|
     proj.component "shellpath"
   end
 
-  if platform.is_solaris? || platform.name =~ /^el-4/ || platform.is_aix?
+  if platform.is_solaris? || platform.name =~ /^huaweios|^el-4/ || platform.is_aix?
     proj.component "runtime"
   end
 
@@ -142,5 +154,4 @@ project "puppet-agent" do |proj|
   proj.directory proj.logdir
   proj.directory proj.piddir
   proj.directory proj.link_bindir
-
 end
