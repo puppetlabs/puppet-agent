@@ -1,5 +1,5 @@
 platform "windows-2012r2-x64" do |plat|
-  plat.vmpooler_template "win-2012r2-x86_64.make"
+  plat.vmpooler_template "win-2012r2-x86_64"
 
   plat.servicetype "windows"
 
