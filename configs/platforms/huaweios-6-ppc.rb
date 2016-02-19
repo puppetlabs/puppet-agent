@@ -1,7 +1,8 @@
 platform "huaweios-6-ppc" do |plat|
-  plat.servicedir "/lib/systemd/system"
+  plat.servicedir "/etc/init.d"
   plat.defaultdir "/etc/default"
-  plat.servicetype "systemd"
+  # HuaweiOS is based on Debian 8 but uses sysv instead of systemd
+  plat.servicetype "sysv"
   plat.codename "jessie"
 
   plat.add_build_repository "http://pl-build-tools.delivery.puppetlabs.net/debian/pl-build-tools-release-#{plat.get_codename}.deb"
