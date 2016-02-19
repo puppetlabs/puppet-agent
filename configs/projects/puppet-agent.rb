@@ -72,6 +72,18 @@ project "puppet-agent" do |proj|
     proj.setting(:host_gem, File.join(proj.bindir, "gem"))
   end
 
+  # HuaweiOS is a cross-compiled platform
+  if platform.is_huaweios?
+    platform_triple = "powerpc-unknown-linux-gnu"
+    host = "--host #{platform_triple}"
+
+    # Use a standalone ruby for cross-compilation
+    proj.setting(:host_ruby, "/opt/pl-build-tools/bin/ruby")
+    proj.setting(:host_gem, "/opt/pl-build-tools/bin/gem")
+
+    proj.noarch
+  end
+
   # For solaris, we build cross-compilers
   if platform.is_solaris?
     if platform.architecture == 'i386'
@@ -156,7 +168,7 @@ project "puppet-agent" do |proj|
   # Then the dependencies
   proj.component "augeas" unless platform.is_windows?
   # Curl is only needed for compute clusters (GCE, EC2); so rpm, deb, and Windows
-  proj.component "curl" if platform.is_linux? || platform.is_windows?
+  proj.component "curl" if (platform.is_linux? && !platform.is_huaweios?) || platform.is_windows?
   proj.component "ruby"
   proj.component "nssm" if platform.is_windows?
   proj.component "ruby-stomp"
@@ -186,7 +198,7 @@ project "puppet-agent" do |proj|
     proj.component "shellpath"
   end
 
-  if platform.is_solaris? || platform.name =~ /^el-4/ || platform.is_aix? || platform.is_windows?
+  if platform.is_solaris? || platform.name =~ /^huaweios|^el-4/ || platform.is_aix? || platform.is_windows?
     proj.component "runtime"
   end
 
