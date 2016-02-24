@@ -39,8 +39,8 @@ component "ruby" do |pkg, settings, platform|
       :sum => "eff5300471153608f30cd76a318c052b",
       :target_double => "powerpc-aix7.1.0.0",
      },
-    'powerpc-unknown-linux-gnu' => {
-      :sum => "a988e9153bbae423824b538c4db7ce56",
+    'powerpc-linux-gnu' => {
+      :sum => "287ce89e47286bd61cbed4a6670bdad4",
       :target_double => "powerpc-linux",
     },
     'i386-pc-solaris2.10' => {
