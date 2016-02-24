@@ -14,7 +14,7 @@ component "libxslt" do |pkg, settings, platform|
     pkg.environment "LDFLAGS" => settings[:ldflags]
 
     # libxslt is picky about manually specifying the build host
-    build = "--build x86_64-unknown-linux-gnu"
+    build = "--build x86_64-linux-gnu"
   elsif platform.is_solaris?
     pkg.environment "PATH" => "/opt/pl-build-tools/bin:$$PATH:/usr/local/bin:/usr/ccs/bin:/usr/sfw/bin:#{settings[:bindir]}"
     pkg.environment "CFLAGS" => settings[:cflags]
@@ -33,8 +33,8 @@ component "libxslt" do |pkg, settings, platform|
   end
 
   if platform.is_linux?
-    if platform.architecture =~ /ppc$/
-      target = 'powerpc-unknown-linux-gnu'
+    if platform.architecture =~ /powerpc$/
+      target = 'powerpc-linux-gnu'
     elsif platform.architecture =~ /ppc64le$/
       target = 'powerpc64le-unknown-linux-gnu'
     end

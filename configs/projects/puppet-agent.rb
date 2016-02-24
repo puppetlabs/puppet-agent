@@ -32,13 +32,15 @@ project "puppet-agent" do |proj|
 
   # HuaweiOS is a cross-compiled platform
   if platform.is_huaweios?
-    platform_triple = "powerpc-unknown-linux-gnu"
+    platform_triple = "powerpc-linux-gnu"
     host = "--host #{platform_triple}"
 
     # Use a standalone ruby for cross-compilation
     proj.setting(:host_ruby, "/opt/pl-build-tools/bin/ruby")
     proj.setting(:host_gem, "/opt/pl-build-tools/bin/gem")
 
+    # This will be removed once vanagon fixes are in to specify the
+    # debian target arch:
     proj.noarch
   end
 
