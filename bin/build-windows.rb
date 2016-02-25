@@ -17,10 +17,10 @@ end
 # The version of this build
 AGENT_VERSION_STRING = ENV['AGENT_VERSION_STRING'] || `git describe --tags`.chomp.tr('-', '.')
 
-# Whether or not we are going to build boost and yaml-cpp or copy them from existing builds
-# If `TRUE`, this will build boost and yaml-cpp according to the specifications in
+# Whether or not we are going to build curl and yaml-cpp or copy them from existing builds
+# If `TRUE`, this will build curl and openssl according to the specifications in
 # git://github.com/puppetlabs/facter/master/contrib/facter.ps1
-# If `FALSE`, this will download and unpack prebuilt boost and yaml-cpp arcives.
+# If `FALSE`, this will download and unpack prebuilt curl and openssl archives.
 BUILD_SOURCE         = ENV['BUILD_SOURCE'] || '0'
 
 PRESERVE             = ENV['PRESERVE'] || false
@@ -34,6 +34,7 @@ ruby_version         = "2.1.8"
 # The refs we will use when building the MSI
 PUPPET       = JSON.parse(File.read('configs/components/puppet.json'))
 FACTER       = JSON.parse(File.read('configs/components/facter.json'))
+LEATHERMAN   = JSON.parse(File.read('configs/components/leatherman.json'))
 CPPPCPCLIENT = JSON.parse(File.read('configs/components/cpp-pcp-client.json'))
 PXPAGENT     = JSON.parse(File.read('configs/components/pxp-agent.json'))
 HIERA        = JSON.parse(File.read('configs/components/hiera.json'))
@@ -100,6 +101,13 @@ puts "Build-Windows.rb... Setting up windows toolset - windows-toolset.ps1"
 result = Kernel.system("set -vx;#{ssh_command} \"powershell.exe -NoProfile -ExecutionPolicy Unrestricted -InputFormat None -Command ./windows-toolset.ps1 -arch #{script_arch} -buildSource #{BUILD_SOURCE}\"")
 fail "It looks like the Windows-toolset build script failed for some reason. I would suggest ssh'ing into the box and poking around" unless result
 puts "Build-Windows.rb... Windows Setup Completed!!"
+
+puts "Build-Windows.rb... building leatherman"
+Kernel.system("#{scp_command} #{File.join(SCRIPT_ROOT, 'build-leatherman.ps1')} Administrator@#{hostname}:/home/Administrator/")
+fail "Copying build-leatherman.ps1 to #{hostname} failed" unless $?.success?
+result = Kernel.system("set -vx;#{ssh_command} \"powershell.exe -NoProfile -ExecutionPolicy Unrestricted -InputFormat None -Command ./build-leatherman.ps1 -arch #{script_arch} -buildSource #{BUILD_SOURCE} -leathermanRef #{LEATHERMAN['ref']} -leathermanFork #{LEATHERMAN['url']}\"")
+fail "It looks like the leatherman build script build-leatherman.ps1 failed for some reason. I would suggest ssh'ing into the box and poking around:\n#{result}" unless result
+puts "Build-Windows.rb... leatherman build Completed!!"
 
 puts "Build-Windows.rb... building facter"
 Kernel.system("set -vx;#{scp_command} #{File.join(SCRIPT_ROOT, 'build-facter.ps1')} Administrator@#{hostname}:/home/Administrator/")

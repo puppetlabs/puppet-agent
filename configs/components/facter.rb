@@ -16,8 +16,9 @@ component "facter" do |pkg, settings, platform|
 
   pkg.build_requires "ruby"
   pkg.build_requires 'openssl'
+  pkg.build_requires 'leatherman'
 
-  if platform.is_linux?
+  if platform.is_linux? && !platform.is_huaweios?
     # Running facter (as part of testing) expects virt-what is available
     pkg.build_requires 'virt-what'
   end
@@ -39,7 +40,7 @@ component "facter" do |pkg, settings, platform|
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/solaris/10/pl-boost-1.58.0-1.#{platform.architecture}.pkg.gz"
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/solaris/10/pl-yaml-cpp-0.5.1.#{platform.architecture}.pkg.gz"
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/solaris/10/pl-cmake-3.2.3-2.i386.pkg.gz"
-  elsif platform.name =~ /solaris-11/
+  elsif platform.name =~ /huaweios|solaris-11/
     pkg.build_requires "pl-gcc-#{platform.architecture}"
     pkg.build_requires "pl-cmake"
     pkg.build_requires "pl-boost-#{platform.architecture}"
@@ -108,10 +109,13 @@ component "facter" do |pkg, settings, platform|
       skip_blkid = 'OFF'
     end
   end
+  if platform.is_huaweios?
+    skip_blkid = 'ON'
+  end
 
   # curl is only used for compute clusters (GCE, EC2); so rpm, deb, and Windows
   skip_curl = 'ON'
-  if platform.is_linux?
+  if platform.is_linux? && !platform.is_huaweios?
     pkg.build_requires "curl"
     skip_curl = 'OFF'
   end
@@ -123,6 +127,10 @@ component "facter" do |pkg, settings, platform|
   if platform.is_osx?
     toolchain = ""
     cmake = "/usr/local/bin/cmake"
+  elsif platform.is_huaweios?
+    ruby = "#{settings[:host_ruby]} -r#{settings[:datadir]}/doc/rbconfig.rb"
+    toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/#{settings[:platform_triple]}/pl-build-toolchain.cmake"
+    cmake = "/opt/pl-build-tools/bin/cmake"
   elsif platform.is_solaris?
     if platform.architecture == 'sparc'
       ruby = "#{settings[:host_ruby]} -r#{settings[:datadir]}/doc/rbconfig.rb"
@@ -159,7 +167,7 @@ component "facter" do |pkg, settings, platform|
 
   # Make test will explode horribly in a cross-compile situation
   # Tests will be skipped on AIX until they are expected to pass
-  if platform.architecture == 'sparc' || platform.is_aix?
+  if platform.architecture == 'sparc' || platform.is_aix? || platform.is_huaweios?
     test = ":"
   else
     test = "#{platform[:make]} test ARGS=-V"

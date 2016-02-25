@@ -6,6 +6,8 @@ component "cpp-pcp-client" do |pkg, settings, platform|
 
   platform_flags = ''
   pkg.build_requires "openssl"
+  pkg.build_requires "leatherman"
+
   if platform.is_aix?
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-gcc-5.2.0-1.aix#{platform.os_version}.ppc.rpm"
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-cmake-3.2.3-2.aix#{platform.os_version}.ppc.rpm"
@@ -16,6 +18,9 @@ component "cpp-pcp-client" do |pkg, settings, platform|
   elsif platform.is_osx?
     cmake = "/usr/local/bin/cmake"
     toolchain = ""
+  elsif platform.is_huaweios?
+    cmake = "/opt/pl-build-tools/bin/cmake"
+    toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/#{settings[:platform_triple]}/pl-build-toolchain.cmake"
   elsif platform.is_solaris?
     cmake = "/opt/pl-build-tools/i386-pc-solaris2.#{platform.os_version}/bin/cmake"
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/#{settings[:platform_triple]}/pl-build-toolchain.cmake"

@@ -60,7 +60,7 @@ If you have your own mirror of the components of puppet-agent, you can also use 
 Building puppet-agent for windows
 ---
 For the moment, windows is a special case. It can be built using a similar
-pattern to other platforms. `ruby bin/build-windows.rb BUILD_TARGET=win-x86` is
+pattern to other platforms. `BUILD_TARGET=win-x86 ruby bin/build-windows.rb` is
 the way to do this. The windows build assumes access to Puppet Labs' vm pooler
 and does not currently accept a hostname override. VANAGON\_SSH\_KEY is
 respected for ssh key overrides.
@@ -126,7 +126,7 @@ can be found [here](https://github.com/puppetlabs/puppet-agent-osx-installer-plu
 
 Issues
 ---
-File issues in the [Pupept Agent (PA) project](https://tickets.puppetlabs.com/browse/PA) on the Puppet Labs Jira site. Issues with individual components should be filed in their respective projects.
+File issues in the [Puppet Agent (PA) project](https://tickets.puppetlabs.com/browse/PA) on the Puppet Labs Jira site. Issues with individual components should be filed in their respective projects.
 
 License
 ---

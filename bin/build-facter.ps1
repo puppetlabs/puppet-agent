@@ -34,10 +34,10 @@ cd release
 $cmake_args = @(
   '-G',
   "MinGW Makefiles",
-  "-DBOOST_ROOT=`"$toolsDir\$boostPkg`"",
+  "-DCMAKE_TOOLCHAIN_FILE=C:/tools/pl-build-tools/pl-build-toolchain.cmake",
   "-DBOOST_STATIC=ON",
-  "-DYAMLCPP_ROOT=`"$toolsDir\$yamlPkg`"",
-  "-DCMAKE_PREFIX_PATH=`"$toolsDir\$curlPkg;$toolsDir\$opensslPkg;$toolsDir\$rubyPkg`"",
+  "-DYAMLCPP_STATIC=ON",
+  "-DCMAKE_PREFIX_PATH=`"$toolsDir\$curlPkg;$toolsDir\$opensslPkg;$toolsDir\$rubyPkg;$toolsDir\leatherman`"",
   "-DCURL_STATIC=ON",
   ".."
 )

@@ -8,9 +8,6 @@ project "puppet-agent" do |proj|
     proj.setting(:link_sysconfdir, "/etc/puppetlabs")
   elsif platform.is_osx?
     proj.setting(:sysconfdir, "/private/etc/puppetlabs")
-  elsif platform.is_eos?
-    proj.setting(:sysconfdir, "/persist/sys/etc/puppetlabs")
-    proj.setting(:link_sysconfdir, "/etc/puppetlabs")
   else
     proj.setting(:sysconfdir, "/etc/puppetlabs")
   end
@@ -32,6 +29,20 @@ project "puppet-agent" do |proj|
   proj.setting(:host_gem, File.join(proj.bindir, "gem"))
 
   platform = proj.get_platform
+
+  # HuaweiOS is a cross-compiled platform
+  if platform.is_huaweios?
+    platform_triple = "powerpc-linux-gnu"
+    host = "--host #{platform_triple}"
+
+    # Use a standalone ruby for cross-compilation
+    proj.setting(:host_ruby, "/opt/pl-build-tools/bin/ruby")
+    proj.setting(:host_gem, "/opt/pl-build-tools/bin/gem")
+
+    # This will be removed once vanagon fixes are in to specify the
+    # debian target arch:
+    proj.noarch
+  end
 
   # For solaris, we build cross-compilers
   if platform.is_solaris?
@@ -92,6 +103,7 @@ project "puppet-agent" do |proj|
   proj.component "puppet"
   proj.component "facter"
   proj.component "hiera"
+  proj.component "leatherman"
   proj.component "marionette-collective"
   proj.component "cpp-pcp-client"
   proj.component "pxp-agent"
@@ -99,7 +111,7 @@ project "puppet-agent" do |proj|
   # Then the dependencies
   proj.component "augeas"
   # Curl is only needed for compute clusters (GCE, EC2); so rpm, deb, and Windows
-  proj.component "curl" if platform.is_linux?
+  proj.component "curl" if platform.is_linux? && !platform.is_huaweios?
   proj.component "ruby"
   proj.component "ruby-stomp"
   proj.component "rubygem-deep-merge"
@@ -119,7 +131,7 @@ project "puppet-agent" do |proj|
     proj.component "shellpath"
   end
 
-  if platform.is_solaris? || platform.name =~ /^el-4/ || platform.is_aix?
+  if platform.is_solaris? || platform.name =~ /^huaweios|^el-4/ || platform.is_aix?
     proj.component "runtime"
   end
 
@@ -144,5 +156,4 @@ project "puppet-agent" do |proj|
   proj.directory proj.logdir
   proj.directory proj.piddir
   proj.directory proj.link_bindir
-
 end

@@ -17,8 +17,14 @@ component "virt-what" do |pkg, settings, platform|
     pkg.build_requires "util-linux"
   end
 
+  if platform.is_linux?
+    if platform.architecture =~ /ppc64le$/
+      target = 'powerpc64le-unknown-linux-gnu'
+    end
+  end
+
   pkg.configure do
-    ["./configure --prefix=#{settings[:prefix]} --sbindir=#{settings[:prefix]}/bin --libexecdir=#{settings[:prefix]}/lib/virt-what"]
+    ["./configure --prefix=#{settings[:prefix]} --sbindir=#{settings[:prefix]}/bin --libexecdir=#{settings[:prefix]}/lib/virt-what #{target}"]
   end
 
   pkg.build do

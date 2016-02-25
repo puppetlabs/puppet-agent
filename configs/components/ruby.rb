@@ -39,6 +39,10 @@ component "ruby" do |pkg, settings, platform|
       :sum => "eff5300471153608f30cd76a318c052b",
       :target_double => "powerpc-aix7.1.0.0",
      },
+    'powerpc-linux-gnu' => {
+      :sum => "287ce89e47286bd61cbed4a6670bdad4",
+      :target_double => "powerpc-linux",
+    },
     'i386-pc-solaris2.10' => {
       :sum => "5242445b8669b2153c00574e64a922db",
       :target_double => 'i386-solaris2.10',
@@ -72,7 +76,7 @@ component "ruby" do |pkg, settings, platform|
   end
 
   # Cross-compiles require a hand-built rbconfig from the target system
-  if platform.is_solaris? || platform.is_aix?
+  if platform.is_solaris? || platform.is_aix? || platform.is_huaweios?
     pkg.add_source "file://resources/files/rbconfig-#{settings[:platform_triple]}.rb", sum: rbconfig_info[settings[:platform_triple]][:sum]
   end
 
@@ -84,6 +88,15 @@ component "ruby" do |pkg, settings, platform|
     pkg.build_requires "http://osmirror.delivery.puppetlabs.net/AIX_MIRROR/zlib-devel-1.2.3-4.aix5.2.ppc.rpm"
   elsif platform.is_rpm?
     pkg.build_requires "zlib-devel"
+  end
+
+  if platform.is_huaweios?
+    pkg.build_requires 'pl-ruby'
+    special_flags = "--with-baseruby=#{settings[:host_ruby]}"
+    pkg.build_requires 'runtime'
+    pkg.environment "PATH" => "#{settings[:bindir]}:$$PATH"
+    pkg.environment "CC" => "/opt/pl-build-tools/bin/#{settings[:platform_triple]}-gcc"
+    pkg.environment "LDFLAGS" => "-Wl,-rpath=/opt/puppetlabs/puppet/lib"
   end
 
   if platform.is_solaris?
@@ -128,7 +141,7 @@ component "ruby" do |pkg, settings, platform|
     "#{platform[:make]} -j$(shell expr $(shell #{platform[:num_cores]}) + 1) install"
   end
 
-  if platform.is_solaris? || platform.is_aix?
+  if platform.is_solaris? || platform.is_aix? || platform.is_huaweios?
     # Here we replace the rbconfig from our ruby compiled with our toolchain
     # with an rbconfig from a ruby of the same version compiled with the system
     # gcc. Without this, the rbconfig will be looking for a gcc that won't
@@ -143,6 +156,7 @@ component "ruby" do |pkg, settings, platform|
     # This tells the ruby setup that it can use the default system gcc rather
     # than our own.
     target_dir = File.join(settings[:libdir], "ruby", "2.1.0", rbconfig_info[settings[:platform_triple]][:target_double])
+    sed = "sed"
     sed = "gsed" if platform.is_solaris?
     sed = "/opt/freeware/bin/sed" if platform.is_aix?
     pkg.install do

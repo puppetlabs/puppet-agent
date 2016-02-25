@@ -19,6 +19,7 @@ foss_platforms:
   - fedora-f21-x86_64
   - fedora-f22-i386
   - fedora-f22-x86_64
+  - huaweios-6-powerpc
   - osx-10.9-x86_64
   - osx-10.10-x86_64
   - osx-10.11-x86_64

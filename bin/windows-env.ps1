@@ -21,7 +21,7 @@ $sourceDir=$pwd
 
 $toolsDir="${sourceDir}\deps"
 
-$mingwVerNum = "4.8.3"
+$mingwVerNum = "5.2.0"
 $mingwVerChoco = $mingwVerNum
 $mingwThreads = "win32"
 if ($arch -eq 64) {
@@ -40,12 +40,6 @@ $mingwVer = "${mingwArch}_mingw-w64_${mingwVerNum}_${mingwThreads}_${mingwExcept
 $rubyPkg = "ruby-2.1.8-${rubyArch}-mingw32"
 
 $opensslPkg = "openssl-1.0.2f-${opensslArch}-windows"
-
-$boostVer = "boost_1_58_0"
-$boostPkg = "${boostVer}-${mingwVer}"
-
-$yamlCppVer = "yaml-cpp-0.5.1"
-$yamlPkg = "${yamlCppVer}-${mingwVer}"
 
 $curlVer = "curl-7.42.1"
 $curlPkg = "${curlVer}-${mingwVer}"
