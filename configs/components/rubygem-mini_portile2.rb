@@ -1,10 +1,9 @@
-component "rubygem-net-scp" do |pkg, settings, platform|
-  pkg.version "1.2.1"
-  pkg.md5sum "abeec1cab9696e02069e74bd3eac8a1b"
-  pkg.url "http://buildsources.delivery.puppetlabs.net/net-scp-#{pkg.get_version}.gem"
+component "rubygem-mini_portile2" do |pkg, settings, platform|
+  pkg.version "2.0.0"
+  pkg.md5sum "e608463ac8081fe600f7bb6ea46c3e64"
+  pkg.url "http://buildsources.delivery.puppetlabs.net/mini_portile2-#{pkg.get_version}.gem"
 
   pkg.build_requires "ruby"
-  pkg.build_requires "rubygem-net-ssh"
 
   # When cross-compiling, we can't use the rubygems we just built.
   # Instead we use the host gem installation and override GEM_HOME. Yay?
@@ -17,6 +16,6 @@ component "rubygem-net-scp" do |pkg, settings, platform|
   pkg.environment "RUBYLIB" => "#{settings[:ruby_vendordir]}:$$RUBYLIB"
 
   pkg.install do
-    ["#{settings[:gem_install]} net-scp-#{pkg.get_version}.gem"]
+    ["#{settings[:gem_install]} mini_portile2-#{pkg.get_version}.gem"]
   end
 end
