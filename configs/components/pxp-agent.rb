@@ -57,9 +57,13 @@ component "pxp-agent" do |pkg, settings, platform|
   when "systemd"
     pkg.install_service "ext/systemd/pxp-agent.service", "ext/redhat/pxp-agent.sysconfig"
     pkg.install_configfile "ext/systemd/pxp-agent.logrotate", "/etc/logrotate.d/pxp-agent"
+    if platform.is_deb?
+      pkg.add_postinstall_action ["install"], ["systemctl disable pxp-agent.service >/dev/null || :"]
+    end
   when "sysv"
     if platform.is_deb?
       pkg.install_service "ext/debian/pxp-agent.init", "ext/debian/pxp-agent.default"
+      pkg.add_postinstall_action ["install"], ["update-rc.d pxp-agent disable > /dev/null || :"]
     elsif platform.is_sles?
       pkg.install_service "ext/suse/pxp-agent.init", "ext/redhat/pxp-agent.sysconfig"
     elsif platform.is_rpm?
