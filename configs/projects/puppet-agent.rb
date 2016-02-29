@@ -195,7 +195,7 @@ project "puppet-agent" do |proj|
   # These utilites don't really work on unix
   if platform.is_linux?
     proj.component "virt-what"
-    proj.component "dmidecode"
+    proj.component "dmidecode" unless platform.is_huaweios?
     proj.component "shellpath"
   end
 
@@ -206,6 +206,14 @@ project "puppet-agent" do |proj|
   # Needed to avoid using readline on solaris and aix
   if platform.is_solaris? || platform.is_aix?
     proj.component "libedit"
+  end
+
+  # Components only applicable on HuaweiOS
+  if platform.is_huaweios?
+    proj.component "rubygem-net-scp"
+    proj.component "rubygem-mini_portile2"
+    proj.component "rubygem-nokogiri"
+    proj.component "rubygem-net-netconf"
   end
 
   # Components only applicable on OSX
