@@ -2,8 +2,8 @@
 <Wix xmlns='http://schemas.microsoft.com/wix/2006/wi' xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
   <Fragment>
     <DirectoryRef Id="TBD">  # The ID has to match the Ruby Bin directory
-      <Component Id='MCOService' Guid="7601FCEA-90B3-CC69-6A69-4087FBC7292D" Win64="$(var.Win64)">
-        <File Id="RubyWExe" KeyPath="yes" Source="stagedir\sys\ruby\bin\rubyw.exe" />
+      <Component Id='MCOService' Guid="7601FCEA-90B3-CC69-6A69-4087FBC7292D" Win64="<%= settings[:win64] %>">
+        <File Id="RubyWExe" KeyPath="yes" Source="SourceDir\ProgramFiles64Folder\PuppetLabs\Puppet\bin\rubyw.exe" />
         <!-- This service is installed with start set to demand because
         it won't be correctly configured to start right away. The
         puppet run that configures mcollective will allow it to start

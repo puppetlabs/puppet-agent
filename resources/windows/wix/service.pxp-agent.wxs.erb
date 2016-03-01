@@ -9,7 +9,7 @@
     <DirectoryRef Id="TBD">  # The ID has to match the nssm service directory
       <Component Id="service_nssm" Guid="52B1CD57-95A2-4CA4-AB8E-9DDD6DE8FC66">
         <CreateFolder />
-        <File Id="NSSM" KeyPath="yes" Source="stagedir\service\nssm.exe" />
+        <File Id="NSSM" KeyPath="yes" Source="SourceDir\ProgramFiles64Folder\PuppetLabs\Puppet\bin\nssm.exe" />
 
         <ServiceInstall Id="PXPServiceInstaller"
           Account="[PUPPET_AGENT_ACCOUNT_DOMAIN]\[PUPPET_AGENT_ACCOUNT_USER]"
