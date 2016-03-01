@@ -17,7 +17,11 @@ component "hiera" do |pkg, settings, platform|
 
   pkg.configfile File.join(settings[:puppet_codedir], 'hiera.yaml')
 
-  pkg.link "#{settings[:bindir]}/hiera", "#{settings[:link_bindir]}/hiera"
+  pkg.link "#{settings[:bindir]}/hiera", "#{settings[:link_bindir]}/hiera" unless platform.is_windows?
 
-  pkg.directory File.join(settings[:puppet_codedir], 'environments', 'production', 'hieradata')
+  if platform.is_windows?
+    pkg.directory File.join(settings[:puppet_codedir], 'hieradata')
+  else
+    pkg.directory File.join(settings[:puppet_codedir], 'environments', 'production', 'hieradata')
+  end
 end
