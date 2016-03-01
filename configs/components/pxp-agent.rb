@@ -103,7 +103,9 @@ component "pxp-agent" do |pkg, settings, platform|
   when "aix"
     pkg.install_service "resources/aix/pxp-agent.service", nil, "pxp-agent"
   when "windows"
-    puts "Service files not enabled on windows"
+    # Sample - service definition for rubyw.
+    # 2nd argumenent is the Wix service specific file to be included.
+    pkg.install_service "SourceDir\\ProgramFiles64Folder\\PuppetLabs\\Puppet\\bin\\nssm.exe"
   else
     fail "need to know where to put #{pkg.get_name} service files"
   end
