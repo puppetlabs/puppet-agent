@@ -53,10 +53,15 @@ hostname = host_json[vm_type]['hostname'] + '.' + host_json['domain']
 puts "Acquired #{vm_type} VM from pooler at #{hostname}"
 
 # uses above variables ssh_key and hostname
-def clone_and_rynsc_private_repo(fork, ref, hostname, ssh_key)
+def clone_and_rynsc_private_repo(fork, ref, hostname, ssh_key, component = nil)
   Dir.mktmpdir do |tmp_dir|
-    name = fork.split('/').last.split('.').first
-    result = Kernel.system("set -vx; cd #{tmp_dir} && git clone #{fork} && cd #{name} && git checkout #{ref} && git submodule update --init --recursive")
+    if component.nil?
+      name = fork.split('/').last.split('.').first
+    else
+      name = component
+    end
+
+    result = Kernel.system("set -vx; cd #{tmp_dir} && git clone #{fork} #{name} && cd #{name} && git checkout #{ref} && git submodule update --init --recursive")
     fail "It seems there were some issues cloning the repo: #{fork}\n#{result}" unless $?.success?
 
     # rsync to windows requires protocol=29 and ssh command w/o -tt option to work.
@@ -111,14 +116,14 @@ puts "Build-Windows.rb... facter build Completed!!"
 puts "Build-Windows.rb... building cpp-pcp-client"
 Kernel.system("#{scp_command} #{File.join(SCRIPT_ROOT, 'build-cpp-pcp-client.ps1')} Administrator@#{hostname}:/home/Administrator/")
 fail "Copying build-cpp-pcp-client.ps1 to #{hostname} failed" unless $?.success?
-clone_and_rynsc_private_repo(CPPPCPCLIENT['url'], CPPPCPCLIENT['ref'], hostname, ssh_key)
+clone_and_rynsc_private_repo(CPPPCPCLIENT['url'], CPPPCPCLIENT['ref'], hostname, ssh_key, 'cpp-pcp-client')
 result = Kernel.system("#{ssh_command} \"powershell.exe -NoProfile -ExecutionPolicy Unrestricted -InputFormat None -Command ./build-cpp-pcp-client.ps1 -arch #{script_arch}\"")
 fail "It looks like the cpp-pcp-client build script failed for some reason. I would suggest ssh'ing into the box and poking around" unless result
 
 puts "Build-Windows.rb... building pxp-agent"
 Kernel.system("#{scp_command} #{File.join(SCRIPT_ROOT, 'build-pxp-agent.ps1')} Administrator@#{hostname}:/home/Administrator/")
 fail "Copying build-pxp-agent.ps1 to #{hostname} failed" unless $?.success?
-clone_and_rynsc_private_repo(PXPAGENT['url'], PXPAGENT['ref'], hostname, ssh_key)
+clone_and_rynsc_private_repo(PXPAGENT['url'], PXPAGENT['ref'], hostname, ssh_key, 'pxp-agent')
 result = Kernel.system("#{ssh_command} \"powershell.exe -NoProfile -ExecutionPolicy Unrestricted -InputFormat None -Command ./build-pxp-agent.ps1 -arch #{script_arch}\"")
 fail "It looks like the pxp-agent build script failed for some reason. I would suggest ssh'ing into the box and poking around" unless result
 
