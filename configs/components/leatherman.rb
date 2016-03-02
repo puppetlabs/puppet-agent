@@ -39,6 +39,9 @@ component "leatherman" do |pkg, settings, platform|
   if platform.is_osx?
     toolchain = ""
     cmake = "/usr/local/bin/cmake"
+
+    # When linking with static Boost, we need to include libiconv for Boost.Locale
+    special_flags = "-DCMAKE_SHARED_LINKER_FLAGS='-liconv'"
   elsif platform.is_huaweios?
     ruby = "#{settings[:host_ruby]} -r#{settings[:datadir]}/doc/rbconfig.rb"
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/#{settings[:platform_triple]}/pl-build-toolchain.cmake"
