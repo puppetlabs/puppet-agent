@@ -83,24 +83,16 @@ To get started creating nuget packages, see
 
 Branches in puppet-agent
 ---
-There are two types of branches in puppet-agent
-* release branches (e.g. aardwolf)
-* tracking branches (e.g. master and stable)
 
-The fundamental difference between the two is their relation with CI pipelines, especially wrt the component configurations:
-* on a release branch:
-  * all components reference component tags *never* SHAs
-* on a tracking branch:
+Tracking branch (master + stable):
   * some components may reference tags if they’re slow moving (ruby, openssl)
   * some components reference SHAs promoted by a CI pipeline (generally puppet-agent#master pipelines track components' master branches, and likewise for stable)
 
 Guidelines on Merging Between Branches
 * stable should be merged to master regularly (e.g. per commit), as is done for component repos; no PR needed
 * master should be merged to stable as-needed; typically this is done when a component merges its master to stable, and there are matching changes needed in puppet-agent
-* stable should be merged to aardwolf as-needed; typically this is done when a component is tagged and ready for release, and there are matching changes needed in puppet-agent
-* aardwolf should be merged to stable after each tag; this ensures that a 'git describe' on stable always refers to a "later" release than what came off aardwolf; this merge can be accomplished with 'git merge aardwolf -s ours' and should not change the contents of any files (because no content changes should ever originate on aardwolf)
 
-Generally, no PR is needed for routine merges from stable to master or aardwolf, but a PR is advised for other merges. Use your judgment of course, and put up a PR if you want review.
+Generally, no PR is needed for routine merges from stable to master, but a PR is advised for other merges. Use your judgment of course, and put up a PR if you want review.
 
 Note that for all merges from master or stable, the merge should pick up:
 * changes outside of config/components
@@ -109,7 +101,7 @@ Note that for all merges from master or stable, the merge should pick up:
 But never:
 * changes that bumped to a SHA inside config/components
 
-Here's a sample snippet used for a stable -> aardwolf merge:
+Here's a sample snippet used for a stable -> master merge:
 
 ```
 git merge --no-commit --no-ff stable
