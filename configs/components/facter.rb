@@ -24,10 +24,14 @@ component "facter" do |pkg, settings, platform|
   end
 
   # Running facter (as part of testing) expects augtool are available
-  pkg.build_requires 'augeas'
+  pkg.build_requires 'augeas' unless platform.is_windows?
   pkg.build_requires "openssl"
 
-  pkg.environment "PATH" => "#{settings[:bindir]}:$$PATH"
+  if platform.is_windows?
+    pkg.environment "PATH" => "$$(cygpath -u #{settings[:gcc_bindir]}):$$(cygpath -u #{settings[:bindir]}):/cygdrive/c/Windows/system32:/cygdrive/c/Windows:/cygdrive/c/Windows/System32/WindowsPowerShell/v1.0"
+  else
+    pkg.environment "PATH" => "#{settings[:bindir]}:$$PATH"
+  end
 
   # OSX uses clang and system openssl.  cmake comes from brew.
   if platform.is_osx?
@@ -50,6 +54,12 @@ component "facter" do |pkg, settings, platform|
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-cmake-3.2.3-2.aix#{platform.os_version}.ppc.rpm"
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-boost-1.58.0-1.aix#{platform.os_version}.ppc.rpm"
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-yaml-cpp-0.5.1-1.aix#{platform.os_version}.ppc.rpm"
+    pkg.build_requires "runtime"
+  elsif platform.is_windows?
+    pkg.build_requires "cmake"
+    pkg.build_requires "pl-toolchain-#{platform.architecture}"
+    pkg.build_requires "pl-boost-#{platform.architecture}"
+    pkg.build_requires "pl-yaml-cpp-#{platform.architecture}"
     pkg.build_requires "runtime"
   else
     pkg.build_requires "pl-gcc"
@@ -115,12 +125,14 @@ component "facter" do |pkg, settings, platform|
 
   # curl is only used for compute clusters (GCE, EC2); so rpm, deb, and Windows
   skip_curl = 'ON'
-  if platform.is_linux? && !platform.is_huaweios?
+  if (platform.is_linux? && !platform.is_huaweios?) || platform.is_windows?
     pkg.build_requires "curl"
     skip_curl = 'OFF'
   end
 
   ruby = "#{settings[:host_ruby]} -rrbconfig"
+
+  make = platform[:make]
 
   # cmake on OSX is provided by brew
   # a toolchain is not currently required for OSX since we're building with clang.
@@ -141,6 +153,12 @@ component "facter" do |pkg, settings, platform|
 
     # FACT-1156: If we build with -O3, solaris segfaults due to something in std::vector
     special_flags = "-DCMAKE_CXX_FLAGS_RELEASE='-O2 -DNDEBUG'"
+  elsif platform.is_windows?
+    make = "#{settings[:gcc_bindir]}/mingw32-make"
+    pkg.environment "CYGWIN" => settings[:cygwin]
+
+    cmake = "C:/ProgramData/chocolatey/bin/cmake.exe -G \"MinGW Makefiles\""
+    toolchain = "-DCMAKE_TOOLCHAIN_FILE=#{settings[:tools_root]}/pl-build-toolchain.cmake"
   else
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/pl-build-toolchain.cmake"
     cmake = "/opt/pl-build-tools/bin/cmake"
@@ -170,24 +188,27 @@ component "facter" do |pkg, settings, platform|
   if platform.architecture == 'sparc' || platform.is_aix? || platform.is_huaweios?
     test = ":"
   else
-    test = "#{platform[:make]} test ARGS=-V"
+    test = "#{make} test ARGS=-V"
   end
 
   pkg.build do
     # Until a `check` target exists, run tests are part of the build.
     [
-      "#{platform[:make]} -j$(shell expr $(shell #{platform[:num_cores]}) + 1)",
+      "#{make} -j$(shell expr $(shell #{platform[:num_cores]}) + 1)",
       test
     ]
   end
 
   pkg.install do
-    ["#{platform[:make]} -j$(shell expr $(shell #{platform[:num_cores]}) + 1) install"]
+    ["#{make} -j$(shell expr $(shell #{platform[:num_cores]}) + 1) install"]
   end
 
   pkg.install_file ".gemspec", "#{settings[:gem_home]}/specifications/#{pkg.get_name}.gemspec"
 
-  pkg.link "#{settings[:bindir]}/facter", "#{settings[:link_bindir]}/facter"
-  pkg.directory File.join('/opt/puppetlabs', 'facter')
-  pkg.directory File.join('/opt/puppetlabs', 'facter', 'facts.d')
+  pkg.link "#{settings[:bindir]}/facter", "#{settings[:link_bindir]}/facter" unless platform.is_windows?
+  if platform.is_windows?
+    pkg.directory File.join(settings[:sysconfdir], 'facter', 'facts.d')
+  else
+    pkg.directory File.join(settings[:install_root], 'facter', 'facts.d')
+  end
 end

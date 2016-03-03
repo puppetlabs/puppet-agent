@@ -34,6 +34,15 @@ component "openssl" do |pkg, settings, platform|
     pkg.build_requires 'runtime'
   elsif platform.is_osx?
     pkg.build_requires 'makedepend'
+  elsif platform.is_windows?
+    pkg.apply_patch 'resources/patches/openssl/openssl-1.0.0l-use-gcc-instead-of-makedepend.patch'
+    # This patch removes the option `-DOPENSSL_USE_APPLINK` from the mingw openssl congifure target
+    # This brings mingw more in line with what is happening with mingw64. All applink does it makes
+    # it possible to use the .dll compiled with one compiler with an application compiled with a
+    # different compiler. Given our openssl should only be interacting with things that we build,
+    # we can ensure everything is build with the same compiler.
+    pkg.apply_patch 'resources/patches/openssl/openssl-mingw-do-not-build-applink.patch'
+    pkg.build_requires "runtime"
   end
 
   if platform.is_osx?
@@ -65,6 +74,12 @@ component "openssl" do |pkg, settings, platform|
     ldflags = ''
     cflags = "$${CFLAGS} -static-libgcc"
     pkg.environment "CC" => "/opt/pl-build-tools/bin/gcc"
+  elsif platform.is_windows?
+    target = platform.architecture == "x64" ? "mingw64" : "mingw"
+    pkg.environment "PATH" => "$$(cygpath -u #{settings[:gcc_bindir]}):$$PATH"
+    pkg.environment "CYGWIN" => settings[:cygwin]
+    cflags = settings[:cflags]
+    ldflags = settings[:ldflags]
   else
     pkg.environment "PATH" => "/opt/pl-build-tools/bin:$$PATH:/usr/local/bin"
     if platform.architecture =~ /86$/
@@ -124,8 +139,10 @@ component "openssl" do |pkg, settings, platform|
     end
   end
 
+  install_prefix = "INSTALL_PREFIX=/" unless platform.is_windows?
+
   pkg.install do
-    ["#{platform[:make]} INSTALL_PREFIX=/ install"]
+    ["#{platform[:make]} #{install_prefix} install"]
   end
 
   pkg.install_file "LICENSE", "#{settings[:prefix]}/share/doc/openssl-#{pkg.get_version}/LICENSE"

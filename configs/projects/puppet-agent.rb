@@ -1,34 +1,75 @@
 project "puppet-agent" do |proj|
-  # Project level settings our components will care about
-  proj.setting(:install_root, "/opt/puppetlabs")
-  proj.setting(:prefix, File.join(proj.install_root, "puppet"))
+  platform = proj.get_platform
 
-  if platform.is_eos?
-    proj.setting(:sysconfdir, "/persist/sys/etc/puppetlabs")
-    proj.setting(:link_sysconfdir, "/etc/puppetlabs")
-  elsif platform.is_osx?
-    proj.setting(:sysconfdir, "/private/etc/puppetlabs")
+  # Project level settings our components will care about
+  if platform.is_windows?
+    proj.setting(:company_name, "Puppet Labs")
+    proj.setting(:company_id, "PuppetLabs")
+    proj.setting(:common_product_id, "PuppetInstaller")
+    proj.setting(:product_id, "Puppet")
+    proj.setting(:upgrade_code, "2AD3D11C-61B3-4710-B106-B4FDEC5FA358")
+    if platform.architecture == "x64"
+      proj.setting(:product_name, "Puppet Agent (64-bit)")
+      proj.setting(:win64, "yes")
+      proj.setting(:base_dir, "ProgramFiles64Folder")
+      proj.setting(:RememberedInstallDirRegKey, "RememberedInstallDir64")
+    else
+      proj.setting(:product_name, "Puppet Agent")
+      proj.setting(:win64, "no")
+      proj.setting(:base_dir, "ProgramFilesFolder")
+      proj.setting(:RememberedInstallDirRegKey, "RememberedInstallDir")
+    end
+    proj.setting(:links, {
+        :HelpLink => "http://links.puppetlabs.com/customer-support-foss",
+        :CommunityLink => "http://links.puppetlabs.com/windows-installer-starting-out",
+        :ForgeLink => "http://links.puppetlabs.com/forge-windows",
+        :NextStepLink => "http://links.puppetlabs.com/windows-installer-next-steps-foss",
+        :ManualLink => "http://links.puppetlabs.com/windows-manual-foss",
+      })
+    proj.setting(:UI_exitdialogtext, "Manage your first resources on this node, explore the Puppet community and get support using the shortcuts in the Documentation folder of your Start Menu.")
+
+    # Directory IDs
+    proj.setting(:bindir_id, "bindir")
+
+    # We build for windows not in the final destination, but in the paths that correspond
+    # to the directory ids expected by WIX. This will allow for a portable installation (ideally).
+    proj.setting(:install_root, File.join("C:", proj.base_dir, proj.company_id, proj.product_id))
+    proj.setting(:sysconfdir, File.join("C:", "CommonAppDataFolder", proj.company_id))
+    proj.setting(:tmpfilesdir, "C:/Windows/Temp")
   else
-    proj.setting(:sysconfdir, "/etc/puppetlabs")
+    proj.setting(:install_root, "/opt/puppetlabs")
+    if platform.is_eos?
+      proj.setting(:sysconfdir, "/persist/sys/etc/puppetlabs")
+      proj.setting(:link_sysconfdir, "/etc/puppetlabs")
+    elsif platform.is_osx?
+      proj.setting(:sysconfdir, "/private/etc/puppetlabs")
+    else
+      proj.setting(:sysconfdir, "/etc/puppetlabs")
+    end
+    proj.setting(:logdir, "/var/log/puppetlabs")
+    proj.setting(:piddir, "/var/run/puppetlabs")
+    proj.setting(:tmpfilesdir, "/usr/lib/tmpfiles.d")
   end
 
+  proj.setting(:prefix, File.join(proj.install_root, "puppet"))
   proj.setting(:puppet_configdir, File.join(proj.sysconfdir, 'puppet'))
   proj.setting(:puppet_codedir, File.join(proj.sysconfdir, 'code'))
-  proj.setting(:logdir, "/var/log/puppetlabs")
-  proj.setting(:piddir, "/var/run/puppetlabs")
   proj.setting(:bindir, File.join(proj.prefix, "bin"))
-  proj.setting(:link_bindir, "/opt/puppetlabs/bin")
+  proj.setting(:link_bindir, File.join(proj.install_root, "bin"))
   proj.setting(:libdir, File.join(proj.prefix, "lib"))
   proj.setting(:includedir, File.join(proj.prefix, "include"))
   proj.setting(:datadir, File.join(proj.prefix, "share"))
   proj.setting(:mandir, File.join(proj.datadir, "man"))
-  proj.setting(:gem_home, File.join(proj.libdir, "ruby/gems/2.1.0"))
-  proj.setting(:tmpfilesdir, "/usr/lib/tmpfiles.d")
+  proj.setting(:gem_home, File.join(proj.libdir, "ruby", "gems", "2.1.0"))
   proj.setting(:ruby_vendordir, File.join(proj.libdir, "ruby", "vendor_ruby"))
-  proj.setting(:host_ruby, File.join(proj.bindir, "ruby"))
-  proj.setting(:host_gem, File.join(proj.bindir, "gem"))
 
-  platform = proj.get_platform
+  if platform.is_windows?
+    proj.setting(:host_ruby, File.join(proj.bindir, "ruby.exe"))
+    proj.setting(:host_gem, File.join(proj.bindir, "gem.bat"))
+  else
+    proj.setting(:host_ruby, File.join(proj.bindir, "ruby"))
+    proj.setting(:host_gem, File.join(proj.bindir, "gem"))
+  end
 
   # HuaweiOS is a cross-compiled platform
   if platform.is_huaweios?
@@ -61,9 +102,16 @@ project "puppet-agent" do |proj|
         proj.setting(:host_gem, "/opt/pl-build-tools/bin/gem")
       end
     end
+  elsif platform.is_windows?
+    # For windows, we need to ensure we are building for mingw not cygwin
+    platform_triple = platform.platform_triple
+    host = "--host #{platform_triple}"
   end
 
   proj.setting(:gem_install, "#{proj.host_gem} install --no-rdoc --no-ri --local ")
+  if platform.is_windows?
+    proj.setting(:gem_install, "#{proj.gem_install} --bindir #{proj.bindir} ")
+  end
 
   # For AIX, we use the triple to install a better rbconfig
   if platform.is_aix?
@@ -93,8 +141,18 @@ project "puppet-agent" do |proj|
   end
 
   # Platform specific
-  proj.setting(:cflags, "-I#{proj.includedir} -I/opt/pl-build-tools/include")
-  proj.setting(:ldflags, "-L#{proj.libdir} -L/opt/pl-build-tools/lib -Wl,-rpath=#{proj.libdir}")
+  if platform.is_windows?
+    arch = platform.architecture == "x64" ? "64" : "32"
+    proj.setting(:gcc_root, "C:/tools/mingw#{arch}")
+    proj.setting(:gcc_bindir, "#{proj.gcc_root}/bin")
+    proj.setting(:tools_root, "C:/tools/pl-build-tools")
+    proj.setting(:cflags, "-I#{proj.tools_root}/include -I#{proj.gcc_root}/include -I#{proj.includedir}")
+    proj.setting(:ldflags, "-L#{proj.tools_root}/lib -L#{proj.gcc_root}/lib -L#{proj.libdir}")
+    proj.setting(:cygwin, "nodosfilewarning winsymlinks:native")
+  else
+    proj.setting(:cflags, "-I#{proj.includedir} -I/opt/pl-build-tools/include")
+    proj.setting(:ldflags, "-L#{proj.libdir} -L/opt/pl-build-tools/lib -Wl,-rpath=#{proj.libdir}")
+  end
   if platform.is_aix?
     proj.setting(:ldflags, "-Wl,-brtl -L#{proj.libdir} -L/opt/pl-build-tools/lib")
   end
@@ -109,20 +167,30 @@ project "puppet-agent" do |proj|
   proj.component "pxp-agent"
 
   # Then the dependencies
-  proj.component "augeas"
+  proj.component "augeas" unless platform.is_windows?
   # Curl is only needed for compute clusters (GCE, EC2); so rpm, deb, and Windows
-  proj.component "curl" if platform.is_linux? && !platform.is_huaweios?
+  proj.component "curl" if (platform.is_linux? && !platform.is_huaweios?) || platform.is_windows?
   proj.component "ruby"
+  proj.component "nssm" if platform.is_windows?
   proj.component "ruby-stomp"
   proj.component "rubygem-deep-merge"
   proj.component "rubygem-net-ssh"
   proj.component "rubygem-hocon"
-  proj.component "ruby-shadow" unless platform.is_aix?
-  proj.component "ruby-augeas"
+  if platform.is_windows?
+    proj.component "rubygem-ffi"
+    proj.component "rubygem-minitar"
+    proj.component "rubygem-win32-dir"
+    proj.component "rubygem-win32-eventlog"
+    proj.component "rubygem-win32-process"
+    proj.component "rubygem-win32-security"
+    proj.component "rubygem-win32-service"
+  end
+  proj.component "ruby-shadow" unless platform.is_aix? || platform.is_windows?
+  proj.component "ruby-augeas" unless platform.is_windows?
   proj.component "openssl"
   proj.component "puppet-ca-bundle"
-  proj.component "libxml2"
-  proj.component "libxslt"
+  proj.component "libxml2" unless platform.is_windows?
+  proj.component "libxslt" unless platform.is_windows?
 
   # These utilites don't really work on unix
   if platform.is_linux?
@@ -131,7 +199,7 @@ project "puppet-agent" do |proj|
     proj.component "shellpath"
   end
 
-  if platform.is_solaris? || platform.name =~ /^huaweios|^el-4/ || platform.is_aix?
+  if platform.is_solaris? || platform.name =~ /^huaweios|^el-4/ || platform.is_aix? || platform.is_windows?
     proj.component "runtime"
   end
 
@@ -153,7 +221,8 @@ project "puppet-agent" do |proj|
   proj.directory proj.install_root
   proj.directory proj.prefix
   proj.directory proj.sysconfdir
-  proj.directory proj.logdir
-  proj.directory proj.piddir
   proj.directory proj.link_bindir
+  proj.directory proj.logdir unless platform.is_windows?
+  proj.directory proj.piddir unless platform.is_windows?
+
 end

@@ -3,6 +3,11 @@ component "ruby" do |pkg, settings, platform|
   pkg.md5sum "091b62f0a9796a3c55de2a228a0e6ef3"
   pkg.url "http://buildsources.delivery.puppetlabs.net/ruby-#{pkg.get_version}.tar.gz"
 
+  if platform.is_windows?
+    pkg.add_source "http://buildsources.delivery.puppetlabs.net/windows/elevate/elevate.exe", sum: "bd81807a5c13da32dd2a7157f66fa55d"
+    pkg.add_source "file://resources/files/windows/elevate.exe.config", sum: "a5aecf3f7335fa1250a0f691d754d561"
+  end
+
   pkg.replaces 'pe-ruby'
   pkg.replaces 'pe-ruby-mysql'
   pkg.replaces 'pe-rubygems'
@@ -75,6 +80,13 @@ component "ruby" do |pkg, settings, platform|
     special_flags = "--build=#{settings[:platform_triple]}"
   end
 
+  if platform.is_windows?
+    pkg.apply_patch "#{base}/windows_ruby_2.1_update_to_rubygems_2.4.5.patch"
+    pkg.apply_patch "#{base}/windows_fixup_generated_batch_files.patch"
+    pkg.apply_patch "#{base}/windows_remove_DL_deprecated_warning.patch"
+    pkg.apply_patch "#{base}/windows_ruby_2.1_update_to_rubygems_2.4.5.1.patch"
+  end
+
   # Cross-compiles require a hand-built rbconfig from the target system
   if platform.is_solaris? || platform.is_aix? || platform.is_huaweios?
     pkg.add_source "file://resources/files/rbconfig-#{settings[:platform_triple]}.rb", sum: rbconfig_info[settings[:platform_triple]][:sum]
@@ -88,6 +100,8 @@ component "ruby" do |pkg, settings, platform|
     pkg.build_requires "http://osmirror.delivery.puppetlabs.net/AIX_MIRROR/zlib-devel-1.2.3-4.aix5.2.ppc.rpm"
   elsif platform.is_rpm?
     pkg.build_requires "zlib-devel"
+  elsif platform.is_windows?
+    pkg.build_requires "pl-zlib-#{platform.architecture}"
   end
 
   if platform.is_huaweios?
@@ -117,6 +131,19 @@ component "ruby" do |pkg, settings, platform|
     pkg.environment "LDFLAGS" => "-Wl,-rpath=/opt/puppetlabs/puppet/lib"
   end
 
+  if platform.is_windows?
+    pkg.build_requires "pl-gdbm-#{platform.architecture}"
+    pkg.build_requires "pl-iconv-#{platform.architecture}"
+    pkg.build_requires "pl-libffi-#{platform.architecture}"
+    pkg.build_requires "pl-pdcurses-#{platform.architecture}"
+
+    pkg.environment "PATH" => "$$(cygpath -u #{settings[:gcc_bindir]}):$$(cygpath -u #{settings[:tools_root]}/bin):$$(cygpath -u #{settings[:bindir]}):$$PATH"
+    pkg.environment "CYGWIN" => settings[:cygwin]
+
+    special_flags = "CPPFLAGS='-DFD_SETSIZE=2048' debugflags=-g"
+  end
+
+
   # Here we set --enable-bundled-libyaml to ensure that the libyaml included in
   # ruby is used, even if the build system has a copy of libyaml available
   pkg.configure do
@@ -141,6 +168,10 @@ component "ruby" do |pkg, settings, platform|
     "#{platform[:make]} -j$(shell expr $(shell #{platform[:num_cores]}) + 1) install"
   end
 
+  if platform.is_windows?
+    pkg.install_file "../elevate.exe", "#{settings[:bindir]}/elevate.exe"
+    pkg.install_file "../elevate.exe.config", "#{settings[:bindir]}/elevate.exe.config"
+  end
   if platform.is_solaris? || platform.is_aix? || platform.is_huaweios?
     # Here we replace the rbconfig from our ruby compiled with our toolchain
     # with an rbconfig from a ruby of the same version compiled with the system
