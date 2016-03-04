@@ -28,6 +28,10 @@ component "pxp-agent" do |pkg, settings, platform|
     pkg.build_requires "pl-gcc"
     pkg.build_requires "pl-cmake"
     pkg.build_requires "pl-boost"
+
+    if platform.is_cisco_wrlinux?
+      special_flags = "-DLEATHERMAN_USE_LOCALES=OFF"
+    end
   end
 
   pkg.configure do
