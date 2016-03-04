@@ -20,7 +20,7 @@
         <Control Id="Title" Type="Text" X="15" Y="15" Width="200" Height="15" Transparent="yes" NoPrefix="yes" Text="!(loc.LicenseAgreementDlgTitle)" />
         <Control Id="LicenseAcceptedCheckBox" Type="CheckBox" X="20" Y="207" Width="330" Height="18" CheckBoxValue="1" Property="LicenseAccepted" Text="!(loc.LicenseAgreementDlgLicenseAcceptedCheckBox)" />
         <Control Id="Print" Type="PushButton" X="112" Y="243" Width="56" Height="17" Text="!(loc.WixUIPrint)">
-            <Publish Event="DoAction" Value="WixUIPrintEula">1</Publish>
+          <Publish Event="DoAction" Value="WixUIPrintEula">1</Publish>
         </Control>
         <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="!(loc.WixUIBack)" />
         <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="!(loc.WixUINext)">
@@ -32,7 +32,7 @@
           <Publish Event="SpawnDialog" Value="CancelDlg">1</Publish>
         </Control>
         <Control Id="LicenseText" Type="ScrollableText" X="20" Y="60" Width="330" Height="140" Sunken="yes" TabSkip="no">
-          <Text SourceFile="!(wix.WixUILicenseRtf=$(var.licenseRtf))" />
+          <Text SourceFile="!(wix.WixUILicenseRtf=<%= settings[:LicenseRTF] %>)" />
         </Control>
       </Dialog>
     </UI>
