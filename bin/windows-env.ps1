@@ -44,7 +44,7 @@ $opensslPkg = "openssl-1.0.2f-${opensslArch}-windows"
 $curlVer = "curl-7.42.1"
 $curlPkg = "${curlVer}-${mingwVer}"
 
-$Wix35_VERSION = '3.5.2519.20130612'
+$WIX_VERSION = '3.10.2'
 
 Function Set-Path {
   $path = [Environment]::GetFolderPath('ProgramFiles') + "\Git\cmd"

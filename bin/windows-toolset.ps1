@@ -46,7 +46,7 @@ Install-Choco 7zip.commandline 9.20.0.20150210 $nugetTempFeed
 
 Install-Choco cmake 3.2.2 $nugetTempFeed
 Install-Choco git.install 2.6.2.20151028 $nugetTempFeed
-Install-Choco Wix35 $Wix35_VERSION $nugetTempFeed
+Install-Choco Wix310 $WIX_VERSION $nugetTempFeed
 
 # For MinGW, we expect specific project defaults
 # - win32 threads, as the libpthread library is buggy
