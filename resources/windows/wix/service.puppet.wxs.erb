@@ -2,17 +2,11 @@
 <Wix xmlns='http://schemas.microsoft.com/wix/2006/wi' xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
 
   <Fragment>
-    <ComponentGroup Id="Service_PUPPET">
-      <ComponentRef Id="PuppetServiceAutomatic" />
-      <ComponentRef Id="PuppetServiceManual" />
-      <ComponentRef Id="PuppetServiceDisabled" />
-    </ComponentGroup>
 
-    <DirectoryRef Id="PUPPETBINDIR">
-      <!--Seriously?... http://stackoverflow.com/questions/9419411/wix-setting-service-startup-type-using-a-property-property-not-recognized -->
-      <!-- Yep, Seriously - http://sourceforge.net/mailarchive/forum.php?thread_name=CANJN1a6gDE2tUUnP4SE05m8Ojh2q0Y8LrWOxbrF89YyJJCHn1A%40mail.gmail.com&forum_name=wix-users -->
+    <ComponentGroup Id="<%= get_service("puppet").component_group_id %>">
       <Component Id='PuppetServiceAutomatic'
                  Guid="639ECD7F-6186-43D5-9E1A-FC0278DBEE15"
+                 Directory="<%= get_service("puppet").bindir_id %>"
                  Win64="<%= settings[:win64] %>">
         <Condition>
           <![CDATA[ (PUPPET_AGENT_STARTUP_MODE ~<> "manual") AND (PUPPET_AGENT_STARTUP_MODE ~<> "disabled") ]]>
@@ -43,6 +37,7 @@
 
       <Component Id='PuppetServiceManual'
                  Guid="752A5A25-9619-4EBA-AA8B-12D8C8688236"
+                 Directory="<%= get_service("puppet").bindir_id %>"
                  Win64="<%= settings[:win64] %>">
         <Condition>
           <![CDATA[PUPPET_AGENT_STARTUP_MODE ~= "manual"]]>
@@ -72,6 +67,7 @@
 
       <Component Id='PuppetServiceDisabled'
                  Guid="4D3A8CAF-C675-46AC-B3AD-75F00581D0DB"
+                 Directory="<%= get_service("puppet").bindir_id %>"
                  Win64="<%= settings[:win64] %>">
         <Condition>
           <![CDATA[PUPPET_AGENT_STARTUP_MODE ~= "disabled"]]>
@@ -97,6 +93,6 @@
                         Remove="uninstall"
                         Name="<%= settings[:puppet_service_name] %>" Wait="yes" />
       </Component>
-    </DirectoryRef>
+    </ComponentGroup>
   </Fragment>
 </Wix>
