@@ -41,12 +41,6 @@ $rubyPkg = "ruby-2.1.8-${rubyArch}-mingw32"
 
 $opensslPkg = "openssl-1.0.2g-${opensslArch}-windows"
 
-$boostVer = "boost_1_58_0"
-$boostPkg = "${boostVer}-${mingwVer}"
-
-$yamlCppVer = "yaml-cpp-0.5.1"
-$yamlPkg = "${yamlCppVer}-${mingwVer}"
-
 $curlVer = "curl-7.42.1"
 $curlPkg = "${curlVer}-${mingwVer}"
 
