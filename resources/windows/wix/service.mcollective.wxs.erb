@@ -1,12 +1,12 @@
 <?xml version='1.0' encoding='windows-1252'?>
 <Wix xmlns='http://schemas.microsoft.com/wix/2006/wi' xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
   <Fragment>
-    <ComponentGroup Id="Service_MARIONETTECOLLECTIVE">
-      <ComponentRef Id="Service_MARIONETTECOLLECTIVE_svc" />
+  <ComponentGroup Id="Service_MCO">
+      <ComponentRef Id="Service_MCO_svc" />
     </ComponentGroup>
 
-    <DirectoryRef Id="MARIONETTECOLLECTIVEBINDIR">
-      <Component Id='Service_MARIONETTECOLLECTIVE_svc'
+    <DirectoryRef Id="MCOBINDIR">
+      <Component Id='Service_MCO_svc'
                  Guid="7601FCEA-90B3-CC69-6A69-4087FBC7292D"
                  Win64="<%= settings[:win64] %>">
         <File Id="RubyWExe"
