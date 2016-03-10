@@ -2,12 +2,10 @@
 <Wix xmlns='http://schemas.microsoft.com/wix/2006/wi' xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
 
   <Fragment>
-    <ComponentGroup Id="Service_PXPAGENT">
-      <ComponentRef Id="Service_PXPAGENT_svc" />
-    </ComponentGroup>
-
-    <DirectoryRef Id="PXPAGENTBINDIR">
-      <Component Id="Service_PXPAGENT_svc" Guid="52B1CD57-95A2-4CA4-AB8E-9DDD6DE8FC66">
+    <ComponentGroup Id="<%= get_service("pxp-agent").component_group_id %>">
+      <Component Id="PxpagentService"
+                 Guid="52B1CD57-95A2-4CA4-AB8E-9DDD6DE8FC66"
+                 Directory="<%= get_service("pxp-agent").bindir_id %>" >
         <CreateFolder />
         <File Id="NSSM"
               KeyPath="yes"
@@ -50,12 +48,11 @@
             <RegistryValue Name="2" Value="Exit" Type="string" />
           </RegistryKey>
         </RegistryKey>
-
         <ServiceControl Id="PXPStartService"
                         Stop="both"
                         Remove="uninstall"
                         Name="pxp-agent" Wait="yes" />
       </Component>
-    </DirectoryRef>
+    </ComponentGroup>
   </Fragment>
 </Wix>
