@@ -13,6 +13,10 @@ component 'libedit' do |pkg, settings, platform|
     pkg.environment "LDFLAGS" => settings[:ldflags]
   end
 
+  if platform.is_osx?
+    pkg.environment "CFLAGS" => settings[:cflags]
+  end
+
   pkg.configure do
     "bash configure --enable-shared --prefix=#{settings[:prefix]} #{settings[:host]}"
   end

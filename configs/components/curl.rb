@@ -14,7 +14,8 @@ component 'curl' do |pkg, settings, platform|
   end
 
   pkg.configure do
-    ["LDFLAGS='#{settings[:ldflags]}' \
+    ["CFLAGS='#{settings[:cflags]}' \
+      LDFLAGS='#{settings[:ldflags]}' \
      ./configure --prefix=#{settings[:prefix]} \
         --with-ssl=#{settings[:prefix]} \
         --enable-threaded-resolver \
