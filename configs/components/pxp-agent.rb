@@ -15,6 +15,7 @@ component "pxp-agent" do |pkg, settings, platform|
   elsif platform.is_osx?
     cmake = "/usr/local/bin/cmake"
     toolchain = ""
+    special_flags = "-DCMAKE_CXX_FLAGS='#{settings[:cflags]}'"
   elsif platform.is_huaweios?
     cmake = "/opt/pl-build-tools/bin/cmake"
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/#{settings[:platform_triple]}/pl-build-toolchain.cmake"
