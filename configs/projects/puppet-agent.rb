@@ -97,7 +97,7 @@ project "puppet-agent" do |proj|
       # For cross-compiling, we have a standalone ruby
       if platform.os_version == "10"
         proj.setting(:host_ruby, "/opt/csw/bin/ruby")
-        proj.setting(:host_gem, "/opt/csw/bin/gem19")
+        proj.setting(:host_gem, "/opt/csw/bin/gem2.0")
       else
         proj.setting(:host_ruby, "/opt/pl-build-tools/bin/ruby")
         proj.setting(:host_gem, "/opt/pl-build-tools/bin/gem")
