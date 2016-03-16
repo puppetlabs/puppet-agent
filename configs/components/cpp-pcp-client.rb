@@ -23,6 +23,7 @@ component "cpp-pcp-client" do |pkg, settings, platform|
     platform_flags = '-DCMAKE_SHARED_LINKER_FLAGS="-Wl,-bbigtoc"'
   elsif platform.is_osx?
     cmake = "/usr/local/bin/cmake"
+    platform_flags = "-DCMAKE_CXX_FLAGS='#{settings[:cflags]}'"
     toolchain = ""
   elsif platform.is_huaweios?
     cmake = "/opt/pl-build-tools/bin/cmake"
