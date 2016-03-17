@@ -80,10 +80,6 @@ project "puppet-agent" do |proj|
     # Use a standalone ruby for cross-compilation
     proj.setting(:host_ruby, "/opt/pl-build-tools/bin/ruby")
     proj.setting(:host_gem, "/opt/pl-build-tools/bin/gem")
-
-    # This will be removed once vanagon fixes are in to specify the
-    # debian target arch:
-    proj.noarch
   end
 
   # For solaris, we build cross-compilers
