@@ -16,6 +16,12 @@ component "rubygem-nokogiri" do |pkg, settings, platform|
   pkg.build_requires "rubygem-mini_portile2"
 
   if platform.is_huaweios?
+    # This is a hack to ensure the nokogiri gem is installed after all other
+    # gems, as once the cross-compiled extensions for nokogiri are installed,
+    # any later gem operations will trigger rebuilding the extensions for the
+    # build host platform, and things then explode horrifically.
+    pkg.build_requires "rubygem-net-netconf"
+
     # The "gem install nokogiri" method of installing the gem won't work for
     # cross-compiled platforms, as we have no way of passing in the rbconfig
     # that specifies which compiler and build flags to use. So instead we use
