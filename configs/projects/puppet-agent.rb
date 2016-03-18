@@ -28,6 +28,7 @@ project "puppet-agent" do |proj|
         :ManualLink => "http://links.puppetlabs.com/windows-manual-foss",
       })
     proj.setting(:UI_exitdialogtext, "Manage your first resources on this node, explore the Puppet community and get support using the shortcuts in the Documentation folder of your Start Menu.")
+    proj.setting(:LicenseRTF, "wix/license/LICENSE.rtf")
 
     # Directory IDs
     proj.setting(:bindir_id, "bindir")
