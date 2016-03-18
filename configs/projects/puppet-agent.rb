@@ -211,8 +211,8 @@ project "puppet-agent" do |proj|
   if platform.is_huaweios?
     proj.component "rubygem-net-scp"
     proj.component "rubygem-mini_portile2"
-    proj.component "rubygem-nokogiri"
     proj.component "rubygem-net-netconf"
+    proj.component "rubygem-nokogiri"
   end
 
   # Components only applicable on OSX
