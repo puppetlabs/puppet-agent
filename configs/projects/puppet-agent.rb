@@ -138,7 +138,12 @@ project "puppet-agent" do |proj|
     proj.bill_of_materials File.join(proj.datadir, "doc")
   end
 
-  # Platform specific
+  # Define default CFLAGS and LDFLAGS for most platforms, and then
+  # tweak or adjust them as needed.
+  proj.setting(:cflags, "-I#{proj.includedir} -I/opt/pl-build-tools/include")
+  proj.setting(:ldflags, "-L#{proj.libdir} -L/opt/pl-build-tools/lib -Wl,-rpath=#{proj.libdir}")
+
+  # Platform specific overrides or settings, which may override the defaults
   if platform.is_windows?
     arch = platform.architecture == "x64" ? "64" : "32"
     proj.setting(:gcc_root, "C:/tools/mingw#{arch}")
@@ -147,12 +152,19 @@ project "puppet-agent" do |proj|
     proj.setting(:cflags, "-I#{proj.tools_root}/include -I#{proj.gcc_root}/include -I#{proj.includedir}")
     proj.setting(:ldflags, "-L#{proj.tools_root}/lib -L#{proj.gcc_root}/lib -L#{proj.libdir}")
     proj.setting(:cygwin, "nodosfilewarning winsymlinks:native")
-  elsif platform.is_osx?
-    proj.setting(:cflags, "-march=core2 -msse4 -I#{proj.includedir} -I/opt/pl-build-tools/include")
-  else
-    proj.setting(:cflags, "-I#{proj.includedir} -I/opt/pl-build-tools/include")
-    proj.setting(:ldflags, "-L#{proj.libdir} -L/opt/pl-build-tools/lib -Wl,-rpath=#{proj.libdir}")
   end
+
+  if platform.is_osx?
+    # For OS X, we should optimize for an older architecture than Apple
+    # currently ships for; there's a lot of older xeon chips based on
+    # that architecture still in use throughout the Mac ecosystem.
+    # Additionally, OS X doesn't use RPATH for linking. We shouldn't
+    # define it or try to force it in the linker, because this might
+    # break gcc or clang if they try to use the RPATH values we forced.
+    proj.setting(:cflags, "-march=core2 -msse4 -I#{proj.includedir}")
+    proj.setting(:ldflags, "-L#{proj.libdir} ")
+  end
+
   if platform.is_aix?
     proj.setting(:ldflags, "-Wl,-brtl -L#{proj.libdir} -L/opt/pl-build-tools/lib")
   end
