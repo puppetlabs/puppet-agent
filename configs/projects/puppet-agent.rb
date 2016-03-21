@@ -138,11 +138,7 @@ project "puppet-agent" do |proj|
     proj.bill_of_materials File.join(proj.datadir, "doc")
   end
 
-  # Define default CFLAGS and LDFLAGS
-  proj.setting(:cflags, "-I#{proj.includedir} -I/opt/pl-build-tools/include")
-  proj.setting(:ldflags, "-L#{proj.libdir} -L/opt/pl-build-tools/lib -Wl,-rpath=#{proj.libdir}")
-
-  # Platform specific overrides or settings, which may override the defaults
+  # Platform specific
   if platform.is_windows?
     arch = platform.architecture == "x64" ? "64" : "32"
     proj.setting(:gcc_root, "C:/tools/mingw#{arch}")
@@ -151,12 +147,12 @@ project "puppet-agent" do |proj|
     proj.setting(:cflags, "-I#{proj.tools_root}/include -I#{proj.gcc_root}/include -I#{proj.includedir}")
     proj.setting(:ldflags, "-L#{proj.tools_root}/lib -L#{proj.gcc_root}/lib -L#{proj.libdir}")
     proj.setting(:cygwin, "nodosfilewarning winsymlinks:native")
-  end
-
-  if platform.is_osx?
+  elsif platform.is_osx?
     proj.setting(:cflags, "-march=core2 -msse4 -I#{proj.includedir} -I/opt/pl-build-tools/include")
+  else
+    proj.setting(:cflags, "-I#{proj.includedir} -I/opt/pl-build-tools/include")
+    proj.setting(:ldflags, "-L#{proj.libdir} -L/opt/pl-build-tools/lib -Wl,-rpath=#{proj.libdir}")
   end
-
   if platform.is_aix?
     proj.setting(:ldflags, "-Wl,-brtl -L#{proj.libdir} -L/opt/pl-build-tools/lib")
   end
