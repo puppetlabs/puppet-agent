@@ -93,8 +93,15 @@ project "puppet-agent" do |proj|
   end
 
   # Platform specific
-  proj.setting(:cflags, "-I#{proj.includedir} -I/opt/pl-build-tools/include")
-  proj.setting(:ldflags, "-L#{proj.libdir} -L/opt/pl-build-tools/lib -Wl,-rpath=#{proj.libdir}")
+
+
+  if platform.is_osx?
+    proj.setting(:cflags, "-march=core2 -msse4 -I#{proj.includedir} -I/opt/pl-build-tools/include")
+  else
+    proj.setting(:cflags, "-I#{proj.includedir} -I/opt/pl-build-tools/include")
+    proj.setting(:ldflags, "-L#{proj.libdir} -L/opt/pl-build-tools/lib -Wl,-rpath=#{proj.libdir}")
+  end
+
   if platform.is_aix?
     proj.setting(:ldflags, "-Wl,-brtl -L#{proj.libdir} -L/opt/pl-build-tools/lib")
   end

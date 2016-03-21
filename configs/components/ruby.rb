@@ -99,6 +99,10 @@ component "ruby" do |pkg, settings, platform|
     pkg.environment "LDFLAGS" => "-Wl,-rpath=/opt/puppetlabs/puppet/lib"
   end
 
+  if platform.is_osx?
+    pkg.environment "optflags" => settings[:cflags]
+  end
+
   if platform.is_solaris?
     if platform.architecture == "sparc"
       if platform.os_version == "10"
