@@ -8,7 +8,7 @@
          restore the properties set by the command line overriding the recalled
          value from the registry -->
     <InstallUISequence>
-    <!-- INSTALLDIR -->
+      <!-- INSTALLDIR -->
       <Custom Action='SaveCmdLineInstallDir' Before='AppSearch' />
       <Custom Action='SetFromCmdLineInstallDir' After='AppSearch'>
         CMDLINE_INSTALLDIR
@@ -95,7 +95,7 @@
       <Custom Action='SetDefaultPuppetAgentEnvironment' Before='CostFinalize'>
         PUPPET_AGENT_ENVIRONMENT=""
       </Custom>
-       <!-- PUPPET_AGENT_CERTNAME -->
+      <!-- PUPPET_AGENT_CERTNAME -->
       <Custom Action='SetFromIniPuppetAgentCertname' Before='FileCost'>
         INI_PUPPET_AGENT_CERTNAME
       </Custom>
@@ -123,16 +123,24 @@
       <Custom Action='SetDomainToNtAuthority' After='SetDomainToLocalComputer'>
         (PUPPET_AGENT_ACCOUNT_USER ~= "LocalService") OR (PUPPET_AGENT_ACCOUNT_USER ~= "NetworkService")
       </Custom>
-      <?if $(var.Platform) = x86 ?>
+      <%- if @platform.architecture == "x86" -%>
       <Custom Action='Remove64BitPath_SetProp' After='CostFinalize' />
       <Custom Action='Remove64BitProgramFiles_SetProp' After='CostFinalize' />
       <Custom Action='Remove64BitProgramFiles' After='InstallFiles'>
-        <![CDATA[VersionNT64 >= 100 AND $(var.Win64) = no AND NOT (&$(var.OurProductNameWord)Runtime = 2)]]>
+        <![CDATA[VersionNT64 >= 100 AND <%= settings[:win64] %> = no AND NOT (&<%= settings[:product_id] %>Runtime = 2)]]>
       </Custom>
       <Custom Action='Remove64BitPath' After='InstallFiles'>
-        <![CDATA[VersionNT64 >= 100 AND $(var.Win64) = no AND NOT (&$(var.OurProductNameWord)Runtime = 2)]]>
+        <![CDATA[VersionNT64 >= 100 AND <%= settings[:win64] %> = no AND NOT (&<%= settings[:product_id] %>Runtime = 2)]]>
       </Custom>
-      <?endif?>
+      <%-end-%>
+      <!-- Make sure pxp-agent service is shutdown before we validate the install -->
+      <!-- Only executed if pxp-agent is already installed (i.e. an Uninstall or upgrade - check for repair also) -->
+      <Custom Action='ShutdownPxpAgentService_SetProp' Before='ShutdownPxpAgentService'>
+        REMOVE="ALL" OR WIX_UPGRADE_DETECTED or REINSTALL
+      </Custom>
+      <Custom Action='ShutdownPxpAgentService' Before='InstallValidate'>
+        REMOVE="ALL" OR WIX_UPGRADE_DETECTED or REINSTALL
+      </Custom>
     </InstallExecuteSequence>
 
     <SetProperty Id="ARPINSTALLLOCATION" Value="[INSTALLDIR]" After="CostFinalize" />

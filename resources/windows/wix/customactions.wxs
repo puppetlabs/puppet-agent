@@ -154,7 +154,7 @@ End If
       Value="[CMDLINE_PUPPET_AGENT_STARTUP_MODE]"
       Execute="firstSequence" />
 
-      <!-- PUPPET_AGENT_ACCOUNT_DOMAIN -->
+    <!-- PUPPET_AGENT_ACCOUNT_DOMAIN -->
     <CustomAction
       Id="SetDomainToLocalComputer"
       Property="PUPPET_AGENT_ACCOUNT_DOMAIN"
@@ -179,7 +179,7 @@ End If
       Execute="immediate"
       Return="ignore" />
 
-    <?if $(var.Platform) = x86 ?>
+    <%- if @platform.architecture == "x86" -%>
     <!-- If these fail, we don't want to fail the installer -->
     <!-- We can't do a registry search for powershell's installed location because it will turn up the WOW64Node version due to not being able to bypass redirection in RegistrySearch
          So we will assume the default install location and if it fails, we will ignore the error.
@@ -192,7 +192,7 @@ End If
     <CustomAction
       Id="Remove64BitPath_SetProp"
       Property="Remove64BitPath"
-      Value="&quot;[%WINDIR]\System32\WindowsPowerShell\v1.0\powershell.exe&quot; -NoLogo -NonInteractive -InputFormat None -NoProfile -ExecutionPolicy Bypass -Command &quot;[\[]System.Text.RegularExpressions.Regex[\]]::Replace([\[]Microsoft.Win32.Registry[\]]::LocalMachine.OpenSubKey(&apos;SYSTEM\CurrentControlSet\Control\Session Manager\Environment\&apos;).GetValue(&apos;PATH&apos;, &apos;&apos;, [\[]Microsoft.Win32.RegistryValueOptions[\]]::DoNotExpandEnvironmentNames).ToString(),  [\[]System.Text.RegularExpressions.Regex[\]]::Escape(&apos;[ProgramFiles64Folder]$(var.OurCompanyName)\Puppet\bin&apos;) + &apos;([\?]&gt;;)[\?]&apos;, &apos;&apos;, [\[]System.Text.RegularExpressions.RegexOptions[\]]::IgnoreCase) | %[\{][\[]System.Environment[\]]::SetEnvironmentVariable(&apos;PATH&apos;,$_, &apos;Machine&apos;)[\}]&quot;"
+      Value="&quot;[%WINDIR]\System32\WindowsPowerShell\v1.0\powershell.exe&quot; -NoLogo -NonInteractive -InputFormat None -NoProfile -ExecutionPolicy Bypass -Command &quot;[\[]System.Text.RegularExpressions.Regex[\]]::Replace([\[]Microsoft.Win32.Registry[\]]::LocalMachine.OpenSubKey(&apos;SYSTEM\CurrentControlSet\Control\Session Manager\Environment\&apos;).GetValue(&apos;PATH&apos;, &apos;&apos;, [\[]Microsoft.Win32.RegistryValueOptions[\]]::DoNotExpandEnvironmentNames).ToString(),  [\[]System.Text.RegularExpressions.Regex[\]]::Escape(&apos;[ProgramFiles64Folder]<%= settings[:company_name] %>\Puppet\bin&apos;) + &apos;([\?]&gt;;)[\?]&apos;, &apos;&apos;, [\[]System.Text.RegularExpressions.RegexOptions[\]]::IgnoreCase) | %[\{][\[]System.Environment[\]]::SetEnvironmentVariable(&apos;PATH&apos;,$_, &apos;Machine&apos;)[\}]&quot;"
       Execute="immediate" />
     <CustomAction
       Id="Remove64BitPath"
@@ -203,7 +203,7 @@ End If
     <CustomAction
       Id="Remove64BitProgramFiles_SetProp"
       Property="Remove64BitProgramFiles"
-      Value="&quot;[%WINDIR]\System32\cmd.exe&quot; /c IF EXIST &quot;[ProgramFiles64Folder]$(var.OurCompanyName)\&quot; rmdir /s /q &quot;[ProgramFiles64Folder]$(var.OurCompanyName)&quot;"
+      Value="&quot;[%WINDIR]\System32\cmd.exe&quot; /c IF EXIST &quot;[ProgramFiles64Folder]<%= settings[:company_name] %>\&quot; rmdir /s /q &quot;[ProgramFiles64Folder]<%= settings[:company_name] %>&quot;"
       Execute="immediate" />
     <CustomAction
       Id="Remove64BitProgramFiles"
@@ -211,6 +211,6 @@ End If
       DllEntry="CAQuietExec64"
       Execute="deferred"
       Return="ignore" />
-    <?endif?>
+    <%-end-%>
   </Fragment>
 </Wix>
