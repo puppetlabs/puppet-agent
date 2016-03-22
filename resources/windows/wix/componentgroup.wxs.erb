@@ -9,6 +9,7 @@
       <ComponentGroupRef Id="AppComponentGroup" />
       <ComponentGroupRef Id="AppDataComponentGroup" />
       <ComponentGroupRef Id="RegistryComponentGroup" />
+      <ComponentGroupRef Id="ShortCutsComponentGroup" />
       <%- get_services.each do |service| -%>
       <ComponentGroupRef Id="<%= service.component_group_id %>" />
       <%- end -%>
