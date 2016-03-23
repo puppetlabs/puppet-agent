@@ -13,30 +13,43 @@
       <Custom Action='SetFromCmdLineInstallDir' After='AppSearch'>
         CMDLINE_INSTALLDIR
       </Custom>
+      <Custom Action='SetIniPropertyValues' After='AppSearch' />
       <!-- PUPPET_MASTER_SERVER -->
+      <Custom Action='SetFromIniPuppetMasterServer' Before='FileCost'>
+        INI_PUPPET_MASTER_SERVER
+      </Custom>
       <Custom Action='SaveCmdLinePuppetMasterServer' Before='AppSearch' />
-      <Custom Action='SetFromCmdLinePuppetMasterServer' After='AppSearch'>
+      <Custom Action='SetFromCmdLinePuppetMasterServer' After='FileCost'>
         CMDLINE_PUPPET_MASTER_SERVER
       </Custom>
-      <Custom Action='SetDefaultPuppetMasterServer' After='AppSearch'>
+      <Custom Action='SetDefaultPuppetMasterServer' Before='CostFinalize'>
         PUPPET_MASTER_SERVER=""
       </Custom>
       <!-- PUPPET_AGENT_ENVIRONMENT -->
+      <Custom Action='SetFromIniPuppetAgentEnvironment' Before='FileCost'>
+        INI_PUPPET_AGENT_ENVIRONMENT
+      </Custom>
       <Custom Action='SaveCmdLinePuppetAgentEnvironment' Before='AppSearch' />
-      <Custom Action='SetFromCmdLinePuppetAgentEnvironment' After='AppSearch'>
+      <Custom Action='SetFromCmdLinePuppetAgentEnvironment' After='FileCost'>
         CMDLINE_PUPPET_AGENT_ENVIRONMENT
       </Custom>
-      <Custom Action='SetDefaultPuppetAgentEnvironment' After='AppSearch'>
+      <Custom Action='SetDefaultPuppetAgentEnvironment' Before='CostFinalize'>
         PUPPET_AGENT_ENVIRONMENT=""
       </Custom>
       <!-- PUPPET_AGENT_CERTNAME -->
+      <Custom Action='SetFromIniPuppetAgentCertname' Before='FileCost'>
+        INI_PUPPET_AGENT_CERTNAME
+      </Custom>
       <Custom Action='SaveCmdLinePuppetAgentCertname' Before='AppSearch' />
-      <Custom Action='SetFromCmdLinePuppetAgentCertname' After='AppSearch'>
+      <Custom Action='SetFromCmdLinePuppetAgentCertname' After='FileCost'>
         CMDLINE_PUPPET_AGENT_CERTNAME
       </Custom>
       <!-- PUPPET_CA_SERVER -->
+      <Custom Action='SetFromIniPuppetCaServer' Before='FileCost'>
+        INI_PUPPET_CA_SERVER
+      </Custom>
       <Custom Action='SaveCmdLinePuppetCaServer' Before='AppSearch' />
-      <Custom Action='SetFromCmdLinePuppetCaServer' After='AppSearch'>
+      <Custom Action='SetFromCmdLinePuppetCaServer' After='FileCost'>
         CMDLINE_PUPPET_CA_SERVER
       </Custom>
       <!-- PUPPET_AGENT_STARTUP_MODE -->
@@ -54,38 +67,51 @@
     </InstallUISequence>
 
     <InstallExecuteSequence>
+      <Custom Action='SetIniPropertyValues' After='AppSearch' />
       <!-- INSTALLDIR -->
       <Custom Action='SaveCmdLineInstallDir' Before='AppSearch' />
       <Custom Action='SetFromCmdLineInstallDir' After='AppSearch'>
         CMDLINE_INSTALLDIR
       </Custom>
       <!-- PUPPET_MASTER_SERVER -->
+      <Custom Action='SetFromIniPuppetMasterServer' Before='FileCost'>
+        INI_PUPPET_MASTER_SERVER
+      </Custom>
       <Custom Action='SaveCmdLinePuppetMasterServer' Before='AppSearch' />
-      <Custom Action='SetFromCmdLinePuppetMasterServer' After='AppSearch'>
+      <Custom Action='SetFromCmdLinePuppetMasterServer' After='FileCost'>
         CMDLINE_PUPPET_MASTER_SERVER
       </Custom>
-      <Custom Action='SetDefaultPuppetMasterServer' After='AppSearch'>
+      <Custom Action='SetDefaultPuppetMasterServer' Before='CostFinalize'>
         PUPPET_MASTER_SERVER=""
       </Custom>
       <!-- PUPPET_AGENT_ENVIRONMENT -->
+      <Custom Action='SetFromIniPuppetAgentEnvironment' Before='FileCost'>
+        INI_PUPPET_AGENT_ENVIRONMENT
+      </Custom>
       <Custom Action='SaveCmdLinePuppetAgentEnvironment' Before='AppSearch' />
-      <Custom Action='SetFromCmdLinePuppetAgentEnvironment' After='AppSearch'>
+      <Custom Action='SetFromCmdLinePuppetAgentEnvironment' After='FileCost'>
         CMDLINE_PUPPET_AGENT_ENVIRONMENT
       </Custom>
-      <Custom Action='SetDefaultPuppetAgentEnvironment' After='AppSearch'>
+      <Custom Action='SetDefaultPuppetAgentEnvironment' Before='CostFinalize'>
         PUPPET_AGENT_ENVIRONMENT=""
       </Custom>
-       <!-- PUPPET_AGENT_CERTNAME -->
+      <!-- PUPPET_AGENT_CERTNAME -->
+      <Custom Action='SetFromIniPuppetAgentCertname' Before='FileCost'>
+        INI_PUPPET_AGENT_CERTNAME
+      </Custom>
       <Custom Action='SaveCmdLinePuppetAgentCertname' Before='AppSearch' />
-      <Custom Action='SetFromCmdLinePuppetAgentCertname' After='AppSearch'>
+      <Custom Action='SetFromCmdLinePuppetAgentCertname' After='FileCost'>
         CMDLINE_PUPPET_AGENT_CERTNAME
       </Custom>
       <!-- PUPPET_CA_SERVER -->
+      <Custom Action='SetFromIniPuppetCaServer' Before='FileCost'>
+        INI_PUPPET_CA_SERVER
+      </Custom>
       <Custom Action='SaveCmdLinePuppetCaServer' Before='AppSearch' />
-      <Custom Action='SetFromCmdLinePuppetCaServer' After='AppSearch'>
+      <Custom Action='SetFromCmdLinePuppetCaServer' After='FileCost'>
         CMDLINE_PUPPET_CA_SERVER
       </Custom>
-      <!-- PUPPET_AGENT_START_MODE -->
+      <!-- PUPPET_AGENT_STARTUP_MODE -->
       <Custom Action='SaveCmdLinePuppetAgentStartupMode' Before='AppSearch' />
       <Custom Action='SetFromCmdLinePuppetAgentStartupMode' After='AppSearch'>
         CMDLINE_PUPPET_AGENT_STARTUP_MODE
@@ -97,7 +123,7 @@
       <Custom Action='SetDomainToNtAuthority' After='SetDomainToLocalComputer'>
         (PUPPET_AGENT_ACCOUNT_USER ~= "LocalService") OR (PUPPET_AGENT_ACCOUNT_USER ~= "NetworkService")
       </Custom>
-      <?if $(var.Platform) = x86 ?>
+      <%- if @platform.architecture == "x86" -%>
       <Custom Action='Remove64BitPath_SetProp' After='CostFinalize' />
       <Custom Action='Remove64BitProgramFiles_SetProp' After='CostFinalize' />
       <Custom Action='Remove64BitProgramFiles' After='InstallFiles'>
@@ -106,7 +132,7 @@
       <Custom Action='Remove64BitPath' After='InstallFiles'>
         <![CDATA[VersionNT64 >= 100 AND <%= settings[:win64] %> = no AND NOT (&<%= settings[:product_id] %>Runtime = 2)]]>
       </Custom>
-      <?endif?>
+      <%-end-%>
       <!-- Make sure pxp-agent service is shutdown before we validate the install -->
       <!-- Only executed if pxp-agent is already installed (i.e. an Uninstall or upgrade - check for repair also) -->
       <Custom Action='ShutdownPxpAgentService_SetProp' Before='ShutdownPxpAgentService'>
@@ -115,9 +141,6 @@
       <Custom Action='ShutdownPxpAgentService' Before='InstallValidate'>
         REMOVE="ALL" OR WIX_UPGRADE_DETECTED or REINSTALL
       </Custom>
-      <!--
-      WIX_UPGRADE_DETECTED
-      -->
     </InstallExecuteSequence>
 
     <SetProperty Id="ARPINSTALLLOCATION" Value="[INSTALLDIR]" After="CostFinalize" />
