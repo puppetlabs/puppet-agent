@@ -21,5 +21,5 @@ platform "windows-2012r2-x86" do |plat|
 
   plat.platform_triple "i686-unknown-mingw32"
 
-  plat.package_type "nuget"
+  plat.package_type "msi"
 end
