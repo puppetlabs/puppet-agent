@@ -31,6 +31,8 @@ mkdir -Force release
 cd release
 
 ## Build Facter
+# Use fake CMAKE_INSTALL_PREFIX and RUBY_LIB_INSTALL to ensure the correct relative
+# path from facter.rb to libfacter.so.
 $cmake_args = @(
   '-G',
   "MinGW Makefiles",
@@ -39,6 +41,8 @@ $cmake_args = @(
   "-DYAMLCPP_STATIC=ON",
   "-DCMAKE_PREFIX_PATH=`"$toolsDir\$curlPkg;$toolsDir\$opensslPkg;$toolsDir\$rubyPkg;$toolsDir\leatherman`"",
   "-DCURL_STATIC=ON",
+  "-DCMAKE_INSTALL_PREFIX=C:/tools/facter",
+  "-DRUBY_LIB_INSTALL=C:/tools/facter/lib",
   ".."
 )
 Invoke-External { cmake $cmake_args }
