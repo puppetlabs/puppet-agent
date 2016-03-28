@@ -19,12 +19,19 @@ component "virt-what" do |pkg, settings, platform|
 
   if platform.is_linux?
     if platform.architecture =~ /ppc64le$/
-      target = 'powerpc64le-unknown-linux-gnu'
+      host_opt = '--host powerpc64le-unknown-linux-gnu'
     end
   end
 
+  if platform.is_huaweios?
+    host_opt = '--host powerpc-linux-gnu'
+    pkg.environment "PATH" => "/opt/pl-build-tools/bin:$$PATH:#{settings[:bindir]}"
+    pkg.environment "CFLAGS" => settings[:cflags]
+    pkg.environment "LDFLAGS" => settings[:ldflags]
+  end
+
   pkg.configure do
-    ["./configure --prefix=#{settings[:prefix]} --sbindir=#{settings[:prefix]}/bin --libexecdir=#{settings[:prefix]}/lib/virt-what #{target}"]
+    ["./configure --prefix=#{settings[:prefix]} --sbindir=#{settings[:prefix]}/bin --libexecdir=#{settings[:prefix]}/lib/virt-what #{host_opt}"]
   end
 
   pkg.build do

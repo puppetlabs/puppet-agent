@@ -46,6 +46,6 @@ component "ruby-augeas" do |pkg, settings, platform|
 
   pkg.install do
     "chown root:root #{settings[:ruby_vendordir]}/augeas.rb"
-  end if platform.is_solaris?
+  end if platform.is_solaris? || platform.is_huaweios?
 
 end

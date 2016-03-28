@@ -1,6 +1,10 @@
 component "puppet" do |pkg, settings, platform|
   pkg.load_from_json("configs/components/puppet.json")
 
+  if platform.is_windows?
+    pkg.add_source("file://resources/files/windows/environment.bat", sum: "c698da37e559935e904f8690dd5c26fa")
+  end
+
   pkg.build_requires "ruby"
   pkg.build_requires "facter"
   pkg.build_requires "hiera"
@@ -59,6 +63,10 @@ component "puppet" do |pkg, settings, platform|
     pkg.install_service "ext/solaris/smf/puppet.xml", "ext/solaris/smf/puppet", service_type: "network"
   when "aix"
     pkg.install_service "resources/aix/puppet.service", nil, "puppet"
+  when "windows"
+    # Note - this definition indicates that the file should be filtered out from the Wix
+    # harvest. A corresponding service definition file is also required in resources/windows/wix
+    pkg.install_service "SourceDir\\#{settings[:base_dir]}\\#{settings[:company_id]}\\#{settings[:product_id]}\\puppet\\bin\\ruby.exe"
   else
     fail "need to know where to put service files"
   end
@@ -96,9 +104,39 @@ component "puppet" do |pkg, settings, platform|
     pkg.install_file("../osx_paths.txt", "/etc/paths.d/puppet-agent")
   end
 
+  if platform.is_windows?
+    pkg.environment "FACTERDIR" => settings[:prefix]
+  end
+
+  if platform.is_windows?
+    vardir = File.join(settings[:sysconfdir], 'puppet', 'cache')
+    configdir = File.join(settings[:sysconfdir], 'puppet', 'etc')
+    logdir = File.join(settings[:sysconfdir], 'puppet', 'var', 'log')
+    piddir = File.join(settings[:sysconfdir], 'puppet', 'var', 'run')
+    prereqs = "--check-prereqs"
+  else
+    vardir = File.join(settings[:prefix], 'cache')
+    configdir = settings[:puppet_configdir]
+    logdir = settings[:logdir]
+    piddir = settings[:piddir]
+    prereqs = "--no-check-prereqs"
+  end
   pkg.install do
     [
-      "#{settings[:host_ruby]} install.rb --ruby=#{File.join(settings[:bindir], 'ruby')} --no-check-prereqs --bindir=#{settings[:bindir]} --configdir=#{settings[:puppet_configdir]} --sitelibdir=#{settings[:ruby_vendordir]} --codedir=#{settings[:puppet_codedir]} --configs --quick --man --mandir=#{settings[:mandir]}",
+      "#{settings[:host_ruby]} install.rb \
+        --ruby=#{File.join(settings[:bindir], 'ruby')} \
+        #{prereqs} \
+        --bindir=#{settings[:bindir]} \
+        --configdir=#{configdir} \
+        --sitelibdir=#{settings[:ruby_vendordir]} \
+        --codedir=#{settings[:puppet_codedir]} \
+        --vardir=#{vardir} \
+        --rundir=#{piddir} \
+        --logdir=#{logdir} \
+        --configs \
+        --quick \
+        --man \
+        --mandir=#{settings[:mandir]}"
     ]
   end
 
@@ -116,11 +154,17 @@ component "puppet" do |pkg, settings, platform|
 
   pkg.install_file ".gemspec", "#{settings[:gem_home]}/specifications/#{pkg.get_name}.gemspec"
 
-  pkg.configfile File.join(settings[:puppet_configdir], 'puppet.conf')
-  pkg.configfile File.join(settings[:puppet_configdir], 'auth.conf')
+  if platform.is_windows?
+    pkg.install_file "../environment.bat", "#{settings[:bindir]}/environment.bat"
+    pkg.install_file "ext/windows/service/daemon.bat", "#{settings[:bindir]}/daemon.bat"
+    pkg.install_file "ext/windows/service/daemon.rb", "#{settings[:bindir]}/daemon.rb"
+  end
 
-  pkg.directory File.join(settings[:prefix], 'cache'), mode: '0750'
-  pkg.directory settings[:puppet_configdir]
+  pkg.configfile File.join(configdir, 'puppet.conf')
+  pkg.configfile File.join(configdir, 'auth.conf')
+
+  pkg.directory vardir, mode: '0750'
+  pkg.directory configdir
   pkg.directory settings[:puppet_codedir]
   pkg.directory File.join(settings[:puppet_codedir], "modules")
   pkg.directory File.join(settings[:prefix], "modules")
@@ -129,9 +173,15 @@ component "puppet" do |pkg, settings, platform|
   pkg.directory File.join(settings[:puppet_codedir], 'environments', 'production', 'manifests')
   pkg.directory File.join(settings[:puppet_codedir], 'environments', 'production', 'modules')
   pkg.install_configfile 'conf/environment.conf', File.join(settings[:puppet_codedir], 'environments', 'production', 'environment.conf')
-  pkg.directory File.join(settings[:logdir], 'puppet'), mode: "0750"
 
-  pkg.link "#{settings[:bindir]}/puppet", "#{settings[:link_bindir]}/puppet"
+  if platform.is_windows?
+    pkg.directory File.join(settings[:sysconfdir], 'puppet', 'var', 'log')
+    pkg.directory File.join(settings[:sysconfdir], 'puppet', 'var', 'run')
+  else
+    pkg.directory File.join(settings[:logdir], 'puppet'), mode: "0750"
+  end
+
+  pkg.link "#{settings[:bindir]}/puppet", "#{settings[:link_bindir]}/puppet" unless platform.is_windows?
   if platform.is_eos?
     pkg.link "#{settings[:sysconfdir]}", "#{settings[:link_sysconfdir]}"
   end
