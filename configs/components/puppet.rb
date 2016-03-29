@@ -158,6 +158,8 @@ component "puppet" do |pkg, settings, platform|
     pkg.install_file "../environment.bat", "#{settings[:bindir]}/environment.bat"
     pkg.install_file "ext/windows/service/daemon.bat", "#{settings[:bindir]}/daemon.bat"
     pkg.install_file "ext/windows/service/daemon.rb", "#{settings[:bindir]}/daemon.rb"
+    pkg.install_file "../wix/icon/puppetlabs.ico", "#{settings[:miscdir]}/puppetlabs.ico"
+    pkg.install_file "../wix/license/LICENSE.rtf", "#{settings[:miscdir]}/LICENSE.rtf"
   end
 
   pkg.configfile File.join(configdir, 'puppet.conf')
