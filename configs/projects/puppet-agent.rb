@@ -53,6 +53,7 @@ project "puppet-agent" do |proj|
     proj.setting(:tmpfilesdir, "/usr/lib/tmpfiles.d")
   end
 
+  proj.setting(:miscdir, File.join(proj.install_root, "misc"))
   proj.setting(:prefix, File.join(proj.install_root, "puppet"))
   proj.setting(:puppet_configdir, File.join(proj.sysconfdir, 'puppet'))
   proj.setting(:puppet_codedir, File.join(proj.sysconfdir, 'code'))
