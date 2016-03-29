@@ -38,10 +38,6 @@ project "puppet-agent" do |proj|
     # Use a standalone ruby for cross-compilation
     proj.setting(:host_ruby, "/opt/pl-build-tools/bin/ruby")
     proj.setting(:host_gem, "/opt/pl-build-tools/bin/gem")
-
-    # This will be removed once vanagon fixes are in to specify the
-    # debian target arch:
-    proj.noarch
   end
 
   # For solaris, we build cross-compilers
@@ -134,7 +130,7 @@ project "puppet-agent" do |proj|
   # These utilites don't really work on unix
   if platform.is_linux?
     proj.component "virt-what"
-    proj.component "dmidecode"
+    proj.component "dmidecode" unless platform.is_huaweios?
     proj.component "shellpath"
   end
 
@@ -145,6 +141,14 @@ project "puppet-agent" do |proj|
   # Needed to avoid using readline on solaris and aix
   if platform.is_solaris? || platform.is_aix?
     proj.component "libedit"
+  end
+
+  # Components only applicable on HuaweiOS
+  if platform.is_huaweios?
+    proj.component "rubygem-net-scp"
+    proj.component "rubygem-mini_portile2"
+    proj.component "rubygem-net-netconf"
+    proj.component "rubygem-nokogiri"
   end
 
   # Components only applicable on OSX
