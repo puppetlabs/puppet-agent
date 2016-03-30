@@ -6,11 +6,11 @@
   -->
   <Fragment>
     <ComponentGroup Id="FragmentEnvironment">
-      <Component 
+      <Component
         Id="PuppetInstallDirBinToPath"
         Guid="F46FA9A8-43A2-4379-8933-EAAE2D0E5D72"
         Directory="TARGETDIR"
-        Win64="$(var.Win64)">
+        Win64="<%= settings[:win64] %>">
         <Environment
           Id="PuppetBinPath"
           Name="PATH"

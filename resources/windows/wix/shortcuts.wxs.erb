@@ -11,7 +11,66 @@
       </Directory>
     </DirectoryRef>
 
+    <!-- Directory Definitions for Start Menu Shortcuts -->
+    <DirectoryRef Id='TARGETDIR'>
+      <Directory Id='ProgramMenuFolder'>
+        <Directory Id='PuppetShortcutDir' Name="<%= settings[:product_id] %>" />
+      </Directory>
+    </DirectoryRef>
+
     <ComponentGroup Id="ShortCutsComponentGroup">
+
+      <Component
+        Id="PuppetShortcuts"
+        Guid="0B69C3FF-8967-4F8A-AC71-0EAE34E91ACC"
+        Directory="PuppetShortcutDir"
+        Win64="<%= settings[:win64] %>">
+        <Shortcut
+          Id="PuppetShortcut"
+          Name="Run Puppet Agent"
+          Description="Run Puppet in an interactive command window"
+          Target="[INSTALLDIR]puppet\bin\run_puppet_interactive.bat"
+          Icon="PuppetShortcutIcon"
+          WorkingDirectory="bin">
+          <Icon
+            Id="PuppetShortcutIcon"
+            SourceFile="wix\icon\puppetlabs.ico"/>
+        </Shortcut>
+        <Shortcut
+          Id="FacterShortcut"
+          Name="Run Facter"
+          Description="Run Facter in an interactive command window"
+          Target="[INSTALLDIR]puppet\bin\run_facter_interactive.bat"
+          Icon="FacterShortcutIcon"
+          WorkingDirectory="bin">
+          <Icon
+            Id="FacterShortcutIcon"
+            SourceFile="wix\icon\puppetlabs.ico"/>
+        </Shortcut>
+        <Shortcut
+          Id="PuppetShellShortcut"
+          Name="Start Command Prompt with Puppet"
+          Description="Start a Command Prompt with Puppet already in the PATH and RUBYLIB load path."
+          Target="[%ComSpec]"
+          Arguments='/E:ON /K "[INSTALLDIR]puppet\bin\puppet_shell.bat"'
+          Icon="PuppetShellShortcutIcon"
+          WorkingDirectory="bin">
+          <Icon
+            Id="PuppetShellShortcutIcon"
+            SourceFile="wix\icon\puppetlabs.ico"/>
+        </Shortcut>
+        <RemoveFolder Id="ApplicationProgramsFolder" On="uninstall"/>
+        <!-- This registry entry is required to be a keypath for this component -->
+        <RegistryValue
+          Root="HKCU"
+          Key="SOFTWARE\<%= settings[:company_name] %>\<%= settings[:product_name] %>"
+          Name="installed"
+          Value="1"
+          Type="integer"
+          KeyPath="yes" />
+      </Component>
+
+
       <Component
         Id="ShortCutsComponent"
         Directory="ShortCutBinDir"
