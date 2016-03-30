@@ -212,5 +212,67 @@ End If
       Execute="deferred"
       Return="ignore" />
     <%-end-%>
+
+    <!-- SymLink custom actions (to create symlinks in the INSTALLDIR/bin directory) -->
+    <CustomAction
+    Id="EnvironmentBatLink"
+    Execute="immediate"
+    ExeCommand="&quot;[%WINDIR]\System32\cmd.exe&quot; /c mklink /H &quot;[INSTALLDIR]bin\environment.bat&quot; &quot;[INSTALLDIR]puppet\bin\environment.bat&quot;"
+    Directory="ShortCutBinDir"/>
+
+    <CustomAction
+    Id="FacterBatLink"
+    Execute="immediate"
+    ExeCommand="&quot;[%WINDIR]\System32\cmd.exe&quot; /c mklink /H &quot;[INSTALLDIR]bin\facter.bat&quot; &quot;[INSTALLDIR]puppet\bin\facter.bat&quot;"
+    Directory="ShortCutBinDir"/>
+
+    <CustomAction
+    Id="FacterInteractiveBatLink"
+    Execute="immediate"
+    ExeCommand="&quot;[%WINDIR]\System32\cmd.exe&quot; /c mklink /H &quot;[INSTALLDIR]bin\facter_interactive.bat&quot; &quot;[INSTALLDIR]puppet\bin\facter_interactive.bat&quot;"
+    Directory="ShortCutBinDir"/>
+
+    <CustomAction
+    Id="RunFacterInteractiveBatLink"
+    Execute="immediate"
+    ExeCommand="&quot;[%WINDIR]\System32\cmd.exe&quot; /c mklink /H &quot;[INSTALLDIR]bin\run_facter_interactive.bat&quot; &quot;[INSTALLDIR]puppet\bin\run_facter_interactive.bat&quot;"
+    Directory="ShortCutBinDir"/>
+
+    <CustomAction
+    Id="HeiraBatLink"
+    Execute="immediate"
+    ExeCommand="&quot;[%WINDIR]\System32\cmd.exe&quot; /c mklink /H &quot;[INSTALLDIR]bin\hiera.bat&quot; &quot;[INSTALLDIR]puppet\bin\hiera.bat&quot;"
+    Directory="ShortCutBinDir"/>
+
+    <CustomAction
+    Id="MCOBatLink"
+    Execute="immediate"
+    ExeCommand="&quot;[%WINDIR]\System32\cmd.exe&quot; /c mklink /H &quot;[INSTALLDIR]bin\mco.bat&quot; &quot;[INSTALLDIR]puppet\bin\mco.bat&quot;"
+    Directory="ShortCutBinDir"/>
+
+    <CustomAction
+    Id="PuppetBatLink"
+    Execute="immediate"
+    ExeCommand="&quot;[%WINDIR]\System32\cmd.exe&quot; /c mklink /H &quot;[INSTALLDIR]bin\puppet.bat&quot; &quot;[INSTALLDIR]puppet\bin\puppet.bat&quot;"
+    Directory="ShortCutBinDir"/>
+
+    <CustomAction
+    Id="PuppetInteractiveBatLink"
+    Execute="immediate"
+    ExeCommand="&quot;[%WINDIR]\System32\cmd.exe&quot; /c mklink /H &quot;[INSTALLDIR]bin\puppet_interactive.bat&quot; &quot;[INSTALLDIR]puppet\bin\puppet_interactive.bat&quot;"
+    Directory="ShortCutBinDir"/>
+
+    <CustomAction
+    Id="PuppetShellBatLink"
+    Execute="immediate"
+    ExeCommand="&quot;[%WINDIR]\System32\cmd.exe&quot; /c mklink /H &quot;[INSTALLDIR]bin\puppet_shell.bat&quot; &quot;[INSTALLDIR]puppet\bin\puppet_shell.bat&quot;"
+    Directory="ShortCutBinDir"/>
+
+    <CustomAction
+    Id="RunPuppetInteractiveBatLink"
+    Execute="immediate"
+    ExeCommand="&quot;[%WINDIR]\System32\cmd.exe&quot; /c mklink /H &quot;[INSTALLDIR]bin\run_puppet_interactive.bat&quot; &quot;[INSTALLDIR]puppet\bin\run_puppet_interactive.bat&quot;"
+    Directory="ShortCutBinDir"/>
+
   </Fragment>
 </Wix>
