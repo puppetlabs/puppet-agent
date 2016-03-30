@@ -141,6 +141,18 @@
       <Custom Action='ShutdownPxpAgentService' Before='InstallValidate'>
         REMOVE="ALL" OR WIX_UPGRADE_DETECTED or REINSTALL
       </Custom>
+      <!-- SymLink custom actions (to create symlinks in the INSTALLDIR/bin directory) -->
+      <!-- These should happen at the end-->
+      <Custom Action='EnvironmentBatLink' After='InstallFinalize'/>
+      <Custom Action='FacterBatLink' After='InstallFinalize'/>
+      <Custom Action='FacterInteractiveBatLink' After='InstallFinalize'/>
+      <Custom Action='RunFacterInteractiveBatLink' After='InstallFinalize'/>
+      <Custom Action='HeiraBatLink' After='InstallFinalize'/>
+      <Custom Action='MCOBatLink' After='InstallFinalize'/>
+      <Custom Action='PuppetBatLink' After='InstallFinalize'/>
+      <Custom Action='PuppetInteractiveBatLink' After='InstallFinalize'/>
+      <Custom Action='PuppetShellBatLink' After='InstallFinalize'/>
+      <Custom Action='RunPuppetInteractiveBatLink' After='InstallFinalize'/>
     </InstallExecuteSequence>
 
     <SetProperty Id="ARPINSTALLLOCATION" Value="[INSTALLDIR]" After="CostFinalize" />
