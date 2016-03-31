@@ -1,0 +1,23 @@
+<?xml version='1.0' encoding='windows-1252'?>
+<Wix xmlns='http://schemas.microsoft.com/wix/2006/wi' xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
+  <!--
+    Enivornment table for installation.
+
+  -->
+  <Fragment>
+    <ComponentGroup Id="FragmentCondition"/>
+
+    <%- if @platform.architecture == "x64" -%>
+      <!-- http://wixtoolset.org/documentation/manual/v3/howtos/redistributables_and_install_checks/block_install_on_os.html
+        -->
+      <Condition Message="<%= settings[:product_name] %> is no longer supported on Windows Server 2003.">
+        <![CDATA[Installed OR (VersionNT64 >= 600)]]>
+      </Condition>
+    <%- else %>
+      <Condition Message="<%= settings[:product_name] %> is no longer supported on Windows Server 2003.">
+        <![CDATA[Installed OR (VersionNT >= 600)]]>
+      </Condition>
+    <%- end -%>
+
+    </Fragment>
+  </Wix>
