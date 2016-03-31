@@ -14,7 +14,10 @@
     <!-- Directory Definitions for Start Menu Shortcuts -->
     <DirectoryRef Id='TARGETDIR'>
       <Directory Id='ProgramMenuFolder'>
-        <Directory Id='PuppetShortcutDir' Name="<%= settings[:product_id] %>" />
+        <Directory Id='PuppetShortcutDir' Name="<%= settings[:product_id] %>">
+          <Directory Id='PuppetShortcutDocumentationDir' Name="Documentation">
+          </Directory>
+        </Directory>
       </Directory>
     </DirectoryRef>
 
@@ -70,7 +73,65 @@
           KeyPath="yes" />
       </Component>
 
+      <Component
+        Id="PuppetDocumentationShortcuts"
+        Guid="651178BC-76D8-4574-B97B-B132064EE2FB"
+        Directory="PuppetShortcutDocumentationDir"
+        Win64="<%= settings[:win64] %>">
+        <IniFile
+          Id="PuppetSupportURL"
+          Name="Get <%= settings[:product_name] %> Support.url"
+          Action="addLine"
+          Section="InternetShortcut"
+          Key="URL"
+          Value="<%= settings[:links][:HelpLink] %>"
+          Directory="PuppetShortcutDocumentationDir" />
+        <IniFile
+          Id="PuppetCommunityURL"
+          Name="Explore the Puppet Community.url"
+          Action="addLine"
+          Section="InternetShortcut"
+          Key="URL"
+          Value="<%= settings[:links][:CommunityLink] %>"
+          Directory="PuppetShortcutDocumentationDir" />
+        <IniFile
+          Id="PuppetNextStepURL"
+          Name="<%= settings[:product_name] %> First Steps.url"
+          Action="addLine"
+          Section="InternetShortcut"
+          Key="URL"
+          Value="<%= settings[:links][:NextStepLink] %>"
+          Directory="PuppetShortcutDocumentationDir" />
+        <IniFile
+          Id="PuppetManualURL"
+          Name="<%= settings[:product_name] %> Manual.url"
+          Action="addLine"
+          Section="InternetShortcut"
+          Key="URL"
+          Value="<%= settings[:links][:ManualLink] %>"
+          Directory="PuppetShortcutDocumentationDir" />
+        <IniFile
+          Id="PuppetForgeURL"
+          Name="Puppet Forge.url"
+          Action="addLine"
+          Section="InternetShortcut"
+          Key="URL"
+          Value="<%= settings[:links][:ForgeLink] %>"
+          Directory="PuppetShortcutDocumentationDir" />
+        <CreateFolder />
+        <RemoveFolder
+          Id="PuppetShortcutDocumentationDir"
+          On="uninstall"/>
+        <RegistryValue
+          Root="HKCU"
+          Key="SOFTWARE\<%= settings[:company_name] %>\<%= settings[:product_name] %>\Documentation"
+          Name="installed"
+          Value="1"
+          Type="integer"
+          KeyPath="yes" />
+      </Component>
 
+      <!-- Shortcuts from bin directory -->
       <Component
         Id="ShortCutsComponent"
         Directory="ShortCutBinDir"
