@@ -109,8 +109,11 @@ component "marionette-collective" do |pkg, settings, platform|
   pkg.install_file "ext/aio/common/client.cfg.dist", File.join(configdir, 'client.cfg')
   pkg.install_file "ext/aio/common/server.cfg.dist", File.join(configdir, 'server.cfg')
 
-  pkg.install_file "ext/windows/daemon.bat", "#{settings[:bindir]}/mco_daemon.bat" if platform.is_windows?
-
+  if platform.is_windows?
+    pkg.install_file "ext/windows/daemon.bat", "#{settings[:bindir]}/mco_daemon.bat"
+    pkg.add_source("file://resources/files/windows/mco.bat", sum: "2d29af9c926dcf8b50ae9ac1bdb18e1f")
+    pkg.install_file "../mco.bat", "#{settings[:link_bindir]}/mco.bat"
+  end
   pkg.configfile File.join(configdir, 'client.cfg')
   pkg.configfile File.join(configdir, 'server.cfg')
   pkg.configfile File.join(configdir, 'facts.yaml')
