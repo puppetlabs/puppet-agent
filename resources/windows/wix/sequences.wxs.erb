@@ -133,14 +133,6 @@
         <![CDATA[VersionNT64 >= 100 AND <%= settings[:win64] %> = no AND NOT (&<%= settings[:product_id] %>Runtime = 2)]]>
       </Custom>
       <%-end-%>
-      <!-- Make sure pxp-agent service is shutdown before we validate the install -->
-      <!-- Only executed if pxp-agent is already installed (i.e. an Uninstall or upgrade - check for repair also) -->
-      <Custom Action='ShutdownPxpAgentService_SetProp' Before='ShutdownPxpAgentService'>
-        REMOVE="ALL" OR WIX_UPGRADE_DETECTED or REINSTALL
-      </Custom>
-      <Custom Action='ShutdownPxpAgentService' Before='InstallValidate'>
-        REMOVE="ALL" OR WIX_UPGRADE_DETECTED or REINSTALL
-      </Custom>
     </InstallExecuteSequence>
 
     <SetProperty Id="ARPINSTALLLOCATION" Value="[INSTALLDIR]" After="CostFinalize" />

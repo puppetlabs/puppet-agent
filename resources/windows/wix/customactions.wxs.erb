@@ -166,19 +166,6 @@ End If
       Value="NT AUTHORITY"
       Execute="firstSequence"/>
 
-    <!--<Property Id="WixQuietExecCmdLine" Value="&quot;[INSTALLDIR]service\nssm.exe&quot; stop pxp-agent"/> -->
-    <CustomAction
-      Id="ShutdownPxpAgentService_SetProp"
-      Property="QtExecCmdLine"
-      Value="&quot;[INSTALLDIR]service\nssm.exe&quot; stop pxp-agent"
-      Execute="immediate" />
-    <CustomAction
-      Id="ShutdownPxpAgentService"
-      BinaryKey="WixCA"
-      DllEntry="CAQuietExec"
-      Execute="immediate"
-      Return="ignore" />
-
     <%- if @platform.architecture == "x86" -%>
     <!-- If these fail, we don't want to fail the installer -->
     <!-- We can't do a registry search for powershell's installed location because it will turn up the WOW64Node version due to not being able to bypass redirection in RegistrySearch
