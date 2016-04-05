@@ -1,10 +1,6 @@
 component "puppet" do |pkg, settings, platform|
   pkg.load_from_json("configs/components/puppet.json")
 
-  if platform.is_windows?
-    pkg.add_source("file://resources/files/windows/environment.bat", sum: "c698da37e559935e904f8690dd5c26fa")
-  end
-
   pkg.build_requires "ruby"
   pkg.build_requires "facter"
   pkg.build_requires "hiera"
@@ -136,8 +132,7 @@ component "puppet" do |pkg, settings, platform|
         --configs \
         --quick \
         --man \
-        --mandir=#{settings[:mandir]}"
-    ]
+        --mandir=#{settings[:mandir]}"]
   end
 
   #The following will add the vim syntax files for puppet
@@ -155,7 +150,18 @@ component "puppet" do |pkg, settings, platform|
   pkg.install_file ".gemspec", "#{settings[:gem_home]}/specifications/#{pkg.get_name}.gemspec"
 
   if platform.is_windows?
-    pkg.install_file "../environment.bat", "#{settings[:bindir]}/environment.bat"
+    # Install the appropriate .batch files to the INSTALLDIR/bin directory
+    pkg.add_source("file://resources/files/windows/environment.bat", sum: "810195e5fe09ce1704d0f1bf818b2d9a")
+    pkg.add_source("file://resources/files/windows/puppet.bat", sum: "002618e115db9fd9b42ec611e1ec70d2")
+    pkg.add_source("file://resources/files/windows/puppet_interactive.bat", sum: "4b40eb0df91d2ca8209302062c4940c4")
+    pkg.add_source("file://resources/files/windows/puppet_shell.bat", sum: "24477c6d2c0e7eec9899fb928204f1a0")
+    pkg.add_source("file://resources/files/windows/run_puppet_interactive.bat", sum: "d4ae359425067336e97e4e3a200027d5")
+    pkg.install_file "../environment.bat", "#{settings[:link_bindir]}/environment.bat"
+    pkg.install_file "../puppet.bat", "#{settings[:link_bindir]}/puppet.bat"
+    pkg.install_file "../puppet_interactive.bat", "#{settings[:link_bindir]}/puppet_interactive.bat"
+    pkg.install_file "../run_puppet_interactive.bat", "#{settings[:link_bindir]}/run_puppet_interactive.bat"
+    pkg.install_file "../puppet_shell.bat", "#{settings[:link_bindir]}/puppet_shell.bat"
+
     pkg.install_file "ext/windows/service/daemon.bat", "#{settings[:bindir]}/daemon.bat"
     pkg.install_file "ext/windows/service/daemon.rb", "#{settings[:bindir]}/daemon.rb"
     pkg.install_file "../wix/icon/puppetlabs.ico", "#{settings[:miscdir]}/puppetlabs.ico"

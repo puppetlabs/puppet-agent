@@ -3,11 +3,14 @@ REM This is the parent directory of the directory containing this script.
 SET "PL_BASEDIR=%~dp0.."
 REM Avoid the nasty \..\ littering the paths.
 SET "PL_BASEDIR=%PL_BASEDIR:\bin\..=%"
+SET "PL_BASEDIR=%PL_BASEDIR%\puppet"
 
 REM Set a fact so we can easily source the environment.bat file in the future.
 SET "FACTER_env_windows_installdir=%PL_BASEDIR%"
 SET "FACTERDIR=%PL_BASEDIR%"
 
+REM we only need to add the path to the executables, the path to the current
+REM bin directory was already set by the install.
 SET "PATH=%PL_BASEDIR%\bin;%PATH%"
 
 REM Enable rubygems support
