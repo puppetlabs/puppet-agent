@@ -38,7 +38,7 @@ function setup_puppet(){
   fi
 }
 
-if [ -z "$foundpkg" ]; then
+if [ -e "/tmp/.<%= @name %>.upgrade" ]; then
   set_answers
   setup_puppet
   remove_answers
