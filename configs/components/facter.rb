@@ -169,6 +169,11 @@ component "facter" do |pkg, settings, platform|
     end
   end
 
+  unless platform.is_windows?
+    special_flags += " -DFACTER_PATH=#{settings[:bindir]} \
+                       -DFACTER_RUBY=#{settings[:libdir]}/$(shell #{ruby} -e 'print RbConfig::CONFIG[\"LIBRUBY_SO\"]')"
+  end
+  # FACTER_RUBY Needs bindir
   pkg.configure do
     ["#{cmake} \
         #{toolchain} \
@@ -178,9 +183,7 @@ component "facter" do |pkg, settings, platform|
         #{special_flags} \
         -DBOOST_STATIC=ON \
         -DYAMLCPP_STATIC=ON \
-        -DFACTER_PATH=#{settings[:bindir]} \
         -DRUBY_LIB_INSTALL=#{settings[:ruby_vendordir]} \
-        -DFACTER_RUBY=#{settings[:libdir]}/$(shell #{ruby} -e 'print RbConfig::CONFIG[\"LIBRUBY_SO\"]') \
         -DWITHOUT_CURL=#{skip_curl} \
         -DWITHOUT_BLKID=#{skip_blkid} \
         -DWITHOUT_JRUBY=#{skip_jruby} \
