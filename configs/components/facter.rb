@@ -134,6 +134,8 @@ component "facter" do |pkg, settings, platform|
 
   make = platform[:make]
 
+  special_flags = ""
+
   # cmake on OSX is provided by brew
   # a toolchain is not currently required for OSX since we're building with clang.
   if platform.is_osx?
