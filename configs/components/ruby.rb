@@ -1,6 +1,12 @@
 component "ruby" do |pkg, settings, platform|
-  pkg.version "2.1.8"
-  pkg.md5sum "091b62f0a9796a3c55de2a228a0e6ef3"
+  if platform.is_aix?
+    pkg.version "2.1.9"
+    pkg.md5sum "d9d2109d3827789344cc3aceb8e1d697"
+  else
+    pkg.version "2.1.8"
+    pkg.md5sum "091b62f0a9796a3c55de2a228a0e6ef3"
+  end
+
   pkg.url "http://buildsources.delivery.puppetlabs.net/ruby-#{pkg.get_version}.tar.gz"
 
   pkg.replaces 'pe-ruby'
@@ -28,15 +34,15 @@ component "ruby" do |pkg, settings, platform|
   #   - bba35c1e: (RE-5290) Update ruby for a cross-compile on solaris 10
   rbconfig_info = {
     'powerpc-ibm-aix5.3.0.0' => {
-      :sum => "b024a1170d0f0201d3e5fd6e760c3aa9",
+      :sum => "5c445630ac67ddf61d16eb47a4ff955b",
       :target_double => "powerpc-aix5.3.0.0",
     },
     'powerpc-ibm-aix6.1.0.0' => {
-      :sum => "81ff5d356716c960f031801de20fc69b",
+      :sum => "82ee3719187cba9bbf6f4b7088b52305",
       :target_double => "powerpc-aix6.1.0.0",
     },
     'powerpc-ibm-aix7.1.0.0' => {
-      :sum => "eff5300471153608f30cd76a318c052b",
+      :sum => "960fb03d7818fec612f3be598c6964d2",
       :target_double => "powerpc-aix7.1.0.0",
      },
     'powerpc-linux-gnu' => {
