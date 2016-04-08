@@ -3,8 +3,8 @@
 # changes made to this file will be lost the next time ruby is built.
 
 module RbConfig
-  RUBY_VERSION == "2.1.8" or
-    raise "ruby lib version (2.1.8) doesn't match executable version (#{RUBY_VERSION})"
+  RUBY_VERSION == "2.1.9" or
+    raise "ruby lib version (2.1.9) doesn't match executable version (#{RUBY_VERSION})"
 
   TOPDIR = File.dirname(__FILE__).chomp!("/lib/ruby/2.1.0/i386-solaris2.10")
   DESTDIR = '' unless defined? DESTDIR
@@ -13,7 +13,7 @@ module RbConfig
   CONFIG["MAJOR"] = "2"
   CONFIG["MINOR"] = "1"
   CONFIG["TEENY"] = "0"
-  CONFIG["PATCHLEVEL"] = "440"
+  CONFIG["PATCHLEVEL"] = "490"
   CONFIG["INSTALL"] = '/opt/csw/bin/ginstall -c'
   CONFIG["EXEEXT"] = ""
   CONFIG["prefix"] = (TOPDIR || DESTDIR + "/opt/puppetlabs/puppet")
