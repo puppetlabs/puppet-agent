@@ -21,6 +21,7 @@ component "rubygem-nokogiri" do |pkg, settings, platform|
     # any later gem operations will trigger rebuilding the extensions for the
     # build host platform, and things then explode horrifically.
     pkg.build_requires "rubygem-net-netconf"
+    pkg.build_requires "rubygem-deep-merge"
 
     # The "gem install nokogiri" method of installing the gem won't work for
     # cross-compiled platforms, as we have no way of passing in the rbconfig
