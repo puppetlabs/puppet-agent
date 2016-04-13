@@ -1,12 +1,6 @@
 component "ruby" do |pkg, settings, platform|
-  if platform.is_aix?
-    pkg.version "2.1.9"
-    pkg.md5sum "d9d2109d3827789344cc3aceb8e1d697"
-  else
-    pkg.version "2.1.8"
-    pkg.md5sum "091b62f0a9796a3c55de2a228a0e6ef3"
-  end
-
+  pkg.version "2.1.9"
+  pkg.md5sum "d9d2109d3827789344cc3aceb8e1d697"
   pkg.url "http://buildsources.delivery.puppetlabs.net/ruby-#{pkg.get_version}.tar.gz"
 
   if platform.is_windows?
@@ -51,23 +45,23 @@ component "ruby" do |pkg, settings, platform|
       :target_double => "powerpc-aix7.1.0.0",
      },
     'powerpc-linux-gnu' => {
-      :sum => "287ce89e47286bd61cbed4a6670bdad4",
+      :sum => "763f316f8f43878d1f3bd5aa6bbe36e8",
       :target_double => "powerpc-linux",
     },
     'i386-pc-solaris2.10' => {
-      :sum => "5242445b8669b2153c00574e64a922db",
+      :sum => "9078034711ef1b047dcb7416134c55ae",
       :target_double => 'i386-solaris2.10',
     },
     'sparc-sun-solaris2.10' => {
-      :sum => "ee915c47a377e43ea16d70732a60009b",
+      :sum => "3fbceb4f70e086a6df52c206ca17211b",
       :target_double => 'sparc-solaris2.10',
     },
     'i386-pc-solaris2.11' => {
-      :sum => "1a0c0ba7105a8fd66139daeb09447280",
+      :sum => "224822682a570aceec965c75ca00d882",
       :target_double => 'i386-solaris2.11',
     },
     'sparc-sun-solaris2.11' => {
-      :sum => "169fc603bd78b889a49b18dbd82c9069",
+      :sum => "f2a40c4bff028dffc880a40b2806a361",
       :target_double => 'sparc-solaris2.11',
     }
   }
