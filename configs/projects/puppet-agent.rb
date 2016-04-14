@@ -74,9 +74,16 @@ project "puppet-agent" do |proj|
     proj.setting(:host_gem, File.join(proj.bindir, "gem"))
   end
 
-  # HuaweiOS is a cross-compiled platform
+  # Cross-compiled Linux platforms
   if platform.is_huaweios?
     platform_triple = "powerpc-linux-gnu"
+    host = "--host #{platform_triple}"
+
+    # Use a standalone ruby for cross-compilation
+    proj.setting(:host_ruby, "/opt/pl-build-tools/bin/ruby")
+    proj.setting(:host_gem, "/opt/pl-build-tools/bin/gem")
+  elsif platform.architecture == "s390x"
+    platform_triple = "s390x-linux-gnu"
     host = "--host #{platform_triple}"
 
     # Use a standalone ruby for cross-compilation
@@ -201,7 +208,9 @@ project "puppet-agent" do |proj|
   proj.component "ruby-shadow" unless platform.is_aix? || platform.is_windows?
   proj.component "ruby-augeas" unless platform.is_windows?
   proj.component "openssl"
-  proj.component "puppet-ca-bundle"
+  # TODO: remove the exception here once puppet-ca-bundle can be
+  # installed in cross-compiled environments (sgarman 2016-04-15)
+  proj.component "puppet-ca-bundle" unless platform.architecture == "s390x"
   proj.component "libxml2" unless platform.is_windows?
   proj.component "libxslt" unless platform.is_windows?
 

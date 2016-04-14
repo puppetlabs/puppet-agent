@@ -6,12 +6,13 @@ component "openssl" do |pkg, settings, platform|
   pkg.replaces 'pe-openssl'
 
   # Use our toolchain on linux systems (it's not available on osx)
-  if platform.is_huaweios?
+  if platform.is_huaweios? || platform.architecture == "s390x"
     pkg.build_requires "pl-binutils-#{platform.architecture}"
     pkg.build_requires "pl-gcc-#{platform.architecture}"
-    pkg.build_requires 'runtime'
-    # xutils-dev contains makedepend
-    pkg.build_requires 'xutils-dev'
+    pkg.build_requires 'runtime' if platform.is_huaweios?
+    # needed for the makedepend command
+    pkg.build_requires 'xutils-dev' if platform.is_huaweios?
+    pkg.build_requires 'xorg-x11-util-devel' if platform.architecture == "s390x"
   elsif platform.is_linux?
     pkg.build_requires 'pl-binutils'
     pkg.build_requires 'pl-gcc'
@@ -57,6 +58,13 @@ component "openssl" do |pkg, settings, platform|
     target = 'linux-ppc'
     ldflags = "-R/opt/pl-build-tools/#{settings[:platform_triple]}/lib -Wl,-rpath=#{settings[:libdir]} -L/opt/pl-build-tools/#{settings[:platform_triple]}/lib"
     cflags = "#{settings[:cflags]} -fPIC"
+  elsif platform.architecture == "s390x"
+    pkg.environment "PATH" => "/opt/pl-build-tools/bin:$$PATH"
+    pkg.environment "CC" => "/opt/pl-build-tools/bin/#{settings[:platform_triple]}-gcc"
+
+    target = 'linux64-s390x'
+    ldflags = "-Wl,-rpath=/opt/pl-build-tools/#{settings[:platform_triple]}/lib -Wl,-rpath=#{settings[:libdir]} -L/opt/pl-build-tools/#{settings[:platform_triple]}/lib"
+    cflags = "#{settings[:cflags]} -fPIC"
   elsif platform.is_solaris?
     pkg.environment "PATH" => "/opt/pl-build-tools/bin:$$PATH:/usr/local/bin:/usr/ccs/bin:/usr/sfw/bin"
     pkg.environment "CC" => "/opt/pl-build-tools/bin/#{settings[:platform_triple]}-gcc"
@@ -89,8 +97,6 @@ component "openssl" do |pkg, settings, platform|
       target = 'linux-x86_64'
     elsif platform.architecture =~ /ppc64le$/
       target = 'linux-ppc64le'
-    elsif platform.architecture =~ /s390/
-      target = 'linux64-s390x'
     end
     cflags = settings[:cflags]
     ldflags = "#{settings[:ldflags]} -Wl,-z,relro"

@@ -11,7 +11,7 @@ component "leatherman" do |pkg, settings, platform|
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/solaris/10/pl-binutils-2.25.#{platform.architecture}.pkg.gz"
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/solaris/10/pl-boost-1.58.0-1.#{platform.architecture}.pkg.gz"
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/solaris/10/pl-cmake-3.2.3-2.i386.pkg.gz"
-  elsif platform.name =~ /huaweios|solaris-11/
+  elsif platform.name =~ /huaweios|solaris-11/ || platform.architecture == "s390x"
     pkg.build_requires "pl-gcc-#{platform.architecture}"
     pkg.build_requires "pl-cmake"
     pkg.build_requires "pl-boost-#{platform.architecture}"
@@ -47,7 +47,7 @@ component "leatherman" do |pkg, settings, platform|
     toolchain = ""
     cmake = "/usr/local/bin/cmake"
     special_flags = "-DCMAKE_CXX_FLAGS='#{settings[:cflags]}'"
-  elsif platform.is_huaweios?
+  elsif platform.is_huaweios? || platform.architecture == "s390x"
     ruby = "#{settings[:host_ruby]} -r#{settings[:datadir]}/doc/rbconfig.rb"
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/#{settings[:platform_triple]}/pl-build-toolchain.cmake"
     cmake = "/opt/pl-build-tools/bin/cmake"
@@ -94,7 +94,7 @@ component "leatherman" do |pkg, settings, platform|
 
   # Make test will explode horribly in a cross-compile situation
   # Tests will be skipped on AIX until they are expected to pass
-  if platform.architecture == 'sparc' || platform.is_aix? || platform.is_huaweios?
+  if platform.architecture == 'sparc' || platform.architecture == 's390x' || platform.is_aix? || platform.is_huaweios?
     test = "/bin/true"
   else
     test = "LEATHERMAN_RUBY=#{settings[:libdir]}/$(shell #{ruby} -e 'print RbConfig::CONFIG[\"LIBRUBY_SO\"]') #{make} test ARGS=-V"

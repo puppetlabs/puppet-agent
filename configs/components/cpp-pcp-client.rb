@@ -25,7 +25,7 @@ component "cpp-pcp-client" do |pkg, settings, platform|
     cmake = "/usr/local/bin/cmake"
     platform_flags = "-DCMAKE_CXX_FLAGS='#{settings[:cflags]}'"
     toolchain = ""
-  elsif platform.is_huaweios?
+  elsif platform.is_huaweios? || platform.architecture == "s390x"
     cmake = "/opt/pl-build-tools/bin/cmake"
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/#{settings[:platform_triple]}/pl-build-toolchain.cmake"
   elsif platform.is_solaris?
