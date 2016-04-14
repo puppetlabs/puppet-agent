@@ -66,7 +66,7 @@
         <!-- This registry entry is required to be a keypath for this component -->
         <RegistryValue
           Root="HKCU"
-          Key="SOFTWARE\<%= settings[:company_name] %>\<%= settings[:product_name] %>"
+          Key="SOFTWARE\<%= settings[:company_name] %>\<%= settings[:product_id] %>"
           Name="installed"
           Value="1"
           Type="integer"
@@ -124,7 +124,7 @@
           On="uninstall"/>
         <RegistryValue
           Root="HKCU"
-          Key="SOFTWARE\<%= settings[:company_name] %>\<%= settings[:product_name] %>\Documentation"
+          Key="SOFTWARE\<%= settings[:company_name] %>\<%= settings[:product_id] %>\Documentation"
           Name="installed"
           Value="1"
           Type="integer"
