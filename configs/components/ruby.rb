@@ -48,6 +48,10 @@ component "ruby" do |pkg, settings, platform|
       :sum => "763f316f8f43878d1f3bd5aa6bbe36e8",
       :target_double => "powerpc-linux",
     },
+    's390x-linux-gnu' => {
+      :sum => "07bd699a2fbe131e25d3d37ea82ada78",
+      :target_double => "s390x-linux",
+    },
     'i386-pc-solaris2.10' => {
       :sum => "9078034711ef1b047dcb7416134c55ae",
       :target_double => 'i386-solaris2.10',
@@ -88,7 +92,7 @@ component "ruby" do |pkg, settings, platform|
   end
 
   # Cross-compiles require a hand-built rbconfig from the target system
-  if platform.is_solaris? || platform.is_aix? || platform.is_huaweios?
+  if platform.is_solaris? || platform.is_aix? || platform.is_huaweios? || platform.architecture == "s390x"
     pkg.add_source "file://resources/files/rbconfig-#{settings[:platform_triple]}.rb", sum: rbconfig_info[settings[:platform_triple]][:sum]
   end
 
@@ -104,10 +108,10 @@ component "ruby" do |pkg, settings, platform|
     pkg.build_requires "pl-zlib-#{platform.architecture}"
   end
 
-  if platform.is_huaweios?
+  if platform.is_huaweios? || platform.architecture == "s390x"
     pkg.build_requires 'pl-ruby'
     special_flags = "--with-baseruby=#{settings[:host_ruby]}"
-    pkg.build_requires 'runtime'
+    pkg.build_requires 'runtime' if platform.is_huaweios?
     pkg.environment "PATH" => "#{settings[:bindir]}:$$PATH"
     pkg.environment "CC" => "/opt/pl-build-tools/bin/#{settings[:platform_triple]}-gcc"
     pkg.environment "LDFLAGS" => "-Wl,-rpath=/opt/puppetlabs/puppet/lib"
@@ -176,7 +180,7 @@ component "ruby" do |pkg, settings, platform|
     pkg.install_file "../elevate.exe", "#{settings[:bindir]}/elevate.exe"
     pkg.install_file "../elevate.exe.config", "#{settings[:bindir]}/elevate.exe.config"
   end
-  if platform.is_solaris? || platform.is_aix? || platform.is_huaweios?
+  if platform.is_solaris? || platform.is_aix? || platform.is_huaweios? || platform.architecture == "s390x"
     # Here we replace the rbconfig from our ruby compiled with our toolchain
     # with an rbconfig from a ruby of the same version compiled with the system
     # gcc. Without this, the rbconfig will be looking for a gcc that won't
