@@ -1,6 +1,6 @@
 component "rubygem-net-netconf" do |pkg, settings, platform|
   pkg.version "0.4.3"
-  pkg.url "http://buildsources.delivery.puppetlabs.net/net-netconf-#{pkg.get_version}.gem"
+  pkg.url "https://rubygems.org/downloads/net-netconf-#{get_version}.gem"
   pkg.md5sum "fa173b0965766a427d8692f6b31c85a4"
 
   pkg.build_requires "ruby"

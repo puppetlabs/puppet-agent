@@ -1,7 +1,7 @@
 component "virt-what" do |pkg, settings, platform|
-  pkg.version "1.1.4"
+  pkg.version "1.14"
   pkg.md5sum "4d9bb5afc81de31f66443d8674bb3672"
-  pkg.url "http://buildsources.delivery.puppetlabs.net/virt-what-1.14.tar.gz"
+  pkg.url "https://people.redhat.com/~rjones/virt-what/files/virt-what-#{pkg.get_version}.tar.gz"
 
   pkg.replaces 'pe-virt-what'
 

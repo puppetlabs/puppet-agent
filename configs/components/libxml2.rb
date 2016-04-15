@@ -1,7 +1,7 @@
 component "libxml2" do |pkg, settings, platform|
   pkg.version "2.9.3"
   pkg.md5sum "daece17e045f1c107610e137ab50c179"
-  pkg.url "http://buildsources.delivery.puppetlabs.net/#{pkg.get_name}-#{pkg.get_version}.tar.gz"
+  pkg.url "http://xmlsoft.org/sources/libxml2-#{pkg.get_version}.tar.gz"
 
   if platform.is_aix?
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-gcc-5.2.0-1.aix#{platform.os_version}.ppc.rpm"
