@@ -87,7 +87,7 @@ fail "Unable to connect to the host. Is is possible that you aren't on VPN or co
 # This is not the best way to do this but we're trying to kill this script
 # so this is the best quick fix for now, to allow for private repo
 # cloning from github. This should be removed ASAP. - morgan,2016-04-18
-result = Kernel.system("set -vx;#{ssh_command} \"echo -e \"Host github.com\n\tStrictHostKeyChecking no\n\" >> ~/.ssh/config\"")
+result = Kernel.system("set -vx;#{ssh_command} \"echo -e \\\"Host github.com\n\tStrictHostKeyChecking no\n\\\" >> ~/.ssh/config\"")
 fail "Unable to connect to the host. Is is possible that you aren't on VPN or connected to the internal PL network?" unless result
 
 ### Build Facter
