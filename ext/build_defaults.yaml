@@ -15,8 +15,6 @@ foss_platforms:
   - el-6-x86_64
   - el-7-x86_64
   - eos-4-i386
-  - fedora-f21-i386
-  - fedora-f21-x86_64
   - fedora-f22-i386
   - fedora-f22-x86_64
   - huaweios-6-powerpc
@@ -27,18 +25,16 @@ foss_platforms:
   - ubuntu-12.04-i386
   - ubuntu-14.04-amd64
   - ubuntu-14.04-i386
-  - ubuntu-15.04-amd64
-  - ubuntu-15.04-i386
   - ubuntu-15.10-amd64
   - ubuntu-15.10-i386
+  - ubuntu-16.04-amd64
+  - ubuntu-16.04-i386
   - windows-2012-x86
   - windows-2012-x64
 pe_platforms:
   - aix-5.3-power
   - aix-6.1-power
   - aix-7.1-power
-  - debian-6-amd64
-  - debian-6-i386
   - el-4-i386
   - el-4-x86_64
   - sles-10-i386

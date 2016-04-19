@@ -38,8 +38,17 @@ function setup_puppet(){
   fi
 }
 
-if [ -z "$foundpkg" ]; then
+function reload_services(){
+  for service in "puppet" "mcollective" "pxp-agent" ; do
+    if [ -f "/tmp/.puppet-agent.upgrade/${service}" ] ; then
+      /bin/launchctl load -F "/Library/LaunchDaemons/com.puppetlabs.${service}.plist"
+    fi
+  done
+}
+
+if [ -d "/tmp/.puppet-agent.upgrade" ]; then
   set_answers
   setup_puppet
   remove_answers
+  reload_services
 fi
