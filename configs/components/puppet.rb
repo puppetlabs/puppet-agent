@@ -14,6 +14,7 @@ component "puppet" do |pkg, settings, platform|
   pkg.replaces 'pe-cloud-provisioner'
   pkg.replaces 'pe-puppet-enterprise-release', '4.0.0'
   pkg.replaces 'pe-agent'
+  pkg.replaces 'pe-puppetserver-common', '4.0.0'
 
   if platform.is_deb?
     pkg.replaces 'puppet-common', '4.0.0'
