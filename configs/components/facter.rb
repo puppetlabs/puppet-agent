@@ -70,7 +70,7 @@ component "facter" do |pkg, settings, platform|
   when /(debian-(7|8)|ubuntu-(12|14))/
     pkg.build_requires 'openjdk-7-jdk'
     java_home = "/usr/lib/jvm/java-7-openjdk-#{platform.architecture}"
-  when /(debian-9|ubuntu-15)/
+  when /(debian-9|ubuntu-(15|16))/
     pkg.build_requires 'openjdk-8-jdk'
     java_home = "/usr/lib/jvm/java-8-openjdk-#{platform.architecture}"
   when /sles-12/
