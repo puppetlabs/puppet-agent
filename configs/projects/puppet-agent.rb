@@ -208,9 +208,7 @@ project "puppet-agent" do |proj|
   proj.component "ruby-shadow" unless platform.is_aix? || platform.is_windows?
   proj.component "ruby-augeas" unless platform.is_windows?
   proj.component "openssl"
-  # TODO: remove the exception here once puppet-ca-bundle can be
-  # installed in cross-compiled environments (sgarman 2016-04-15)
-  proj.component "puppet-ca-bundle" unless platform.architecture == "s390x"
+  proj.component "puppet-ca-bundle"
   proj.component "libxml2" unless platform.is_windows?
   proj.component "libxslt" unless platform.is_windows?
 

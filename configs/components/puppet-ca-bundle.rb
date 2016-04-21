@@ -5,12 +5,18 @@ component "puppet-ca-bundle" do |pkg, settings, platform|
   # make the keystore
   pkg.build_requires 'facter'
 
+  openssl_cmd = "#{settings[:bindir]}/openssl"
+  if platform.architecture == "s390x"
+    # Use the build host's openssl command, not our cross-compiled one
+    openssl_cmd = "/usr/bin/openssl"
+  end
+
   install_commands = [
-    "#{platform[:make]} install OPENSSL=#{settings[:bindir]}/openssl USER=0 GROUP=0 DESTDIR=#{File.join(settings[:prefix], 'ssl')}"
+    "#{platform[:make]} install OPENSSL=#{openssl_cmd} USER=0 GROUP=0 DESTDIR=#{File.join(settings[:prefix], 'ssl')}"
   ]
 
   if settings[:java_available]
-    install_commands << "#{platform[:make]} keystore DESTDIR=#{File.join(settings[:prefix], 'ssl')}"
+    install_commands << "#{platform[:make]} keystore OPENSSL=#{openssl_cmd} DESTDIR=#{File.join(settings[:prefix], 'ssl')}"
   end
 
   pkg.install do

@@ -4,9 +4,7 @@ component 'curl' do |pkg, settings, platform|
   pkg.url "http://buildsources.delivery.puppetlabs.net/curl-#{pkg.get_version}.tar.gz"
 
   pkg.build_requires "openssl"
-  # TODO: remove the exception here once puppet-ca-bundle can be
-  # installed in cross-compiled environments (sgarman: 2016-04-15)
-  pkg.build_requires "puppet-ca-bundle" unless platform.architecture == "s390x"
+  pkg.build_requires "puppet-ca-bundle"
 
   if platform.architecture == "s390x"
     pkg.environment "CC" => "/opt/pl-build-tools/bin/#{settings[:platform_triple]}-gcc"
