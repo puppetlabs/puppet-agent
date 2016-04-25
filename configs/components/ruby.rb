@@ -49,7 +49,7 @@ component "ruby" do |pkg, settings, platform|
       :target_double => "powerpc-linux",
     },
     's390x-linux-gnu' => {
-      :sum => "07bd699a2fbe131e25d3d37ea82ada78",
+      :sum => "3bb93ed43fddc4807347a988cbb2e0c1",
       :target_double => "s390x-linux",
     },
     'i386-pc-solaris2.10' => {
