@@ -85,6 +85,10 @@
         Guid="B9179A60-483F-4F32-8E3F-AD632B0DEBB4"
         Directory="PuppetConfDir">
         <CreateFolder />
+        <File
+          Id="HieraConf"
+          KeyPath="yes"
+          Source="SourceDir\CommonAppDataFolder\Puppetlabs\puppet\etc\hiera.yaml" />
         <IniFile
           Id="PuppetConfServer" Name="puppet.conf"
           Action="addLine"
@@ -191,10 +195,6 @@
         Guid="0D29EB1B-604D-4FE1-A75C-F18CC230BEED"
         Directory="CodeDir">
         <CreateFolder />
-        <File
-          Id="HieraConf"
-          KeyPath="yes"
-          Source="SourceDir\CommonAppDataFolder\Puppetlabs\code\hiera.yaml" />
       </Component>
       <Component
         Id="HieraDataDir"
