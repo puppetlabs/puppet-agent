@@ -44,6 +44,7 @@ WINDOWS      = JSON.parse(File.read('configs/components/windows_puppet.json'))
 WINDOWS_RUBY = JSON.parse(File.read('configs/components/windows_ruby.json'))
 
 ssh_key = ENV['VANAGON_SSH_KEY'] ? "-i #{ENV['VANAGON_SSH_KEY']}" : ''
+ssh_agent = ENV['VANAGON_SSH_AGENT'] ? '-A' : ''
 
 # Retrieve a vm
 vm_type = 'win-2012r2-x86_64'
@@ -77,13 +78,18 @@ def clone_and_rynsc_private_repo(fork, ref, hostname, ssh_key, component = nil)
 end
 
 # Set up the environment so I don't keep crying
-ssh_command = "ssh #{ssh_key} -T -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null Administrator@#{hostname}"
+ssh_command = "ssh #{ssh_key} #{ssh_agent} -T -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null Administrator@#{hostname}"
 ssh_env = "export PATH=\'/cygdrive/c/Program Files/Git/cmd:/home/Administrator/deps/ruby-#{ruby_version}-#{ruby_arch}-mingw32/bin:/cygdrive/c/ProgramData/chocolatey/bin:/cygdrive/c/Program Files (x86)/Windows Installer XML v3.5/bin:/usr/local/bin:/usr/bin:/cygdrive/c/Windows/system32:/cygdrive/c/Windows:/cygdrive/c/Windows/System32/Wbem:/cygdrive/c/Windows/System32/WindowsPowerShell/v1.0:/bin\'"
 scp_command = "scp #{ssh_key} -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
 
 result = Kernel.system("set -vx;#{ssh_command} \"echo \\\"#{ssh_env}\\\" >> ~/.bash_profile\"")
 fail "Unable to connect to the host. Is is possible that you aren't on VPN or connected to the internal PL network?" unless result
 
+# This is not the best way to do this but we're trying to kill this script
+# so this is the best quick fix for now, to allow for private repo
+# cloning from github. This should be removed ASAP. - morgan,2016-04-18
+result = Kernel.system("set -vx;#{ssh_command} \"echo -e \\\"Host github.com\n\tStrictHostKeyChecking no\n\\\" >> ~/.ssh/config\"")
+fail "Unable to connect to the host. Is is possible that you aren't on VPN or connected to the internal PL network?" unless result
 
 ### Build Facter
 #
@@ -208,7 +214,8 @@ fail "It seems there were some issues cloning the puppet_for_the_win repo" unles
 Kernel.system("set -vx;#{scp_command} winconfig.yaml Administrator@#{hostname}:/home/Administrator/puppet_for_the_win/")
 
 # Build the MSI with automation in puppet_for_the_win
-result = Kernel.system("set -vx;#{ssh_command} \"source .bash_profile ; cd /home/Administrator/puppet_for_the_win ; AGENT_VERSION_STRING=#{AGENT_VERSION_STRING} ARCH=#{ARCH} C:/cygwin64/home/Administrator/deps/ruby-#{ruby_version}-#{ruby_arch}-mingw32/bin/rake clobber windows:build config=winconfig.yaml\"")
+result = Kernel.system("set -vx;#{ssh_command} \"bash -l -c \\\"source .bash_profile ; cd /home/Administrator/puppet_for_the_win ; AGENT_VERSION_STRING=#{AGENT_VERSION_STRING} ARCH=#{ARCH} C:/cygwin64/home/Administrator/deps/ruby-#{ruby_version}-#{ruby_arch}-mingw32/bin/rake clobber windows:build config=winconfig.yaml\\\"\"")
+
 fail "It seems there were some issues building the puppet-agent msi" unless result
 
 # Fetch back the built installer
