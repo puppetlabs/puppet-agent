@@ -253,4 +253,6 @@ project "puppet-agent" do |proj|
   proj.directory proj.logdir unless platform.is_windows?
   proj.directory proj.piddir unless platform.is_windows?
 
+  proj.timeout 7200 if platform.is_windows?
+
 end
