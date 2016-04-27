@@ -32,7 +32,7 @@
           Id="PuppetShortcut"
           Name="Run Puppet Agent"
           Description="Run Puppet in an interactive command window"
-          Target="[INSTALLDIR]puppet\bin\run_puppet_interactive.bat"
+          Target="[INSTALLDIR]bin\run_puppet_interactive.bat"
           Icon="PuppetShortcutIcon"
           WorkingDirectory="bin">
           <Icon
@@ -43,7 +43,7 @@
           Id="FacterShortcut"
           Name="Run Facter"
           Description="Run Facter in an interactive command window"
-          Target="[INSTALLDIR]puppet\bin\run_facter_interactive.bat"
+          Target="[INSTALLDIR]bin\run_facter_interactive.bat"
           Icon="FacterShortcutIcon"
           WorkingDirectory="bin">
           <Icon
@@ -55,7 +55,7 @@
           Name="Start Command Prompt with Puppet"
           Description="Start a Command Prompt with Puppet already in the PATH and RUBYLIB load path."
           Target="[%ComSpec]"
-          Arguments='/E:ON /K "[INSTALLDIR]puppet\bin\puppet_shell.bat"'
+          Arguments='/E:ON /K "[INSTALLDIR]bin\puppet_shell.bat"'
           Icon="PuppetShellShortcutIcon"
           WorkingDirectory="bin">
           <Icon
