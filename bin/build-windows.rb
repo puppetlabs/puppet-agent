@@ -44,6 +44,7 @@ WINDOWS      = JSON.parse(File.read('configs/components/windows_puppet.json'))
 WINDOWS_RUBY = JSON.parse(File.read('configs/components/windows_ruby.json'))
 
 ssh_key = ENV['VANAGON_SSH_KEY'] ? "-i #{ENV['VANAGON_SSH_KEY']}" : ''
+ssh_agent = ENV['VANAGON_SSH_AGENT'] ? '-A' : ''
 
 # Retrieve a vm
 vm_type = 'win-2012r2-x86_64'
@@ -77,13 +78,12 @@ def clone_and_rynsc_private_repo(fork, ref, hostname, ssh_key, component = nil)
 end
 
 # Set up the environment so I don't keep crying
-ssh_command = "ssh #{ssh_key} -T -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null Administrator@#{hostname}"
+ssh_command = "ssh #{ssh_key} #{ssh_agent} -T -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null Administrator@#{hostname}"
 ssh_env = "export PATH=\'/cygdrive/c/Program Files/Git/cmd:/home/Administrator/deps/ruby-#{ruby_version}-#{ruby_arch}-mingw32/bin:/cygdrive/c/ProgramData/chocolatey/bin:/cygdrive/c/Program Files (x86)/Windows Installer XML v3.5/bin:/usr/local/bin:/usr/bin:/cygdrive/c/Windows/system32:/cygdrive/c/Windows:/cygdrive/c/Windows/System32/Wbem:/cygdrive/c/Windows/System32/WindowsPowerShell/v1.0:/bin\'"
 scp_command = "scp #{ssh_key} -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
 
 result = Kernel.system("set -vx;#{ssh_command} \"echo \\\"#{ssh_env}\\\" >> ~/.bash_profile\"")
 fail "Unable to connect to the host. Is is possible that you aren't on VPN or connected to the internal PL network?" unless result
-
 
 ### Build Facter
 #
