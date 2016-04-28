@@ -1,5 +1,7 @@
 component "nssm" do |pkg, settings, platform|
-  pkg.load_from_json("configs/components/nssm.json")
+  pkg.version "2.24"
+  pkg.md5sum "0fa251d152383ded6850097279291bb0"
+  pkg.url "https://nssm.cc/release/nssm-#{pkg.get_version}.zip"
 
   # Because we're unpacking a zip archive, we need to set the path to the executable.
   # We don't automatically have this set on windows, unfortunately. We need to set the
