@@ -137,9 +137,11 @@ fail "It looks like the pxp-agent build script failed for some reason. I would s
 
 # Move all necessary dll's into facter bindir
 Kernel.system("set -vx;#{ssh_command} \"cp /cygdrive/c/tools/mingw#{script_arch}/bin/libgcc_s_#{ARCH == 'x64' ? 'seh' : 'sjlj'}-1.dll /cygdrive/c/tools/mingw#{script_arch}/bin/libstdc++-6.dll /cygdrive/c/tools/mingw#{script_arch}/bin/libwinpthread-1.dll /home/Administrator/facter/release/bin/\"")
+Kernel.system("set -vx;#{ssh_command} \"cp -r /home/Administrator/deps/leatherman/bin/* /home/Administrator/facter/release/bin/\"")
 fail "Copying compiler DLLs to build directory failed" unless $?.success?
 # Repeat for pxp-agent (CTH-357)
 Kernel.system("set -vx;#{ssh_command} \"cp /cygdrive/c/tools/mingw#{script_arch}/bin/libgcc_s_#{ARCH == 'x64' ? 'seh' : 'sjlj'}-1.dll /cygdrive/c/tools/mingw#{script_arch}/bin/libstdc++-6.dll /cygdrive/c/tools/mingw#{script_arch}/bin/libwinpthread-1.dll /home/Administrator/pxp-agent/release/bin/\"")
+Kernel.system("set -vx;#{ssh_command} \"cp -r /home/Administrator/deps/leatherman/bin/* /home/Administrator/pxp-agent/release/bin/\"")
 fail "Copying compiler DLLs to build directory failed" unless $?.success?
 
 archive_dest = "/home/Administrator/archive"

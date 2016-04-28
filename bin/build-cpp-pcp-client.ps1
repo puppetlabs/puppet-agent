@@ -22,6 +22,9 @@ Write-Host "Starting cpp-pcp-client build"
 mkdir -Force release
 cd release
 
+$env:PATH += ";$toolsDir\leatherman\bin"
+Write-Host "Updated Path to $env:PATH"
+
 ## Build cpp_pcp_client
 $cmake_args = @(
   '-G',
