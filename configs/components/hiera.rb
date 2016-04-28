@@ -28,6 +28,7 @@ component "hiera" do |pkg, settings, platform|
   end
 
   pkg.install_file ".gemspec", "#{settings[:gem_home]}/specifications/#{pkg.get_name}.gemspec"
+
   if platform.is_windows?
     pkg.add_source("file://resources/files/windows/hiera.bat", sum: "bbe0a513808af61ed9f4b57463851326")
     pkg.install_file "../hiera.bat", "#{settings[:link_bindir]}/hiera.bat"
@@ -41,4 +42,7 @@ component "hiera" do |pkg, settings, platform|
   else
     pkg.directory File.join(settings[:puppet_codedir], 'environments', 'production', 'hieradata')
   end
+
+  pkg.add_preinstall_action ["upgrade"], ["if [ -e #{File.join(settings[:puppet_codedir], 'hiera.yaml')} ]; then cp #{File.join(settings[:puppet_codedir], 'hiera.yaml')} #{File.join(settings[:puppet_codedir], 'hiera.yaml.pkg-old')}; fi"]
+  pkg.add_postinstall_action ["upgrade"], ["if [ -e #{File.join(settings[:puppet_codedir], 'hiera.yaml.pkg-old')} ]; then mv #{File.join(settings[:puppet_codedir], 'hiera.yaml.pkg-old')} #{File.join(settings[:puppet_codedir], 'hiera.yaml')}; fi"]
 end
