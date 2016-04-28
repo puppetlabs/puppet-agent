@@ -75,12 +75,12 @@ component "facter" do |pkg, settings, platform|
   case platform.name
   when /fedora-f20/
     pkg.build_requires 'java-1.7.0-openjdk-devel'
-  when /(el-(6|7)|fedora-(f21|f22))/
+  when /(el-(6|7)|fedora-(f21|f22|f23|f24))/
     pkg.build_requires 'java-1.8.0-openjdk-devel'
   when /(debian-(7|8)|ubuntu-(12|14))/
     pkg.build_requires 'openjdk-7-jdk'
     java_home = "/usr/lib/jvm/java-7-openjdk-#{platform.architecture}"
-  when /(debian-9|ubuntu-15)/
+  when /(debian-9|ubuntu-(15|16))/
     pkg.build_requires 'openjdk-8-jdk'
     java_home = "/usr/lib/jvm/java-8-openjdk-#{platform.architecture}"
   when /sles-12/
