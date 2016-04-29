@@ -41,6 +41,7 @@ component "cpp-pcp-client" do |pkg, settings, platform|
 
     cmake = "C:/ProgramData/chocolatey/bin/cmake.exe -G \"MinGW Makefiles\""
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=#{settings[:tools_root]}/pl-build-toolchain.cmake"
+    platform_flags = "-DBUILD_SHARED_LIBS=OFF"
   else
     pkg.build_requires "pl-gcc"
     pkg.build_requires "pl-cmake"

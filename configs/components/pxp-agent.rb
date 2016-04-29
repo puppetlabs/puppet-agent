@@ -43,7 +43,7 @@ component "pxp-agent" do |pkg, settings, platform|
     make = "#{settings[:gcc_bindir]}/mingw32-make"
     pkg.environment "CYGWIN" => settings[:cygwin]
 
-    special_flags = " -DCMAKE_INSTALL_PREFIX=#{settings[:pxp_root]} "
+    special_flags = " -DCMAKE_INSTALL_PREFIX=#{settings[:pxp_root]} -DCMAKE_CXX_FLAGS='-static-libgcc -static-libstdc++'"
     cmake = "C:/ProgramData/chocolatey/bin/cmake.exe -G \"MinGW Makefiles\""
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=#{settings[:tools_root]}/pl-build-toolchain.cmake"
   else

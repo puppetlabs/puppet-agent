@@ -34,6 +34,7 @@ $cmake_args = @(
   "-DCMAKE_PREFIX_PATH=`"$toolsDir\$curlPkg;$toolsDir\$opensslPkg;$toolsDir\$rubyPkg;$toolsDir\leatherman`"",
   "-DCMAKE_INSTALL_PREFIX=`"$toolsDir\pcp-client`"",
   "-DCURL_STATIC=ON",
+  "-DBUILD_SHARED_LIBS=OFF",
   ".."
 )
 Invoke-External { cmake $cmake_args }
