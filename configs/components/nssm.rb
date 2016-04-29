@@ -8,5 +8,5 @@ component "nssm" do |pkg, settings, platform|
 
   win_arch = platform.architecture == "x64" ? "win64" : "win32"
 
-  pkg.install_file "#{win_arch}/nssm.exe", "#{settings[:bindir]}/nssm.exe"
+  pkg.install_file "#{win_arch}/nssm.exe", "#{settings[:service_dir]}/nssm.exe"
 end

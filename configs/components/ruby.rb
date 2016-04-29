@@ -70,6 +70,8 @@ component "ruby" do |pkg, settings, platform|
     }
   }
 
+  special_flags = " --prefix=#{settings[:prefix]} --with-opt-dir=#{settings[:prefix]} "
+
   if platform.is_aix?
     pkg.apply_patch "#{base}/aix_ruby_2.1_libpath_with_opt_dir.patch"
     pkg.apply_patch "#{base}/aix_ruby_2.1_fix_proctitle.patch"
@@ -81,7 +83,7 @@ component "ruby" do |pkg, settings, platform|
 
     # This normalizes the build string to something like AIX 7.1.0.0 rather
     # than AIX 7.1.0.2 or something
-    special_flags = "--build=#{settings[:platform_triple]}"
+    special_flags += " --build=#{settings[:platform_triple]} "
   end
 
   if platform.is_windows?
@@ -110,7 +112,7 @@ component "ruby" do |pkg, settings, platform|
 
   if platform.is_cross_compiled_linux?
     pkg.build_requires 'pl-ruby'
-    special_flags = "--with-baseruby=#{settings[:host_ruby]}"
+    special_flags += " --with-baseruby=#{settings[:host_ruby]} "
     pkg.build_requires 'runtime' if platform.is_huaweios?
     pkg.environment "PATH" => "#{settings[:bindir]}:$$PATH"
     pkg.environment "CC" => "/opt/pl-build-tools/bin/#{settings[:platform_triple]}-gcc"
@@ -130,7 +132,7 @@ component "ruby" do |pkg, settings, platform|
         pkg.build_requires 'pl-ruby'
       end
 
-      special_flags = "--with-baseruby=#{settings[:host_ruby]}"
+      special_flags += " --with-baseruby=#{settings[:host_ruby]} "
     end
     pkg.build_requires 'libedit'
     pkg.build_requires 'runtime'
@@ -147,8 +149,12 @@ component "ruby" do |pkg, settings, platform|
 
     pkg.environment "PATH" => "$$(cygpath -u #{settings[:gcc_bindir]}):$$(cygpath -u #{settings[:tools_root]}/bin):$$(cygpath -u #{settings[:bindir]}):$$PATH"
     pkg.environment "CYGWIN" => settings[:cygwin]
+    # So we need to pass -static-libgcc to the compiler, but we cannot pass -static-libgcc as
+    # a regular flag, for information as to why: http://www.mingw.org/wiki/HOWTO_Sneak_GCC_Switches_Past_Libtool
+    # in order to actually get gcc to honor the flag you need to set CC specifically with the flag in it
+    pkg.environment "CC" => "gcc -static-libgcc"
 
-    special_flags = "CPPFLAGS='-DFD_SETSIZE=2048' debugflags=-g"
+    special_flags = " CPPFLAGS='-DFD_SETSIZE=2048' debugflags=-g --prefix=#{settings[:ruby_dir]} --with-opt-dir=#{settings[:prefix]} "
   end
 
 
@@ -157,8 +163,6 @@ component "ruby" do |pkg, settings, platform|
   pkg.configure do
     [
       "bash configure \
-        --prefix=#{settings[:prefix]} \
-        --with-opt-dir=#{settings[:prefix]} \
         --enable-shared \
         --enable-bundled-libyaml \
         --disable-install-doc \
@@ -177,8 +181,9 @@ component "ruby" do |pkg, settings, platform|
   end
 
   if platform.is_windows?
-    pkg.install_file "../elevate.exe", "#{settings[:bindir]}/elevate.exe"
-    pkg.install_file "../elevate.exe.config", "#{settings[:bindir]}/elevate.exe.config"
+    pkg.install_file "../elevate.exe", "#{settings[:windows_tools]}/elevate.exe"
+    pkg.install_file "../elevate.exe.config", "#{settings[:windows_tools]}/elevate.exe.config"
+    pkg.directory settings[:ruby_dir]
   end
   if platform.is_cross_compiled_linux? || platform.is_solaris? || platform.is_aix?
     # Here we replace the rbconfig from our ruby compiled with our toolchain

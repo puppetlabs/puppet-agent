@@ -74,10 +74,6 @@ component "marionette-collective" do |pkg, settings, platform|
   end
 
   if platform.is_windows?
-    extra_flags = "--no-service-files"
-  end
-
-  if platform.is_windows?
     configdir = File.join(settings[:sysconfdir], 'mcollective', 'etc')
     plugindir = File.join(settings[:sysconfdir], 'mcollective', 'plugins')
   else
@@ -85,17 +81,27 @@ component "marionette-collective" do |pkg, settings, platform|
     plugindir = File.join(settings[:install_root], 'mcollective', 'plugins')
   end
 
+  flags = " --bindir=#{settings[:bindir]} \
+            --sitelibdir=#{settings[:ruby_vendordir]} \
+            --ruby=#{File.join(settings[:bindir], 'ruby')} "
+
+  if platform.is_windows?
+    pkg.install_file "ext/windows/daemon.bat", "#{settings[:bindir]}/mco_daemon.bat"
+    pkg.add_source("file://resources/files/windows/mco.bat", sum: "2d29af9c926dcf8b50ae9ac1bdb18e1f")
+    pkg.install_file "../mco.bat", "#{settings[:link_bindir]}/mco.bat"
+    flags = " --bindir=#{settings[:mco_bindir]} \
+              --sitelibdir=#{settings[:mco_libdir]} \
+              --no-service-files \
+              --ruby=#{File.join(settings[:ruby_dir], 'bin/ruby')} "
+  end
 
   pkg.install do
     ["#{settings[:host_ruby]} install.rb \
-        --ruby=#{File.join(settings[:bindir], 'ruby')} \
-        --bindir=#{settings[:bindir]} \
         --configdir=#{configdir} \
-        --sitelibdir=#{settings[:ruby_vendordir]} \
-        --quick \
         --sbindir=#{settings[:bindir]} \
         --plugindir=#{plugindir} \
-        #{extra_flags}"]
+        --quick \
+        #{flags}"]
   end
 
   pkg.directory configdir
@@ -109,11 +115,6 @@ component "marionette-collective" do |pkg, settings, platform|
   pkg.install_file "ext/aio/common/client.cfg.dist", File.join(configdir, 'client.cfg')
   pkg.install_file "ext/aio/common/server.cfg.dist", File.join(configdir, 'server.cfg')
 
-  if platform.is_windows?
-    pkg.install_file "ext/windows/daemon.bat", "#{settings[:bindir]}/mco_daemon.bat"
-    pkg.add_source("file://resources/files/windows/mco.bat", sum: "2d29af9c926dcf8b50ae9ac1bdb18e1f")
-    pkg.install_file "../mco.bat", "#{settings[:link_bindir]}/mco.bat"
-  end
   pkg.configfile File.join(configdir, 'client.cfg')
   pkg.configfile File.join(configdir, 'server.cfg')
   pkg.configfile File.join(configdir, 'facts.yaml')
