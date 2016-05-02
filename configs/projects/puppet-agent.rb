@@ -196,6 +196,7 @@ project "puppet-agent" do |proj|
   proj.component "rubygem-deep-merge"
   proj.component "rubygem-net-ssh"
   proj.component "rubygem-hocon"
+  proj.component "rubygem-semantic_puppet"
   if platform.is_windows?
     proj.component "rubygem-ffi"
     proj.component "rubygem-minitar"
