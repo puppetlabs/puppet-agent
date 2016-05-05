@@ -179,7 +179,7 @@ End If
     <CustomAction
       Id="Remove64BitPath_SetProp"
       Property="Remove64BitPath"
-      Value="&quot;[%WINDIR]\System32\WindowsPowerShell\v1.0\powershell.exe&quot; -NoLogo -NonInteractive -InputFormat None -NoProfile -ExecutionPolicy Bypass -Command &quot;[\[]System.Text.RegularExpressions.Regex[\]]::Replace([\[]Microsoft.Win32.Registry[\]]::LocalMachine.OpenSubKey(&apos;SYSTEM\CurrentControlSet\Control\Session Manager\Environment\&apos;).GetValue(&apos;PATH&apos;, &apos;&apos;, [\[]Microsoft.Win32.RegistryValueOptions[\]]::DoNotExpandEnvironmentNames).ToString(),  [\[]System.Text.RegularExpressions.Regex[\]]::Escape(&apos;[ProgramFiles64Folder]<%= settings[:company_name] %>\Puppet\bin&apos;) + &apos;([\?]&gt;;)[\?]&apos;, &apos;&apos;, [\[]System.Text.RegularExpressions.RegexOptions[\]]::IgnoreCase) | %[\{][\[]System.Environment[\]]::SetEnvironmentVariable(&apos;PATH&apos;,$_, &apos;Machine&apos;)[\}]&quot;"
+      Value="&quot;[%WINDIR]\System32\WindowsPowerShell\v1.0\powershell.exe&quot; -NoLogo -NonInteractive -InputFormat None -NoProfile -ExecutionPolicy Bypass -Command &quot;[\[]System.Text.RegularExpressions.Regex[\]]::Replace([\[]Microsoft.Win32.Registry[\]]::LocalMachine.OpenSubKey(&apos;SYSTEM\CurrentControlSet\Control\Session Manager\Environment\&apos;).GetValue(&apos;PATH&apos;, &apos;&apos;, [\[]Microsoft.Win32.RegistryValueOptions[\]]::DoNotExpandEnvironmentNames).ToString(),  [\[]System.Text.RegularExpressions.Regex[\]]::Escape(&apos;[ProgramFiles64Folder]<%= settings[:pl_company_name] %>\Puppet\bin&apos;) + &apos;([\?]&gt;;)[\?]&apos;, &apos;&apos;, [\[]System.Text.RegularExpressions.RegexOptions[\]]::IgnoreCase) | %[\{][\[]System.Environment[\]]::SetEnvironmentVariable(&apos;PATH&apos;,$_, &apos;Machine&apos;)[\}]&quot;"
       Execute="immediate" />
     <CustomAction
       Id="Remove64BitPath"
@@ -190,7 +190,7 @@ End If
     <CustomAction
       Id="Remove64BitProgramFiles_SetProp"
       Property="Remove64BitProgramFiles"
-      Value="&quot;[%WINDIR]\System32\cmd.exe&quot; /c IF EXIST &quot;[ProgramFiles64Folder]<%= settings[:company_name] %>\&quot; rmdir /s /q &quot;[ProgramFiles64Folder]<%= settings[:company_name] %>&quot;"
+      Value="&quot;[%WINDIR]\System32\cmd.exe&quot; /c IF EXIST &quot;[ProgramFiles64Folder]<%= settings[:pl_company_name] %>\&quot; rmdir /s /q &quot;[ProgramFiles64Folder]<%= settings[:pl_company_name] %>&quot;"
       Execute="immediate" />
     <CustomAction
       Id="Remove64BitProgramFiles"
