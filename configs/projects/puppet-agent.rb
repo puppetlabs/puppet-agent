@@ -3,7 +3,8 @@ project "puppet-agent" do |proj|
 
   # Project level settings our components will care about
   if platform.is_windows?
-    proj.setting(:company_name, "Puppet Labs")
+    proj.setting(:company_name, "Puppet Inc")
+    proj.setting(:pl_company_name, "Puppet Labs")
     proj.setting(:company_id, "PuppetLabs")
     proj.setting(:common_product_id, "PuppetInstaller")
     proj.setting(:puppet_service_name, "puppet")

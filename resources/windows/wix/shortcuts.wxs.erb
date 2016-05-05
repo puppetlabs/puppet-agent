@@ -37,7 +37,7 @@
           WorkingDirectory="bin">
           <Icon
             Id="PuppetShortcutIcon"
-            SourceFile="wix\icon\puppetlabs.ico"/>
+            SourceFile="wix\icon\puppet.ico"/>
         </Shortcut>
         <Shortcut
           Id="FacterShortcut"
@@ -48,7 +48,7 @@
           WorkingDirectory="bin">
           <Icon
             Id="FacterShortcutIcon"
-            SourceFile="wix\icon\puppetlabs.ico"/>
+            SourceFile="wix\icon\puppet.ico"/>
         </Shortcut>
         <Shortcut
           Id="PuppetShellShortcut"
@@ -60,13 +60,13 @@
           WorkingDirectory="bin">
           <Icon
             Id="PuppetShellShortcutIcon"
-            SourceFile="wix\icon\puppetlabs.ico"/>
+            SourceFile="wix\icon\puppet.ico"/>
         </Shortcut>
         <RemoveFolder Id="ApplicationProgramsFolder" On="uninstall"/>
         <!-- This registry entry is required to be a keypath for this component -->
         <RegistryValue
           Root="HKCU"
-          Key="SOFTWARE\<%= settings[:company_name] %>\<%= settings[:product_id] %>"
+          Key="SOFTWARE\<%= settings[:pl_company_name] %>\<%= settings[:product_id] %>"
           Name="installed"
           Value="1"
           Type="integer"
@@ -124,7 +124,7 @@
           On="uninstall"/>
         <RegistryValue
           Root="HKCU"
-          Key="SOFTWARE\<%= settings[:company_name] %>\<%= settings[:product_id] %>\Documentation"
+          Key="SOFTWARE\<%= settings[:pl_company_name] %>\<%= settings[:product_id] %>\Documentation"
           Name="installed"
           Value="1"
           Type="integer"
