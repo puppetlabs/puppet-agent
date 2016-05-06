@@ -8,6 +8,6 @@ platform "sles-11-s390x" do |plat|
   plat.add_build_repository "http://pl-build-tools.delivery.puppetlabs.net/yum/pl-build-tools-release-#{plat.get_os_name}-#{plat.get_os_version}.noarch.rpm"
   plat.provision_with "zypper -n --no-gpg-checks install -y aaa_base autoconf automake rsync gcc make"
   plat.install_build_dependencies_with "zypper -n --no-gpg-checks install -y"
-  # We're cross-compiling the agent for s390x using the x86_64 template
+  plat.cross_compiled true
   plat.vmpooler_template "sles-11-x86_64"
 end
