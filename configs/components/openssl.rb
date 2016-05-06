@@ -6,7 +6,7 @@ component "openssl" do |pkg, settings, platform|
   pkg.replaces 'pe-openssl'
 
   # Use our toolchain on linux systems (it's not available on osx)
-  if platform.is_huaweios? || platform.architecture == "s390x"
+  if platform.is_cross_compiled_linux?
     pkg.build_requires "pl-binutils-#{platform.architecture}"
     pkg.build_requires "pl-gcc-#{platform.architecture}"
     pkg.build_requires 'runtime' if platform.is_huaweios?
