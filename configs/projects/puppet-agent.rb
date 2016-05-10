@@ -22,11 +22,11 @@ project "puppet-agent" do |proj|
       proj.setting(:RememberedInstallDirRegKey, "RememberedInstallDir")
     end
     proj.setting(:links, {
-        :HelpLink => "http://links.puppetlabs.com/customer-support-foss",
-        :CommunityLink => "http://links.puppetlabs.com/windows-installer-starting-out",
-        :ForgeLink => "http://links.puppetlabs.com/forge-windows",
-        :NextStepLink => "http://links.puppetlabs.com/windows-installer-next-steps-foss",
-        :ManualLink => "http://links.puppetlabs.com/windows-manual-foss",
+        :HelpLink => "http://puppet.com/services/customer-support",
+        :CommunityLink => "http://docs.puppet.com",
+        :ForgeLink => "http://forge.puppet.com",
+        :NextStepLink => "http://docs.puppet.com",
+        :ManualLink => "http://docs.puppet.com",
       })
     proj.setting(:UI_exitdialogtext, "Manage your first resources on this node, explore the Puppet community and get support using the shortcuts in the Documentation folder of your Start Menu.")
     proj.setting(:LicenseRTF, "wix/license/LICENSE.rtf")
@@ -76,15 +76,10 @@ project "puppet-agent" do |proj|
   end
 
   # Cross-compiled Linux platforms
-  if platform.is_huaweios?
-    platform_triple = "powerpc-linux-gnu"
-    host = "--host #{platform_triple}"
+  platform_triple = "powerpc-linux-gnu" if platform.is_huaweios?
+  platform_triple = "s390x-linux-gnu" if platform.architecture == "s390x"
 
-    # Use a standalone ruby for cross-compilation
-    proj.setting(:host_ruby, "/opt/pl-build-tools/bin/ruby")
-    proj.setting(:host_gem, "/opt/pl-build-tools/bin/gem")
-  elsif platform.architecture == "s390x"
-    platform_triple = "s390x-linux-gnu"
+  if platform.is_cross_compiled_linux?
     host = "--host #{platform_triple}"
 
     # Use a standalone ruby for cross-compilation
