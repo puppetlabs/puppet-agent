@@ -76,15 +76,10 @@ project "puppet-agent" do |proj|
   end
 
   # Cross-compiled Linux platforms
-  if platform.is_huaweios?
-    platform_triple = "powerpc-linux-gnu"
-    host = "--host #{platform_triple}"
+  platform_triple = "powerpc-linux-gnu" if platform.is_huaweios?
+  platform_triple = "s390x-linux-gnu" if platform.architecture == "s390x"
 
-    # Use a standalone ruby for cross-compilation
-    proj.setting(:host_ruby, "/opt/pl-build-tools/bin/ruby")
-    proj.setting(:host_gem, "/opt/pl-build-tools/bin/gem")
-  elsif platform.architecture == "s390x"
-    platform_triple = "s390x-linux-gnu"
+  if platform.is_cross_compiled_linux?
     host = "--host #{platform_triple}"
 
     # Use a standalone ruby for cross-compilation

@@ -92,7 +92,7 @@ component "ruby" do |pkg, settings, platform|
   end
 
   # Cross-compiles require a hand-built rbconfig from the target system
-  if platform.is_solaris? || platform.is_aix? || platform.is_huaweios? || platform.architecture == "s390x"
+  if platform.is_cross_compiled_linux? || platform.is_solaris? || platform.is_aix?
     pkg.add_source "file://resources/files/rbconfig-#{settings[:platform_triple]}.rb", sum: rbconfig_info[settings[:platform_triple]][:sum]
   end
 
@@ -108,7 +108,7 @@ component "ruby" do |pkg, settings, platform|
     pkg.build_requires "pl-zlib-#{platform.architecture}"
   end
 
-  if platform.is_huaweios? || platform.architecture == "s390x"
+  if platform.is_cross_compiled_linux?
     pkg.build_requires 'pl-ruby'
     special_flags = "--with-baseruby=#{settings[:host_ruby]}"
     pkg.build_requires 'runtime' if platform.is_huaweios?
@@ -180,7 +180,7 @@ component "ruby" do |pkg, settings, platform|
     pkg.install_file "../elevate.exe", "#{settings[:bindir]}/elevate.exe"
     pkg.install_file "../elevate.exe.config", "#{settings[:bindir]}/elevate.exe.config"
   end
-  if platform.is_solaris? || platform.is_aix? || platform.is_huaweios? || platform.architecture == "s390x"
+  if platform.is_cross_compiled_linux? || platform.is_solaris? || platform.is_aix?
     # Here we replace the rbconfig from our ruby compiled with our toolchain
     # with an rbconfig from a ruby of the same version compiled with the system
     # gcc. Without this, the rbconfig will be looking for a gcc that won't

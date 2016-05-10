@@ -6,7 +6,7 @@ component 'curl' do |pkg, settings, platform|
   pkg.build_requires "openssl"
   pkg.build_requires "puppet-ca-bundle"
 
-  if platform.architecture == "s390x"
+  if platform.is_cross_compiled_linux?
     pkg.environment "CC" => "/opt/pl-build-tools/bin/#{settings[:platform_triple]}-gcc"
     pkg.environment "PKG_CONFIG_PATH" => "/opt/puppetlabs/puppet/lib/pkgconfig"
   end
