@@ -10,7 +10,9 @@ component "virt-what" do |pkg, settings, platform|
     requires "util-linux"
   end
   if platform.name =~ /^sles-(10|11)-.*$/
-    requires "pmtools"
+    # pmtools (which contains the dmidecode command) is not
+    # available in the s390x repos
+    requires "pmtools" unless platform.architecture == "s390x"
   end
 
   if platform.is_rpm?
@@ -25,6 +27,11 @@ component "virt-what" do |pkg, settings, platform|
 
   if platform.is_huaweios?
     host_opt = '--host powerpc-linux-gnu'
+    pkg.environment "PATH" => "/opt/pl-build-tools/bin:$$PATH:#{settings[:bindir]}"
+    pkg.environment "CFLAGS" => settings[:cflags]
+    pkg.environment "LDFLAGS" => settings[:ldflags]
+  elsif platform.architecture == "s390x"
+    host_opt = '--host s390x-linux-gnu'
     pkg.environment "PATH" => "/opt/pl-build-tools/bin:$$PATH:#{settings[:bindir]}"
     pkg.environment "CFLAGS" => settings[:cflags]
     pkg.environment "LDFLAGS" => settings[:ldflags]

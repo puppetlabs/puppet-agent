@@ -79,7 +79,7 @@ end
 
 # Set up the environment so I don't keep crying
 ssh_command = "ssh #{ssh_key} #{ssh_agent} -T -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null Administrator@#{hostname}"
-ssh_env = "export PATH=\'/cygdrive/c/Program Files/Git/cmd:/home/Administrator/deps/ruby-#{ruby_version}-#{ruby_arch}-mingw32/bin:/cygdrive/c/ProgramData/chocolatey/bin:/cygdrive/c/Program Files (x86)/Windows Installer XML v3.5/bin:/usr/local/bin:/usr/bin:/cygdrive/c/Windows/system32:/cygdrive/c/Windows:/cygdrive/c/Windows/System32/Wbem:/cygdrive/c/Windows/System32/WindowsPowerShell/v1.0:/bin\'"
+ssh_env = "export PATH=\'/cygdrive/c/Program Files/Git/cmd:/home/Administrator/deps/ruby-#{ruby_version}-#{ruby_arch}-mingw32/bin:/cygdrive/c/ProgramData/chocolatey/bin:/cygdrive/c/Program Files (x86)/WiX Toolset v3.10/bin:/usr/local/bin:/usr/bin:/cygdrive/c/Windows/system32:/cygdrive/c/Windows:/cygdrive/c/Windows/System32/Wbem:/cygdrive/c/Windows/System32/WindowsPowerShell/v1.0:/bin\'"
 scp_command = "scp #{ssh_key} -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
 
 result = Kernel.system("set -vx;#{ssh_command} \"echo \\\"#{ssh_env}\\\" >> ~/.bash_profile\"")
@@ -137,9 +137,11 @@ fail "It looks like the pxp-agent build script failed for some reason. I would s
 
 # Move all necessary dll's into facter bindir
 Kernel.system("set -vx;#{ssh_command} \"cp /cygdrive/c/tools/mingw#{script_arch}/bin/libgcc_s_#{ARCH == 'x64' ? 'seh' : 'sjlj'}-1.dll /cygdrive/c/tools/mingw#{script_arch}/bin/libstdc++-6.dll /cygdrive/c/tools/mingw#{script_arch}/bin/libwinpthread-1.dll /home/Administrator/facter/release/bin/\"")
+Kernel.system("set -vx;#{ssh_command} \"cp -r /home/Administrator/deps/leatherman/bin/* /home/Administrator/facter/release/bin/\"")
 fail "Copying compiler DLLs to build directory failed" unless $?.success?
 # Repeat for pxp-agent (CTH-357)
 Kernel.system("set -vx;#{ssh_command} \"cp /cygdrive/c/tools/mingw#{script_arch}/bin/libgcc_s_#{ARCH == 'x64' ? 'seh' : 'sjlj'}-1.dll /cygdrive/c/tools/mingw#{script_arch}/bin/libstdc++-6.dll /cygdrive/c/tools/mingw#{script_arch}/bin/libwinpthread-1.dll /home/Administrator/pxp-agent/release/bin/\"")
+Kernel.system("set -vx;#{ssh_command} \"cp -r /home/Administrator/deps/leatherman/bin/* /home/Administrator/pxp-agent/release/bin/\"")
 fail "Copying compiler DLLs to build directory failed" unless $?.success?
 
 archive_dest = "/home/Administrator/archive"

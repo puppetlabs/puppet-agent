@@ -65,26 +65,59 @@ component "marionette-collective" do |pkg, settings, platform|
     pkg.install_service "ext/aio/solaris/smf/mcollective.xml", nil, "mcollective", service_type: "network"
   when "aix"
     pkg.install_service "resources/aix/mcollective.service", nil, "mcollective"
+  when "windows"
+    # Note - this definition indicates that the file should be filtered out from the Wix
+    # harvest. A corresponding service definition file is also required in resources/windows/wix
+    pkg.install_service "SourceDir\\#{settings[:base_dir]}\\#{settings[:company_id]}\\#{settings[:product_id]}\\puppet\\bin\\rubyw.exe"
   else
     fail "need to know where to put service files"
   end
 
-  pkg.install do
-    ["#{settings[:host_ruby]} install.rb --ruby=#{File.join(settings[:bindir], 'ruby')} --bindir=#{settings[:bindir]} --configdir=#{File.join(settings[:sysconfdir], 'mcollective')} --sitelibdir=#{settings[:ruby_vendordir]} --quick --sbindir=#{settings[:bindir]} --plugindir=#{File.join('/opt/puppetlabs', 'mcollective', 'plugins')}"]
+  if platform.is_windows?
+    extra_flags = "--no-service-files"
   end
 
-  pkg.directory File.join(settings[:sysconfdir], "mcollective")
-  pkg.directory File.join('/opt/puppetlabs', 'mcollective')
-  pkg.directory File.join('/opt/puppetlabs', 'mcollective', 'plugins')
+  if platform.is_windows?
+    configdir = File.join(settings[:sysconfdir], 'mcollective', 'etc')
+    plugindir = File.join(settings[:sysconfdir], 'mcollective', 'plugins')
+  else
+    configdir = File.join(settings[:sysconfdir], 'mcollective')
+    plugindir = File.join(settings[:install_root], 'mcollective', 'plugins')
+  end
+
+
+  pkg.install do
+    ["#{settings[:host_ruby]} install.rb \
+        --ruby=#{File.join(settings[:bindir], 'ruby')} \
+        --bindir=#{settings[:bindir]} \
+        --configdir=#{configdir} \
+        --sitelibdir=#{settings[:ruby_vendordir]} \
+        --quick \
+        --sbindir=#{settings[:bindir]} \
+        --plugindir=#{plugindir} \
+        #{extra_flags}"]
+  end
+
+  pkg.directory configdir
+  pkg.directory plugindir
+
+  if platform.is_windows?
+    pkg.directory File.join(settings[:sysconfdir], 'mcollective', 'var', 'log')
+  end
 
   # Bring in the client.cfg and server.cfg from ext/aio.
-  pkg.install_file "ext/aio/common/client.cfg.dist", File.join(settings[:sysconfdir], 'mcollective', 'client.cfg')
-  pkg.install_file "ext/aio/common/server.cfg.dist", File.join(settings[:sysconfdir], 'mcollective', 'server.cfg')
+  pkg.install_file "ext/aio/common/client.cfg.dist", File.join(configdir, 'client.cfg')
+  pkg.install_file "ext/aio/common/server.cfg.dist", File.join(configdir, 'server.cfg')
 
-  pkg.configfile File.join(settings[:sysconfdir], 'mcollective', 'client.cfg')
-  pkg.configfile File.join(settings[:sysconfdir], 'mcollective', 'server.cfg')
-  pkg.configfile File.join(settings[:sysconfdir], 'mcollective', 'facts.yaml')
+  if platform.is_windows?
+    pkg.install_file "ext/windows/daemon.bat", "#{settings[:bindir]}/mco_daemon.bat"
+    pkg.add_source("file://resources/files/windows/mco.bat", sum: "2d29af9c926dcf8b50ae9ac1bdb18e1f")
+    pkg.install_file "../mco.bat", "#{settings[:link_bindir]}/mco.bat"
+  end
+  pkg.configfile File.join(configdir, 'client.cfg')
+  pkg.configfile File.join(configdir, 'server.cfg')
+  pkg.configfile File.join(configdir, 'facts.yaml')
   pkg.configfile "/etc/logrotate.d/mcollective" if platform.is_linux?
 
-  pkg.link "#{settings[:bindir]}/mco", "#{settings[:link_bindir]}/mco"
+  pkg.link "#{settings[:bindir]}/mco", "#{settings[:link_bindir]}/mco" unless platform.is_windows?
 end

@@ -39,12 +39,12 @@ $mingwVer = "${mingwArch}_mingw-w64_${mingwVerNum}_${mingwThreads}_${mingwExcept
 
 $rubyPkg = "ruby-2.1.8-${rubyArch}-mingw32"
 
-$opensslPkg = "openssl-1.0.2g-${opensslArch}-windows"
+$opensslPkg = "openssl-1.0.2h-${opensslArch}-windows"
 
 $curlVer = "curl-7.42.1"
 $curlPkg = "${curlVer}-${mingwVer}"
 
-$Wix35_VERSION = '3.5.2519.20130612'
+$WIX_VERSION = '3.10.2'
 
 Function Set-Path {
   $path = [Environment]::GetFolderPath('ProgramFiles') + "\Git\cmd"

@@ -24,10 +24,14 @@ component "facter" do |pkg, settings, platform|
   end
 
   # Running facter (as part of testing) expects augtool are available
-  pkg.build_requires 'augeas'
+  pkg.build_requires 'augeas' unless platform.is_windows?
   pkg.build_requires "openssl"
 
-  pkg.environment "PATH" => "#{settings[:bindir]}:$$PATH"
+  if platform.is_windows?
+    pkg.environment "PATH" => "$$(cygpath -u #{settings[:gcc_bindir]}):$$(cygpath -u #{settings[:bindir]}):/cygdrive/c/Windows/system32:/cygdrive/c/Windows:/cygdrive/c/Windows/System32/WindowsPowerShell/v1.0"
+  else
+    pkg.environment "PATH" => "#{settings[:bindir]}:$$PATH"
+  end
 
   # OSX uses clang and system openssl.  cmake comes from brew.
   if platform.is_osx?
@@ -40,7 +44,7 @@ component "facter" do |pkg, settings, platform|
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/solaris/10/pl-boost-1.58.0-1.#{platform.architecture}.pkg.gz"
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/solaris/10/pl-yaml-cpp-0.5.1.#{platform.architecture}.pkg.gz"
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/solaris/10/pl-cmake-3.2.3-2.i386.pkg.gz"
-  elsif platform.name =~ /huaweios|solaris-11/
+  elsif platform.name =~ /huaweios|solaris-11/ || platform.architecture == "s390x"
     pkg.build_requires "pl-gcc-#{platform.architecture}"
     pkg.build_requires "pl-cmake"
     pkg.build_requires "pl-boost-#{platform.architecture}"
@@ -50,6 +54,12 @@ component "facter" do |pkg, settings, platform|
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-cmake-3.2.3-2.aix#{platform.os_version}.ppc.rpm"
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-boost-1.58.0-1.aix#{platform.os_version}.ppc.rpm"
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-yaml-cpp-0.5.1-1.aix#{platform.os_version}.ppc.rpm"
+    pkg.build_requires "runtime"
+  elsif platform.is_windows?
+    pkg.build_requires "cmake"
+    pkg.build_requires "pl-toolchain-#{platform.architecture}"
+    pkg.build_requires "pl-boost-#{platform.architecture}"
+    pkg.build_requires "pl-yaml-cpp-#{platform.architecture}"
     pkg.build_requires "runtime"
   else
     pkg.build_requires "pl-gcc"
@@ -102,7 +112,7 @@ component "facter" do |pkg, settings, platform|
     skip_blkid = 'OFF'
   elsif platform.is_rpm?
     if (platform.is_el? && platform.os_version.to_i >= 6) || (platform.is_sles? && platform.os_version.to_i >= 11) || platform.is_fedora?
-      pkg.build_requires "libblkid-devel"
+      pkg.build_requires "libblkid-devel" unless platform.architecture == "s390x"
       skip_blkid = 'OFF'
     elsif (platform.is_el? && platform.os_version.to_i < 6) || (platform.is_sles? && platform.os_version.to_i < 11)
       pkg.build_requires "e2fsprogs-devel"
@@ -115,12 +125,16 @@ component "facter" do |pkg, settings, platform|
 
   # curl is only used for compute clusters (GCE, EC2); so rpm, deb, and Windows
   skip_curl = 'ON'
-  if platform.is_linux? && !platform.is_huaweios?
+  if (platform.is_linux? && !platform.is_huaweios?) || platform.is_windows?
     pkg.build_requires "curl"
     skip_curl = 'OFF'
   end
 
   ruby = "#{settings[:host_ruby]} -rrbconfig"
+
+  make = platform[:make]
+
+  special_flags = ""
 
   # cmake on OSX is provided by brew
   # a toolchain is not currently required for OSX since we're building with clang.
@@ -128,7 +142,7 @@ component "facter" do |pkg, settings, platform|
     toolchain = ""
     cmake = "/usr/local/bin/cmake"
     special_flags = "-DCMAKE_CXX_FLAGS='#{settings[:cflags]}'"
-  elsif platform.is_huaweios?
+  elsif platform.is_huaweios? || platform.architecture == "s390x"
     ruby = "#{settings[:host_ruby]} -r#{settings[:datadir]}/doc/rbconfig.rb"
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/#{settings[:platform_triple]}/pl-build-toolchain.cmake"
     cmake = "/opt/pl-build-tools/bin/cmake"
@@ -142,6 +156,12 @@ component "facter" do |pkg, settings, platform|
 
     # FACT-1156: If we build with -O3, solaris segfaults due to something in std::vector
     special_flags = "-DCMAKE_CXX_FLAGS_RELEASE='-O2 -DNDEBUG'"
+  elsif platform.is_windows?
+    make = "#{settings[:gcc_bindir]}/mingw32-make"
+    pkg.environment "CYGWIN" => settings[:cygwin]
+
+    cmake = "C:/ProgramData/chocolatey/bin/cmake.exe -G \"MinGW Makefiles\""
+    toolchain = "-DCMAKE_TOOLCHAIN_FILE=#{settings[:tools_root]}/pl-build-toolchain.cmake"
   else
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/pl-build-toolchain.cmake"
     cmake = "/opt/pl-build-tools/bin/cmake"
@@ -151,6 +171,11 @@ component "facter" do |pkg, settings, platform|
     end
   end
 
+  unless platform.is_windows?
+    special_flags += " -DFACTER_PATH=#{settings[:bindir]} \
+                       -DFACTER_RUBY=#{settings[:libdir]}/$(shell #{ruby} -e 'print RbConfig::CONFIG[\"LIBRUBY_SO\"]')"
+  end
+  # FACTER_RUBY Needs bindir
   pkg.configure do
     ["#{cmake} \
         #{toolchain} \
@@ -160,9 +185,7 @@ component "facter" do |pkg, settings, platform|
         #{special_flags} \
         -DBOOST_STATIC=ON \
         -DYAMLCPP_STATIC=ON \
-        -DFACTER_PATH=#{settings[:bindir]} \
         -DRUBY_LIB_INSTALL=#{settings[:ruby_vendordir]} \
-        -DFACTER_RUBY=#{settings[:libdir]}/$(shell #{ruby} -e 'print RbConfig::CONFIG[\"LIBRUBY_SO\"]') \
         -DWITHOUT_CURL=#{skip_curl} \
         -DWITHOUT_BLKID=#{skip_blkid} \
         -DWITHOUT_JRUBY=#{skip_jruby} \
@@ -172,27 +195,37 @@ component "facter" do |pkg, settings, platform|
 
   # Make test will explode horribly in a cross-compile situation
   # Tests will be skipped on AIX until they are expected to pass
-  if platform.architecture == 'sparc' || platform.is_aix? || platform.is_huaweios?
+  if platform.architecture == 'sparc' || platform.architecture == 's390x' || platform.is_aix? || platform.is_huaweios?
     test = ":"
   else
-    test = "#{platform[:make]} test ARGS=-V"
+    test = "#{make} test ARGS=-V"
   end
 
   pkg.build do
     # Until a `check` target exists, run tests are part of the build.
     [
-      "#{platform[:make]} -j$(shell expr $(shell #{platform[:num_cores]}) + 1)",
+      "#{make} -j$(shell expr $(shell #{platform[:num_cores]}) + 1)",
       test
     ]
   end
 
   pkg.install do
-    ["#{platform[:make]} -j$(shell expr $(shell #{platform[:num_cores]}) + 1) install"]
+    ["#{make} -j$(shell expr $(shell #{platform[:num_cores]}) + 1) install"]
   end
 
   pkg.install_file ".gemspec", "#{settings[:gem_home]}/specifications/#{pkg.get_name}.gemspec"
-
-  pkg.link "#{settings[:bindir]}/facter", "#{settings[:link_bindir]}/facter"
-  pkg.directory File.join('/opt/puppetlabs', 'facter')
-  pkg.directory File.join('/opt/puppetlabs', 'facter', 'facts.d')
+  if platform.is_windows?
+    pkg.add_source("file://resources/files/windows/facter.bat", sum: "185b8645feecac4acadc55c64abb3755")
+    pkg.add_source("file://resources/files/windows/facter_interactive.bat", sum: "20a1c0bc5368ffb24980f42432f1b372")
+    pkg.add_source("file://resources/files/windows/run_facter_interactive.bat", sum: "c5e0c0a80e5c400a680a06a4bac8abd4")
+    pkg.install_file "../facter.bat", "#{settings[:link_bindir]}/facter.bat"
+    pkg.install_file "../facter_interactive.bat", "#{settings[:link_bindir]}/facter_interactive.bat"
+    pkg.install_file "../run_facter_interactive.bat", "#{settings[:link_bindir]}/run_facter_interactive.bat"
+  end
+  pkg.link "#{settings[:bindir]}/facter", "#{settings[:link_bindir]}/facter" unless platform.is_windows?
+  if platform.is_windows?
+    pkg.directory File.join(settings[:sysconfdir], 'facter', 'facts.d')
+  else
+    pkg.directory File.join(settings[:install_root], 'facter', 'facts.d')
+  end
 end

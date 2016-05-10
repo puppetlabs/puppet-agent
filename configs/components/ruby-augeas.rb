@@ -24,7 +24,7 @@ component "ruby-augeas" do |pkg, settings, platform|
       pkg.environment "RUBY" => settings[:host_ruby]
     end
     ruby = "#{settings[:host_ruby]} -r#{settings[:datadir]}/doc/rbconfig.rb"
-  elsif platform.is_huaweios?
+  elsif platform.is_huaweios? || platform.architecture == "s390x"
     pkg.environment "RUBY" => settings[:host_ruby]
     ruby = "#{settings[:host_ruby]} -r#{settings[:datadir]}/doc/rbconfig.rb"
     pkg.environment "LDFLAGS" => settings[:ldflags]
@@ -46,6 +46,6 @@ component "ruby-augeas" do |pkg, settings, platform|
 
   pkg.install do
     "chown root:root #{settings[:ruby_vendordir]}/augeas.rb"
-  end if platform.is_solaris? || platform.is_huaweios?
+  end if platform.is_solaris? || platform.is_huaweios? || platform.architecture == "s390x"
 
 end

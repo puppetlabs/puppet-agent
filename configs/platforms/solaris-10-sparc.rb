@@ -2,6 +2,7 @@ platform "solaris-10-sparc" do |plat|
   plat.servicedir "/var/svc/manifest"
   plat.defaultdir "/lib/svc/method"
   plat.servicetype "smf"
+  plat.cross_compiled true
   plat.vmpooler_template "solaris-10-x86_64"
   plat.tar "/usr/sfw/bin/gtar"
   plat.patch "/usr/bin/gpatch"
