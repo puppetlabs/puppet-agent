@@ -129,6 +129,7 @@ component "openssl" do |pkg, settings, platform|
       no-gost \
       no-srp \
       no-ssl2 \
+      no-ssl2-method \
       no-ssl3 \
       #{cflags} \
       #{ldflags}"]
