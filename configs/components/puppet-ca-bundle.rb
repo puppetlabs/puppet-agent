@@ -6,7 +6,7 @@ component "puppet-ca-bundle" do |pkg, settings, platform|
   pkg.build_requires 'facter'
 
   openssl_cmd = "#{settings[:bindir]}/openssl"
-  if platform.architecture == "s390x"
+  if platform.is_cross_compiled_linux?
     # Use the build host's openssl command, not our cross-compiled one
     openssl_cmd = "/usr/bin/openssl"
   end

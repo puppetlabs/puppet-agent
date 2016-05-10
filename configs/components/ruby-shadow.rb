@@ -14,7 +14,7 @@ component "ruby-shadow" do |pkg, settings, platform|
       pkg.environment "RUBY" => settings[:host_ruby]
     end
     ruby = "#{settings[:host_ruby]} -r#{settings[:datadir]}/doc/rbconfig.rb"
-  elsif platform.is_huaweios? || platform.architecture == "s390x"
+  elsif platform.is_cross_compiled_linux?
     pkg.environment "RUBY" => settings[:host_ruby]
     ruby = "#{settings[:host_ruby]} -r#{settings[:datadir]}/doc/rbconfig.rb"
   else

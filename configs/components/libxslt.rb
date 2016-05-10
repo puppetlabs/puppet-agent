@@ -8,7 +8,7 @@ component "libxslt" do |pkg, settings, platform|
   if platform.is_aix?
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-gcc-5.2.0-1.aix#{platform.os_version}.ppc.rpm"
     pkg.environment "PATH" => "/opt/pl-build-tools/bin:$$PATH"
-  elsif platform.is_huaweios? || platform.architecture == "s390x"
+  elsif platform.is_cross_compiled_linux?
     pkg.environment "PATH" => "/opt/pl-build-tools/bin:$$PATH:#{settings[:bindir]}"
     pkg.environment "CFLAGS" => settings[:cflags]
     pkg.environment "LDFLAGS" => settings[:ldflags]
@@ -31,7 +31,7 @@ component "libxslt" do |pkg, settings, platform|
     pkg.environment "CFLAGS" => settings[:cflags]
   end
 
-  if platform.name =~ /huaweios|solaris-11/ || platform.architecture == "s390x"
+  if platform.is_cross_compiled_linux? || platform.name =~ /solaris-11/
     pkg.build_requires "pl-gcc-#{platform.architecture}"
   end
 

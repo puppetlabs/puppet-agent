@@ -11,10 +11,10 @@ component "leatherman" do |pkg, settings, platform|
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/solaris/10/pl-binutils-2.25.#{platform.architecture}.pkg.gz"
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/solaris/10/pl-boost-1.58.0-1.#{platform.architecture}.pkg.gz"
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/solaris/10/pl-cmake-3.2.3-2.i386.pkg.gz"
-  elsif platform.name =~ /huaweios|solaris-11/ || platform.architecture == "s390x"
+  elsif platform.is_cross_compiled_linux? || platform.name =~ /solaris-11/
     pkg.build_requires "pl-gcc-#{platform.architecture}"
-    pkg.build_requires "pl-cmake"
     pkg.build_requires "pl-boost-#{platform.architecture}"
+    pkg.build_requires "pl-cmake"
   elsif platform.is_aix?
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-gcc-5.2.0-1.aix#{platform.os_version}.ppc.rpm"
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-cmake-3.2.3-2.aix#{platform.os_version}.ppc.rpm"
@@ -46,7 +46,7 @@ component "leatherman" do |pkg, settings, platform|
     toolchain = ""
     cmake = "/usr/local/bin/cmake"
     special_flags = "-DCMAKE_CXX_FLAGS='#{settings[:cflags]}'"
-  elsif platform.is_huaweios? || platform.architecture == "s390x"
+  elsif platform.is_cross_compiled_linux?
     ruby = "#{settings[:host_ruby]} -r#{settings[:datadir]}/doc/rbconfig.rb"
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/#{settings[:platform_triple]}/pl-build-toolchain.cmake"
     cmake = "/opt/pl-build-tools/bin/cmake"
@@ -91,7 +91,7 @@ component "leatherman" do |pkg, settings, platform|
 
   # Make test will explode horribly in a cross-compile situation
   # Tests will be skipped on AIX until they are expected to pass
-  if platform.architecture == 'sparc' || platform.architecture == 's390x' || platform.is_aix? || platform.is_huaweios?
+  if platform.is_cross_compiled? || platform.is_aix?
     test = "/bin/true"
   else
     test = "LEATHERMAN_RUBY=#{settings[:libdir]}/$(shell #{ruby} -e 'print RbConfig::CONFIG[\"LIBRUBY_SO\"]') #{make} test ARGS=-V"
