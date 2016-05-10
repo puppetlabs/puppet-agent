@@ -39,7 +39,7 @@ $mingwVer = "${mingwArch}_mingw-w64_${mingwVerNum}_${mingwThreads}_${mingwExcept
 
 $rubyPkg = "ruby-2.1.8-${rubyArch}-mingw32"
 
-$opensslPkg = "openssl-1.0.2g-${opensslArch}-windows"
+$opensslPkg = "openssl-1.0.2h-${opensslArch}-windows"
 
 $curlVer = "curl-7.42.1"
 $curlPkg = "${curlVer}-${mingwVer}"
