@@ -27,6 +27,8 @@ component 'augeas' do |pkg, settings, platform|
 
   if platform.is_rpm? && !platform.is_aix?
     pkg.build_requires 'readline-devel'
+    pkg.build_requires 'pkgconfig'
+
     if platform.is_cisco_wrlinux?
       pkg.requires 'libreadline6'
     else
@@ -37,7 +39,11 @@ component 'augeas' do |pkg, settings, platform|
       pkg.build_requires 'runtime'
     end
 
-    pkg.build_requires 'pkgconfig'
+    if platform.architecture == "s390x"
+      pkg.environment "PATH" => "/opt/pl-build-tools/bin:$$PATH:#{settings[:bindir]}"
+      pkg.environment "CFLAGS" => settings[:cflags]
+      pkg.environment "LDFLAGS" => settings[:ldflags]
+    end
   elsif platform.is_huaweios?
     pkg.build_requires 'runtime'
     pkg.build_requires 'pl-pkg-config'

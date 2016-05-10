@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="windows-1252"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
+  <Fragment>
+
+    <ComponentGroup Id="FragmentProperties" />
+
+    <!-- Add/Remove Programs icon and help link -->
+    <Property
+      Id="ARPPRODUCTICON"
+      Value="<%= settings[:company_id] %>.ico" />
+    <Property
+      Id="ARPHELPLINK"
+      Value="<%= settings[:links][:HelpLink] %>" />
+
+    <!-- This property is used in the localization strings for the GUI -->
+    <Property
+      Id="VersionUIString"
+      Value="<%= @version.sub(/\.g[0-9a-z]{7}$/, '') %>" />
+
+    <!--
+      By default, install puppet agent to run as LocalSystem. Password
+      is hidden to prevent it from appearing in msiexec log files
+    -->
+    <Property
+      Id="PUPPET_AGENT_ACCOUNT_DOMAIN"
+      Value="."/>
+    <Property
+      Id="PUPPET_AGENT_ACCOUNT_USER"
+      Value="LocalSystem"/>
+    <Property
+      Id="PUPPET_AGENT_ACCOUNT_PASSWORD"
+      Hidden="yes"/>
+
+    <!-- To use WixUI_InstallDir, you must set a property named
+       WIXUI_INSTALLDIR with a value of the ID of the directory you want the
+       user to be able to specify the location of. -->
+    <Property
+      Id="WIXUI_INSTALLDIR"
+      Value="INSTALLDIR" />
+    <!-- This text is placed as a literal string in the GUI -->
+    <Property
+      Id="WIXUI_EXITDIALOGOPTIONALTEXT"
+      Value="Manage your first resources on this node, explore the Puppet community and get support using the shortcuts in the Documentation folder of your Start Menu." />
+
+    <!--
+      Remembered Property Pattern
+      http://robmensching.com/blog/posts/2010/5/2/The-WiX-toolsets-Remember-Property-pattern
+      -->
+    <!-- Registry settings, remembered install dir is dependent on x86/64.
+         Everything else stays with x86 so both installer types can see it
+      -->
+    <!-- Note the static default value of "puppet".  This will be overriden by
+         the command line. -->
+    <Property Id="PUPPET_MASTER_SERVER">
+      <!-- Recall the property in repair, upgrade, and uninstall scenarios -->
+      <RegistrySearch
+        Id="RecallPuppetMasterServer"
+        Root="HKLM"
+        Key="SOFTWARE\<%= settings[:pl_company_name] %>\<%= settings[:common_product_id] %>"
+        Name="RememberedPuppetMasterServer"
+        Type="raw"
+        Win64="no" />
+    </Property>
+    <Property Id="PUPPET_AGENT_ENVIRONMENT">
+      <!-- Recall the property in repair, upgrade, and uninstall scenarios -->
+      <RegistrySearch
+        Id="RecallPuppetAgentEnvironment"
+        Root="HKLM"
+        Key="SOFTWARE\<%= settings[:pl_company_name] %>\<%= settings[:common_product_id] %>"
+        Name="RememberedPuppetAgentEnvironment"
+        Type="raw"
+        Win64="no" />
+    </Property>
+
+    <Property Id="PUPPET_AGENT_CERTNAME">
+      <!-- Recall the property in repair, upgrade, and uninstall scenarios -->
+      <RegistrySearch
+        Id="RecallPuppetAgentCertname"
+        Root="HKLM"
+        Key="SOFTWARE\<%= settings[:pl_company_name] %>\<%= settings[:common_product_id] %>"
+        Name="RememberedPuppetAgentCertname"
+        Type="raw"
+        Win64="no" />
+    </Property>
+
+    <Property Id="PUPPET_CA_SERVER">
+      <RegistrySearch
+        Id="RecallPuppetCAServer"
+        Root="HKLM"
+        Key="SOFTWARE\<%= settings[:pl_company_name] %>\<%= settings[:common_product_id] %>"
+        Name="RememberedPuppetCaServer"
+        Type="raw"
+        Win64="no" />
+    </Property>
+
+    <Property Id="PUPPET_AGENT_STARTUP_MODE">
+      <RegistrySearch
+        Id="RecallPuppetAgentStartupMode"
+        Root="HKLM"
+        Key="SOFTWARE\<%= settings[:pl_company_name] %>\<%= settings[:common_product_id] %>"
+        Name="RememberedPuppetAgentStartupMode"
+        Type="raw"
+        Win64="no" />
+    </Property>
+
+    <Property Id="INSTALLDIR">
+      <RegistrySearch
+        Id="RecallInstallDir"
+        Root="HKLM"
+        Key="SOFTWARE\<%= settings[:pl_company_name] %>\<%= settings[:product_id] %>"
+        Name="<%= settings[:RememberedInstallDirRegKey] %>"
+        Type="raw"
+        Win64="<%= settings[:win64] %>" />
+    </Property>
+
+    <Property Id="INSTALLDIR_X86" >
+      <RegistrySearch
+        Id="RecallInstallDirx86"
+        Root="HKLM"
+        Key="SOFTWARE\<%= settings[:pl_company_name] %>\<%= settings[:product_id] %>"
+        Name="<%= settings[:RememberedInstallDirRegKey] %>"
+        Type="raw"
+        Win64="<%= settings[:win64] %>" />
+    </Property>
+
+  </Fragment>
+</Wix>

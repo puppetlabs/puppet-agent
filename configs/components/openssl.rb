@@ -1,17 +1,18 @@
 component "openssl" do |pkg, settings, platform|
-  pkg.version "1.0.2g"
-  pkg.md5sum "f3c710c045cdee5fd114feb69feba7aa"
+  pkg.version "1.0.2h"
+  pkg.md5sum "9392e65072ce4b614c1392eefc1f23d0"
   pkg.url "http://buildsources.delivery.puppetlabs.net/openssl-#{pkg.get_version}.tar.gz"
 
   pkg.replaces 'pe-openssl'
 
   # Use our toolchain on linux systems (it's not available on osx)
-  if platform.is_huaweios?
+  if platform.is_huaweios? || platform.architecture == "s390x"
     pkg.build_requires "pl-binutils-#{platform.architecture}"
     pkg.build_requires "pl-gcc-#{platform.architecture}"
-    pkg.build_requires 'runtime'
-    # xutils-dev contains makedepend
-    pkg.build_requires 'xutils-dev'
+    pkg.build_requires 'runtime' if platform.is_huaweios?
+    # needed for the makedepend command
+    pkg.build_requires 'xutils-dev' if platform.is_huaweios?
+    pkg.build_requires 'xorg-x11-util-devel' if platform.architecture == "s390x"
   elsif platform.is_linux?
     pkg.build_requires 'pl-binutils'
     pkg.build_requires 'pl-gcc'
@@ -34,6 +35,15 @@ component "openssl" do |pkg, settings, platform|
     pkg.build_requires 'runtime'
   elsif platform.is_osx?
     pkg.build_requires 'makedepend'
+  elsif platform.is_windows?
+    pkg.apply_patch 'resources/patches/openssl/openssl-1.0.0l-use-gcc-instead-of-makedepend.patch'
+    # This patch removes the option `-DOPENSSL_USE_APPLINK` from the mingw openssl congifure target
+    # This brings mingw more in line with what is happening with mingw64. All applink does it makes
+    # it possible to use the .dll compiled with one compiler with an application compiled with a
+    # different compiler. Given our openssl should only be interacting with things that we build,
+    # we can ensure everything is build with the same compiler.
+    pkg.apply_patch 'resources/patches/openssl/openssl-mingw-do-not-build-applink.patch'
+    pkg.build_requires "runtime"
   end
 
   if platform.is_osx?
@@ -47,6 +57,13 @@ component "openssl" do |pkg, settings, platform|
 
     target = 'linux-ppc'
     ldflags = "-R/opt/pl-build-tools/#{settings[:platform_triple]}/lib -Wl,-rpath=#{settings[:libdir]} -L/opt/pl-build-tools/#{settings[:platform_triple]}/lib"
+    cflags = "#{settings[:cflags]} -fPIC"
+  elsif platform.architecture == "s390x"
+    pkg.environment "PATH" => "/opt/pl-build-tools/bin:$$PATH"
+    pkg.environment "CC" => "/opt/pl-build-tools/bin/#{settings[:platform_triple]}-gcc"
+
+    target = 'linux64-s390x'
+    ldflags = "-Wl,-rpath=/opt/pl-build-tools/#{settings[:platform_triple]}/lib -Wl,-rpath=#{settings[:libdir]} -L/opt/pl-build-tools/#{settings[:platform_triple]}/lib"
     cflags = "#{settings[:cflags]} -fPIC"
   elsif platform.is_solaris?
     pkg.environment "PATH" => "/opt/pl-build-tools/bin:$$PATH:/usr/local/bin:/usr/ccs/bin:/usr/sfw/bin"
@@ -65,6 +82,12 @@ component "openssl" do |pkg, settings, platform|
     ldflags = ''
     cflags = "$${CFLAGS} -static-libgcc"
     pkg.environment "CC" => "/opt/pl-build-tools/bin/gcc"
+  elsif platform.is_windows?
+    target = platform.architecture == "x64" ? "mingw64" : "mingw"
+    pkg.environment "PATH" => "$$(cygpath -u #{settings[:gcc_bindir]}):$$PATH"
+    pkg.environment "CYGWIN" => settings[:cygwin]
+    cflags = settings[:cflags]
+    ldflags = settings[:ldflags]
   else
     pkg.environment "PATH" => "/opt/pl-build-tools/bin:$$PATH:/usr/local/bin"
     if platform.architecture =~ /86$/
@@ -74,8 +97,6 @@ component "openssl" do |pkg, settings, platform|
       target = 'linux-x86_64'
     elsif platform.architecture =~ /ppc64le$/
       target = 'linux-ppc64le'
-    elsif platform.architecture =~ /s390/
-      target = 'linux64-s390x'
     end
     cflags = settings[:cflags]
     ldflags = "#{settings[:ldflags]} -Wl,-z,relro"
@@ -108,6 +129,7 @@ component "openssl" do |pkg, settings, platform|
       no-gost \
       no-srp \
       no-ssl2 \
+      no-ssl2-method \
       no-ssl3 \
       #{cflags} \
       #{ldflags}"]
@@ -124,8 +146,10 @@ component "openssl" do |pkg, settings, platform|
     end
   end
 
+  install_prefix = "INSTALL_PREFIX=/" unless platform.is_windows?
+
   pkg.install do
-    ["#{platform[:make]} INSTALL_PREFIX=/ install"]
+    ["#{platform[:make]} #{install_prefix} install"]
   end
 
   pkg.install_file "LICENSE", "#{settings[:prefix]}/share/doc/openssl-#{pkg.get_version}/LICENSE"
