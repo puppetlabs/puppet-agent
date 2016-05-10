@@ -118,7 +118,7 @@ can be found [here](https://github.com/puppetlabs/puppet-agent-osx-installer-plu
 
 Issues
 ---
-File issues in the [Puppet Agent (PA) project](https://tickets.puppetlabs.com/browse/PA) on the Puppet Labs Jira site. Issues with individual components should be filed in their respective projects.
+File issues in the [Puppet Agent (PA) project](https://tickets.puppet.com/browse/PA) on the Puppet Labs Jira site. Issues with individual components should be filed in their respective projects.
 
 License
 ---
