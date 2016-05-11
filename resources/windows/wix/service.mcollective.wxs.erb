@@ -8,7 +8,7 @@
                  Win64="<%= settings[:win64] %>">
         <File Id="RubyWExe"
               KeyPath="yes"
-              Source="SourceDir\<%= settings[:base_dir] %>\<%= settings[:company_id] %>\<%= settings[:product_id] %>\puppet\bin\rubyw.exe" />
+              Source="SourceDir\<%= settings[:base_dir] %>\<%= settings[:company_id] %>\<%= settings[:product_id] %>\sys\ruby\bin\rubyw.exe" />
         <!-- This service is installed with start set to demand because
         it won't be correctly configured to start right away. The
         puppet run that configures mcollective will allow it to start
@@ -24,7 +24,7 @@
                         Type="ownProcess"
                         ErrorControl="normal"
                         Vital="yes"
-                        Arguments="-I&quot;[INSTALLDIR]puppet\lib&quot; -rubygems &quot;[INSTALLDIR]puppet\bin\mcollectived&quot; --daemonize" />
+                        Arguments="-I&quot;[INSTALLDIR]puppet\lib;[INSTALLDIR]facter\lib;[INSTALLDIR]hiera\lib;[INSTALLDIR]mcollective\lib&quot; -rubygems &quot;[INSTALLDIR]mcollective\bin\mcollectived&quot; --daemonize" />
         <ServiceControl Id="MCOStartService"
                         Stop="both"
                         Remove="uninstall"

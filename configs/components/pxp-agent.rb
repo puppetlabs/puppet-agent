@@ -5,7 +5,7 @@ component "pxp-agent" do |pkg, settings, platform|
   cmake = "/opt/pl-build-tools/bin/cmake"
 
   if platform.is_windows?
-    pkg.environment "PATH" => "$$(cygpath -u #{settings[:gcc_bindir]}):$$(cygpath -u #{settings[:bindir]}):/cygdrive/c/Windows/system32:/cygdrive/c/Windows:/cygdrive/c/Windows/System32/WindowsPowerShell/v1.0"
+    pkg.environment "PATH" => "$$(cygpath -u #{settings[:gcc_bindir]}):$$(cygpath -u #{settings[:ruby_dir]}/bin):/cygdrive/c/Windows/system32:/cygdrive/c/Windows:/cygdrive/c/Windows/System32/WindowsPowerShell/v1.0"
   else
     pkg.environment "PATH" => "#{settings[:bindir]}:/opt/pl-build-tools/bin:$$PATH"
   end
@@ -16,6 +16,8 @@ component "pxp-agent" do |pkg, settings, platform|
 
   make = platform[:make]
 
+  special_flags = " -DCMAKE_INSTALL_PREFIX=#{settings[:prefix]} "
+
   if platform.is_aix?
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-gcc-5.2.0-1.aix#{platform.os_version}.ppc.rpm"
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-cmake-3.2.3-2.aix#{platform.os_version}.ppc.rpm"
@@ -23,7 +25,7 @@ component "pxp-agent" do |pkg, settings, platform|
   elsif platform.is_osx?
     cmake = "/usr/local/bin/cmake"
     toolchain = ""
-    special_flags = "-DCMAKE_CXX_FLAGS='#{settings[:cflags]}'"
+    special_flags += "-DCMAKE_CXX_FLAGS='#{settings[:cflags]}'"
   elsif platform.is_cross_compiled_linux?
     cmake = "/opt/pl-build-tools/bin/cmake"
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/#{settings[:platform_triple]}/pl-build-toolchain.cmake"
@@ -32,7 +34,7 @@ component "pxp-agent" do |pkg, settings, platform|
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/#{settings[:platform_triple]}/pl-build-toolchain.cmake"
 
     # PCP-87: If we build with -O3, solaris segfaults due to something in std::vector
-    special_flags = "-DCMAKE_CXX_FLAGS_RELEASE='-O2 -DNDEBUG'"
+    special_flags += " -DCMAKE_CXX_FLAGS_RELEASE='-O2 -DNDEBUG' "
   elsif platform.is_windows?
     pkg.build_requires "cmake"
     pkg.build_requires "pl-toolchain-#{platform.architecture}"
@@ -41,6 +43,7 @@ component "pxp-agent" do |pkg, settings, platform|
     make = "#{settings[:gcc_bindir]}/mingw32-make"
     pkg.environment "CYGWIN" => settings[:cygwin]
 
+    special_flags = " -DCMAKE_INSTALL_PREFIX=#{settings[:pxp_root]} "
     cmake = "C:/ProgramData/chocolatey/bin/cmake.exe -G \"MinGW Makefiles\""
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=#{settings[:tools_root]}/pl-build-toolchain.cmake"
   else
@@ -49,7 +52,7 @@ component "pxp-agent" do |pkg, settings, platform|
     pkg.build_requires "pl-boost"
 
     if platform.is_cisco_wrlinux?
-      special_flags = "-DLEATHERMAN_USE_LOCALES=OFF"
+      special_flags += " -DLEATHERMAN_USE_LOCALES=OFF "
     end
   end
 
@@ -59,7 +62,6 @@ component "pxp-agent" do |pkg, settings, platform|
       #{toolchain} \
           -DCMAKE_VERBOSE_MAKEFILE=ON \
           -DCMAKE_PREFIX_PATH=#{settings[:prefix]} \
-          -DCMAKE_INSTALL_PREFIX=#{settings[:prefix]} \
           -DCMAKE_SYSTEM_PREFIX_PATH=#{settings[:prefix]} \
           -DMODULES_INSTALL_PATH=#{File.join(settings[:install_root], 'pxp-agent', 'modules')} \
           #{special_flags} \
@@ -114,7 +116,7 @@ component "pxp-agent" do |pkg, settings, platform|
   when "windows"
     # Note - this definition indicates that the file should be filtered out from the Wix
     # harvest. A corresponding service definition file is also required in resources/windows/wix
-    pkg.install_service "SourceDir\\#{settings[:base_dir]}\\#{settings[:company_id]}\\#{settings[:product_id]}\\puppet\\bin\\nssm.exe"
+    pkg.install_service "SourceDir\\#{settings[:base_dir]}\\#{settings[:company_id]}\\#{settings[:product_id]}\\service\\nssm.exe"
   else
     fail "need to know where to put #{pkg.get_name} service files"
   end

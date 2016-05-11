@@ -28,7 +28,7 @@ component "facter" do |pkg, settings, platform|
   pkg.build_requires "openssl"
 
   if platform.is_windows?
-    pkg.environment "PATH" => "$$(cygpath -u #{settings[:gcc_bindir]}):$$(cygpath -u #{settings[:bindir]}):/cygdrive/c/Windows/system32:/cygdrive/c/Windows:/cygdrive/c/Windows/System32/WindowsPowerShell/v1.0"
+    pkg.environment "PATH" => "$$(cygpath -u #{settings[:gcc_bindir]}):$$(cygpath -u #{settings[:ruby_dir]}/bin):$$(cygpath -u #{settings[:bindir]}):/cygdrive/c/Windows/system32:/cygdrive/c/Windows:/cygdrive/c/Windows/System32/WindowsPowerShell/v1.0"
   else
     pkg.environment "PATH" => "#{settings[:bindir]}:$$PATH"
   end
@@ -134,14 +134,14 @@ component "facter" do |pkg, settings, platform|
 
   make = platform[:make]
 
-  special_flags = ""
+  special_flags = " -DCMAKE_INSTALL_PREFIX=#{settings[:prefix]} "
 
   # cmake on OSX is provided by brew
   # a toolchain is not currently required for OSX since we're building with clang.
   if platform.is_osx?
     toolchain = ""
     cmake = "/usr/local/bin/cmake"
-    special_flags = "-DCMAKE_CXX_FLAGS='#{settings[:cflags]}'"
+    special_flags += "-DCMAKE_CXX_FLAGS='#{settings[:cflags]}'"
   elsif platform.is_cross_compiled_linux?
     ruby = "#{settings[:host_ruby]} -r#{settings[:datadir]}/doc/rbconfig.rb"
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/#{settings[:platform_triple]}/pl-build-toolchain.cmake"
@@ -155,19 +155,20 @@ component "facter" do |pkg, settings, platform|
     cmake = "/opt/pl-build-tools/i386-pc-solaris2.#{platform.os_version}/bin/cmake"
 
     # FACT-1156: If we build with -O3, solaris segfaults due to something in std::vector
-    special_flags = "-DCMAKE_CXX_FLAGS_RELEASE='-O2 -DNDEBUG'"
+    special_flags += " -DCMAKE_CXX_FLAGS_RELEASE='-O2 -DNDEBUG' "
   elsif platform.is_windows?
     make = "#{settings[:gcc_bindir]}/mingw32-make"
     pkg.environment "CYGWIN" => settings[:cygwin]
 
     cmake = "C:/ProgramData/chocolatey/bin/cmake.exe -G \"MinGW Makefiles\""
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=#{settings[:tools_root]}/pl-build-toolchain.cmake"
+    special_flags = "-DCMAKE_INSTALL_PREFIX=#{settings[:facter_root]}"
   else
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/pl-build-toolchain.cmake"
     cmake = "/opt/pl-build-tools/bin/cmake"
 
     if platform.is_cisco_wrlinux?
-      special_flags = "-DLEATHERMAN_USE_LOCALES=OFF"
+      special_flags += " -DLEATHERMAN_USE_LOCALES=OFF "
     end
   end
 
@@ -181,7 +182,6 @@ component "facter" do |pkg, settings, platform|
         #{toolchain} \
         -DCMAKE_VERBOSE_MAKEFILE=ON \
         -DCMAKE_PREFIX_PATH=#{settings[:prefix]} \
-        -DCMAKE_INSTALL_PREFIX=#{settings[:prefix]} \
         #{special_flags} \
         -DBOOST_STATIC=ON \
         -DYAMLCPP_STATIC=ON \

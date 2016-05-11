@@ -31,6 +31,9 @@ component "runtime" do |pkg, settings, platform|
     pkg.install_file "#{settings[:gcc_bindir]}/libgcc_s_#{lib_type}-1.dll", "#{settings[:bindir]}/libgcc_s_#{lib_type}-1.dll"
     pkg.install_file "#{settings[:gcc_bindir]}/libstdc++-6.dll", "#{settings[:bindir]}/libstdc++-6.dll"
     pkg.install_file "#{settings[:gcc_bindir]}/libwinpthread-1.dll", "#{settings[:bindir]}/libwinpthread-1.dll"
+    pkg.install_file "#{settings[:gcc_bindir]}/libgcc_s_#{lib_type}-1.dll", "#{settings[:facter_root]}/lib/libgcc_s_#{lib_type}-1.dll"
+    pkg.install_file "#{settings[:gcc_bindir]}/libstdc++-6.dll", "#{settings[:facter_root]}/lib/libstdc++-6.dll"
+    pkg.install_file "#{settings[:gcc_bindir]}/libwinpthread-1.dll", "#{settings[:facter_root]}/lib/libwinpthread-1.dll"
 
     # Curl is dynamically linking against zlib, so we need to include this file until we
     # update curl to statically link against zlib
