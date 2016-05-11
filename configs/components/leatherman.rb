@@ -98,7 +98,7 @@ component "leatherman" do |pkg, settings, platform|
   end
 
   if platform.is_solaris? && platform.architecture != 'sparc'
-    test = "LANG=C #{test}"
+    test = "LANG=C LC_ALL=C #{test}"
   end
 
   pkg.build do
