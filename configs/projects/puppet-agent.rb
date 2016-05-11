@@ -23,10 +23,10 @@ project "puppet-agent" do |proj|
     end
     proj.setting(:links, {
         :HelpLink => "http://puppet.com/services/customer-support",
-        :CommunityLink => "http://docs.puppet.com",
+        :CommunityLink => "http://docs.puppet.com/community",
         :ForgeLink => "http://forge.puppet.com",
-        :NextStepLink => "http://docs.puppet.com",
-        :ManualLink => "http://docs.puppet.com",
+        :NextStepLink => "https://docs.puppet.com/pe/latest/quick_start_install_agents_windows.html",
+        :ManualLink => "https://docs.puppet.com/puppet/latest/reference",
       })
     proj.setting(:UI_exitdialogtext, "Manage your first resources on this node, explore the Puppet community and get support using the shortcuts in the Documentation folder of your Start Menu.")
     proj.setting(:LicenseRTF, "wix/license/LICENSE.rtf")
