@@ -89,24 +89,21 @@ component "leatherman" do |pkg, settings, platform|
         ."]
   end
 
+  pkg.build do
+    ["#{make} -j$(shell expr $(shell #{platform[:num_cores]}) + 1)"]
+  end
+
   # Make test will explode horribly in a cross-compile situation
   # Tests will be skipped on AIX until they are expected to pass
-  if platform.is_cross_compiled? || platform.is_aix?
-    test = "/bin/true"
-  else
+  if !platform.is_cross_compiled? && !platform.is_aix?
     test = "LEATHERMAN_RUBY=#{settings[:libdir]}/$(shell #{ruby} -e 'print RbConfig::CONFIG[\"LIBRUBY_SO\"]') #{make} test ARGS=-V"
-  end
+    if platform.is_solaris? && platform.architecture != 'sparc'
+      test = "LANG=C LC_ALL=C #{test}"
+    end
 
-  if platform.is_solaris? && platform.architecture != 'sparc'
-    test = "LANG=C LC_ALL=C #{test}"
-  end
-
-  pkg.build do
-    # Until a `check` target exists, run tests are part of the build.
-    [
-      "#{make} -j$(shell expr $(shell #{platform[:num_cores]}) + 1)",
-      "#{test}"
-    ]
+    pkg.check do
+      [test]
+    end
   end
 
   pkg.install do
