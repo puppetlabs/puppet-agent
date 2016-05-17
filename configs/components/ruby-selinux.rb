@@ -1,14 +1,16 @@
 component "ruby-selinux" do |pkg, settings, platform|
   if platform.name =~ /^el-5-.*$/
+    # This is a _REALLY_ old version of libselinux found only in Fedora/RH archives and not upstream
     pkg.version "1.33.4"
     pkg.md5sum "08762379de2242926854080dad649b67"
     pkg.apply_patch "resources/patches/ruby-selinux/libselinux-rhat.patch"
+    pkg.url "http://pkgs.fedoraproject.org/repo/pkgs/libselinux/libselinux-1.33.4.tgz/08762379de2242926854080dad649b67/libselinux-1.33.4.tgz"
   else
     pkg.version "2.0.94"
     pkg.md5sum "f814c71fca5a85ebfeb81b57afed59db"
+    pkg.url "https://raw.githubusercontent.com/wiki/SELinuxProject/selinux/files/releases/20100525/devel/libselinux-#{pkg.get_version}.tar.gz"
   end
 
-  pkg.url "http://buildsources.delivery.puppetlabs.net/libselinux-#{pkg.get_version}.tgz"
 
   pkg.replaces 'pe-ruby-selinux'
 

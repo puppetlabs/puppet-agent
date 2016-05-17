@@ -1,7 +1,7 @@
 component 'augeas' do |pkg, settings, platform|
   pkg.version '1.4.0'
   pkg.md5sum 'a2536a9c3d744dc09d234228fe4b0c93'
-  pkg.url "http://buildsources.delivery.puppetlabs.net/#{pkg.get_name}-#{pkg.get_version}.tar.gz"
+  pkg.url "http://download.augeas.net/augeas-#{pkg.get_version}.tar.gz"
 
   pkg.replaces 'pe-augeas'
   pkg.apply_patch 'resources/patches/augeas/osx-stub-needed-readline-functions.patch'

@@ -8,7 +8,7 @@ component "rubygem-nokogiri" do |pkg, settings, platform|
     pkg.url "http://buildsources.delivery.puppetlabs.net/nokogiri-precompiled-huaweios-#{pkg.get_version}.tar.gz"
     pkg.md5sum "8c0a9dfccca51332e35f75d9816440eb"
   else
-    pkg.url "http://buildsources.delivery.puppetlabs.net/nokogiri-#{pkg.get_version}.gem"
+    pkg.url "https://rubygems.org/downloads/nokogiri-#{pkg.get_version}.gem"
     pkg.md5sum "3e2169ebd67863a8a992289e2a887366"
   end
 
