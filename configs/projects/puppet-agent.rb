@@ -156,6 +156,9 @@ project "puppet-agent" do |proj|
     proj.bill_of_materials File.join(proj.datadir, "doc")
   end
 
+  # Set package version, for use by Facter in creating the AIO_AGENT_VERSION fact.
+  proj.setting(:package_version, proj.get_version)
+
   # Define default CFLAGS and LDFLAGS for most platforms, and then
   # tweak or adjust them as needed.
   proj.setting(:cflags, "-I#{proj.includedir} -I/opt/pl-build-tools/include")
