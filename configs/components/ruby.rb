@@ -67,6 +67,9 @@ component "ruby" do |pkg, settings, platform|
     'sparc-sun-solaris2.11' => {
       :sum => "f2a40c4bff028dffc880a40b2806a361",
       :target_double => 'sparc-solaris2.11',
+    },
+    'arm-linux-gnueabihf' => {
+      :target_double => 'arm-linux-eabihf'
     }
   }
 
@@ -95,7 +98,7 @@ component "ruby" do |pkg, settings, platform|
 
   # Cross-compiles require a hand-built rbconfig from the target system
   if platform.is_cross_compiled_linux? || platform.is_solaris? || platform.is_aix?
-    pkg.add_source "file://resources/files/rbconfig-#{settings[:platform_triple]}.rb", sum: rbconfig_info[settings[:platform_triple]][:sum]
+    pkg.add_source "file://resources/files/rbconfig-#{settings[:platform_triple]}.rb"
   end
 
   pkg.build_requires "openssl"
