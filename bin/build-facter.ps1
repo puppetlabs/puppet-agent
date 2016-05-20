@@ -30,9 +30,6 @@ Invoke-External { git submodule update --init --recursive }
 mkdir -Force release
 cd release
 
-$env:PATH += ";$toolsDir\leatherman\bin"
-Write-Host "Updated Path to $env:PATH"
-
 ## Build Facter
 # Use fake CMAKE_INSTALL_PREFIX and RUBY_LIB_INSTALL to ensure the correct relative
 # path from facter.rb to libfacter.so.

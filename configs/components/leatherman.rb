@@ -39,6 +39,7 @@ component "leatherman" do |pkg, settings, platform|
   pkg.build_requires "ruby"
 
   ruby = "#{settings[:host_ruby]} -rrbconfig"
+  build_shared = "TRUE"
 
   # cmake on OSX is provided by brew
   # a toolchain is not currently required for OSX since we're building with clang.
@@ -67,6 +68,8 @@ component "leatherman" do |pkg, settings, platform|
 
     cmake = "C:/ProgramData/chocolatey/bin/cmake.exe -G \"MinGW Makefiles\""
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=#{settings[:tools_root]}/pl-build-toolchain.cmake"
+
+    build_shared = "FALSE"
   else
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/pl-build-toolchain.cmake"
     cmake = "/opt/pl-build-tools/bin/cmake"
@@ -82,7 +85,7 @@ component "leatherman" do |pkg, settings, platform|
         -DCMAKE_VERBOSE_MAKEFILE=ON \
         -DCMAKE_PREFIX_PATH=#{settings[:prefix]} \
         -DCMAKE_INSTALL_PREFIX=#{settings[:prefix]} \
-        -DLEATHERMAN_SHARED=TRUE \
+        -DLEATHERMAN_SHARED=#{build_shared} \
         #{special_flags} \
         -DBOOST_STATIC=ON \
         -DLEATHERMAN_USE_CURL=#{use_curl} \

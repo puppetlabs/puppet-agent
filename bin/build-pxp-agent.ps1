@@ -22,9 +22,6 @@ Write-Host "Starting pxp-agent build"
 mkdir -Force release
 cd release
 
-$env:PATH += ";$toolsDir\pcp-client\bin;$toolsDir\leatherman\bin"
-Write-Host "Updated Path to $env:PATH"
-
 ## Build pxp_agent
 $cmake_args = @(
   '-G',
@@ -34,6 +31,7 @@ $cmake_args = @(
   "-DCMAKE_INSTALL_PREFIX=`"$sourceDir`"",
   "-DCMAKE_PREFIX_PATH=`"$toolsDir\$curlPkg;$toolsDir\$opensslPkg;$toolsDir\$rubyPkg;$toolsDir\pcp-client;$toolsDir\leatherman`"",
   "-DCURL_STATIC=ON",
+  "-DCMAKE_CXX_FLAGS=`"-static-libgcc -static-libstdc++`"",
   ".."
 )
 Invoke-External { cmake $cmake_args }
