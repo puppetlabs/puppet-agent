@@ -190,6 +190,7 @@ component "facter" do |pkg, settings, platform|
         -DWITHOUT_BLKID=#{skip_blkid} \
         -DWITHOUT_JRUBY=#{skip_jruby} \
         -DAIO_AGENT_VERSION=#{settings[:package_version]} \
+        -DINSTALL_BATCH_FILES=NO \
         #{java_includedir} \
         ."]
   end

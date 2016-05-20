@@ -101,6 +101,7 @@ component "marionette-collective" do |pkg, settings, platform|
         --sbindir=#{settings[:bindir]} \
         --plugindir=#{plugindir} \
         --quick \
+        --no-batch-files \
         #{flags}"]
   end
 
