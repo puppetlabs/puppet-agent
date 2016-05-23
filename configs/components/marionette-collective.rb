@@ -92,7 +92,7 @@ component "marionette-collective" do |pkg, settings, platform|
     flags = " --bindir=#{settings[:mco_bindir]} \
               --sitelibdir=#{settings[:mco_libdir]} \
               --no-service-files \
-              --ruby=#{File.join(settings[:ruby_dir], 'bin/ruby')} "
+              --ruby=#{File.join(settings[:ruby_bindir], 'ruby')} "
   end
 
   pkg.install do
