@@ -20,7 +20,7 @@ component "hiera" do |pkg, settings, platform|
     pkg.install_file "../hiera.bat", "#{settings[:link_bindir]}/hiera.bat"
     flags = " --bindir=#{settings[:hiera_bindir]} \
               --sitelibdir=#{settings[:hiera_libdir]} \
-              --ruby=#{File.join(settings[:ruby_dir], 'bin/ruby')} "
+              --ruby=#{File.join(settings[:ruby_bindir], 'ruby')} "
   end
 
   pkg.install do
