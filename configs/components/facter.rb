@@ -195,16 +195,20 @@ component "facter" do |pkg, settings, platform|
         ."]
   end
 
-  pkg.build do
-    ["#{make} -j$(shell expr $(shell #{platform[:num_cores]}) + 1)"]
-  end
-
   # Make test will explode horribly in a cross-compile situation
   # Tests will be skipped on AIX until they are expected to pass
-  if !platform.is_cross_compiled? && !platform.is_aix?
-    pkg.check do
-      ["#{make} test ARGS=-V"]
-    end
+  if platform.is_cross_compiled? || platform.is_aix?
+    test = ":"
+  else
+    test = "#{make} test ARGS=-V"
+  end
+
+  pkg.build do
+    # Until a `check` target exists, run tests are part of the build.
+    [
+      "#{make} -j$(shell expr $(shell #{platform[:num_cores]}) + 1)",
+      test
+    ]
   end
 
   pkg.install do

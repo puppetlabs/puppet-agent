@@ -74,14 +74,6 @@ component "pxp-agent" do |pkg, settings, platform|
     ["#{make} -j$(shell expr $(shell #{platform[:num_cores]}) + 1)"]
   end
 
-  # Can't run binaries when cross-compiling, and Solaris has an issue with
-  # accessing the certs while testing. AIX tests are always iffy.
-  if !platform.is_cross_compiled? && !platform.is_solaris? && !platform.is_aix?
-    pkg.check do
-      ["#{make} test ARGS=-V"]
-    end
-  end
-
   pkg.install do
     ["#{make} -j$(shell expr $(shell #{platform[:num_cores]}) + 1) install"]
   end
