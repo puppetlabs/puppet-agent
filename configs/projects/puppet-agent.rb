@@ -229,7 +229,7 @@ project "puppet-agent" do |proj|
   # These utilites don't really work on unix
   if platform.is_linux?
     proj.component "virt-what"
-    proj.component "dmidecode" unless platform.is_huaweios?
+    proj.component "dmidecode"
     proj.component "shellpath"
   end
 
