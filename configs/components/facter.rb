@@ -166,10 +166,7 @@ component "facter" do |pkg, settings, platform|
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/pl-build-toolchain.cmake"
     cmake = "/opt/pl-build-tools/bin/cmake"
 
-    # SLES-10 and EL-4 have old versions of gettext on them; until we build our own, disable using locales.
-    # gettext 0.17 is required to compile .mo files with msgctxt. This shouldn't cause an issue otherwise,
-    # as we use their default locales anyway.
-    if platform.is_cisco_wrlinux? || platform.is_sles? || platform.name =~ /el-4/
+    if platform.is_cisco_wrlinux?
       special_flags = "-DLEATHERMAN_USE_LOCALES=OFF"
     end
   end
@@ -182,10 +179,14 @@ component "facter" do |pkg, settings, platform|
     special_flags += " -DFACTER_PATH=#{settings[:bindir]} \
                        -DFACTER_RUBY=#{settings[:libdir]}/$(shell #{ruby} -e 'print RbConfig::CONFIG[\"LIBRUBY_SO\"]')"
   end
+
+  # Until we build our own gettext packages, disable using locales.
+  # gettext 0.17 is required to compile .mo files with msgctxt.
   # FACTER_RUBY Needs bindir
   pkg.configure do
     ["#{cmake} \
         #{toolchain} \
+        -DLEATHERMAN_GETTEXT=OFF \
         -DCMAKE_VERBOSE_MAKEFILE=ON \
         -DCMAKE_PREFIX_PATH=#{settings[:prefix]} \
         -DCMAKE_INSTALL_PREFIX=#{settings[:prefix]} \
