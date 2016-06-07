@@ -48,10 +48,7 @@ component "pxp-agent" do |pkg, settings, platform|
     pkg.build_requires "pl-cmake"
     pkg.build_requires "pl-boost"
 
-    # SLES-10 and EL-4 have old versions of gettext on them; until we build our own, disable using locales.
-    # gettext 0.17 is required to compile .mo files with msgctxt. This shouldn't cause an issue otherwise,
-    # as we use their default locales anyway.
-    if platform.is_cisco_wrlinux? || platform.is_sles? || platform.name =~ /el-4/
+    if platform.is_cisco_wrlinux?
       special_flags = "-DLEATHERMAN_USE_LOCALES=OFF"
     end
   end
