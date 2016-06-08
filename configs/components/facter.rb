@@ -180,10 +180,14 @@ component "facter" do |pkg, settings, platform|
     special_flags += " -DFACTER_PATH=#{settings[:bindir]} \
                        -DFACTER_RUBY=#{settings[:libdir]}/$(shell #{ruby} -e 'print RbConfig::CONFIG[\"LIBRUBY_SO\"]')"
   end
+
+  # Until we build our own gettext packages, disable using locales.
+  # gettext 0.17 is required to compile .mo files with msgctxt.
   # FACTER_RUBY Needs bindir
   pkg.configure do
     ["#{cmake} \
         #{toolchain} \
+        -DLEATHERMAN_GETTEXT=OFF \
         -DCMAKE_VERBOSE_MAKEFILE=ON \
         -DCMAKE_PREFIX_PATH=#{settings[:prefix]} \
         #{special_flags} \
