@@ -234,9 +234,7 @@ project "puppet-agent" do |proj|
     proj.component "shellpath"
   end
 
-  if platform.is_solaris? || platform.name =~ /^huaweios|^el-4/ || platform.is_aix? || platform.is_windows?
-    proj.component "runtime"
-  end
+  proj.component "runtime"
 
   # Needed to avoid using readline on solaris and aix
   if platform.is_solaris? || platform.is_aix?
