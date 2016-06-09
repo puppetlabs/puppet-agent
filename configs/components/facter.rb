@@ -223,14 +223,6 @@ component "facter" do |pkg, settings, platform|
     ["#{make} -j$(shell expr $(shell #{platform[:num_cores]}) + 1) install"]
   end
 
-  pkg.check do
-    [
-      # Ensure we're linking against our libstdc++ and libgcc_s or statically linking
-      "ldd lib/libfactero.so | grep libstdc++ && ldd lib/libfacter.so | grep libstdc++ | grep puppet || true",
-      "ldd lib/libfacter.so | grep libgcc_s && ldd lib/libfacter.so | grep puppet || true"
-    ]
-  end
-
   pkg.install_file ".gemspec", "#{settings[:gem_home]}/specifications/#{pkg.get_name}.gemspec"
   if platform.is_windows?
     pkg.add_source("file://resources/files/windows/facter.bat", sum: "185b8645feecac4acadc55c64abb3755")
