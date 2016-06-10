@@ -26,8 +26,7 @@ component "virt-what" do |pkg, settings, platform|
   end
 
   if platform.is_cross_compiled_linux?
-    host_opt = '--host powerpc-linux-gnu' if platform.is_huaweios?
-    host_opt = '--host s390x-linux-gnu' if platform.architecture == "s390x"
+    host_opt = "--host #{settings[:platform_triple]}"
 
     pkg.environment "PATH" => "/opt/pl-build-tools/bin:$$PATH:#{settings[:bindir]}"
     pkg.environment "CFLAGS" => settings[:cflags]

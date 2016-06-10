@@ -57,6 +57,12 @@ component 'augeas' do |pkg, settings, platform|
     pkg.requires 'libreadline6'
 
     pkg.build_requires 'pkg-config'
+    if platform.architecture =~ /arm/
+      pkg.environment "PATH" => "/opt/pl-build-tools/bin:$$PATH:#{settings[:bindir]}"
+      pkg.environment "CFLAGS" => settings[:cflags]
+      pkg.environment "LDFLAGS" => settings[:ldflags]
+    end
+
   elsif platform.is_solaris?
     pkg.environment "PATH" => "/opt/pl-build-tools/bin:$$PATH:/usr/local/bin:/usr/ccs/bin:/usr/sfw/bin:#{settings[:bindir]}"
     pkg.environment "CFLAGS" => settings[:cflags]
