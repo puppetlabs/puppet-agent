@@ -7,6 +7,7 @@ component 'curl' do |pkg, settings, platform|
   pkg.build_requires "puppet-ca-bundle"
 
   if platform.is_cross_compiled_linux?
+    pkg.build_requires 'runtime'
     pkg.environment "CC" => "/opt/pl-build-tools/bin/#{settings[:platform_triple]}-gcc"
     pkg.environment "PKG_CONFIG_PATH" => "/opt/puppetlabs/puppet/lib/pkgconfig"
   end

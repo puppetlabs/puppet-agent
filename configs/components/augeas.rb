@@ -40,6 +40,7 @@ component 'augeas' do |pkg, settings, platform|
     end
 
     if platform.architecture == "s390x"
+      pkg.build_requires 'runtime'
       pkg.environment "PATH" => "/opt/pl-build-tools/bin:$$PATH:#{settings[:bindir]}"
       pkg.environment "CFLAGS" => settings[:cflags]
       pkg.environment "LDFLAGS" => settings[:ldflags]
