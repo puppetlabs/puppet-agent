@@ -1,7 +1,7 @@
-component "rubygem-mini_portile2" do |pkg, settings, platform|
-  pkg.version "2.1.0"
-  pkg.md5sum "d771975a58cef82daa6b0ee03522293f"
-  pkg.url "http://buildsources.delivery.puppetlabs.net/mini_portile2-#{pkg.get_version}.gem"
+component "rubygem-pkg-config" do |pkg, settings, platform|
+  pkg.version "1.1.7"
+  pkg.md5sum "2767d4620b32f2a4ccddc18c353e5385"
+  pkg.url "http://buildsources.delivery.puppetlabs.net/pkg-config-#{pkg.get_version}.gem"
 
   pkg.build_requires "ruby"
 
@@ -16,6 +16,6 @@ component "rubygem-mini_portile2" do |pkg, settings, platform|
   pkg.environment "RUBYLIB" => "#{settings[:ruby_vendordir]}:$$RUBYLIB"
 
   pkg.install do
-    ["#{settings[:gem_install]} mini_portile2-#{pkg.get_version}.gem"]
+    ["#{settings[:gem_install]} pkg-config-#{pkg.get_version}.gem"]
   end
 end
