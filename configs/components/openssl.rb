@@ -1,7 +1,7 @@
 component "openssl" do |pkg, settings, platform|
   pkg.version "1.0.2h"
   pkg.md5sum "9392e65072ce4b614c1392eefc1f23d0"
-  pkg.url "http://buildsources.delivery.puppetlabs.net/openssl-#{pkg.get_version}.tar.gz"
+  pkg.url "https://openssl.org/source/openssl-#{pkg.get_version}.tar.gz"
 
   pkg.replaces 'pe-openssl'
 
@@ -9,10 +9,11 @@ component "openssl" do |pkg, settings, platform|
   if platform.is_cross_compiled_linux?
     pkg.build_requires "pl-binutils-#{platform.architecture}"
     pkg.build_requires "pl-gcc-#{platform.architecture}"
-    pkg.build_requires 'runtime' if platform.is_huaweios?
+    pkg.build_requires 'runtime'
     # needed for the makedepend command
+    pkg.build_requires 'imake' if platform.name =~ /^el/
+    pkg.build_requires 'xorg-x11-util-devel' if platform.name =~ /^sles/
     pkg.build_requires 'xutils-dev' if platform.is_huaweios?
-    pkg.build_requires 'xorg-x11-util-devel' if platform.architecture == "s390x"
   elsif platform.is_linux?
     pkg.build_requires 'pl-binutils'
     pkg.build_requires 'pl-gcc'
@@ -88,6 +89,14 @@ component "openssl" do |pkg, settings, platform|
     pkg.environment "CYGWIN" => settings[:cygwin]
     cflags = settings[:cflags]
     ldflags = settings[:ldflags]
+  elsif platform.name == 'debian-8-armhf'
+    pkg.apply_patch 'resources/patches/openssl/openssl-1.0.0l-use-gcc-instead-of-makedepend.patch'
+    pkg.environment "PATH" => "/opt/pl-build-tools/bin:$$PATH"
+    pkg.environment "CC" => "/opt/pl-build-tools/bin/#{settings[:platform_triple]}-gcc"
+    pkg.build_requires "xutils-dev"
+    target = 'linux-armv4'
+    ldflags = "-Wl,-rpath=/opt/pl-build-tools/#{settings[:platform_triple]}/lib -Wl,-rpath=#{settings[:libdir]} -L/opt/pl-build-tools/#{settings[:platform_triple]}/lib"
+    cflags = "#{settings[:cflags]} -fPIC"
   else
     pkg.environment "PATH" => "/opt/pl-build-tools/bin:$$PATH:/usr/local/bin"
     if platform.architecture =~ /86$/

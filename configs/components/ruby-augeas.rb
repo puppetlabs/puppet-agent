@@ -1,7 +1,7 @@
 component "ruby-augeas" do |pkg, settings, platform|
   pkg.version "0.5.0"
   pkg.md5sum "a132eace43ce13ccd059e22c0b1188ac"
-  pkg.url "http://buildsources.delivery.puppetlabs.net/ruby-augeas-0.5.0.tgz"
+  pkg.url "http://download.augeas.net/ruby/ruby-augeas-#{pkg.get_version}.tgz"
 
   pkg.replaces 'pe-ruby-augeas'
 
@@ -32,6 +32,28 @@ component "ruby-augeas" do |pkg, settings, platform|
     ruby = File.join(settings[:bindir], 'ruby')
   end
 
+  # This is a disturbing workaround needed for s390x based systems, that
+  # for some reason isn't encountered with our other architecture cross
+  # builds. When trying to build the augeas test cases for extconf.rb,
+  # the process fails with "/opt/pl-build-tools/bin/s390x-linux-gnu-gcc:
+  # error while loading shared libraries: /opt/puppetlabs/puppet/lib/libstdc++.so.6:
+  # ELF file data encoding not little-endian". It will also complain in
+  # the same way about libgcc. If however we temporarily move these
+  # libraries out of the way, extconf.rb and the cross-compile work
+  # properly. This needs to be fixed, but I've spent over a week analyzing
+  # every possible angle that could cause this, from rbconfig settings to
+  # strace logs, and we need to move forward on this platform.
+  # FIXME: Scott Garman Jun 2016
+  if platform.architecture == "s390x"
+    pkg.configure do
+      [
+        "mkdir #{settings[:libdir]}/hide",
+        "mv #{settings[:libdir]}/libstdc* #{settings[:libdir]}/hide/",
+        "mv #{settings[:libdir]}/libgcc* #{settings[:libdir]}/hide/"
+      ]
+    end
+  end
+
   pkg.build do
     ["#{ruby} ext/augeas/extconf.rb",
        "#{platform[:make]} -e -j$(shell expr $(shell #{platform[:num_cores]}) + 1)"]
@@ -48,4 +70,13 @@ component "ruby-augeas" do |pkg, settings, platform|
     "chown root:root #{settings[:ruby_vendordir]}/augeas.rb"
   end if platform.is_solaris? || platform.is_cross_compiled_linux?
 
+  # Undo the gross hack from the configure step
+  if platform.architecture == "s390x"
+    pkg.install do
+      [
+        "mv #{settings[:libdir]}/hide/* #{settings[:libdir]}/",
+        "rmdir #{settings[:libdir]}/hide/"
+      ]
+    end
+  end
 end

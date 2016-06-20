@@ -37,11 +37,15 @@ pe_platforms:
   - aix-7.1-power
   - el-4-i386
   - el-4-x86_64
+  - el-6-s390x
+  - el-7-s390x
   - sles-10-i386
   - sles-10-x86_64
   - sles-11-i386
   - sles-11-x86_64
+  - sles-11-s390x
   - sles-12-x86_64
+  - sles-12-s390x
   - solaris-10-i386
   - solaris-10-sparc
   - solaris-11-i386

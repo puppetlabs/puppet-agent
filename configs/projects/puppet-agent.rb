@@ -23,10 +23,10 @@ project "puppet-agent" do |proj|
     end
     proj.setting(:links, {
         :HelpLink => "http://puppet.com/services/customer-support",
-        :CommunityLink => "http://docs.puppet.com",
+        :CommunityLink => "http://puppet.com/community",
         :ForgeLink => "http://forge.puppet.com",
-        :NextStepLink => "http://docs.puppet.com",
-        :ManualLink => "http://docs.puppet.com",
+        :NextStepLink => "https://docs.puppet.com/pe/latest/quick_start_install_agents_windows.html",
+        :ManualLink => "https://docs.puppet.com/puppet/latest/reference",
       })
     proj.setting(:UI_exitdialogtext, "Manage your first resources on this node, explore the Puppet community and get support using the shortcuts in the Documentation folder of your Start Menu.")
     proj.setting(:LicenseRTF, "wix/license/LICENSE.rtf")
@@ -39,6 +39,18 @@ project "puppet-agent" do |proj|
     proj.setting(:install_root, File.join("C:", proj.base_dir, proj.company_id, proj.product_id))
     proj.setting(:sysconfdir, File.join("C:", "CommonAppDataFolder", proj.company_id))
     proj.setting(:tmpfilesdir, "C:/Windows/Temp")
+    proj.setting(:facter_root, File.join(proj.install_root, "facter"))
+    proj.setting(:hiera_root, File.join(proj.install_root, "hiera"))
+    proj.setting(:hiera_bindir, File.join(proj.hiera_root, "bin"))
+    proj.setting(:hiera_libdir, File.join(proj.hiera_root, "lib"))
+    proj.setting(:mco_root, File.join(proj.install_root, "mcollective"))
+    proj.setting(:mco_bindir, File.join(proj.mco_root, "bin"))
+    proj.setting(:mco_libdir, File.join(proj.mco_root, "lib"))
+    proj.setting(:pxp_root, File.join(proj.install_root, "pxp-agent"))
+    proj.setting(:service_dir, File.join(proj.install_root, "service"))
+    proj.setting(:windows_tools, File.join(proj.install_root, "sys/tools/bin"))
+    proj.setting(:ruby_dir, File.join(proj.install_root, "sys/ruby"))
+    proj.setting(:ruby_bindir, File.join(proj.ruby_dir, "bin"))
   else
     proj.setting(:install_root, "/opt/puppetlabs")
     if platform.is_eos?
@@ -60,24 +72,27 @@ project "puppet-agent" do |proj|
   proj.setting(:puppet_codedir, File.join(proj.sysconfdir, 'code'))
   proj.setting(:bindir, File.join(proj.prefix, "bin"))
   proj.setting(:link_bindir, File.join(proj.install_root, "bin"))
-  proj.setting(:libdir, File.join(proj.prefix, "lib"))
   proj.setting(:includedir, File.join(proj.prefix, "include"))
   proj.setting(:datadir, File.join(proj.prefix, "share"))
   proj.setting(:mandir, File.join(proj.datadir, "man"))
-  proj.setting(:gem_home, File.join(proj.libdir, "ruby", "gems", "2.1.0"))
-  proj.setting(:ruby_vendordir, File.join(proj.libdir, "ruby", "vendor_ruby"))
 
   if platform.is_windows?
-    proj.setting(:host_ruby, File.join(proj.bindir, "ruby.exe"))
-    proj.setting(:host_gem, File.join(proj.bindir, "gem.bat"))
+    proj.setting(:host_ruby, File.join(proj.ruby_bindir, "ruby.exe"))
+    proj.setting(:host_gem, File.join(proj.ruby_bindir, "gem.bat"))
+    proj.setting(:libdir, File.join(proj.ruby_dir, "lib"))
   else
     proj.setting(:host_ruby, File.join(proj.bindir, "ruby"))
     proj.setting(:host_gem, File.join(proj.bindir, "gem"))
+    proj.setting(:libdir, File.join(proj.prefix, "lib"))
   end
+
+  proj.setting(:gem_home, File.join(proj.libdir, "ruby", "gems", "2.1.0"))
+  proj.setting(:ruby_vendordir, File.join(proj.libdir, "ruby", "vendor_ruby"))
 
   # Cross-compiled Linux platforms
   platform_triple = "powerpc-linux-gnu" if platform.is_huaweios?
   platform_triple = "s390x-linux-gnu" if platform.architecture == "s390x"
+  platform_triple = "arm-linux-gnueabihf" if platform.name == 'debian-8-armhf'
 
   if platform.is_cross_compiled_linux?
     host = "--host #{platform_triple}"
@@ -112,7 +127,7 @@ project "puppet-agent" do |proj|
 
   proj.setting(:gem_install, "#{proj.host_gem} install --no-rdoc --no-ri --local ")
   if platform.is_windows?
-    proj.setting(:gem_install, "#{proj.gem_install} --bindir #{proj.bindir} ")
+    proj.setting(:gem_install, "#{proj.gem_install} --bindir #{proj.ruby_bindir} ")
   end
 
   # For AIX, we use the triple to install a better rbconfig
@@ -219,9 +234,7 @@ project "puppet-agent" do |proj|
     proj.component "shellpath"
   end
 
-  if platform.is_solaris? || platform.name =~ /^huaweios|^el-4/ || platform.is_aix? || platform.is_windows?
-    proj.component "runtime"
-  end
+  proj.component "runtime"
 
   # Needed to avoid using readline on solaris and aix
   if platform.is_solaris? || platform.is_aix?
@@ -256,4 +269,9 @@ project "puppet-agent" do |proj|
 
   proj.timeout 7200 if platform.is_windows?
 
+  # Here we rewrite public http urls to use our internal source host instead.
+  # Something like https://www.openssl.org/source/openssl-1.0.0r.tar.gz gets
+  # rewritten as
+  # http://buildsources.delivery.puppetlabs.net/openssl-1.0.0r.tar.gz
+  proj.register_rewrite_rule 'http', 'http://buildsources.delivery.puppetlabs.net'
 end

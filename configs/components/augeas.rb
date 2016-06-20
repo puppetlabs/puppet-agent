@@ -1,7 +1,7 @@
 component 'augeas' do |pkg, settings, platform|
   pkg.version '1.4.0'
   pkg.md5sum 'a2536a9c3d744dc09d234228fe4b0c93'
-  pkg.url "http://buildsources.delivery.puppetlabs.net/#{pkg.get_name}-#{pkg.get_version}.tar.gz"
+  pkg.url "http://download.augeas.net/augeas-#{pkg.get_version}.tar.gz"
 
   pkg.replaces 'pe-augeas'
   pkg.apply_patch 'resources/patches/augeas/osx-stub-needed-readline-functions.patch'
@@ -40,6 +40,7 @@ component 'augeas' do |pkg, settings, platform|
     end
 
     if platform.architecture == "s390x"
+      pkg.build_requires 'runtime'
       pkg.environment "PATH" => "/opt/pl-build-tools/bin:$$PATH:#{settings[:bindir]}"
       pkg.environment "CFLAGS" => settings[:cflags]
       pkg.environment "LDFLAGS" => settings[:ldflags]
@@ -57,6 +58,12 @@ component 'augeas' do |pkg, settings, platform|
     pkg.requires 'libreadline6'
 
     pkg.build_requires 'pkg-config'
+    if platform.architecture =~ /arm/
+      pkg.environment "PATH" => "/opt/pl-build-tools/bin:$$PATH:#{settings[:bindir]}"
+      pkg.environment "CFLAGS" => settings[:cflags]
+      pkg.environment "LDFLAGS" => settings[:ldflags]
+    end
+
   elsif platform.is_solaris?
     pkg.environment "PATH" => "/opt/pl-build-tools/bin:$$PATH:/usr/local/bin:/usr/ccs/bin:/usr/sfw/bin:#{settings[:bindir]}"
     pkg.environment "CFLAGS" => settings[:cflags]
