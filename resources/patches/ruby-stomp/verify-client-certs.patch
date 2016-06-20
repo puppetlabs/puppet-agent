@@ -1,0 +1,397 @@
+From 9a305d3e240902a856c99a85daf87483219773f7 Mon Sep 17 00:00:00 2001
+From: Rob Braden <bradejr@puppetlabs.com>
+Date: Thu, 2 Jun 2016 15:04:41 -0700
+Subject: [PATCH] Verify client certificates
+
+---
+ lib/connection/netio.rb |   6 ++-
+ spec/connection_spec.rb | 116 ++++++++++++++++++++++++------------------------
+ 2 files changed, 63 insertions(+), 59 deletions(-)
+
+diff --git a/lib/connection/netio.rb b/lib/connection/netio.rb
+index b6c19af..29d3681 100644
+--- a/lib/connection/netio.rb
++++ b/lib/connection/netio.rb
+@@ -287,6 +287,9 @@ module Stomp
+           ssl.hostname = @host if ssl.respond_to? :hostname=
+           ssl.sync_close = true # Sync ssl close with underlying TCP socket
+           ssl.connect
++          if ssl.context.verify_mode != OpenSSL::SSL::VERIFY_NONE
++            ssl.post_connection_check(@host)
++          end
+         end
+         def ssl.ready?
+           ! @rbuffer.empty? || @io.ready?
+@@ -368,7 +371,7 @@ module Stomp
+       @disconnect_receipt = nil
+       @session = @connection_frame.headers["session"] if @connection_frame
+       # replay any subscriptions.
+-      @subscriptions.each {|k,v| 
++      @subscriptions.each {|k,v|
+         _transmit(used_socket, Stomp::CMD_SUBSCRIBE, v)
+       }
+     end
+@@ -405,4 +408,3 @@ module Stomp
+   end # class Connection
+ 
+ end # module Stomp
+-
+diff --git a/spec/connection_spec.rb b/spec/connection_spec.rb
+index f5dd408..71dd210 100644
+--- a/spec/connection_spec.rb
++++ b/spec/connection_spec.rb
+@@ -32,13 +32,13 @@ describe Stomp::Connection do
+       :tcp_nodelay => true,
+       :start_timeout => 10,
+    }
+-        
++
+     #POG:
+     class Stomp::Connection
+       def _receive( s, connread = false )
+       end
+     end
+-    
++
+     # clone() does a shallow copy, we want a deep one so we can garantee the hosts order
+     normal_parameters = Marshal::load(Marshal::dump(@parameters))
+ 
+@@ -76,7 +76,7 @@ describe Stomp::Connection do
+       @tcp_socket.should_not_receive(:flush)
+       @connection = Stomp::Connection.new(parameter_hash)
+       @connection.publish "/queue", "message", :suppress_content_length => false
+-    end    
++    end
+   end
+ 
+   describe "(created using a hash)" do
+@@ -103,20 +103,20 @@ describe Stomp::Connection do
+         :tcpNodelay => true,
+         :startTimeout => 10,
+       }
+-      
++
+       @connection = Stomp::Connection.new(used_hash)
+       @connection.instance_variable_get(:@parameters).should == @parameters
+     end
+-   
++
+     it "should start with first host in array" do
+       @connection.instance_variable_get(:@host).should == "localhost"
+     end
+-    
++
+     it "should change host to next one with randomize false" do
+       @connection.send(:change_host) # use .send(:name) to test a private method!
+       @connection.instance_variable_get(:@host).should == "remotehost"
+     end
+-    
++
+     it "should use default port (61613) if none is given" do
+       hash = {:hosts => [{:login => "login2", :passcode => "passcode2", :host => "remotehost", :ssl => false}]}
+       @connection = Stomp::Connection.new hash
+@@ -129,35 +129,35 @@ describe Stomp::Connection do
+         connection = Stomp::Connection.new(hash)
+         connection.instance_variable_get(:@reliable).should be_false
+       end
+-      
++
+       it "should be true if reliable is set to true" do
+         hash = @parameters.merge({:reliable => true })
+         connection = Stomp::Connection.new(hash)
+         connection.instance_variable_get(:@reliable).should be_true
+       end
+-      
++
+       it "should be true if reliable is not set" do
+         connection = Stomp::Connection.new(@parameters)
+         connection.instance_variable_get(:@reliable).should be_true
+       end
+     end
+-    
++
+     context "when dealing with content-length header" do
+       it "should not suppress it when receiving :suppress_content_length => false" do
+         @tcp_socket.should_receive(:puts).with("content-length:7")
+         @connection.publish "/queue", "message", :suppress_content_length => false
+       end
+-      
++
+       it "should not suppress it when :suppress_content_length is nil" do
+         @tcp_socket.should_receive(:puts).with("content-length:7")
+         @connection.publish "/queue", "message"
+       end
+-    
++
+       it "should suppress it when receiving :suppress_content_length => true" do
+         @tcp_socket.should_not_receive(:puts).with("content-length:7")
+         @connection.publish "/queue", "message", :suppress_content_length => true
+       end
+-      
++
+       it "should get the correct byte length when dealing with Unicode characters" do
+         @tcp_socket.should_receive(:puts).with("content-length:18")
+         @connection.publish "/queue", "сообщение"  # 'сообщение' is 'message' in Russian
+@@ -165,44 +165,44 @@ describe Stomp::Connection do
+     end
+ 
+     describe "when unacknowledging a message" do
+-      
++
+       before :each do
+         @message = Stomp::Message.new(nil)
+         @message.body = "message body"
+         @message.headers = {"destination" => "/queue/original", "message-id" => "ID"}
+-        
++
+         @transaction_id = "transaction-#{@message.headers["message-id"]}-0"
+-        
++
+         @retry_headers = {
+           :destination => @message.headers["destination"],
+           :transaction => @transaction_id,
+           :retry_count => 1
+         }
+       end
+-      
++
+       it "should use a transaction" do
+         @connection.should_receive(:begin).with(@transaction_id).ordered
+         @connection.should_receive(:commit).with(@transaction_id).ordered
+         @connection.unreceive @message
+       end
+-    
++
+       it "should acknowledge the original message if ack mode is client" do
+         @connection.should_receive(:ack).with(@message.headers["message-id"], :transaction => @transaction_id)
+         @connection.subscribe(@message.headers["destination"], :ack => "client")
+         @connection.unreceive @message
+       end
+-      
+-      it "should acknowledge the original message if forced" do      
++
++      it "should acknowledge the original message if forced" do
+         @connection.subscribe(@message.headers["destination"])
+         @connection.should_receive(:ack)
+         @connection.unreceive(@message, :force_client_ack => true)
+       end
+-      
+-      it "should not acknowledge the original message if ack mode is not client or it did not subscribe to the queue" do      
++
++      it "should not acknowledge the original message if ack mode is not client or it did not subscribe to the queue" do
+         @connection.subscribe(@message.headers["destination"], :ack => "client")
+         @connection.should_receive(:ack)
+         @connection.unreceive @message
+-        
++
+         # At this time the message headers are symbolized
+         @connection.unsubscribe(@message.headers[:destination])
+         @connection.should_not_receive(:ack)
+@@ -210,48 +210,48 @@ describe Stomp::Connection do
+         @connection.subscribe(@message.headers[:destination], :ack => "individual")
+         @connection.unreceive @message
+       end
+-      
++
+       it "should send the message back to the queue it came" do
+         @connection.subscribe(@message.headers["destination"], :ack => "client")
+         @connection.should_receive(:publish).with(@message.headers["destination"], @message.body, @retry_headers)
+         @connection.unreceive @message
+       end
+-      
++
+       it "should increment the retry_count header" do
+         @message.headers["retry_count"] = 4
+         @connection.unreceive @message
+         @message.headers[:retry_count].should == 5
+       end
+-      
++
+       it "should not send the message to the dead letter queue as persistent if retry_count is less than max redeliveries" do
+         max_redeliveries = 5
+         dead_letter_queue = "/queue/Dead"
+-        
++
+         @message.headers["retry_count"] = max_redeliveries - 1
+         transaction_id = "transaction-#{@message.headers["message-id"]}-#{@message.headers["retry_count"]}"
+         @retry_headers = @retry_headers.merge :transaction => transaction_id, :retry_count => @message.headers["retry_count"] + 1
+         @connection.should_receive(:publish).with(@message.headers["destination"], @message.body, @retry_headers)
+         @connection.unreceive @message, :dead_letter_queue => dead_letter_queue, :max_redeliveries => max_redeliveries
+       end
+-      
++
+       # If the retry_count has reached max_redeliveries, then we're done.
+       it "should send the message to the dead letter queue as persistent if max redeliveries have been reached" do
+         max_redeliveries = 5
+         dead_letter_queue = "/queue/Dead"
+-        
++
+         @message.headers["retry_count"] = max_redeliveries
+         transaction_id = "transaction-#{@message.headers["message-id"]}-#{@message.headers["retry_count"]}"
+         @retry_headers = @retry_headers.merge :persistent => true, :transaction => transaction_id, :retry_count => @message.headers["retry_count"] + 1, :original_destination=> @message.headers["destination"]
+         @connection.should_receive(:publish).with(dead_letter_queue, @message.body, @retry_headers)
+         @connection.unreceive @message, :dead_letter_queue => dead_letter_queue, :max_redeliveries => max_redeliveries
+       end
+-      
++
+       it "should rollback the transaction and raise the exception if happened during transaction" do
+         @connection.should_receive(:publish).and_raise "Error"
+         @connection.should_receive(:abort).with(@transaction_id)
+         lambda {@connection.unreceive @message}.should raise_error("Error")
+       end
+-    
++
+     end
+ 
+     describe "when sending a nil message body" do
+@@ -265,41 +265,44 @@ describe Stomp::Connection do
+ 
+     describe "when using ssl" do
+ 
+-      # Mocking ruby's openssl extension, so we can test without requiring openssl  
++      # Mocking ruby's openssl extension, so we can test without requiring openssl
+       module ::OpenSSL
+         module SSL
+           VERIFY_NONE = 0
+-          
++          VERIFY_PEER = 1
++
+           class SSLSocket
+           end
+-          
++
+           class SSLContext
+             attr_accessor :verify_mode
+           end
+         end
+       end
+-      
++
+       before(:each) do
++        ssl_context = double(:verify_mode => OpenSSL::SSL::VERIFY_PEER)
+         ssl_parameters = {:hosts => [{:login => "login2", :passcode => "passcode2", :host => "remotehost", :ssl => true}]}
+-        @ssl_socket = mock(:ssl_socket, :puts => nil, :write => nil, 
+-          :setsockopt => nil, :flush => true)
++        @ssl_socket = mock(:ssl_socket, :puts => nil, :write => nil,
++          :setsockopt => nil, :flush => true, :context => ssl_context)
+         @ssl_socket.stub!(:sync_close=)
+-        
++
+         TCPSocket.should_receive(:open).and_return @tcp_socket
+         OpenSSL::SSL::SSLSocket.should_receive(:new).and_return(@ssl_socket)
+         @ssl_socket.should_receive(:connect)
+-        
++        @ssl_socket.should_receive(:post_connection_check)
++
+         @connection = Stomp::Connection.new ssl_parameters
+       end
+-    
++
+       it "should use ssl socket if ssl use is enabled" do
+         @connection.instance_variable_get(:@socket).should == @ssl_socket
+       end
+-    
++
+       it "should use default port for ssl (61612) if none is given" do
+         @connection.instance_variable_get(:@port).should == 61612
+       end
+-      
++
+     end
+ 
+     describe "when called to increase reconnect delay" do
+@@ -320,7 +323,7 @@ describe Stomp::Connection do
+         @connection.send(:increase_reconnect_delay).should == 16.0
+         @connection.send(:increase_reconnect_delay).should == 30.0
+       end
+-      
++
+       it "should change to next host on socket error" do
+         @connection.instance_variable_set(:@failure, "some exception")
+         #retries the same host
+@@ -331,7 +334,7 @@ describe Stomp::Connection do
+         @connection.send(:socket)
+         @connection.instance_variable_get(:@host).should == "remotehost"
+       end
+-      
++
+       it "should use default options if those where not given" do
+         expected_hash = {
+           :hosts => [
+@@ -360,18 +363,18 @@ describe Stomp::Connection do
+           :tcp_nodelay => true,
+           :start_timeout => 10,
+         }
+-        
++
+         used_hash =  {
+           :hosts => [
+             {:login => "login1", :passcode => "passcode1", :host => "localhost", :port => 61616, :ssl => false},
+             {:login => "login2", :passcode => "passcode2", :host => "remotehost", :port => 61617, :ssl => false}
+           ]
+         }
+-        
++
+         @connection = Stomp::Connection.new(used_hash)
+         @connection.instance_variable_get(:@parameters).should == expected_hash
+       end
+-      
++
+       it "should use the given options instead of default ones" do
+         used_hash = {
+           :hosts => [
+@@ -402,21 +405,21 @@ describe Stomp::Connection do
+           :tcp_nodelay => false,
+           :start_timeout => 6,
+         }
+-        
++
+         @connection = Stomp::Connection.new(used_hash)
+         received_hash = @connection.instance_variable_get(:@parameters)
+-        
++
+         # Using randomize we can't assure the hosts order
+         received_hash.delete(:hosts)
+         used_hash.delete(:hosts)
+-        
++
+         received_hash.should == used_hash
+       end
+-      
++
+     end
+-    
++
+   end
+-  
++
+   describe "when closing a socket" do
+     it "should close the tcp connection" do
+       @tcp_socket.should_receive(:close)
+@@ -443,10 +446,10 @@ describe Stomp::Connection do
+       limit = 10000
+       @parameters[:max_reconnect_attempts] = limit
+       @connection = Stomp::Connection.new(@parameters)
+-      
++
+       @connection.instance_variable_set(:@connection_attempts, limit-1)
+       @connection.send(:max_reconnect_attempts?).should be_false
+-      
++
+       @connection.instance_variable_set(:@connection_attempts, limit)
+       @connection.send(:max_reconnect_attempts?).should be_true
+     end
+@@ -454,10 +457,9 @@ describe Stomp::Connection do
+     it "should not rescue MaxReconnectAttempts" do
+       @connection = Stomp::Connection.new(@parameters)
+       @connection.stub(:socket).and_raise(Stomp::Error::MaxReconnectAttempts)
+-      
++
+       expect { @connection.receive() }.to raise_error
+     end
+   end
+ 
+ end
+-
+-- 
+2.8.3
