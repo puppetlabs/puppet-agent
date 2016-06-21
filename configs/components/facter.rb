@@ -134,6 +134,7 @@ component "facter" do |pkg, settings, platform|
   ruby = "#{settings[:host_ruby]} -rrbconfig"
 
   make = platform[:make]
+  cp = platform[:cp]
 
   special_flags = " -DCMAKE_INSTALL_PREFIX=#{settings[:prefix]} "
 
@@ -163,7 +164,8 @@ component "facter" do |pkg, settings, platform|
 
     cmake = "C:/ProgramData/chocolatey/bin/cmake.exe -G \"MinGW Makefiles\""
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=#{settings[:tools_root]}/pl-build-toolchain.cmake"
-    special_flags = "-DCMAKE_INSTALL_PREFIX=#{settings[:facter_root]}"
+    special_flags = "-DCMAKE_INSTALL_PREFIX=#{settings[:facter_root]} \
+                     -DRUBY_LIB_INSTALL=#{settings[:facter_root]}/lib "
   else
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/pl-build-toolchain.cmake"
     cmake = "/opt/pl-build-tools/bin/cmake"
@@ -179,7 +181,8 @@ component "facter" do |pkg, settings, platform|
 
   unless platform.is_windows?
     special_flags += " -DFACTER_PATH=#{settings[:bindir]} \
-                       -DFACTER_RUBY=#{settings[:libdir]}/$(shell #{ruby} -e 'print RbConfig::CONFIG[\"LIBRUBY_SO\"]')"
+                       -DFACTER_RUBY=#{settings[:libdir]}/$(shell #{ruby} -e 'print RbConfig::CONFIG[\"LIBRUBY_SO\"]') \
+                       -DRUBY_LIB_INSTALL=#{settings[:ruby_vendordir]}"
   end
 
   # Until we build our own gettext packages, disable using locales.
@@ -194,7 +197,6 @@ component "facter" do |pkg, settings, platform|
         #{special_flags} \
         -DBOOST_STATIC=ON \
         -DYAMLCPP_STATIC=ON \
-        -DRUBY_LIB_INSTALL=#{settings[:ruby_vendordir]} \
         -DWITHOUT_CURL=#{skip_curl} \
         -DWITHOUT_BLKID=#{skip_blkid} \
         -DWITHOUT_JRUBY=#{skip_jruby} \
