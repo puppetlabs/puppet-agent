@@ -63,7 +63,7 @@ component "puppet" do |pkg, settings, platform|
   when "windows"
     # Note - this definition indicates that the file should be filtered out from the Wix
     # harvest. A corresponding service definition file is also required in resources/windows/wix
-    pkg.install_service "SourceDir\\#{settings[:base_dir]}\\#{settings[:company_id]}\\#{settings[:product_id]}\\puppet\\bin\\ruby.exe"
+    pkg.install_service "SourceDir\\#{settings[:base_dir]}\\#{settings[:company_id]}\\#{settings[:product_id]}\\sys\\ruby\\bin\\ruby.exe"
   else
     fail "need to know where to put service files"
   end
@@ -102,7 +102,9 @@ component "puppet" do |pkg, settings, platform|
   end
 
   if platform.is_windows?
-    pkg.environment "FACTERDIR" => settings[:prefix]
+    pkg.environment "FACTERDIR" => settings[:facter_root]
+    pkg.environment "PATH" => "$$(cygpath -u #{settings[:gcc_bindir]}):$$(cygpath -u #{settings[:ruby_bindir]}):$$(cygpath -u #{settings[:bindir]}):/cygdrive/c/Windows/system32:/cygdrive/c/Windows:/cygdrive/c/Windows/System32/WindowsPowerShell/v1.0"
+    pkg.environment "RUBYLIB" => "#{settings[:hiera_libdir]}"
   end
 
   if platform.is_windows?
@@ -132,6 +134,7 @@ component "puppet" do |pkg, settings, platform|
         --logdir=#{logdir} \
         --configs \
         --quick \
+        --no-batch-files \
         --man \
         --mandir=#{settings[:mandir]}"]
   end
@@ -164,9 +167,10 @@ component "puppet" do |pkg, settings, platform|
     pkg.install_file "../puppet_shell.bat", "#{settings[:link_bindir]}/puppet_shell.bat"
 
     pkg.install_file "ext/windows/service/daemon.bat", "#{settings[:bindir]}/daemon.bat"
-    pkg.install_file "ext/windows/service/daemon.rb", "#{settings[:bindir]}/daemon.rb"
+    pkg.install_file "ext/windows/service/daemon.rb", "#{settings[:service_dir]}/daemon.rb"
     pkg.install_file "../wix/icon/puppet.ico", "#{settings[:miscdir]}/puppet.ico"
     pkg.install_file "../wix/license/LICENSE.rtf", "#{settings[:miscdir]}/LICENSE.rtf"
+    pkg.directory settings[:service_dir]
   end
 
   pkg.configfile File.join(configdir, 'puppet.conf')

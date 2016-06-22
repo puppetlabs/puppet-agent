@@ -1,6 +1,6 @@
 component "rubygem-net-netconf" do |pkg, settings, platform|
   pkg.version "0.4.3"
-  pkg.url "http://buildsources.delivery.puppetlabs.net/net-netconf-#{pkg.get_version}.gem"
+  pkg.url "https://rubygems.org/downloads/net-netconf-#{get_version}.gem"
   pkg.md5sum "fa173b0965766a427d8692f6b31c85a4"
 
   pkg.build_requires "ruby"
@@ -11,6 +11,10 @@ component "rubygem-net-netconf" do |pkg, settings, platform|
   # When cross-compiling, we can't use the rubygems we just built.
   # Instead we use the host gem installation and override GEM_HOME. Yay?
   pkg.environment "GEM_HOME" => settings[:gem_home]
+
+  if platform.is_windows?
+    pkg.environment "PATH" => "$$(cygpath -u #{settings[:gcc_bindir]}):$$(cygpath -u #{settings[:ruby_bindir]}):$$(cygpath -u #{settings[:bindir]}):/cygdrive/c/Windows/system32:/cygdrive/c/Windows:/cygdrive/c/Windows/System32/WindowsPowerShell/v1.0"
+  end
 
   # PA-25 in order to install gems in a cross-compiled environment we need to
   # set RUBYLIB to include puppet and hiera, so that their gemspecs can resolve

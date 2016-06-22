@@ -9,30 +9,32 @@ component "hiera" do |pkg, settings, platform|
 
   pkg.replaces 'pe-hiera'
 
+  configdir = settings[:puppet_configdir]
+  flags = " --bindir=#{settings[:bindir]} \
+            --sitelibdir=#{settings[:ruby_vendordir]} \
+            --ruby=#{File.join(settings[:bindir], 'ruby')} "
+
   if platform.is_windows?
+    pkg.add_source("file://resources/files/windows/hiera.bat", sum: "bbe0a513808af61ed9f4b57463851326")
     configdir = File.join(settings[:sysconfdir], 'puppet', 'etc')
-  else
-    configdir = settings[:puppet_configdir]
+    pkg.install_file "../hiera.bat", "#{settings[:link_bindir]}/hiera.bat"
+    flags = " --bindir=#{settings[:hiera_bindir]} \
+              --sitelibdir=#{settings[:hiera_libdir]} \
+              --ruby=#{File.join(settings[:ruby_bindir], 'ruby')} "
   end
 
   pkg.install do
     ["#{settings[:host_ruby]} install.rb \
-    --ruby=#{File.join(settings[:bindir], 'ruby')} \
-    --bindir=#{settings[:bindir]} \
-    --configdir=#{configdir} \
-    --sitelibdir=#{settings[:ruby_vendordir]} \
     --configs \
-    --quick \
+    --configdir=#{configdir} \
     --man \
-    --mandir=#{settings[:mandir]}"]
+    --mandir=#{settings[:mandir]} \
+    --no-batch-files \
+    #{flags}"]
   end
 
-  pkg.install_file ".gemspec", "#{settings[:gem_home]}/specifications/#{pkg.get_name}.gemspec"
+  pkg.install_file ".gemspec", "#{settings[:gem_home]}/specifications/#{pkg.get_name}.gemspec" unless platform.is_windows?
 
-  if platform.is_windows?
-    pkg.add_source("file://resources/files/windows/hiera.bat", sum: "bbe0a513808af61ed9f4b57463851326")
-    pkg.install_file "../hiera.bat", "#{settings[:link_bindir]}/hiera.bat"
-  end
   pkg.configfile File.join(configdir, 'hiera.yaml')
 
   pkg.link "#{settings[:bindir]}/hiera", "#{settings[:link_bindir]}/hiera" unless platform.is_windows?

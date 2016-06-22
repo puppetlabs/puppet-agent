@@ -1,13 +1,17 @@
 component "rubygem-hocon" do |pkg, settings, platform|
   pkg.version "0.9.3"
   pkg.md5sum "af89595899c3b893787045039ff02ee0"
-  pkg.url "http://buildsources.delivery.puppetlabs.net/hocon-#{pkg.get_version}.gem"
+  pkg.url "https://rubygems.org/downloads/hocon-#{pkg.get_version}.gem"
 
   pkg.build_requires "ruby"
 
   # Because we are cross-compiling on sparc, we can't use the rubygems we just built.
   # Instead we use the host gem installation and override GEM_HOME. Yay?
   pkg.environment "GEM_HOME" => settings[:gem_home]
+
+  if platform.is_windows?
+    pkg.environment "PATH" => "$$(cygpath -u #{settings[:gcc_bindir]}):$$(cygpath -u #{settings[:ruby_bindir]}):$$(cygpath -u #{settings[:bindir]}):/cygdrive/c/Windows/system32:/cygdrive/c/Windows:/cygdrive/c/Windows/System32/WindowsPowerShell/v1.0"
+  end
 
   # PA-25 in order to install gems in a cross-compiled environment we need to
   # set RUBYLIB to include puppet and hiera, so that their gemspecs can resolve
