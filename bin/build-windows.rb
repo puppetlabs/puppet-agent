@@ -85,6 +85,12 @@ scp_command = "scp #{ssh_key} -o StrictHostKeyChecking=no -o UserKnownHostsFile=
 result = Kernel.system("set -vx;#{ssh_command} \"echo \\\"#{ssh_env}\\\" >> ~/.bash_profile\"")
 fail "Unable to connect to the host. Is is possible that you aren't on VPN or connected to the internal PL network?" unless result
 
+# This is not the best way to do this but we're trying to kill this script
+# so this is the best quick fix for now, to allow for private repo
+# cloning from github. This should be removed ASAP. - morgan,2016-04-18
+result = Kernel.system("set -vx;#{ssh_command} \"echo -e \\\"Host github.com\n\tStrictHostKeyChecking no\n\\\" >> ~/.ssh/config\"")
+fail "Unable to connect to the host. Is is possible that you aren't on VPN or connected to the internal PL network?" unless result
+
 ### Build Facter
 #
 #
@@ -210,7 +216,8 @@ fail "It seems there were some issues cloning the puppet_for_the_win repo" unles
 Kernel.system("set -vx;#{scp_command} winconfig.yaml Administrator@#{hostname}:/home/Administrator/puppet_for_the_win/")
 
 # Build the MSI with automation in puppet_for_the_win
-result = Kernel.system("set -vx;#{ssh_command} \"source .bash_profile ; cd /home/Administrator/puppet_for_the_win ; AGENT_VERSION_STRING=#{AGENT_VERSION_STRING} ARCH=#{ARCH} C:/cygwin64/home/Administrator/deps/ruby-#{ruby_version}-#{ruby_arch}-mingw32/bin/rake clobber windows:build config=winconfig.yaml\"")
+result = Kernel.system("set -vx;#{ssh_command} \"bash -l -c \\\"source .bash_profile ; cd /home/Administrator/puppet_for_the_win ; AGENT_VERSION_STRING=#{AGENT_VERSION_STRING} ARCH=#{ARCH} C:/cygwin64/home/Administrator/deps/ruby-#{ruby_version}-#{ruby_arch}-mingw32/bin/rake clobber windows:build config=winconfig.yaml\\\"\"")
+
 fail "It seems there were some issues building the puppet-agent msi" unless result
 
 # Fetch back the built installer
