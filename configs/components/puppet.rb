@@ -32,28 +32,6 @@ component "puppet" do |pkg, settings, platform|
     elsif platform.is_rpm?
       pkg.install_service "ext/redhat/client.init", "ext/redhat/client.sysconfig"
     end
-    if platform.is_rpm?
-      puppet_bin = "/opt/puppetlabs/bin/puppet"
-      rpm_statedir = "%{_localstatedir}/lib/rpm-state/#{pkg.get_name}"
-      service_statefile = "#{rpm_statedir}/service.pp"
-      pkg.add_preinstall_action ["upgrade"],
-        [<<-HERE.undent
-          install --owner root --mode 0700 --directory #{rpm_statedir} || :
-          if [ -x #{puppet_bin} ] ; then
-            #{puppet_bin} resource service puppet > #{service_statefile} || :
-          fi
-          HERE
-        ]
-
-      pkg.add_postinstall_action ["upgrade"],
-        [<<-HERE.undent
-          if [ -f #{service_statefile} ] ; then
-            #{puppet_bin} apply #{service_statefile} > /dev/null 2>&1 || :
-            rm -rf #{rpm_statedir} || :
-          fi
-          HERE
-        ]
-    end
   when "launchd"
     pkg.install_service "ext/osx/puppet.plist", nil, "com.puppetlabs.puppet"
   when "smf"
@@ -66,6 +44,29 @@ component "puppet" do |pkg, settings, platform|
     pkg.install_service "SourceDir\\#{settings[:base_dir]}\\#{settings[:company_id]}\\#{settings[:product_id]}\\sys\\ruby\\bin\\ruby.exe"
   else
     fail "need to know where to put service files"
+  end
+
+  if (platform.servicetype == "sysv" && platform.is_rpm?) || platform.is_aix?
+    puppet_bin = "/opt/puppetlabs/bin/puppet"
+    rpm_statedir = "%{_localstatedir}/lib/rpm-state/#{pkg.get_name}"
+    service_statefile = "#{rpm_statedir}/service.pp"
+    pkg.add_preinstall_action ["upgrade"],
+      [<<-HERE.undent
+        install --owner root --mode 0700 --directory #{rpm_statedir} || :
+        if [ -x #{puppet_bin} ] ; then
+          #{puppet_bin} resource service puppet > #{service_statefile} || :
+        fi
+        HERE
+      ]
+
+    pkg.add_postinstall_action ["upgrade"],
+      [<<-HERE.undent
+        if [ -f #{service_statefile} ] ; then
+          #{puppet_bin} apply #{service_statefile} > /dev/null 2>&1 || :
+          rm -rf #{rpm_statedir} || :
+        fi
+        HERE
+      ]
   end
 
   # To create a tmpfs directory for the piddir, it seems like it's either this
