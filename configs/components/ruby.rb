@@ -49,7 +49,7 @@ component "ruby" do |pkg, settings, platform|
       :target_double => "powerpc-linux",
     },
     's390x-linux-gnu' => {
-      :sum => "3bb93ed43fddc4807347a988cbb2e0c1",
+      :sum => "dc6341fff1d00b3ba22dc1b9e6d5532f",
       :target_double => "s390x-linux",
     },
     'i386-pc-solaris2.10' => {
@@ -67,6 +67,9 @@ component "ruby" do |pkg, settings, platform|
     'sparc-sun-solaris2.11' => {
       :sum => "f2a40c4bff028dffc880a40b2806a361",
       :target_double => 'sparc-solaris2.11',
+    },
+    'arm-linux-gnueabihf' => {
+      :target_double => 'arm-linux-eabihf'
     }
   }
 
@@ -95,7 +98,8 @@ component "ruby" do |pkg, settings, platform|
 
   # Cross-compiles require a hand-built rbconfig from the target system
   if platform.is_cross_compiled_linux? || platform.is_solaris? || platform.is_aix?
-    pkg.add_source "file://resources/files/rbconfig-#{settings[:platform_triple]}.rb", sum: rbconfig_info[settings[:platform_triple]][:sum]
+    pkg.add_source "file://resources/files/rbconfig-#{settings[:platform_triple]}.rb"
+    pkg.build_requires 'runtime' if platform.is_cross_compiled_linux?
   end
 
   pkg.build_requires "openssl"
@@ -113,7 +117,6 @@ component "ruby" do |pkg, settings, platform|
   if platform.is_cross_compiled_linux?
     pkg.build_requires 'pl-ruby'
     special_flags += " --with-baseruby=#{settings[:host_ruby]} "
-    pkg.build_requires 'runtime' if platform.is_huaweios?
     pkg.environment "PATH" => "#{settings[:bindir]}:$$PATH"
     pkg.environment "CC" => "/opt/pl-build-tools/bin/#{settings[:platform_triple]}-gcc"
     pkg.environment "LDFLAGS" => "-Wl,-rpath=/opt/puppetlabs/puppet/lib"

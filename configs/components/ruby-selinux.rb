@@ -11,7 +11,6 @@ component "ruby-selinux" do |pkg, settings, platform|
     pkg.url "https://raw.githubusercontent.com/wiki/SELinuxProject/selinux/files/releases/20100525/devel/libselinux-#{pkg.get_version}.tar.gz"
   end
 
-
   pkg.replaces 'pe-ruby-selinux'
 
   pkg.build_requires "ruby"
@@ -20,10 +19,16 @@ component "ruby-selinux" do |pkg, settings, platform|
   pkg.build_requires "libsepol-devel"
   pkg.build_requires "libselinux-devel"
 
+  ruby = "#{settings[:bindir]}/ruby -rrbconfig"
+  if platform.is_cross_compiled_linux?
+    pkg.environment "RUBY" => settings[:host_ruby]
+    ruby = "#{settings[:host_ruby]} -r#{settings[:datadir]}/doc/rbconfig.rb"
+  end
+
   pkg.build do
-    ["export RUBYHDRDIR=$(shell #{settings[:bindir]}/ruby -rrbconfig -e 'puts RbConfig::CONFIG[\"rubyhdrdir\"]')",
-     "export VENDORARCHDIR=$(shell #{settings[:bindir]}/ruby -rrbconfig -e 'puts RbConfig::CONFIG[\"vendorarchdir\"]')",
-     "export ARCHDIR=$${RUBYHDRDIR}/$(shell #{settings[:bindir]}/ruby -rrbconfig -e 'puts RbConfig::CONFIG[\"arch\"]')",
+    ["export RUBYHDRDIR=$(shell #{ruby} -e 'puts RbConfig::CONFIG[\"rubyhdrdir\"]')",
+     "export VENDORARCHDIR=$(shell #{ruby} -e 'puts RbConfig::CONFIG[\"vendorarchdir\"]')",
+     "export ARCHDIR=$${RUBYHDRDIR}/$(shell #{ruby} -e 'puts RbConfig::CONFIG[\"arch\"]')",
      "export INCLUDESTR=\"-I#{settings[:includedir]} -I$${RUBYHDRDIR} -I$${ARCHDIR}\"",
      "cp -pr src/{selinuxswig_ruby.i,selinuxswig.i}  .",
      "swig -Wall -ruby  -I../include -I/usr/include -o selinuxswig_ruby_wrap.c -outdir ./ selinuxswig_ruby.i",
@@ -32,7 +37,7 @@ component "ruby-selinux" do |pkg, settings, platform|
   end
 
   pkg.install do
-    ["export VENDORARCHDIR=$(shell #{settings[:bindir]}/ruby -rrbconfig -e 'puts RbConfig::CONFIG[\"vendorarchdir\"]')",
+    ["export VENDORARCHDIR=$(shell #{ruby} -e 'puts RbConfig::CONFIG[\"vendorarchdir\"]')",
      "install -d $${VENDORARCHDIR}",
      "install -p -m755 _rubyselinux.so $${VENDORARCHDIR}/selinux.so"]
   end

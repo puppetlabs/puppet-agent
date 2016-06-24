@@ -92,6 +92,7 @@ project "puppet-agent" do |proj|
   # Cross-compiled Linux platforms
   platform_triple = "powerpc-linux-gnu" if platform.is_huaweios?
   platform_triple = "s390x-linux-gnu" if platform.architecture == "s390x"
+  platform_triple = "arm-linux-gnueabihf" if platform.name == 'debian-8-armhf'
 
   if platform.is_cross_compiled_linux?
     host = "--host #{platform_triple}"
@@ -229,13 +230,11 @@ project "puppet-agent" do |proj|
   # These utilites don't really work on unix
   if platform.is_linux?
     proj.component "virt-what"
-    proj.component "dmidecode" unless platform.is_huaweios?
+    proj.component "dmidecode"
     proj.component "shellpath"
   end
 
-  if platform.is_solaris? || platform.name =~ /^huaweios|^el-4/ || platform.is_aix? || platform.is_windows?
-    proj.component "runtime"
-  end
+  proj.component "runtime"
 
   # Needed to avoid using readline on solaris and aix
   if platform.is_solaris? || platform.is_aix?
@@ -246,6 +245,7 @@ project "puppet-agent" do |proj|
   if platform.is_huaweios?
     proj.component "rubygem-net-scp"
     proj.component "rubygem-mini_portile2"
+    proj.component "rubygem-pkg-config"
     proj.component "rubygem-net-netconf"
     proj.component "rubygem-nokogiri"
   end

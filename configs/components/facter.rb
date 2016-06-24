@@ -49,6 +49,7 @@ component "facter" do |pkg, settings, platform|
     pkg.build_requires "pl-boost-#{platform.architecture}"
     pkg.build_requires "pl-yaml-cpp-#{platform.architecture}"
     pkg.build_requires "pl-cmake"
+    pkg.build_requires "runtime" if platform.is_cross_compiled_linux?
   elsif platform.is_aix?
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-gcc-5.2.0-1.aix#{platform.os_version}.ppc.rpm"
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-cmake-3.2.3-2.aix#{platform.os_version}.ppc.rpm"
@@ -172,14 +173,22 @@ component "facter" do |pkg, settings, platform|
     end
   end
 
+  # In PE, aio_agent_version is distinguished from aio_agent_build by not including the git sha.
+  # Strip it off; this should have no impact on final releases, as git sha would not be included.
+  aio_agent_version = settings[:package_version].match(/^\d+\.\d+\.\d+(\.\d+){0,2}/).to_s
+
   unless platform.is_windows?
     special_flags += " -DFACTER_PATH=#{settings[:bindir]} \
                        -DFACTER_RUBY=#{settings[:libdir]}/$(shell #{ruby} -e 'print RbConfig::CONFIG[\"LIBRUBY_SO\"]')"
   end
+
+  # Until we build our own gettext packages, disable using locales.
+  # gettext 0.17 is required to compile .mo files with msgctxt.
   # FACTER_RUBY Needs bindir
   pkg.configure do
     ["#{cmake} \
         #{toolchain} \
+        -DLEATHERMAN_GETTEXT=OFF \
         -DCMAKE_VERBOSE_MAKEFILE=ON \
         -DCMAKE_PREFIX_PATH=#{settings[:prefix]} \
         #{special_flags} \
@@ -189,7 +198,7 @@ component "facter" do |pkg, settings, platform|
         -DWITHOUT_CURL=#{skip_curl} \
         -DWITHOUT_BLKID=#{skip_blkid} \
         -DWITHOUT_JRUBY=#{skip_jruby} \
-        -DAIO_AGENT_VERSION=#{settings[:package_version]} \
+        -DAIO_AGENT_VERSION=#{aio_agent_version} \
         -DINSTALL_BATCH_FILES=NO \
         #{java_includedir} \
         ."]

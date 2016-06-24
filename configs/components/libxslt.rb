@@ -1,7 +1,13 @@
 component "libxslt" do |pkg, settings, platform|
-  pkg.version "1.1.28"
-  pkg.md5sum "9667bf6f9310b957254fdcf6596600b7"
-  pkg.url "http://xmlsoft.org/sources/libxslt-#{pkg.get_version}.tar.gz"
+  if platform.is_solaris?
+    pkg.version "1.1.28"
+    pkg.md5sum "9667bf6f9310b957254fdcf6596600b7"
+    pkg.url "http://buildsources.delivery.puppetlabs.net/#{pkg.get_name}-#{pkg.get_version}.tar.gz"
+  else
+    pkg.version "1.1.29"
+    pkg.md5sum "a129d3c44c022de3b9dcf6d6f288d72e"
+    pkg.url "http://buildsources.delivery.puppetlabs.net/#{pkg.get_name}-#{pkg.get_version}.tar.gz"
+  end
 
   pkg.build_requires "libxml2"
 
@@ -15,6 +21,8 @@ component "libxslt" do |pkg, settings, platform|
 
     # libxslt is picky about manually specifying the build host
     build = "--build x86_64-linux-gnu"
+    # don't depend on libgcrypto
+    disable_crypto = "--without-crypto"
   elsif platform.is_solaris?
     pkg.environment "PATH" => "/opt/pl-build-tools/bin:$$PATH:/usr/local/bin:/usr/ccs/bin:/usr/sfw/bin:#{settings[:bindir]}"
     pkg.environment "CFLAGS" => settings[:cflags]
@@ -44,7 +52,7 @@ component "libxslt" do |pkg, settings, platform|
   end
 
   pkg.configure do
-    ["./configure --prefix=#{settings[:prefix]} --docdir=/tmp --with-libxml-prefix=#{settings[:prefix]} #{settings[:host]} #{build} #{target}"]
+    ["./configure --prefix=#{settings[:prefix]} --docdir=/tmp --with-libxml-prefix=#{settings[:prefix]} #{settings[:host]} #{disable_crypto} #{build} #{target}"]
   end
 
   pkg.build do
