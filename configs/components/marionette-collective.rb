@@ -55,7 +55,7 @@ component "marionette-collective" do |pkg, settings, platform|
     service_statefile = "#{rpm_statedir}/service.pp"
     pkg.add_preinstall_action ["upgrade"],
       [<<-HERE.undent
-        install --owner root --mode 0700 --directory #{rpm_statedir} || :
+        mkdir -p  #{rpm_statedir} && chown root #{rpm_statedir} && chmod 0700 #{rpm_statedir} || :
         if [ -x #{puppet_bin} ] ; then
           #{puppet_bin} resource service mcollective > #{service_statefile} || :
         fi
