@@ -17,6 +17,7 @@ component "facter" do |pkg, settings, platform|
   pkg.build_requires "ruby"
   pkg.build_requires 'openssl'
   pkg.build_requires 'leatherman'
+  pkg.build_requires 'runtime'
 
   if platform.is_linux? && !platform.is_huaweios?
     # Running facter (as part of testing) expects virt-what is available
@@ -49,19 +50,16 @@ component "facter" do |pkg, settings, platform|
     pkg.build_requires "pl-boost-#{platform.architecture}"
     pkg.build_requires "pl-yaml-cpp-#{platform.architecture}"
     pkg.build_requires "pl-cmake"
-    pkg.build_requires "runtime" if platform.is_cross_compiled_linux?
   elsif platform.is_aix?
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-gcc-5.2.0-1.aix#{platform.os_version}.ppc.rpm"
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-cmake-3.2.3-2.aix#{platform.os_version}.ppc.rpm"
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-boost-1.58.0-1.aix#{platform.os_version}.ppc.rpm"
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-yaml-cpp-0.5.1-1.aix#{platform.os_version}.ppc.rpm"
-    pkg.build_requires "runtime"
   elsif platform.is_windows?
     pkg.build_requires "cmake"
     pkg.build_requires "pl-toolchain-#{platform.architecture}"
     pkg.build_requires "pl-boost-#{platform.architecture}"
     pkg.build_requires "pl-yaml-cpp-#{platform.architecture}"
-    pkg.build_requires "runtime"
   else
     pkg.build_requires "pl-gcc"
     pkg.build_requires "pl-cmake"
@@ -226,12 +224,21 @@ component "facter" do |pkg, settings, platform|
     ["#{make} -j$(shell expr $(shell #{platform[:num_cores]}) + 1) install"]
   end
 
-  pkg.check do
-    [
-      # Ensure we're linking against our libstdc++ and libgcc_s or statically linking
-      "ldd lib/libfactero.so | grep libstdc++ && ldd lib/libfacter.so | grep libstdc++ | grep puppet || true",
-      "ldd lib/libfacter.so | grep libgcc_s && ldd lib/libfacter.so | grep puppet || true"
-    ]
+  if platform.is_osx?
+    ldd = "otool -L"
+  else
+    ldd = "ldd"
+  end
+
+  unless platform.is_windows? || platform.is_cross_compiled_linux? || platform.architecture == 'sparc'
+    pkg.check do
+      [
+        # Check that we're not linking against system libstdc++ and libgcc_s
+        "#{ldd} lib/libfacter.so",
+        "[ $$(#{ldd} lib/libfacter.so | grep -c libstdc++) -eq 0 ] || #{ldd} lib/libfacter.so | grep libstdc++ | grep -v ' /lib'",
+        "[ $$(#{ldd} lib/libfacter.so | grep -c libgcc_s) -eq 0 ] || #{ldd} lib/libfacter.so | grep libgcc_s | grep -v ' /lib'"
+      ]
+    end
   end
 
   pkg.install_file ".gemspec", "#{settings[:gem_home]}/specifications/#{pkg.get_name}.gemspec"
