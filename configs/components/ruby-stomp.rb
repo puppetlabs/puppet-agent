@@ -1,6 +1,6 @@
 component "ruby-stomp" do |pkg, settings, platform|
-  pkg.version "1.3.3"
-  pkg.md5sum "50a2c1b66982b426d67a83f56f4bc0e2"
+  pkg.version "1.4.1"
+  pkg.md5sum "f1b8574adf47aa9d8945b5e0089de91b"
   pkg.url "https://rubygems.org/downloads/stomp-#{pkg.get_version}.gem"
 
   pkg.replaces 'pe-ruby-stomp'
