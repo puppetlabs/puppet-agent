@@ -1,7 +1,7 @@
 component "rubygem-mini_portile2" do |pkg, settings, platform|
   pkg.version "2.1.0"
   pkg.md5sum "d771975a58cef82daa6b0ee03522293f"
-  pkg.url "http://buildsources.delivery.puppetlabs.net/mini_portile2-#{pkg.get_version}.gem"
+  pkg.url "https://rubygems.org/downloads/mini_portile2-#{pkg.get_version}.gem"
 
   pkg.build_requires "ruby"
 
