@@ -245,6 +245,7 @@ project "puppet-agent" do |proj|
   if platform.is_huaweios?
     proj.component "rubygem-net-scp"
     proj.component "rubygem-mini_portile2"
+    proj.component "rubygem-pkg-config"
     proj.component "rubygem-net-netconf"
     proj.component "rubygem-nokogiri"
   end

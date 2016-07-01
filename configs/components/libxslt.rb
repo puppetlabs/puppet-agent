@@ -1,7 +1,7 @@
 component "libxslt" do |pkg, settings, platform|
-  pkg.version "1.1.28"
-  pkg.md5sum "9667bf6f9310b957254fdcf6596600b7"
-  pkg.url "http://xmlsoft.org/sources/libxslt-#{pkg.get_version}.tar.gz"
+  pkg.version "1.1.29"
+  pkg.md5sum "a129d3c44c022de3b9dcf6d6f288d72e"
+  pkg.url "http://xmlsoft.org/sources/#{pkg.get_name}-#{pkg.get_version}.tar.gz"
 
   pkg.build_requires "libxml2"
 
@@ -23,6 +23,7 @@ component "libxslt" do |pkg, settings, platform|
     pkg.environment "LDFLAGS" => settings[:ldflags]
     # Configure on Solaris incorrectly passes flags to ld
     pkg.apply_patch 'resources/patches/libxslt/disable-version-script.patch'
+    pkg.apply_patch 'resources/patches/libxslt/Update-missing-script-to-return-0.patch'
   elsif platform.is_osx?
     pkg.environment "LDFLAGS" => settings[:ldflags]
     pkg.environment "CFLAGS" => settings[:cflags]
