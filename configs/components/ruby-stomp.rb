@@ -21,6 +21,9 @@ component "ruby-stomp" do |pkg, settings, platform|
   # will fail by blowing out the stack.
   pkg.environment "RUBYLIB" => "#{settings[:ruby_vendordir]}:$$RUBYLIB"
 
+  base = 'resources/patches/ruby-stomp'
+  pkg.apply_patch "#{base}/verify_client_certs.patch", destination: "#{settings[:gem_home]}/gems/stomp-#{pkg.get_version}", after: "install"
+
   pkg.install do
     ["#{settings[:gem_install]} stomp-#{pkg.get_version}.gem"]
   end
