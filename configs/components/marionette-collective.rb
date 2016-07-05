@@ -81,14 +81,15 @@ component "marionette-collective" do |pkg, settings, platform|
   end
 
   flags = " --bindir=#{settings[:bindir]} \
+            --sbindir=#{settings[:bindir]} \
             --sitelibdir=#{settings[:ruby_vendordir]} \
             --ruby=#{File.join(settings[:bindir], 'ruby')} "
 
   if platform.is_windows?
-    pkg.install_file "ext/windows/daemon.bat", "#{settings[:bindir]}/mco_daemon.bat"
-    pkg.add_source("file://resources/files/windows/mco.bat", sum: "2d29af9c926dcf8b50ae9ac1bdb18e1f")
+    pkg.add_source("file://resources/files/windows/mco.bat")
     pkg.install_file "../mco.bat", "#{settings[:link_bindir]}/mco.bat"
     flags = " --bindir=#{settings[:mco_bindir]} \
+              --sbindir=#{settings[:mco_bindir]} \
               --sitelibdir=#{settings[:mco_libdir]} \
               --no-service-files \
               --ruby=#{File.join(settings[:ruby_bindir], 'ruby')} "
@@ -97,7 +98,6 @@ component "marionette-collective" do |pkg, settings, platform|
   pkg.install do
     ["#{settings[:host_ruby]} install.rb \
         --configdir=#{configdir} \
-        --sbindir=#{settings[:bindir]} \
         --plugindir=#{plugindir} \
         --quick \
         --no-batch-files \

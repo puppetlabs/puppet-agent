@@ -189,6 +189,21 @@ component "ruby" do |pkg, settings, platform|
   if platform.is_windows?
     pkg.install_file "../elevate.exe", "#{settings[:windows_tools]}/elevate.exe"
     pkg.install_file "../elevate.exe.config", "#{settings[:windows_tools]}/elevate.exe.config"
+
+    # As things stand right now, ssl should build under [INSTALLDIR]\Puppet\puppet on
+    # windows. However, if things need to run *outside* of the normal batch file runs
+    # (puppet.bat ,mco.bat etcc) the location of openssl away from where ruby is
+    # installed will cause a failure. Specifically this is meant to help services like
+    # mco that require openssl but don't have access to environment.bat. Refer to
+    # https://tickets.puppetlabs.com/browse/RE-7593 for details on why this causes
+    # failures and why these copies fix that.
+    #                   -Sean P. McDonald 07/01/2016
+    pkg.install do
+      [
+        "cp #{settings[:prefix]}/bin/ssleay32.dll #{settings[:ruby_bindir]}",
+        "cp #{settings[:prefix]}/bin/libeay32.dll #{settings[:ruby_bindir]}",
+      ]
+    end
     pkg.directory settings[:ruby_dir]
   end
   if platform.is_cross_compiled_linux? || platform.is_solaris? || platform.is_aix?
