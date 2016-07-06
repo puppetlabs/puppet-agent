@@ -1,6 +1,11 @@
 component "ruby" do |pkg, settings, platform|
-  pkg.version "2.1.9"
-  pkg.md5sum "d9d2109d3827789344cc3aceb8e1d697"
+  if platform.is_windows? || platform.name == /el-6-s390x/
+    pkg.version "2.1.9"
+    pkg.md5sum "d9d2109d3827789344cc3aceb8e1d697"
+  else
+    pkg.version "2.3.1"
+    pkg.md5sum "0d896c2e7fd54f722b399f407e48a4c6"
+  end
   pkg.url "https://cache.ruby-lang.org/pub/ruby/2.1/ruby-#{pkg.get_version}.tar.gz"
 
   if platform.is_windows?
@@ -17,7 +22,6 @@ component "ruby" do |pkg, settings, platform|
   pkg.replaces 'pe-rubygem-gem2rpm'
 
   base = 'resources/patches/ruby'
-  pkg.apply_patch "#{base}/libyaml_cve-2014-9130.patch"
 
   # These are a pretty smelly hack, and they run the risk of letting tests
   # based on the generated data (that should otherwise fail) pass
@@ -77,7 +81,6 @@ component "ruby" do |pkg, settings, platform|
 
   if platform.is_aix?
     pkg.apply_patch "#{base}/aix_ruby_2.1_libpath_with_opt_dir.patch"
-    pkg.apply_patch "#{base}/aix_ruby_2.1_fix_proctitle.patch"
     pkg.apply_patch "#{base}/aix_ruby_2.1_fix_make_test_failure.patch"
     pkg.environment "CC" => "/opt/pl-build-tools/bin/gcc"
     pkg.environment "LDFLAGS" => settings[:ldflags]
@@ -90,10 +93,8 @@ component "ruby" do |pkg, settings, platform|
   end
 
   if platform.is_windows?
-    pkg.apply_patch "#{base}/windows_ruby_2.1_update_to_rubygems_2.4.5.patch"
     pkg.apply_patch "#{base}/windows_fixup_generated_batch_files.patch"
-    pkg.apply_patch "#{base}/windows_remove_DL_deprecated_warning.patch"
-    pkg.apply_patch "#{base}/windows_ruby_2.1_update_to_rubygems_2.4.5.1.patch"
+    pkg.apply_patch "#{base}/win32ole_fix.patch"
   end
 
   # Cross-compiles require a hand-built rbconfig from the target system
@@ -120,6 +121,23 @@ component "ruby" do |pkg, settings, platform|
     pkg.environment "PATH" => "#{settings[:bindir]}:$$PATH"
     pkg.environment "CC" => "/opt/pl-build-tools/bin/#{settings[:platform_triple]}-gcc"
     pkg.environment "LDFLAGS" => "-Wl,-rpath=/opt/puppetlabs/puppet/lib"
+  end
+
+  pkg.environment "optflags" => "-O2"
+
+  # The el-4-x86_64, el-5-i386 and sles-10-i386 platforms have issues when using -O3 compiling
+  # ruby. This is *possibly* a limitatio of the versions of GCC we have running on those platforms.
+  # We should revisit these optimizations once GCC 6.1 is in production for us.
+  #
+  #         - Sean P. McDonald 07/21/16
+  if platform.is_el?
+    if platform.os_version == "5" && platform.architecture == "i386"
+      pkg.environment "optflags" => "-O2"
+    elsif platform.os_version == "4" && platform.architecture == "x86_64"
+      pkg.environment "optflags" => "-O2"
+    end
+  elsif platform.is_sles? && platform.os_version == "10" && platform.architecture == "i386"
+    pkg.environment "optflags" => "-O2"
   end
 
   if platform.is_osx?
@@ -179,11 +197,11 @@ component "ruby" do |pkg, settings, platform|
   end
 
   pkg.build do
-    "#{platform[:make]} -j$(shell expr $(shell #{platform[:num_cores]}) + 1)"
+    "#{platform[:make]}"
   end
 
   pkg.install do
-    "#{platform[:make]} -j$(shell expr $(shell #{platform[:num_cores]}) + 1) install"
+    ["#{platform[:make]} -j$(shell expr $(shell #{platform[:num_cores]}) + 1) install",]
   end
 
   if platform.is_windows?
@@ -220,7 +238,7 @@ component "ruby" do |pkg, settings, platform|
     # installing a compiled gem would not work without us shipping that gcc.
     # This tells the ruby setup that it can use the default system gcc rather
     # than our own.
-    target_dir = File.join(settings[:libdir], "ruby", "2.1.0", rbconfig_info[settings[:platform_triple]][:target_double])
+    target_dir = File.join(settings[:libdir], "ruby", "2.3.0", rbconfig_info[settings[:platform_triple]][:target_double])
     sed = "sed"
     sed = "gsed" if platform.is_solaris?
     sed = "/opt/freeware/bin/sed" if platform.is_aix?
