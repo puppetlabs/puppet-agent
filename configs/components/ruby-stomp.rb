@@ -1,6 +1,6 @@
 component "ruby-stomp" do |pkg, settings, platform|
-  pkg.version "1.4.1"
-  pkg.md5sum "f1b8574adf47aa9d8945b5e0089de91b"
+  pkg.version "1.3.3"
+  pkg.md5sum "50a2c1b66982b426d67a83f56f4bc0e2"
   pkg.url "https://rubygems.org/downloads/stomp-#{pkg.get_version}.gem"
 
   pkg.replaces 'pe-ruby-stomp'
@@ -20,6 +20,9 @@ component "ruby-stomp" do |pkg, settings, platform|
   # hiera/version and puppet/version requires. Without this the gem install
   # will fail by blowing out the stack.
   pkg.environment "RUBYLIB" => "#{settings[:ruby_vendordir]}:$$RUBYLIB"
+
+  base = 'resources/patches/ruby-stomp'
+  pkg.apply_patch "#{base}/verify_client_certs.patch", destination: "#{settings[:gem_home]}/gems/stomp-#{pkg.get_version}", after: "install"
 
   pkg.install do
     ["#{settings[:gem_install]} stomp-#{pkg.get_version}.gem"]
