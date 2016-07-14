@@ -1,7 +1,7 @@
 component "rubygem-semantic_puppet" do |pkg, settings, platform|
   pkg.version "0.1.2"
   pkg.md5sum "192ae7729997cb5d5364f64b99b13121"
-  pkg.url "http://buildsources.delivery.puppetlabs.net/semantic_puppet-#{pkg.get_version}.gem"
+  pkg.url "https://rubygems.org/downloads/semantic_puppet-#{pkg.get_version}.gem"
 
   pkg.build_requires "ruby"
 
