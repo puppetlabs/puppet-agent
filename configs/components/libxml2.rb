@@ -24,6 +24,10 @@ component "libxml2" do |pkg, settings, platform|
     pkg.environment "CFLAGS" => settings[:cflags]
   end
 
+  if platform.is_cross_compiled? && platform.is_deb?
+    pkg.build_requires "pl-pkg-config"
+  end
+
   if platform.is_cross_compiled_linux? || platform.name =~ /solaris-11/
     pkg.build_requires "pl-gcc-#{platform.architecture}"
   end
