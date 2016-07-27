@@ -2,11 +2,12 @@ component "ruby" do |pkg, settings, platform|
   if platform.is_windows? || platform.name == /el-6-s390x/
     pkg.version "2.1.9"
     pkg.md5sum "d9d2109d3827789344cc3aceb8e1d697"
+    pkg.url "https://cache.ruby-lang.org/pub/ruby/2.1/ruby-#{pkg.get_version}.tar.gz"
   else
     pkg.version "2.3.1"
     pkg.md5sum "0d896c2e7fd54f722b399f407e48a4c6"
+    pkg.url "https://cache.ruby-lang.org/pub/ruby/2.3/ruby-#{pkg.get_version}.tar.gz"
   end
-  pkg.url "https://cache.ruby-lang.org/pub/ruby/2.1/ruby-#{pkg.get_version}.tar.gz"
 
   if platform.is_windows?
     pkg.add_source "http://buildsources.delivery.puppetlabs.net/windows/elevate/elevate.exe", sum: "bd81807a5c13da32dd2a7157f66fa55d"
