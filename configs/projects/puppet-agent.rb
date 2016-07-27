@@ -78,7 +78,7 @@ project "puppet-agent" do |proj|
 
   if platform.is_windows?
     proj.setting(:host_ruby, File.join(proj.ruby_bindir, "ruby.exe"))
-    proj.setting(:host_gem, File.join(proj.ruby_bindir, "gem.bat"))
+    proj.setting(:host_gem, File.join(proj.ruby_bindir, "gem.cmd"))
     proj.setting(:libdir, File.join(proj.ruby_dir, "lib"))
   else
     proj.setting(:host_ruby, File.join(proj.bindir, "ruby"))
@@ -86,7 +86,7 @@ project "puppet-agent" do |proj|
     proj.setting(:libdir, File.join(proj.prefix, "lib"))
   end
 
-  proj.setting(:gem_home, File.join(proj.libdir, "ruby", "gems", "2.1.0"))
+  proj.setting(:gem_home, File.join(proj.libdir, "ruby", "gems", "2.3.0"))
   proj.setting(:ruby_vendordir, File.join(proj.libdir, "ruby", "vendor_ruby"))
 
   # Cross-compiled Linux platforms
