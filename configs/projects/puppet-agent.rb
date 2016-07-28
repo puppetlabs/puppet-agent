@@ -78,7 +78,7 @@ project "puppet-agent" do |proj|
 
   if platform.is_windows?
     proj.setting(:host_ruby, File.join(proj.ruby_bindir, "ruby.exe"))
-    proj.setting(:host_gem, File.join(proj.ruby_bindir, "gem.cmd"))
+    proj.setting(:host_gem, File.join(proj.ruby_bindir, "gem.bat"))
     proj.setting(:libdir, File.join(proj.ruby_dir, "lib"))
   else
     proj.setting(:host_ruby, File.join(proj.bindir, "ruby"))
