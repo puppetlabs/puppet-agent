@@ -80,6 +80,7 @@ component "ruby" do |pkg, settings, platform|
 
   special_flags = " --prefix=#{settings[:prefix]} --with-opt-dir=#{settings[:prefix]} "
 
+
   if platform.is_aix?
     pkg.apply_patch "#{base}/aix_ruby_2.1_libpath_with_opt_dir.patch"
     pkg.apply_patch "#{base}/aix_ruby_2.1_fix_make_test_failure.patch"
@@ -98,6 +99,7 @@ component "ruby" do |pkg, settings, platform|
     pkg.apply_patch "#{base}/windows_fixup_generated_batch_files.patch"
     pkg.apply_patch "#{base}/windows_remove_DL_deprecated_warning.patch"
     pkg.apply_patch "#{base}/windows_ruby_2.1_update_to_rubygems_2.4.5.1.patch"
+    pkg.apply_patch "#{base}/libyaml_cve-2014-9130.patch"
   end
 
 
