@@ -1,5 +1,5 @@
 component "ruby" do |pkg, settings, platform|
-  if platform.is_windows? || platform.name == /el-6-s390x/
+  if platform.is_windows? || platform.name =~ /el-6-s390x/
     pkg.version "2.1.9"
     pkg.md5sum "d9d2109d3827789344cc3aceb8e1d697"
     pkg.url "https://cache.ruby-lang.org/pub/ruby/2.1/ruby-#{pkg.get_version}.tar.gz"
@@ -94,9 +94,12 @@ component "ruby" do |pkg, settings, platform|
   end
 
   if platform.is_windows?
+    pkg.apply_patch "#{base}/windows_ruby_2.1_update_to_rubygems_2.4.5.patch"
     pkg.apply_patch "#{base}/windows_fixup_generated_batch_files.patch"
-    pkg.apply_patch "#{base}/win32ole_fix.patch"
+    pkg.apply_patch "#{base}/windows_remove_DL_deprecated_warning.patch"
+    pkg.apply_patch "#{base}/windows_ruby_2.1_update_to_rubygems_2.4.5.1.patch"
   end
+
 
   # Cross-compiles require a hand-built rbconfig from the target system
   if platform.is_cross_compiled_linux? || platform.is_solaris? || platform.is_aix?
