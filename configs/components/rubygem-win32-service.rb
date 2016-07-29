@@ -19,8 +19,6 @@ component "rubygem-win32-service" do |pkg, settings, platform|
   # will fail by blowing out the stack.
   pkg.environment "RUBYLIB" => "#{settings[:ruby_vendordir]}:$$RUBYLIB"
 
-  pkg.apply_patch "resources/patches/rubygem-win32-service/PUP-4390-win32-service-0.8.6-restore_win_2003_compat.patch", destination: "#{settings[:gem_home]}/gems/win32-service-#{pkg.get_version}", after: "install"
-
   pkg.install do
     ["#{settings[:gem_install]} win32-service-#{pkg.get_version}.gem"]
   end
