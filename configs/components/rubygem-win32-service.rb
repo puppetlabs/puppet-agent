@@ -1,6 +1,6 @@
 component "rubygem-win32-service" do |pkg, settings, platform|
-  pkg.version "0.8.6"
-  pkg.md5sum "b9b410177485069f5e4c3e1afac0779c"
+  pkg.version "0.8.8"
+  pkg.md5sum "24cc05fed398eb931e14b8ee22196634"
   pkg.url "https://rubygems.org/downloads/win32-service-#{pkg.get_version}.gem"
 
   pkg.build_requires "ruby"
