@@ -1,5 +1,5 @@
 component "ruby" do |pkg, settings, platform|
-  if platform.is_windows? || platform.name =~ /el-6-s390x/
+  if platform.is_windows?
     pkg.version "2.1.9"
     pkg.md5sum "d9d2109d3827789344cc3aceb8e1d697"
     pkg.url "https://cache.ruby-lang.org/pub/ruby/2.1/ruby-#{pkg.get_version}.tar.gz"

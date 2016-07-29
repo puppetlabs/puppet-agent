@@ -19,8 +19,10 @@ component "ruby-selinux" do |pkg, settings, platform|
   pkg.build_requires "libsepol-devel"
   pkg.build_requires "libselinux-devel"
 
+  cc = "/opt/pl-build-tools/bin/gcc"
   ruby = "#{settings[:bindir]}/ruby -rrbconfig"
   if platform.is_cross_compiled_linux?
+    cc = "/opt/pl-build-tools/bin/#{settings[:platform_triple]}-gcc"
     pkg.environment "RUBY" => settings[:host_ruby]
     ruby = "#{settings[:host_ruby]} -r#{settings[:datadir]}/doc/rbconfig.rb"
   end
@@ -31,9 +33,9 @@ component "ruby-selinux" do |pkg, settings, platform|
      "export ARCHDIR=$${RUBYHDRDIR}/$(shell #{ruby} -e 'puts RbConfig::CONFIG[\"arch\"]')",
      "export INCLUDESTR=\"-I#{settings[:includedir]} -I$${RUBYHDRDIR} -I$${ARCHDIR}\"",
      "cp -pr src/{selinuxswig_ruby.i,selinuxswig.i}  .",
-     "swig -Wall -ruby  -I../include -I/usr/include -o selinuxswig_ruby_wrap.c -outdir ./ selinuxswig_ruby.i",
-     "gcc $${INCLUDESTR}  -I../include -I/usr/include -D_GNU_SOURCE -D_FILE_OFFSET_BITS=64 -fPIC -DSHARED -c -o selinuxswig_ruby_wrap.lo selinuxswig_ruby_wrap.c",
-     "gcc $${INCLUDESTR}  -I../include -I/usr/include -D_GNU_SOURCE -D_FILE_OFFSET_BITS=64   -shared -o _rubyselinux.so selinuxswig_ruby_wrap.lo -lselinux -L/usr/lib -Wl,-soname,_rubyselinux.so"]
+     "swig -Wall -ruby -I/usr/include -o selinuxswig_ruby_wrap.c -outdir ./ selinuxswig_ruby.i",
+     "#{cc} $${INCLUDESTR} -I/usr/include -D_GNU_SOURCE -D_FILE_OFFSET_BITS=64 -fPIC -DSHARED -c -o selinuxswig_ruby_wrap.lo selinuxswig_ruby_wrap.c",
+     "#{cc} $${INCLUDESTR} -I/usr/include -D_GNU_SOURCE -D_FILE_OFFSET_BITS=64 -shared -o _rubyselinux.so selinuxswig_ruby_wrap.lo -lselinux -Wl,-soname,_rubyselinux.so"]
   end
 
   pkg.install do
