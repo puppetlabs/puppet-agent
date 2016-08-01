@@ -196,6 +196,7 @@ project "puppet-agent" do |proj|
   proj.component "facter"
   proj.component "hiera"
   proj.component "leatherman"
+  proj.component "cpp-hocon"
   proj.component "marionette-collective"
   proj.component "cpp-pcp-client"
   proj.component "pxp-agent"
