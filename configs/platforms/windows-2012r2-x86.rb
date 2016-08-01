@@ -22,4 +22,5 @@ platform "windows-2012r2-x86" do |plat|
   plat.platform_triple "i686-unknown-mingw32"
 
   plat.package_type "msi"
+  plat.output_dir "windows"
 end
