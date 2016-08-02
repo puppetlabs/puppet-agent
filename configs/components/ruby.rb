@@ -1,17 +1,12 @@
 component "ruby" do |pkg, settings, platform|
-  if platform.is_windows?
-    pkg.version "2.1.9"
-    pkg.md5sum "d9d2109d3827789344cc3aceb8e1d697"
-    pkg.url "https://cache.ruby-lang.org/pub/ruby/2.1/ruby-#{pkg.get_version}.tar.gz"
-  else
-    pkg.version "2.3.1"
-    pkg.md5sum "0d896c2e7fd54f722b399f407e48a4c6"
-    pkg.url "https://cache.ruby-lang.org/pub/ruby/2.3/ruby-#{pkg.get_version}.tar.gz"
-  end
+  pkg.version "2.3.1"
+  pkg.md5sum "0d896c2e7fd54f722b399f407e48a4c6"
+  pkg.url "https://cache.ruby-lang.org/pub/ruby/2.3/ruby-#{pkg.get_version}.tar.gz"
 
   if platform.is_windows?
     pkg.add_source "http://buildsources.delivery.puppetlabs.net/windows/elevate/elevate.exe", sum: "bd81807a5c13da32dd2a7157f66fa55d"
     pkg.add_source "file://resources/files/windows/elevate.exe.config", sum: "a5aecf3f7335fa1250a0f691d754d561"
+    pkg.add_source "file://resources/files/ruby/windows_ruby_gem_wrapper.bat"
   end
 
   pkg.replaces 'pe-ruby'
@@ -80,6 +75,7 @@ component "ruby" do |pkg, settings, platform|
 
   special_flags = " --prefix=#{settings[:prefix]} --with-opt-dir=#{settings[:prefix]} "
 
+
   if platform.is_aix?
     pkg.apply_patch "#{base}/aix_ruby_2.1_libpath_with_opt_dir.patch"
     pkg.apply_patch "#{base}/aix_ruby_2.1_fix_make_test_failure.patch"
@@ -95,8 +91,10 @@ component "ruby" do |pkg, settings, platform|
 
   if platform.is_windows?
     pkg.apply_patch "#{base}/windows_fixup_generated_batch_files.patch"
+    pkg.apply_patch "#{base}/update_rbinstall_for_windows.patch"
     pkg.apply_patch "#{base}/win32ole_fix.patch"
   end
+
 
   # Cross-compiles require a hand-built rbconfig from the target system
   if platform.is_cross_compiled_linux? || platform.is_solaris? || platform.is_aix?
@@ -201,6 +199,16 @@ component "ruby" do |pkg, settings, platform|
     "#{platform[:make]}"
   end
 
+  if platform.is_windows?
+    pkg.install do
+      ["cp ../windows_ruby_gem_wrapper.bat #{settings[:ruby_bindir]}/irb.bat",
+       "cp ../windows_ruby_gem_wrapper.bat #{settings[:ruby_bindir]}/gem.bat",
+       "cp ../windows_ruby_gem_wrapper.bat #{settings[:ruby_bindir]}/rake.bat",
+       "cp ../windows_ruby_gem_wrapper.bat #{settings[:ruby_bindir]}/erb.bat",
+       "cp ../windows_ruby_gem_wrapper.bat #{settings[:ruby_bindir]}/rdoc.bat",
+       "cp ../windows_ruby_gem_wrapper.bat #{settings[:ruby_bindir]}/ri.bat",]
+    end
+  end
   pkg.install do
     ["#{platform[:make]} -j$(shell expr $(shell #{platform[:num_cores]}) + 1) install",]
   end
