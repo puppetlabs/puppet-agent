@@ -12,7 +12,6 @@ component "ruby" do |pkg, settings, platform|
   if platform.is_windows?
     pkg.add_source "http://buildsources.delivery.puppetlabs.net/windows/elevate/elevate.exe", sum: "bd81807a5c13da32dd2a7157f66fa55d"
     pkg.add_source "file://resources/files/windows/elevate.exe.config", sum: "a5aecf3f7335fa1250a0f691d754d561"
-    pkg.add_source "file://resources/files/ruby/windows_ruby_gem_wrapper.bat"
   end
 
   pkg.replaces 'pe-ruby'
@@ -101,7 +100,6 @@ component "ruby" do |pkg, settings, platform|
     pkg.apply_patch "#{base}/windows_remove_DL_deprecated_warning.patch"
     pkg.apply_patch "#{base}/windows_ruby_2.1_update_to_rubygems_2.4.5.1.patch"
     pkg.apply_patch "#{base}/libyaml_cve-2014-9130.patch"
-    pkg.apply_patch "#{base}/update_rbinstall_for_windows.patch"
   end
 
 
@@ -208,16 +206,6 @@ component "ruby" do |pkg, settings, platform|
     "#{platform[:make]}"
   end
 
-  if platform.is_windows?
-    pkg.install do
-      ["cp ../windows_ruby_gem_wrapper.bat #{settings[:ruby_bindir]}/irb.bat",
-       "cp ../windows_ruby_gem_wrapper.bat #{settings[:ruby_bindir]}/gem.bat",
-       "cp ../windows_ruby_gem_wrapper.bat #{settings[:ruby_bindir]}/rake.bat",
-       "cp ../windows_ruby_gem_wrapper.bat #{settings[:ruby_bindir]}/erb.bat",
-       "cp ../windows_ruby_gem_wrapper.bat #{settings[:ruby_bindir]}/rdoc.bat",
-       "cp ../windows_ruby_gem_wrapper.bat #{settings[:ruby_bindir]}/ri.bat",]
-    end
-  end
   pkg.install do
     ["#{platform[:make]} -j$(shell expr $(shell #{platform[:num_cores]}) + 1) install",]
   end
