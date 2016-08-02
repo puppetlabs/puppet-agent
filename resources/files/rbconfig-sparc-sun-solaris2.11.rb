@@ -3,17 +3,17 @@
 # changes made to this file will be lost the next time ruby is built.
 
 module RbConfig
-  RUBY_VERSION == "2.3.1" or
-    raise "ruby lib version (2.3.1) doesn't match executable version (#{RUBY_VERSION})"
+  RUBY_VERSION == "2.1.9" or
+    raise "ruby lib version (2.1.9) doesn't match executable version (#{RUBY_VERSION})"
 
-  TOPDIR = File.dirname(__FILE__).chomp!("/lib/ruby/2.3.0/sparc-solaris2.11")
+  TOPDIR = File.dirname(__FILE__).chomp!("/lib/ruby/2.1.0/sparc-solaris2.11")
   DESTDIR = '' unless defined? DESTDIR
   CONFIG = {}
   CONFIG["DESTDIR"] = DESTDIR
   CONFIG["MAJOR"] = "2"
-  CONFIG["MINOR"] = "3"
+  CONFIG["MINOR"] = "1"
   CONFIG["TEENY"] = "0"
-  CONFIG["PATCHLEVEL"] = "112"
+  CONFIG["PATCHLEVEL"] = "490"
   CONFIG["INSTALL"] = '/usr/bin/ginstall -c'
   CONFIG["EXEEXT"] = ""
   CONFIG["prefix"] = (TOPDIR || DESTDIR + "/opt/puppetlabs/puppet")
@@ -21,7 +21,7 @@ module RbConfig
   CONFIG["RUBY_INSTALL_NAME"] = "ruby"
   CONFIG["RUBY_SO_NAME"] = "ruby"
   CONFIG["exec"] = "exec"
-  CONFIG["ruby_pc"] = "ruby-2.3.pc"
+  CONFIG["ruby_pc"] = "ruby-2.1.pc"
   CONFIG["PACKAGE"] = "ruby"
   CONFIG["BUILTIN_TRANSSRCS"] = " newline.c"
   CONFIG["USE_RUBYGEMS"] = "YES"
@@ -45,7 +45,7 @@ module RbConfig
   CONFIG["sitedir"] = "$(rubylibprefix)/site_ruby"
   CONFIG["rubyarchdir"] = "$(rubylibdir)/$(arch)"
   CONFIG["rubylibdir"] = "$(rubylibprefix)/$(ruby_version)"
-  CONFIG["ruby_version"] = "2.3.0"
+  CONFIG["ruby_version"] = "2.1.0"
   CONFIG["sitearch"] = "$(arch)"
   CONFIG["arch"] = "sparc-solaris2.11"
   CONFIG["sitearchincludedir"] = "$(includedir)/$(sitearch)"
@@ -109,16 +109,13 @@ module RbConfig
   CONFIG["TEST_RUNNABLE"] = "yes"
   CONFIG["rubylibprefix"] = "$(libdir)/$(RUBY_BASE_NAME)"
   CONFIG["setup"] = "Setup"
-  CONFIG["ENCSTATIC"] = ""
   CONFIG["EXTSTATIC"] = ""
   CONFIG["STRIP"] = "strip"
   CONFIG["TRY_LINK"] = ""
-  CONFIG["PRELOADENV"] = "LD_PRELOAD"
   CONFIG["LIBPATHENV"] = "LD_LIBRARY_PATH"
   CONFIG["RPATHFLAG"] = " -Wl,-R%1$-s"
   CONFIG["LIBPATHFLAG"] = " -L%1$-s"
   CONFIG["LINK_SO"] = ""
-  CONFIG["ASMEXT"] = "S"
   CONFIG["LIBEXT"] = "a"
   CONFIG["DLEXT2"] = ""
   CONFIG["DLEXT"] = "so"
@@ -196,7 +193,7 @@ module RbConfig
   CONFIG["build_cpu"] = "sparc"
   CONFIG["build"] = "sparc-sun-solaris2.11"
   CONFIG["RUBY_RELEASE_DATE"] = "2015-04-13"
-  CONFIG["RUBY_PROGRAM_VERSION"] = "2.3.1"
+  CONFIG["RUBY_PROGRAM_VERSION"] = "2.1.6"
   CONFIG["target_alias"] = ""
   CONFIG["host_alias"] = ""
   CONFIG["build_alias"] = ""

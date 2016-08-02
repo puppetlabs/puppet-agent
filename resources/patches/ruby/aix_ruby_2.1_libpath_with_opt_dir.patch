@@ -8,22 +8,24 @@ configure flag fails due to whitespace in the -blibpath arguments
 arguments passed to the linker. (This patch uses a fragment derived
 from the "non-portable sed" patch we used for Ruby 1.9.3.)
 ---
- configure | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ configure | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
 diff --git a/configure b/configure
-index 9136fe7..439288d 100755
+index 8d8da19..1c04b66 100755
 --- a/configure
 +++ b/configure
-@@ -22659,7 +22659,7 @@ if test "x$OPT_DIR" != x; then
+@@ -20086,7 +20086,9 @@ if test "x$OPT_DIR" != x; then
          for dir in $OPT_DIR; do
              echo x ${LIBPATHFLAG} ${RPATHFLAG} |
              sed "s/^x *//;s${IFS}"'%1\\$-s'"${IFS}${dir}/lib${IFS}g;s${IFS}%s${IFS}${dir}/lib${IFS}g"
--        done | tr '\012' ' ' | sed 's/ *$//'`
-+        done | tr '\012' ' ' | sed "s% \+% %g;s% /%${IFS}/%g"`
-     if test x"$val" != x; then
- 	test x"${LDFLAGS}" = x || LDFLAGS="$LDFLAGS "
- 	LDFLAGS="$LDFLAGS$val"
---
+-        done | tr '\012' ' '`
++        done |
++        sed "s% \+% %g;s% /%${IFS}/%g" |
++        tr '\012' ' '`
+     test x"${LDFLAGS}" = x || LDFLAGS="$LDFLAGS "
+     LDFLAGS="$LDFLAGS$val"
+     test x"${DLDFLAGS}" = x || DLDFLAGS="$DLDFLAGS "
+-- 
 2.3.2 (Apple Git-55)
 
