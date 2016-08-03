@@ -18,6 +18,7 @@ component "facter" do |pkg, settings, platform|
   pkg.build_requires 'openssl'
   pkg.build_requires 'leatherman'
   pkg.build_requires 'runtime'
+  pkg.build_requires 'cpp-hocon'
 
   if platform.is_linux? && !platform.is_huaweios?
     # Running facter (as part of testing) expects virt-what is available
