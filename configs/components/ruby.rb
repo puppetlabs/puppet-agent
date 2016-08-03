@@ -154,7 +154,7 @@ component "ruby" do |pkg, settings, platform|
 
     pkg.environment "PATH" => "$$(cygpath -u #{settings[:gcc_bindir]}):$$(cygpath -u #{settings[:tools_root]}/bin):$$(cygpath -u #{settings[:tools_root]}/include):$$(cygpath -u #{settings[:bindir]}):$$(cygpath -u #{settings[:ruby_bindir]}):$$(cygpath -u #{settings[:includedir]}):$$PATH"
     pkg.environment "CYGWIN" => settings[:cygwin]
-    pkg.environment "optflags" => settings[:cflags]
+    pkg.environment "optflags" => settings[:cflags] + " -O3"
     pkg.environment "LDFLAGS" => settings[:ldflags]
 
     special_flags = " CPPFLAGS='-DFD_SETSIZE=2048' debugflags=-g --prefix=#{settings[:ruby_dir]} --with-opt-dir=#{settings[:prefix]} "
