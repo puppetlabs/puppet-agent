@@ -154,12 +154,7 @@ component "ruby" do |pkg, settings, platform|
 
     pkg.environment "PATH" => "$$(cygpath -u #{settings[:gcc_bindir]}):$$(cygpath -u #{settings[:tools_root]}/bin):$$(cygpath -u #{settings[:tools_root]}/include):$$(cygpath -u #{settings[:bindir]}):$$(cygpath -u #{settings[:ruby_bindir]}):$$(cygpath -u #{settings[:includedir]}):$$PATH"
     pkg.environment "CYGWIN" => settings[:cygwin]
-
-    # So we need to pass -static-libgcc to the compiler, but we cannot pass -static-libgcc as
-    # a regular flag, for information as to why: http://www.mingw.org/wiki/HOWTO_Sneak_GCC_Switches_Past_Libtool
-    # in order to actually get gcc to honor the flag you need to set CC specifically with the flag in it
-    pkg.environment "CC" => "gcc -static-libgcc"
-    pkg.environment "optflags" => settings[:cflags]
+    pkg.environment "optflags" => settings[:cflags] + " -O3"
     pkg.environment "LDFLAGS" => settings[:ldflags]
 
     special_flags = " CPPFLAGS='-DFD_SETSIZE=2048' debugflags=-g --prefix=#{settings[:ruby_dir]} --with-opt-dir=#{settings[:prefix]} "
@@ -208,6 +203,7 @@ component "ruby" do |pkg, settings, platform|
   if platform.is_windows?
     pkg.install_file "../elevate.exe", "#{settings[:windows_tools]}/elevate.exe"
     pkg.install_file "../elevate.exe.config", "#{settings[:windows_tools]}/elevate.exe.config"
+    lib_type = platform.architecture == "x64" ? "seh" : "sjlj"
 
     # As things stand right now, ssl should build under [INSTALLDIR]\Puppet\puppet on
     # windows. However, if things need to run *outside* of the normal batch file runs
@@ -219,6 +215,7 @@ component "ruby" do |pkg, settings, platform|
     #                   -Sean P. McDonald 07/01/2016
     pkg.install do
       [
+        "cp #{settings[:prefix]}/bin/libgcc_s_#{lib_type}-1.dll #{settings[:ruby_bindir]}",
         "cp #{settings[:prefix]}/bin/ssleay32.dll #{settings[:ruby_bindir]}",
         "cp #{settings[:prefix]}/bin/libeay32.dll #{settings[:ruby_bindir]}",
       ]
