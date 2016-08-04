@@ -6,3 +6,4 @@ Gemfile.local
 *.log
 ext/packaging
 pkg/*
+*.swp
