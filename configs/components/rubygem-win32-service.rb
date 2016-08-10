@@ -1,6 +1,6 @@
 component "rubygem-win32-service" do |pkg, settings, platform|
-  pkg.version "0.8.6"
-  pkg.md5sum "b9b410177485069f5e4c3e1afac0779c"
+  pkg.version "0.8.8"
+  pkg.md5sum "24cc05fed398eb931e14b8ee22196634"
   pkg.url "https://rubygems.org/downloads/win32-service-#{pkg.get_version}.gem"
 
   pkg.build_requires "ruby"
@@ -18,8 +18,6 @@ component "rubygem-win32-service" do |pkg, settings, platform|
   # hiera/version and puppet/version requires. Without this the gem install
   # will fail by blowing out the stack.
   pkg.environment "RUBYLIB" => "#{settings[:ruby_vendordir]}:$$RUBYLIB"
-
-  pkg.apply_patch "resources/patches/rubygem-win32-service/PUP-4390-win32-service-0.8.6-restore_win_2003_compat.patch", destination: "#{settings[:gem_home]}/gems/win32-service-#{pkg.get_version}", after: "install"
 
   pkg.install do
     ["#{settings[:gem_install]} win32-service-#{pkg.get_version}.gem"]

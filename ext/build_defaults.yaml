@@ -25,6 +25,9 @@ foss_platforms:
   - osx-10.9-x86_64
   - osx-10.10-x86_64
   - osx-10.11-x86_64
+  - sles-11-i386
+  - sles-11-x86_64
+  - sles-12-x86_64
   - ubuntu-12.04-amd64
   - ubuntu-12.04-i386
   - ubuntu-14.04-amd64
@@ -45,10 +48,7 @@ pe_platforms:
   - el-7-s390x
   - sles-10-i386
   - sles-10-x86_64
-  - sles-11-i386
-  - sles-11-x86_64
   - sles-11-s390x
-  - sles-12-x86_64
   - sles-12-s390x
   - solaris-10-i386
   - solaris-10-sparc

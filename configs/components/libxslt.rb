@@ -38,16 +38,8 @@ component "libxslt" do |pkg, settings, platform|
     pkg.build_requires "pl-gcc-#{platform.architecture}"
   end
 
-  if platform.is_linux?
-    if platform.architecture =~ /powerpc$/
-      target = 'powerpc-linux-gnu'
-    elsif platform.architecture =~ /ppc64le$/
-      target = 'powerpc64le-unknown-linux-gnu'
-    end
-  end
-
   pkg.configure do
-    ["./configure --prefix=#{settings[:prefix]} --docdir=/tmp --with-libxml-prefix=#{settings[:prefix]} #{settings[:host]} #{disable_crypto} #{build} #{target}"]
+    ["./configure --prefix=#{settings[:prefix]} --docdir=/tmp --with-libxml-prefix=#{settings[:prefix]} #{settings[:host]} #{disable_crypto} #{build}"]
   end
 
   pkg.build do

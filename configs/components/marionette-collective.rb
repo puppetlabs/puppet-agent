@@ -34,31 +34,7 @@ component "marionette-collective" do |pkg, settings, platform|
     elsif platform.is_rpm?
       pkg.install_service "ext/aio/redhat/mcollective.init", "ext/aio/redhat/mcollective.sysconfig", "mcollective"
     end
-    if platform.is_rpm?
-      puppet_bin = "/opt/puppetlabs/bin/puppet"
-      rpm_statedir = "%{_localstatedir}/lib/rpm-state/#{pkg.get_name}"
-      service_statefile = "#{rpm_statedir}/service.pp"
-      pkg.add_preinstall_action ["upgrade"],
-        [<<-HERE.undent
-          install --owner root --mode 0700 --directory #{rpm_statedir} || :
-          if [ -x #{puppet_bin} ] ; then
-            #{puppet_bin} resource service mcollective > #{service_statefile} || :
-          fi
-          HERE
-        ]
-
-      pkg.add_postinstall_action ["upgrade"],
-        [<<-HERE.undent
-          if [ -f #{service_statefile} ] ; then
-            #{puppet_bin} apply #{service_statefile} > /dev/null 2>&1 || :
-            rm -rf #{rpm_statedir} || :
-          fi
-          HERE
-        ]
-    end
-
     pkg.install_file "ext/aio/redhat/mcollective-sysv.logrotate", "/etc/logrotate.d/mcollective"
-
   when "launchd"
     pkg.install_service "ext/aio/osx/mcollective.plist", nil, "com.puppetlabs.mcollective"
   when "smf"
@@ -73,6 +49,29 @@ component "marionette-collective" do |pkg, settings, platform|
     fail "need to know where to put service files"
   end
 
+  if (platform.servicetype == "sysv" && platform.is_rpm?) || platform.is_aix?
+    puppet_bin = "/opt/puppetlabs/bin/puppet"
+    rpm_statedir = "%{_localstatedir}/lib/rpm-state/#{pkg.get_name}"
+    service_statefile = "#{rpm_statedir}/service.pp"
+    pkg.add_preinstall_action ["upgrade"],
+      [<<-HERE.undent
+        mkdir -p  #{rpm_statedir} && chown root #{rpm_statedir} && chmod 0700 #{rpm_statedir} || :
+        if [ -x #{puppet_bin} ] ; then
+          #{puppet_bin} resource service mcollective > #{service_statefile} || :
+        fi
+        HERE
+      ]
+
+    pkg.add_postinstall_action ["upgrade"],
+      [<<-HERE.undent
+        if [ -f #{service_statefile} ] ; then
+          #{puppet_bin} apply #{service_statefile} > /dev/null 2>&1 || :
+          rm -rf #{rpm_statedir} || :
+        fi
+        HERE
+      ]
+    end
+
   if platform.is_windows?
     configdir = File.join(settings[:sysconfdir], 'mcollective', 'etc')
     plugindir = File.join(settings[:sysconfdir], 'mcollective', 'plugins')
@@ -82,14 +81,15 @@ component "marionette-collective" do |pkg, settings, platform|
   end
 
   flags = " --bindir=#{settings[:bindir]} \
+            --sbindir=#{settings[:bindir]} \
             --sitelibdir=#{settings[:ruby_vendordir]} \
             --ruby=#{File.join(settings[:bindir], 'ruby')} "
 
   if platform.is_windows?
-    pkg.install_file "ext/windows/daemon.bat", "#{settings[:bindir]}/mco_daemon.bat"
-    pkg.add_source("file://resources/files/windows/mco.bat", sum: "2d29af9c926dcf8b50ae9ac1bdb18e1f")
+    pkg.add_source("file://resources/files/windows/mco.bat")
     pkg.install_file "../mco.bat", "#{settings[:link_bindir]}/mco.bat"
     flags = " --bindir=#{settings[:mco_bindir]} \
+              --sbindir=#{settings[:mco_bindir]} \
               --sitelibdir=#{settings[:mco_libdir]} \
               --no-service-files \
               --ruby=#{File.join(settings[:ruby_bindir], 'ruby')} "
@@ -98,7 +98,6 @@ component "marionette-collective" do |pkg, settings, platform|
   pkg.install do
     ["#{settings[:host_ruby]} install.rb \
         --configdir=#{configdir} \
-        --sbindir=#{settings[:bindir]} \
         --plugindir=#{plugindir} \
         --quick \
         --no-batch-files \
