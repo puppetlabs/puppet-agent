@@ -91,6 +91,7 @@ project "puppet-agent" do |proj|
 
   # Cross-compiled Linux platforms
   platform_triple = "powerpc-linux-gnu" if platform.is_huaweios?
+  platform_triple = "powerpc64le-unknown-linux-gnu" if platform.architecture == "ppc64le"
   platform_triple = "s390x-linux-gnu" if platform.architecture == "s390x"
   platform_triple = "arm-linux-gnueabihf" if platform.name == 'debian-8-armhf'
 
@@ -196,6 +197,7 @@ project "puppet-agent" do |proj|
   proj.component "facter"
   proj.component "hiera"
   proj.component "leatherman"
+  proj.component "cpp-hocon"
   proj.component "marionette-collective"
   proj.component "cpp-pcp-client"
   proj.component "pxp-agent"

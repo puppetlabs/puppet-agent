@@ -17,6 +17,8 @@ component "facter" do |pkg, settings, platform|
   pkg.build_requires "ruby"
   pkg.build_requires 'openssl'
   pkg.build_requires 'leatherman'
+  pkg.build_requires 'runtime'
+  pkg.build_requires 'cpp-hocon'
 
   if platform.is_linux? && !platform.is_huaweios?
     # Running facter (as part of testing) expects virt-what is available
@@ -49,19 +51,16 @@ component "facter" do |pkg, settings, platform|
     pkg.build_requires "pl-boost-#{platform.architecture}"
     pkg.build_requires "pl-yaml-cpp-#{platform.architecture}"
     pkg.build_requires "pl-cmake"
-    pkg.build_requires "runtime" if platform.is_cross_compiled_linux?
   elsif platform.is_aix?
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-gcc-5.2.0-1.aix#{platform.os_version}.ppc.rpm"
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-cmake-3.2.3-2.aix#{platform.os_version}.ppc.rpm"
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-boost-1.58.0-1.aix#{platform.os_version}.ppc.rpm"
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-yaml-cpp-0.5.1-1.aix#{platform.os_version}.ppc.rpm"
-    pkg.build_requires "runtime"
   elsif platform.is_windows?
     pkg.build_requires "cmake"
     pkg.build_requires "pl-toolchain-#{platform.architecture}"
     pkg.build_requires "pl-boost-#{platform.architecture}"
     pkg.build_requires "pl-yaml-cpp-#{platform.architecture}"
-    pkg.build_requires "runtime"
   else
     pkg.build_requires "pl-gcc"
     pkg.build_requires "pl-cmake"
@@ -134,6 +133,7 @@ component "facter" do |pkg, settings, platform|
   ruby = "#{settings[:host_ruby]} -rrbconfig"
 
   make = platform[:make]
+  cp = platform[:cp]
 
   special_flags = " -DCMAKE_INSTALL_PREFIX=#{settings[:prefix]} "
 
@@ -163,7 +163,8 @@ component "facter" do |pkg, settings, platform|
 
     cmake = "C:/ProgramData/chocolatey/bin/cmake.exe -G \"MinGW Makefiles\""
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=#{settings[:tools_root]}/pl-build-toolchain.cmake"
-    special_flags = "-DCMAKE_INSTALL_PREFIX=#{settings[:facter_root]}"
+    special_flags = "-DCMAKE_INSTALL_PREFIX=#{settings[:facter_root]} \
+                     -DRUBY_LIB_INSTALL=#{settings[:facter_root]}/lib "
   else
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/pl-build-toolchain.cmake"
     cmake = "/opt/pl-build-tools/bin/cmake"
@@ -179,7 +180,8 @@ component "facter" do |pkg, settings, platform|
 
   unless platform.is_windows?
     special_flags += " -DFACTER_PATH=#{settings[:bindir]} \
-                       -DFACTER_RUBY=#{settings[:libdir]}/$(shell #{ruby} -e 'print RbConfig::CONFIG[\"LIBRUBY_SO\"]')"
+                       -DFACTER_RUBY=#{settings[:libdir]}/$(shell #{ruby} -e 'print RbConfig::CONFIG[\"LIBRUBY_SO\"]') \
+                       -DRUBY_LIB_INSTALL=#{settings[:ruby_vendordir]}"
   end
 
   # Until we build our own gettext packages, disable using locales.
@@ -194,7 +196,6 @@ component "facter" do |pkg, settings, platform|
         #{special_flags} \
         -DBOOST_STATIC=ON \
         -DYAMLCPP_STATIC=ON \
-        -DRUBY_LIB_INSTALL=#{settings[:ruby_vendordir]} \
         -DWITHOUT_CURL=#{skip_curl} \
         -DWITHOUT_BLKID=#{skip_blkid} \
         -DWITHOUT_JRUBY=#{skip_jruby} \
@@ -222,6 +223,23 @@ component "facter" do |pkg, settings, platform|
 
   pkg.install do
     ["#{make} -j$(shell expr $(shell #{platform[:num_cores]}) + 1) install"]
+  end
+
+  if platform.is_osx?
+    ldd = "otool -L"
+  else
+    ldd = "ldd"
+  end
+
+  unless platform.is_windows? || platform.is_cross_compiled_linux? || platform.architecture == 'sparc'
+    pkg.check do
+      [
+        # Check that we're not linking against system libstdc++ and libgcc_s
+        "#{ldd} lib/libfacter.so",
+        "[ $$(#{ldd} lib/libfacter.so | grep -c libstdc++) -eq 0 ] || #{ldd} lib/libfacter.so | grep libstdc++ | grep -v ' /lib'",
+        "[ $$(#{ldd} lib/libfacter.so | grep -c libgcc_s) -eq 0 ] || #{ldd} lib/libfacter.so | grep libgcc_s | grep -v ' /lib'"
+      ]
+    end
   end
 
   pkg.install_file ".gemspec", "#{settings[:gem_home]}/specifications/#{pkg.get_name}.gemspec"

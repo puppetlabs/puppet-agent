@@ -28,5 +28,5 @@ SET RUBYOPT=rubygems
 REM Now return to the caller.
 
 REM Set SSL variables to ensure trusted locations are used
-SET SSL_CERT_FILE=%PL_BASEDIR%\ssl\cert.pem
-SET SSL_CERT_DIR=%PL_BASEDIR%\ssl\certs
+SET SSL_CERT_FILE=%PUPPET_DIR%\ssl\cert.pem
+SET SSL_CERT_DIR=%PUPPET_DIR%\ssl\certs

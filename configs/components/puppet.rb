@@ -32,28 +32,6 @@ component "puppet" do |pkg, settings, platform|
     elsif platform.is_rpm?
       pkg.install_service "ext/redhat/client.init", "ext/redhat/client.sysconfig"
     end
-    if platform.is_rpm?
-      puppet_bin = "/opt/puppetlabs/bin/puppet"
-      rpm_statedir = "%{_localstatedir}/lib/rpm-state/#{pkg.get_name}"
-      service_statefile = "#{rpm_statedir}/service.pp"
-      pkg.add_preinstall_action ["upgrade"],
-        [<<-HERE.undent
-          install --owner root --mode 0700 --directory #{rpm_statedir} || :
-          if [ -x #{puppet_bin} ] ; then
-            #{puppet_bin} resource service puppet > #{service_statefile} || :
-          fi
-          HERE
-        ]
-
-      pkg.add_postinstall_action ["upgrade"],
-        [<<-HERE.undent
-          if [ -f #{service_statefile} ] ; then
-            #{puppet_bin} apply #{service_statefile} > /dev/null 2>&1 || :
-            rm -rf #{rpm_statedir} || :
-          fi
-          HERE
-        ]
-    end
   when "launchd"
     pkg.install_service "ext/osx/puppet.plist", nil, "com.puppetlabs.puppet"
   when "smf"
@@ -66,6 +44,29 @@ component "puppet" do |pkg, settings, platform|
     pkg.install_service "SourceDir\\#{settings[:base_dir]}\\#{settings[:company_id]}\\#{settings[:product_id]}\\sys\\ruby\\bin\\ruby.exe"
   else
     fail "need to know where to put service files"
+  end
+
+  if (platform.servicetype == "sysv" && platform.is_rpm?) || platform.is_aix?
+    puppet_bin = "/opt/puppetlabs/bin/puppet"
+    rpm_statedir = "%{_localstatedir}/lib/rpm-state/#{pkg.get_name}"
+    service_statefile = "#{rpm_statedir}/service.pp"
+    pkg.add_preinstall_action ["upgrade"],
+      [<<-HERE.undent
+        mkdir -p  #{rpm_statedir} && chown root #{rpm_statedir} && chmod 0700 #{rpm_statedir} || :
+        if [ -x #{puppet_bin} ] ; then
+          #{puppet_bin} resource service puppet > #{service_statefile} || :
+        fi
+        HERE
+      ]
+
+    pkg.add_postinstall_action ["upgrade"],
+      [<<-HERE.undent
+        if [ -f #{service_statefile} ] ; then
+          #{puppet_bin} apply #{service_statefile} > /dev/null 2>&1 || :
+          rm -rf #{rpm_statedir} || :
+        fi
+        HERE
+      ]
   end
 
   # To create a tmpfs directory for the piddir, it seems like it's either this
@@ -104,7 +105,7 @@ component "puppet" do |pkg, settings, platform|
   if platform.is_windows?
     pkg.environment "FACTERDIR" => settings[:facter_root]
     pkg.environment "PATH" => "$$(cygpath -u #{settings[:gcc_bindir]}):$$(cygpath -u #{settings[:ruby_bindir]}):$$(cygpath -u #{settings[:bindir]}):/cygdrive/c/Windows/system32:/cygdrive/c/Windows:/cygdrive/c/Windows/System32/WindowsPowerShell/v1.0"
-    pkg.environment "RUBYLIB" => "#{settings[:hiera_libdir]}"
+    pkg.environment "RUBYLIB" => "#{settings[:hiera_libdir]};#{settings[:facter_root]}/lib"
   end
 
   if platform.is_windows?
@@ -136,7 +137,13 @@ component "puppet" do |pkg, settings, platform|
         --quick \
         --no-batch-files \
         --man \
-        --mandir=#{settings[:mandir]}"]
+        --mandir=#{settings[:mandir]}",]
+  end
+
+  if platform.is_windows?
+    pkg.install do
+      ["/usr/bin/cp #{settings[:prefix]}/VERSION #{settings[:install_root]}",]
+    end
   end
 
   #The following will add the vim syntax files for puppet
