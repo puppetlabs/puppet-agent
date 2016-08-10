@@ -142,7 +142,7 @@ component "puppet" do |pkg, settings, platform|
 
   if platform.is_windows?
     pkg.install do
-      ["cp #{settings[:prefix]}/VERSION #{settings[:install_root]}",]
+      ["/usr/bin/cp #{settings[:prefix]}/VERSION #{settings[:install_root]}",]
     end
   end
 
