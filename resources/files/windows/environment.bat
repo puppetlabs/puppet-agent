@@ -5,7 +5,7 @@ REM Avoid the nasty \..\ littering the paths.
 SET PL_BASEDIR=%PL_BASEDIR:\bin\..=%
 
 REM Set a fact so we can easily source the environment.bat file in the future.
-SET FACTER_env_windows_installdir=%PL_BASEDIR%\facter
+SET FACTER_env_windows_installdir=%PL_BASEDIR%
 
 SET PUPPET_DIR=%PL_BASEDIR%\puppet
 REM Facter will load FACTER_ env vars as facts, so don't use FACTER_DIR

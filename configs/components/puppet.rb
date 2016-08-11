@@ -137,7 +137,13 @@ component "puppet" do |pkg, settings, platform|
         --quick \
         --no-batch-files \
         --man \
-        --mandir=#{settings[:mandir]}"]
+        --mandir=#{settings[:mandir]}",]
+  end
+
+  if platform.is_windows?
+    pkg.install do
+      ["/usr/bin/cp #{settings[:prefix]}/VERSION #{settings[:install_root]}",]
+    end
   end
 
   #The following will add the vim syntax files for puppet
