@@ -19,7 +19,7 @@ platform "windows-2012r2-x64" do |plat|
   plat.make "/usr/bin/make"
   plat.patch "TMP=/var/tmp /usr/bin/patch.exe --binary"
 
-  plat.platform_triple "x86_64-unknown-mingw32"
+  plat.platform_triple "x86_64-w64-mingw32"
 
   plat.package_type "msi"
   plat.output_dir "windows"
