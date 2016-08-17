@@ -12,3 +12,5 @@ matrix:
   include:
     - rvm: 2.1.7
       env: "CHECK='rubocop -D'"
+    - rvm: 2.1.7
+      env: "CHECK='rake commits'"
