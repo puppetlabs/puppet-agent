@@ -42,6 +42,24 @@
       Id="WIXUI_EXITDIALOGOPTIONALTEXT"
       Value="Manage your first resources on this node, explore the Puppet community and get support using the shortcuts in the Documentation folder of your Start Menu." />
 
+    <!--                  ***NOTE***
+        When originally moving to vanagon builds of puppet-agent (specifically for 1.6.0 and 1.6.1),
+        we wrote several registry entries to the wrong place. We fixed the issue in 1.6.2, but in order
+        to maintain upgrade stability we now need to read from both the correct and incorrect Key
+        locations. The two properties below coupled with the double registry search in the remembered
+        property sections below will achieve that by trying the incorrect location, then the correct
+        location. Note that the last location to be searched (the *correct* one) will take precedence if
+        both locations are available.
+                                              Sean P. McDonald 8/30/16     -->
+    <Property
+      Id="REMEMBERED_PUPPETINSTALLER_ROOT_KEY"
+      Value="SOFTWARE\<%= settings[:pl_company_name] %>\PuppetInstaller">
+    </Property>
+    <Property
+      Id="REMEMBERED_PUPPET_ROOT_KEY"
+      Value="SOFTWARE\<%= settings[:pl_company_name] %>\Puppet">
+    </Property>
+
     <!--
       Remembered Property Pattern
       http://robmensching.com/blog/posts/2010/5/2/The-WiX-toolsets-Remember-Property-pattern
@@ -54,9 +72,16 @@
     <Property Id="PUPPET_MASTER_SERVER">
       <!-- Recall the property in repair, upgrade, and uninstall scenarios -->
       <RegistrySearch
+        Id="RecallBadPuppetMasterServer"
+        Root="HKLM"
+        Key="[REMEMBERED_PUPPET_ROOT_KEY]"
+        Name="RememberedPuppetMasterServer"
+        Type="raw"
+        Win64="no" />
+      <RegistrySearch
         Id="RecallPuppetMasterServer"
         Root="HKLM"
-        Key="SOFTWARE\<%= settings[:pl_company_name] %>\<%= settings[:common_product_id] %>"
+        Key="[REMEMBERED_PUPPETINSTALLER_ROOT_KEY]"
         Name="RememberedPuppetMasterServer"
         Type="raw"
         Win64="no" />
@@ -64,40 +89,65 @@
     <Property Id="PUPPET_AGENT_ENVIRONMENT">
       <!-- Recall the property in repair, upgrade, and uninstall scenarios -->
       <RegistrySearch
+        Id="RecallBadPuppetAgentEnvironment"
+        Root="HKLM"
+        Key="[REMEMBERED_PUPPET_ROOT_KEY]"
+        Name="RememberedPuppetAgentEnvironment"
+        Type="raw"
+        Win64="no" />
+      <RegistrySearch
         Id="RecallPuppetAgentEnvironment"
         Root="HKLM"
-        Key="SOFTWARE\<%= settings[:pl_company_name] %>\<%= settings[:common_product_id] %>"
+        Key="[REMEMBERED_PUPPETINSTALLER_ROOT_KEY]"
         Name="RememberedPuppetAgentEnvironment"
         Type="raw"
         Win64="no" />
     </Property>
-
     <Property Id="PUPPET_AGENT_CERTNAME">
       <!-- Recall the property in repair, upgrade, and uninstall scenarios -->
       <RegistrySearch
+        Id="RecallBadPuppetAgentCertname"
+        Root="HKLM"
+        Key="[REMEMBERED_PUPPET_ROOT_KEY]"
+        Name="RememberedPuppetAgentCertname"
+        Type="raw"
+        Win64="no" />
+      <RegistrySearch
         Id="RecallPuppetAgentCertname"
         Root="HKLM"
-        Key="SOFTWARE\<%= settings[:pl_company_name] %>\<%= settings[:common_product_id] %>"
+        Key="[REMEMBERED_PUPPETINSTALLER_ROOT_KEY]"
         Name="RememberedPuppetAgentCertname"
         Type="raw"
         Win64="no" />
     </Property>
-
     <Property Id="PUPPET_CA_SERVER">
+      <RegistrySearch
+        Id="RecallBadPuppetCAServer"
+        Root="HKLM"
+        Key="[REMEMBERED_PUPPET_ROOT_KEY]"
+        Name="RememberedPuppetCaServer"
+        Type="raw"
+        Win64="no" />
       <RegistrySearch
         Id="RecallPuppetCAServer"
         Root="HKLM"
-        Key="SOFTWARE\<%= settings[:pl_company_name] %>\<%= settings[:common_product_id] %>"
+        Key="[REMEMBERED_PUPPETINSTALLER_ROOT_KEY]"
         Name="RememberedPuppetCaServer"
         Type="raw"
         Win64="no" />
     </Property>
-
     <Property Id="PUPPET_AGENT_STARTUP_MODE">
+      <RegistrySearch
+        Id="RecallBadPuppetAgentStartupMode"
+        Root="HKLM"
+        Key="[REMEMBERED_PUPPET_ROOT_KEY]"
+        Name="RememberedPuppetAgentStartupMode"
+        Type="raw"
+        Win64="no" />
       <RegistrySearch
         Id="RecallPuppetAgentStartupMode"
         Root="HKLM"
-        Key="SOFTWARE\<%= settings[:pl_company_name] %>\<%= settings[:common_product_id] %>"
+        Key="[REMEMBERED_PUPPETINSTALLER_ROOT_KEY]"
         Name="RememberedPuppetAgentStartupMode"
         Type="raw"
         Win64="no" />
