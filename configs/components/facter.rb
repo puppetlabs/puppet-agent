@@ -211,7 +211,7 @@ component "facter" do |pkg, settings, platform|
   if platform.is_cross_compiled? || platform.is_aix?
     test = ":"
   else
-    test = "#{make} test ARGS=-V"
+    test = "LD_LIBRARY_PATH=#{settings[:libdir]} LIBPATH=#{settings[:libdir]} #{make} test ARGS=-V"
   end
 
   pkg.build do

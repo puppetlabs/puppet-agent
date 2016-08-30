@@ -36,6 +36,7 @@ component "leatherman" do |pkg, settings, platform|
     use_curl = 'TRUE'
   end
 
+  pkg.build_requires "runtime"
   pkg.build_requires "ruby"
 
   ruby = "#{settings[:host_ruby]} -rrbconfig"
@@ -98,7 +99,8 @@ component "leatherman" do |pkg, settings, platform|
   if platform.is_cross_compiled? || platform.is_aix?
     test = "/bin/true"
   else
-    test = "LEATHERMAN_RUBY=#{settings[:libdir]}/$(shell #{ruby} -e 'print RbConfig::CONFIG[\"LIBRUBY_SO\"]') #{make} test ARGS=-V"
+    test = "LEATHERMAN_RUBY=#{settings[:libdir]}/$(shell #{ruby} -e 'print RbConfig::CONFIG[\"LIBRUBY_SO\"]') \
+           LD_LIBRARY_PATH=#{settings[:libdir]} LIBPATH=#{settings[:libdir]}#{make} test ARGS=-V"
   end
 
   if platform.is_solaris? && platform.architecture != 'sparc'
