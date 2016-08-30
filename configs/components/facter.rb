@@ -193,6 +193,7 @@ component "facter" do |pkg, settings, platform|
         -DLEATHERMAN_GETTEXT=OFF \
         -DCMAKE_VERBOSE_MAKEFILE=ON \
         -DCMAKE_PREFIX_PATH=#{settings[:prefix]} \
+        -DCMAKE_INSTALL_RPATH=#{settings[:libdir]} \
         #{special_flags} \
         -DBOOST_STATIC=ON \
         -DYAMLCPP_STATIC=ON \
