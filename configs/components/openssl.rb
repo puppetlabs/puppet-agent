@@ -89,7 +89,7 @@ component "openssl" do |pkg, settings, platform|
     pkg.environment "CYGWIN" => settings[:cygwin]
     cflags = settings[:cflags]
     ldflags = settings[:ldflags]
-  elsif platform.name == 'debian-8-armhf'
+  elsif platform.name =~ /debian-8-arm/
     pkg.apply_patch 'resources/patches/openssl/openssl-1.0.0l-use-gcc-instead-of-makedepend.patch'
     pkg.environment "PATH" => "/opt/pl-build-tools/bin:$$PATH"
     pkg.environment "CC" => "/opt/pl-build-tools/bin/#{settings[:platform_triple]}-gcc"

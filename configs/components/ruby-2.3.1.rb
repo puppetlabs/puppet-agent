@@ -70,6 +70,9 @@ component "ruby-2.3.1" do |pkg, settings, platform|
     },
     'arm-linux-gnueabihf' => {
       :target_double => 'arm-linux-eabihf'
+    },
+    'arm-linux-gnueabi' => {
+      :target_double => 'arm-linux-eabi'
     }
   }
 
