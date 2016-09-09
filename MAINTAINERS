@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "file_format": "This MAINTAINERS file format is described at https://github.com/puppetlabs/maintainers",
+  "issues": "https://tickets.puppetlabs.com/browse/PA",
+  "people": [
+    {
+      "github": "MosesMendoza",
+      "email": "moses@puppet.com",
+      "name": "Moses Mendoza"
+    }
+  ]
+}
