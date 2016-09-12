@@ -94,10 +94,6 @@ component "leatherman" do |pkg, settings, platform|
         ."]
   end
 
-  if platform.is_solaris? && platform.architecture != 'sparc'
-    test = "LANG=C LC_ALL=C #{test}"
-  end
-
   pkg.build do
     ["#{make} -j$(shell expr $(shell #{platform[:num_cores]}) + 1)"]
   end
@@ -105,9 +101,13 @@ component "leatherman" do |pkg, settings, platform|
   # Make test will explode horribly in a cross-compile situation
   # Tests will be skipped on AIX until they are expected to pass
   if !platform.is_cross_compiled? && !platform.is_aix?
+    if platform.is_solaris? && platform.architecture != 'sparc'
+      test_locale = "LANG=C LC_ALL=C"
+    end
+
     pkg.check do
       ["LEATHERMAN_RUBY=#{settings[:libdir]}/$(shell #{ruby} -e 'print RbConfig::CONFIG[\"LIBRUBY_SO\"]') \
-       LD_LIBRARY_PATH=#{settings[:libdir]} LIBPATH=#{settings[:libdir]} #{make} test ARGS=-V"]
+       LD_LIBRARY_PATH=#{settings[:libdir]} LIBPATH=#{settings[:libdir]} #{test_locale} #{make} test ARGS=-V"]
     end
   end
 
