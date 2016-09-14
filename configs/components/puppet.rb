@@ -161,18 +161,6 @@ component "puppet" do |pkg, settings, platform|
   pkg.install_file ".gemspec", "#{settings[:gem_home]}/specifications/#{pkg.get_name}.gemspec"
 
   if platform.is_windows?
-    # Install the appropriate .batch files to the INSTALLDIR/bin directory
-    pkg.add_source("file://resources/files/windows/environment.bat", sum: "810195e5fe09ce1704d0f1bf818b2d9a")
-    pkg.add_source("file://resources/files/windows/puppet.bat", sum: "002618e115db9fd9b42ec611e1ec70d2")
-    pkg.add_source("file://resources/files/windows/puppet_interactive.bat", sum: "4b40eb0df91d2ca8209302062c4940c4")
-    pkg.add_source("file://resources/files/windows/puppet_shell.bat", sum: "24477c6d2c0e7eec9899fb928204f1a0")
-    pkg.add_source("file://resources/files/windows/run_puppet_interactive.bat", sum: "d4ae359425067336e97e4e3a200027d5")
-    pkg.install_file "../environment.bat", "#{settings[:link_bindir]}/environment.bat"
-    pkg.install_file "../puppet.bat", "#{settings[:link_bindir]}/puppet.bat"
-    pkg.install_file "../puppet_interactive.bat", "#{settings[:link_bindir]}/puppet_interactive.bat"
-    pkg.install_file "../run_puppet_interactive.bat", "#{settings[:link_bindir]}/run_puppet_interactive.bat"
-    pkg.install_file "../puppet_shell.bat", "#{settings[:link_bindir]}/puppet_shell.bat"
-
     pkg.install_file "ext/windows/service/daemon.bat", "#{settings[:bindir]}/daemon.bat"
     pkg.install_file "ext/windows/service/daemon.rb", "#{settings[:service_dir]}/daemon.rb"
     pkg.install_file "../wix/icon/puppet.ico", "#{settings[:miscdir]}/puppet.ico"
@@ -200,9 +188,24 @@ component "puppet" do |pkg, settings, platform|
   else
     pkg.directory File.join(settings[:logdir], 'puppet'), mode: "0750"
   end
-
-  pkg.link "#{settings[:bindir]}/puppet", "#{settings[:link_bindir]}/puppet" unless platform.is_windows?
-  if platform.is_eos?
-    pkg.link "#{settings[:sysconfdir]}", "#{settings[:link_sysconfdir]}"
+  if platform.is_windows?
+    # Install the appropriate .batch files to the INSTALLDIR/bin directory
+    pkg.add_source("file://resources/files/windows/environment.bat", sum: "810195e5fe09ce1704d0f1bf818b2d9a")
+    pkg.add_source("file://resources/files/windows/puppet.bat", sum: "002618e115db9fd9b42ec611e1ec70d2")
+    pkg.add_source("file://resources/files/windows/puppet_interactive.bat", sum: "4b40eb0df91d2ca8209302062c4940c4")
+    pkg.add_source("file://resources/files/windows/puppet_shell.bat", sum: "24477c6d2c0e7eec9899fb928204f1a0")
+    pkg.add_source("file://resources/files/windows/run_puppet_interactive.bat", sum: "d4ae359425067336e97e4e3a200027d5")
+    pkg.install_file "../environment.bat", "#{settings[:link_bindir]}/environment.bat"
+    pkg.install_file "../puppet.bat", "#{settings[:link_bindir]}/puppet.bat"
+    pkg.install_file "../puppet_interactive.bat", "#{settings[:link_bindir]}/puppet_interactive.bat"
+    pkg.install_file "../run_puppet_interactive.bat", "#{settings[:link_bindir]}/run_puppet_interactive.bat"
+    pkg.install_file "../puppet_shell.bat", "#{settings[:link_bindir]}/puppet_shell.bat"
+  elsif platform.is_eos?
+    pkg.add_source("file://resources/files/puppet.sh")
+    pkg.install_file "../puppet.sh", "#{settings[:sysconfdir]}", mode: "755", owner: "root", group: "root"
+    pkg.link "", "#{settings[:link_sysconfdir]}"
+  else
+    pkg.add_source("file://resources/files/puppet.sh")
+    pkg.install_file "../puppet.sh", "#{settings[:link_bindir]}/puppet", mode: "755", owner: "root", group: "root"
   end
 end

@@ -13,11 +13,8 @@ component "hiera" do |pkg, settings, platform|
   flags = " --bindir=#{settings[:bindir]} \
             --sitelibdir=#{settings[:ruby_vendordir]} \
             --ruby=#{File.join(settings[:bindir], 'ruby')} "
-
   if platform.is_windows?
-    pkg.add_source("file://resources/files/windows/hiera.bat", sum: "bbe0a513808af61ed9f4b57463851326")
     configdir = File.join(settings[:sysconfdir], 'puppet', 'etc')
-    pkg.install_file "../hiera.bat", "#{settings[:link_bindir]}/hiera.bat"
     flags = " --bindir=#{settings[:hiera_bindir]} \
               --sitelibdir=#{settings[:hiera_libdir]} \
               --ruby=#{File.join(settings[:ruby_bindir], 'ruby')} "
@@ -37,7 +34,13 @@ component "hiera" do |pkg, settings, platform|
 
   pkg.configfile File.join(configdir, 'hiera.yaml')
 
-  pkg.link "#{settings[:bindir]}/hiera", "#{settings[:link_bindir]}/hiera" unless platform.is_windows?
+  if platform.is_windows?
+    pkg.add_source("file://resources/files/windows/hiera.bat", sum: "bbe0a513808af61ed9f4b57463851326")
+    pkg.install_file "../hiera.bat", "#{settings[:link_bindir]}/hiera.bat"
+  else
+    pkg.add_source("file://resources/files/hiera.sh")
+    pkg.install_file "../hiera.sh", "#{settings[:link_bindir]}/hiera", mode: "755", owner: "root", group: "root"
+  end
 
   if platform.is_windows?
     pkg.directory File.join(settings[:puppet_codedir], 'hieradata')
