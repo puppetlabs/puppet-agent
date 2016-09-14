@@ -250,8 +250,13 @@ component "facter" do |pkg, settings, platform|
     pkg.install_file "../facter.bat", "#{settings[:link_bindir]}/facter.bat"
     pkg.install_file "../facter_interactive.bat", "#{settings[:link_bindir]}/facter_interactive.bat"
     pkg.install_file "../run_facter_interactive.bat", "#{settings[:link_bindir]}/run_facter_interactive.bat"
+  elsif platform.is_cisco_wrlinux?
+    pkg.add_source("file://resources/files/cisco-eXR/facter.sh")
+    pkg.install_file "../facter.sh", "#{settings[:link_bindir]}/facter", mode: "755", owner: "root", group: "root"
+  else
+    pkg.link "#{settings[:bindir]}/facter", "#{settings[:link_bindir]}/facter"
   end
-  pkg.link "#{settings[:bindir]}/facter", "#{settings[:link_bindir]}/facter" unless platform.is_windows?
+
   if platform.is_windows?
     pkg.directory File.join(settings[:sysconfdir], 'facter', 'facts.d')
   else
