@@ -162,7 +162,8 @@ component "ruby" do |pkg, settings, platform|
         pkg.build_requires 'pl-ruby'
       end
 
-      special_flags += " --with-baseruby=#{settings[:host_ruby]} "
+      # The rcvmsg flag is needed to cross-compile the socket library
+      special_flags += " --with-baseruby=#{settings[:host_ruby]} --enable-close-fds-by-recvmsg-with-peek "
     end
     pkg.build_requires 'libedit'
     pkg.build_requires 'runtime'
