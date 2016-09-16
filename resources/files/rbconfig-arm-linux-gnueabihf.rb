@@ -2,17 +2,17 @@
 # This file was created by puppet-agent for Debian-8-armhf.
 
 module RbConfig
-  RUBY_VERSION == "2.3.1" or
-    raise "ruby lib version (2.3.1) doesn't match executable version (#{RUBY_VERSION})"
+  RUBY_VERSION == "2.1.9" or
+    raise "ruby lib version (2.1.9) doesn't match executable version (#{RUBY_VERSION})"
 
-  TOPDIR = File.dirname(__FILE__).chomp!("/lib/ruby/2.3.0/arm-linux-gnueabihf")
+  TOPDIR = File.dirname(__FILE__).chomp!("/lib/ruby/2.1.0/arm-linux-gnueabihf")
   DESTDIR = '' unless defined? DESTDIR
   CONFIG = {}
   CONFIG["DESTDIR"] = DESTDIR
   CONFIG["MAJOR"] = "2"
-  CONFIG["MINOR"] = "3"
+  CONFIG["MINOR"] = "1"
   CONFIG["TEENY"] = "0"
-  CONFIG["PATCHLEVEL"] = "112"
+  CONFIG["PATCHLEVEL"] = "490"
   CONFIG["INSTALL"] = '/usr/bin/install -c'
   CONFIG["EXEEXT"] = ""
   CONFIG["prefix"] = (TOPDIR || DESTDIR + "/opt/puppetlabs/puppet")
@@ -20,7 +20,7 @@ module RbConfig
   CONFIG["RUBY_INSTALL_NAME"] = "ruby"
   CONFIG["RUBY_SO_NAME"] = "ruby"
   CONFIG["exec"] = "exec"
-  CONFIG["ruby_pc"] = "ruby-2.3.pc"
+  CONFIG["ruby_pc"] = "ruby-2.1.pc"
   CONFIG["PACKAGE"] = "ruby"
   CONFIG["BUILTIN_TRANSSRCS"] = " newline.c"
   CONFIG["USE_RUBYGEMS"] = "YES"
@@ -36,7 +36,6 @@ module RbConfig
   CONFIG["UNIVERSAL_INTS"] = ""
   CONFIG["UNIVERSAL_ARCHNAMES"] = ""
   CONFIG["configure_args"] = " '--prefix=/opt/puppetlabs/puppet' '--with-opt-dir=/opt/puppetlabs/puppet' '--enable-shared' '--enable-bundled-libyaml' '--disable-install-doc' '--disable-install-rdoc'"
-  CONFIG["CONFIGURE"] = "configure"
   CONFIG["vendorarchdir"] = "$(vendorlibdir)/$(sitearch)"
   CONFIG["vendorlibdir"] = "$(vendordir)/$(ruby_version)"
   CONFIG["vendordir"] = "$(rubylibprefix)/vendor_ruby"
@@ -45,7 +44,7 @@ module RbConfig
   CONFIG["sitedir"] = "$(rubylibprefix)/site_ruby"
   CONFIG["rubyarchdir"] = "$(rubylibdir)/$(arch)"
   CONFIG["rubylibdir"] = "$(rubylibprefix)/$(ruby_version)"
-  CONFIG["ruby_version"] = "2.3.0"
+  CONFIG["ruby_version"] = "2.1.0"
   CONFIG["sitearch"] = "$(arch)"
   CONFIG["arch"] = "arm-linux-gnueabihf"
   CONFIG["sitearchincludedir"] = "$(includedir)/$(sitearch)"
@@ -109,16 +108,13 @@ module RbConfig
   CONFIG["TEST_RUNNABLE"] = "yes"
   CONFIG["rubylibprefix"] = "$(libdir)/$(RUBY_BASE_NAME)"
   CONFIG["setup"] = "Setup"
-  CONFIG["ENCSTATIC"] = ""
   CONFIG["EXTSTATIC"] = ""
   CONFIG["STRIP"] = "strip"
   CONFIG["TRY_LINK"] = ""
-  CONFIG["PRELOADENV"] = "LD_PRELOAD"
   CONFIG["LIBPATHENV"] = "LD_LIBRARY_PATH"
   CONFIG["RPATHFLAG"] = " -Wl,-R%1$-s"
   CONFIG["LIBPATHFLAG"] = " -L%1$-s"
   CONFIG["LINK_SO"] = ""
-  CONFIG["ASMEXT"] = "S"
   CONFIG["LIBEXT"] = "a"
   CONFIG["DLEXT2"] = ""
   CONFIG["DLEXT"] = "so"
@@ -177,7 +173,6 @@ module RbConfig
   CONFIG["LDFLAGS"] = "-L. -fstack-protector -L/opt/puppetlabs/puppet/lib  -Wl,-R/opt/puppetlabs/puppet/lib "
   CONFIG["CFLAGS"] = "$(cflags)  -fPIC"
   CONFIG["CC"] = "gcc"
-  CONFIG["NACL_LIB_PATH"] = ""
   CONFIG["NACL_SDK_VARIANT"] = ""
   CONFIG["NACL_SDK_ROOT"] = ""
   CONFIG["NACL_TOOLCHAIN"] = ""
@@ -197,7 +192,7 @@ module RbConfig
   CONFIG["build_cpu"] = "arm"
   CONFIG["build"] = "arm-unknown-linux-gnueabihf"
   CONFIG["RUBY_RELEASE_DATE"] = "2016-04-01"
-  CONFIG["RUBY_PROGRAM_VERSION"] = "2.3.1"
+  CONFIG["RUBY_PROGRAM_VERSION"] = "2.1.9"
   CONFIG["target_alias"] = "arm-linux-gnueabihf"
   CONFIG["host_alias"] = ""
   CONFIG["build_alias"] = "arm-linux-gnueabihf"
