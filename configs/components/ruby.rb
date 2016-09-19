@@ -17,16 +17,6 @@ component "ruby" do |pkg, settings, platform|
   pkg.replaces 'pe-ruby-ldap'
   pkg.replaces 'pe-rubygem-gem2rpm'
 
-  # Gem path changes between Ruby 2.1 and 2.3 mean that we don't
-  # want to co-install puppet-agent with Ruby 2.3 on PE < 2016.3
-  # infrastructure nodes, especially ones with components with
-  # vendored gems with Ruby 2.1 gem paths (i.e. pe-r10k).
-  # Conflicts with less than the specified version.
-  pkg.conflicts 'pe-puppet-enterprise-release', '2016.3.0.0'
-  pkg.conflicts 'pe-installer', '2016.1.0.70'
-  pkg.conflicts 'pe-r10k', '2.4.3.1'
-  pkg.conflicts 'pe-client-tools', '1.0.5.3'
-
   base = 'resources/patches/ruby'
   pkg.apply_patch "#{base}/libyaml_cve-2014-9130.patch"
 
