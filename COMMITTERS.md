@@ -1,4 +1,4 @@
-Committing changes to Puppet Agent
+Committing changes to Puppet agent
 ====
 
 This document is liberally copied/based on the same in
@@ -38,12 +38,12 @@ Terminology
 Many of these terms have more than one meaning.  For the purposes of this
 document, the following terms refer to specific things.
 
-**contributor** - A person who makes a change to Puppet Agent and submits a
+**contributor** - A person who makes a change to Puppet agent and submits a
 change set in the form of a pull request.
 
 **change set** - A set of discrete patches which combined together form a
 contribution.  A change set takes the form of Git commits and is submitted to
-Puppet Agent in the form of a pull request.
+Puppet agent in the form of a pull request.
 
 **committer** - A person responsible for reviewing a pull request and then
 making the decision what base branch to merge the change set into.
@@ -143,12 +143,12 @@ This section aims to provide guidelines for being a good commit citizen by
 paying attention to our automated build tools.
 
  * Don’t push on a broken build.  (A broken build is defined as a failing job
-   in the [Puppet Agent](https://jenkins.puppetlabs.com/view/puppet-agent/)
+   in the [Puppet agent](https://jenkins.puppetlabs.com/view/puppet-agent/)
    page.)
  * Watch the build until your changes have gone through green.
  * Update the ticket status and target version.  The target version field in
-   our issue tracker should be updated to be the next release of Puppet Agent.
-   For example, if the most recent release of Puppet Agent is 1.6.2 and you
+   our issue tracker should be updated to be the next release of Puppet agent.
+   For example, if the most recent release of Puppet agent is 1.6.2 and you
    merge a backwards compatible change set into master, then the target version
    should be 1.7.0 in the issue tracker.)
  * Ensure the pull request is closed (Hint: amend your merge commit to contain
@@ -163,8 +163,8 @@ branch, then merge into the base branch and up through all active base
 branches.
 
 Suppose a contributor submits a pull request based on master.  The change set
-fixes a bug reported against Puppet Agent 1.6.2 which is the most recently
-released version of Puppet Agent.
+fixes a bug reported against Puppet agent 1.6.2 which is the most recently
+released version of Puppet agent.
 
 In this example the committer should rebase the change set onto the `stable`
 branch since this is a bug rather than new functionality.

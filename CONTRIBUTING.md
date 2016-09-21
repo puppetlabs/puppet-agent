@@ -4,9 +4,9 @@ This document is liberally copied/based on the same in
 [Puppet](https://github.com/puppetlabs/puppet).
 
 Third-party patches, as well as patches from those within Puppet who don't
-maintain this project directly, are essential for keeping Puppet Agent
+maintain this project directly, are essential for keeping Puppet agent
 great. We simply can't access the huge number of platforms and myriad
-configurations for running Puppet Agent. We want to keep it as easy as possible
+configurations for running Puppet agent. We want to keep it as easy as possible
 to contribute changes that get things working in your environment. There are a
 few guidelines that we need contributors to follow so that we can have a chance
 of keeping on top of things.
@@ -48,7 +48,7 @@ of keeping on top of things.
     why this is a problem, and how the patch fixes the problem when applied.
 ````
 
-* Puppet Agent does not currently have automated tests, as it is tested
+* Puppet agent does not currently have automated tests, as it is tested
   indirectly via its components. In the future additional automated validation
   may be added.
 
@@ -65,7 +65,7 @@ a ticket number.
     (doc) Add documentation commit example to CONTRIBUTING
 
     There is no example for contributing a documentation commit
-    to the Puppet Agent repository. This is a problem because the contributor
+    to the Puppet agent repository. This is a problem because the contributor
     is left to assume how a commit of this nature may appear.
 
     The first line is a real life imperative statement with '(doc)' in
