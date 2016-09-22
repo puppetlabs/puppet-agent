@@ -86,8 +86,6 @@ component "marionette-collective" do |pkg, settings, platform|
             --ruby=#{File.join(settings[:bindir], 'ruby')} "
 
   if platform.is_windows?
-    pkg.add_source("file://resources/files/windows/mco.bat")
-    pkg.install_file "../mco.bat", "#{settings[:link_bindir]}/mco.bat"
     flags = " --bindir=#{settings[:mco_bindir]} \
               --sbindir=#{settings[:mco_bindir]} \
               --sitelibdir=#{settings[:mco_libdir]} \
@@ -120,5 +118,13 @@ component "marionette-collective" do |pkg, settings, platform|
   pkg.configfile File.join(configdir, 'facts.yaml')
   pkg.configfile "/etc/logrotate.d/mcollective" if platform.is_linux?
 
-  pkg.link "#{settings[:bindir]}/mco", "#{settings[:link_bindir]}/mco" unless platform.is_windows?
+  if platform.is_windows?
+    pkg.add_source("file://resources/files/windows/mco.bat")
+    pkg.install_file "../mco.bat", "#{settings[:link_bindir]}/mco.bat"
+  elsif platform.is_cisco_wrlinux?
+    pkg.add_source("file://resources/files/cisco-eXR/mco.sh")
+    pkg.install_file "../mco.sh", "#{settings[:link_bindir]}/mco", mode: "755", owner: "root", group: "root"
+  else
+    pkg.link "#{settings[:bindir]}/mco", "#{settings[:link_bindir]}/mco"
+  end
 end
