@@ -4,9 +4,9 @@ component "ruby" do |pkg, settings, platform|
   pkg.url "https://cache.ruby-lang.org/pub/ruby/2.3/ruby-#{pkg.get_version}.tar.gz"
 
   if platform.is_windows?
-    pkg.add_source "http://buildsources.delivery.puppetlabs.net/windows/elevate/elevate.exe", sum: "bd81807a5c13da32dd2a7157f66fa55d"
+    pkg.add_source "file://resources/files/windows/elevate.exe", sum: "bd81807a5c13da32dd2a7157f66fa55d"
     pkg.add_source "file://resources/files/windows/elevate.exe.config", sum: "a5aecf3f7335fa1250a0f691d754d561"
-    pkg.add_source "file://resources/files/ruby/windows_ruby_gem_wrapper.bat"
+    pkg.add_source "file://resources/files/ruby/windows_ruby_gem_wrapper.bat", sum: "97eb0b80b43774b4adbc67ad321cb7c3"
   end
 
   pkg.replaces 'pe-ruby'
