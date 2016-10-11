@@ -152,7 +152,10 @@ component "ruby" do |pkg, settings, platform|
         pkg.build_requires 'pl-ruby'
       end
 
-      special_flags += " --with-baseruby=#{settings[:host_ruby]} "
+      # During Ruby 2.3.1's configure step on a cross-compiled host, the system cannot
+      # determine whether recvmsg requires peek when closing fds, so we must set it
+      # manually. Without this, we were getting builds missing the socket library (PA-544).
+      special_flags += " --with-baseruby=#{settings[:host_ruby]} --enable-close-fds-by-recvmsg-with-peek "
     end
     pkg.build_requires 'libedit'
     pkg.build_requires 'runtime'
