@@ -4,9 +4,19 @@
   "issues": "https://tickets.puppetlabs.com/browse/PA",
   "people": [
     {
-      "github": "MosesMendoza",
-      "email": "moses@puppet.com",
-      "name": "Moses Mendoza"
+      "github": "Magisus",
+      "email": "maggie@puppet.com",
+      "name": "Maggie Dreyer"
+    },
+    {
+      "github": "ScottGarman",
+      "email": "scott.garman@puppet.com",
+      "name": "Scott Garman"
+    },
+    {
+      "github": "McdonaldSeanp",
+      "email": "sean.mcdonald@puppet.com",
+      "name": "Sean McDonald"
     }
   ]
 }
