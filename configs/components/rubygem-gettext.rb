@@ -3,7 +3,7 @@ component "rubygem-gettext" do |pkg, settings, platform|
   pkg.md5sum "4cbb125f8d8206e9a8f3a90f6488e4da"
   pkg.url "https://rubygems.org/downloads/gettext-#{pkg.get_version}.gem"
 
-  pkg.build_requires "ruby"
+  pkg.build_requires "ruby-#{settings[:ruby_version]}"
 
   # When cross-compiling, we can't use the rubygems we just built.
   # Instead we use the host gem installation and override GEM_HOME. Yay?

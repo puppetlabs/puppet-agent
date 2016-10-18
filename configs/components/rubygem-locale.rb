@@ -3,7 +3,7 @@ component "rubygem-locale" do |pkg, settings, platform|
   pkg.md5sum "def1e89d1d3126a0c684d3b7b20d88d4"
   pkg.url "https://rubygems.org/downloads/locale-#{pkg.get_version}.gem"
 
-  pkg.build_requires "ruby"
+  pkg.build_requires "ruby-#{settings[:ruby_version]}"
 
   # When cross-compiling, we can't use the rubygems we just built.
   # Instead we use the host gem installation and override GEM_HOME. Yay?

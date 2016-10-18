@@ -3,7 +3,7 @@ component "rubygem-mini_portile2" do |pkg, settings, platform|
   pkg.md5sum "d771975a58cef82daa6b0ee03522293f"
   pkg.url "https://rubygems.org/downloads/mini_portile2-#{pkg.get_version}.gem"
 
-  pkg.build_requires "ruby"
+  pkg.build_requires "ruby-#{settings[:ruby_version]}"
 
   # When cross-compiling, we can't use the rubygems we just built.
   # Instead we use the host gem installation and override GEM_HOME. Yay?

@@ -3,7 +3,7 @@ component "rubygem-minitar" do |pkg, settings, platform|
   pkg.md5sum "f5bd734fb3eda7b979d1485ba48fc0ea"
   pkg.url "https://rubygems.org/downloads/minitar-#{pkg.get_version}.gem"
 
-  pkg.build_requires "ruby"
+  pkg.build_requires "ruby-#{settings[:ruby_version]}"
 
   # Because we are cross-compiling on sparc, we can't use the rubygems we just built.
   # Instead we use the host gem installation and override GEM_HOME. Yay?

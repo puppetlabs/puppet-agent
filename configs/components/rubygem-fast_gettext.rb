@@ -3,7 +3,7 @@ component "rubygem-fast_gettext" do |pkg, settings, platform|
   pkg.md5sum "fc0597bd4d84b749c579cc39c7ceda0f"
   pkg.url "https://rubygems.org/downloads/fast_gettext-#{pkg.get_version}.gem"
 
-  pkg.build_requires "ruby"
+  pkg.build_requires "ruby-#{settings[:ruby_version]}"
 
   # When cross-compiling, we can't use the rubygems we just built.
   # Instead we use the host gem installation and override GEM_HOME. Yay?
