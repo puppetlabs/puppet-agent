@@ -36,7 +36,8 @@ component "leatherman" do |pkg, settings, platform|
     use_curl = 'TRUE'
   end
 
-  pkg.build_requires "ruby"
+  pkg.build_requires "runtime"
+  pkg.build_requires "ruby-#{settings[:ruby_version]}"
 
   ruby = "#{settings[:host_ruby]} -rrbconfig"
 

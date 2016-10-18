@@ -3,7 +3,7 @@ component "rubygem-win32-service" do |pkg, settings, platform|
   pkg.md5sum "24cc05fed398eb931e14b8ee22196634"
   pkg.url "https://rubygems.org/downloads/win32-service-#{pkg.get_version}.gem"
 
-  pkg.build_requires "ruby"
+  pkg.build_requires "ruby-#{settings[:ruby_version]}"
 
   # Because we are cross-compiling on sparc, we can't use the rubygems we just built.
   # Instead we use the host gem installation and override GEM_HOME. Yay?
