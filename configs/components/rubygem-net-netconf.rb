@@ -3,7 +3,7 @@ component "rubygem-net-netconf" do |pkg, settings, platform|
   pkg.url "https://rubygems.org/downloads/net-netconf-#{get_version}.gem"
   pkg.md5sum "fa173b0965766a427d8692f6b31c85a4"
 
-  pkg.build_requires "ruby"
+  pkg.build_requires "ruby-#{settings[:ruby_version]}"
   pkg.build_requires "rubygem-net-scp"
   # We're force installing the gem to workaround issues we have with
   # the nokogiri gem, so there is no build_requires on rubygem-nokogiri

@@ -5,14 +5,18 @@ component "rubygem-nokogiri" do |pkg, settings, platform|
     # including its dependencies (mini_portile2), installing it on the target, and
     # installing the nokogiri gem using our gem command. The added files from
     # :gem_home were then tar'ed up and packed into this container tarball.
-    pkg.url "http://buildsources.delivery.puppetlabs.net/nokogiri-precompiled-huaweios-#{pkg.get_version}.tar.gz"
-    pkg.md5sum "8a783bdda33cf5f10afe84cf6fd8f28c"
+    pkg.url "http://buildsources.delivery.puppetlabs.net/nokogiri-precompiled-huaweios-#{pkg.get_version}-for-ruby-#{settings[:ruby_version]}.tar.gz"
+    if settings[:ruby_version] == "2.1.9"
+      pkg.md5sum "2ad8b4dd69f6e2b296dfaba293e9cb11"
+    elsif settings[:ruby_version] == "2.3.1"
+      pkg.md5sum "d11bcd650dc4942aa198586f4ff04247"
+    end
   else
     pkg.url "https://rubygems.org/downloads/nokogiri-#{pkg.get_version}.gem"
     pkg.md5sum "3e2169ebd67863a8a992289e2a887366"
   end
 
-  pkg.build_requires "ruby"
+  pkg.build_requires "ruby-#{settings[:ruby_version]}"
   pkg.build_requires "rubygem-mini_portile2"
   pkg.build_requires "rubygem-pkg-config"
 
