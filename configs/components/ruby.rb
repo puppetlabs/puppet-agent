@@ -225,12 +225,6 @@ component "ruby" do |pkg, settings, platform|
     end
     pkg.directory settings[:ruby_dir]
   end
-
-  # This became necessary when rubygems.org updated its SSL cert. This patches the new cert into the Rubygems
-  # cert bundle in our vendored Ruby. See PA-620.
-  pkg.add_source "http://buildsources.delivery.puppetlabs.net/GlobalSignRootCA.pem", sum: "7872bab9a5e1a71e3d7f77836a841a04"
-  pkg.install_file "../GlobalSignRootCA.pem", "#{settings[:libdir]}/ruby/2.3.0/rubygems/ssl_certs"
-
   if platform.is_cross_compiled_linux? || platform.is_solaris? || platform.is_aix?
     # Here we replace the rbconfig from our ruby compiled with our toolchain
     # with an rbconfig from a ruby of the same version compiled with the system
