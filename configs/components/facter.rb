@@ -14,7 +14,7 @@ component "facter" do |pkg, settings, platform|
 
   pkg.replaces 'pe-facter'
 
-  pkg.build_requires "ruby"
+  pkg.build_requires "ruby-#{settings[:ruby_version]}"
   pkg.build_requires 'openssl'
   pkg.build_requires 'leatherman'
   pkg.build_requires 'runtime'

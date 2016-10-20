@@ -3,7 +3,7 @@ component "rubygem-hocon" do |pkg, settings, platform|
   pkg.md5sum "af89595899c3b893787045039ff02ee0"
   pkg.url "https://rubygems.org/downloads/hocon-#{pkg.get_version}.gem"
 
-  pkg.build_requires "ruby"
+  pkg.build_requires "ruby-#{settings[:ruby_version]}"
 
   # Because we are cross-compiling on sparc, we can't use the rubygems we just built.
   # Instead we use the host gem installation and override GEM_HOME. Yay?
