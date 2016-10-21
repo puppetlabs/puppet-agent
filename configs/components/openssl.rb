@@ -1,6 +1,6 @@
 component "openssl" do |pkg, settings, platform|
-  pkg.version "1.0.2h"
-  pkg.md5sum "9392e65072ce4b614c1392eefc1f23d0"
+  pkg.version "1.0.2j"
+  pkg.md5sum "96322138f0b69e61b7212bc53d5e912b"
   pkg.url "https://openssl.org/source/openssl-#{pkg.get_version}.tar.gz"
 
   pkg.replaces 'pe-openssl'
