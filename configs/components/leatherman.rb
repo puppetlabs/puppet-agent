@@ -36,7 +36,8 @@ component "leatherman" do |pkg, settings, platform|
     use_curl = 'TRUE'
   end
 
-  pkg.build_requires "ruby"
+  pkg.build_requires "runtime"
+  pkg.build_requires "ruby-#{settings[:ruby_version]}"
 
   ruby = "#{settings[:host_ruby]} -rrbconfig"
 
@@ -85,6 +86,7 @@ component "leatherman" do |pkg, settings, platform|
         -DCMAKE_VERBOSE_MAKEFILE=ON \
         -DCMAKE_PREFIX_PATH=#{settings[:prefix]} \
         -DCMAKE_INSTALL_PREFIX=#{settings[:prefix]} \
+        -DCMAKE_INSTALL_RPATH=#{settings[:libdir]} \
         -DLEATHERMAN_SHARED=TRUE \
         #{special_flags} \
         -DBOOST_STATIC=ON \
@@ -92,24 +94,21 @@ component "leatherman" do |pkg, settings, platform|
         ."]
   end
 
+  pkg.build do
+    ["#{make} -j$(shell expr $(shell #{platform[:num_cores]}) + 1)"]
+  end
+
   # Make test will explode horribly in a cross-compile situation
   # Tests will be skipped on AIX until they are expected to pass
-  if platform.is_cross_compiled? || platform.is_aix?
-    test = "/bin/true"
-  else
-    test = "LEATHERMAN_RUBY=#{settings[:libdir]}/$(shell #{ruby} -e 'print RbConfig::CONFIG[\"LIBRUBY_SO\"]') #{make} test ARGS=-V"
-  end
+  if !platform.is_cross_compiled? && !platform.is_aix?
+    if platform.is_solaris? && platform.architecture != 'sparc'
+      test_locale = "LANG=C LC_ALL=C"
+    end
 
-  if platform.is_solaris? && platform.architecture != 'sparc'
-    test = "LANG=C LC_ALL=C #{test}"
-  end
-
-  pkg.build do
-    # Until a `check` target exists, run tests are part of the build.
-    [
-      "#{make} -j$(shell expr $(shell #{platform[:num_cores]}) + 1)",
-      "#{test}"
-    ]
+    pkg.check do
+      ["LEATHERMAN_RUBY=#{settings[:libdir]}/$(shell #{ruby} -e 'print RbConfig::CONFIG[\"LIBRUBY_SO\"]') \
+       LD_LIBRARY_PATH=#{settings[:libdir]} LIBPATH=#{settings[:libdir]} #{test_locale} #{make} test ARGS=-V"]
+    end
   end
 
   pkg.install do

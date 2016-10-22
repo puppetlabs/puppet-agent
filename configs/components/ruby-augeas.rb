@@ -5,7 +5,7 @@ component "ruby-augeas" do |pkg, settings, platform|
 
   pkg.replaces 'pe-ruby-augeas'
 
-  pkg.build_requires "ruby"
+  pkg.build_requires "ruby-#{settings[:ruby_version]}"
   pkg.build_requires "augeas"
 
   pkg.environment "PATH" => "$$PATH:/opt/pl-build-tools/bin:/usr/local/bin:/opt/csw/bin:/usr/ccs/bin:/usr/sfw/bin"

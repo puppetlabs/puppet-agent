@@ -3,7 +3,7 @@ component "rubygem-win32-security" do |pkg, settings, platform|
   pkg.md5sum "97c4b971ea19ca48cea7dec1d21d506a"
   pkg.url "https://rubygems.org/downloads/win32-security-#{pkg.get_version}.gem"
 
-  pkg.build_requires "ruby"
+  pkg.build_requires "ruby-#{settings[:ruby_version]}"
 
   # Because we are cross-compiling on sparc, we can't use the rubygems we just built.
   # Instead we use the host gem installation and override GEM_HOME. Yay?
