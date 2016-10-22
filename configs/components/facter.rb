@@ -14,7 +14,7 @@ component "facter" do |pkg, settings, platform|
 
   pkg.replaces 'pe-facter'
 
-  pkg.build_requires "ruby"
+  pkg.build_requires "ruby-#{settings[:ruby_version]}"
   pkg.build_requires 'openssl'
   pkg.build_requires 'leatherman'
   pkg.build_requires 'runtime'
@@ -193,6 +193,7 @@ component "facter" do |pkg, settings, platform|
         -DLEATHERMAN_GETTEXT=OFF \
         -DCMAKE_VERBOSE_MAKEFILE=ON \
         -DCMAKE_PREFIX_PATH=#{settings[:prefix]} \
+        -DCMAKE_INSTALL_RPATH=#{settings[:libdir]} \
         #{special_flags} \
         -DBOOST_STATIC=ON \
         -DYAMLCPP_STATIC=ON \
@@ -205,20 +206,8 @@ component "facter" do |pkg, settings, platform|
         ."]
   end
 
-  # Make test will explode horribly in a cross-compile situation
-  # Tests will be skipped on AIX until they are expected to pass
-  if platform.is_cross_compiled? || platform.is_aix?
-    test = ":"
-  else
-    test = "#{make} test ARGS=-V"
-  end
-
   pkg.build do
-    # Until a `check` target exists, run tests are part of the build.
-    [
-      "#{make} -j$(shell expr $(shell #{platform[:num_cores]}) + 1)",
-      test
-    ]
+    ["#{make} -j$(shell expr $(shell #{platform[:num_cores]}) + 1)"]
   end
 
   pkg.install do
@@ -231,15 +220,24 @@ component "facter" do |pkg, settings, platform|
     ldd = "ldd"
   end
 
+  tests = []
   unless platform.is_windows? || platform.is_cross_compiled_linux? || platform.architecture == 'sparc'
-    pkg.check do
-      [
-        # Check that we're not linking against system libstdc++ and libgcc_s
-        "#{ldd} lib/libfacter.so",
-        "[ $$(#{ldd} lib/libfacter.so | grep -c libstdc++) -eq 0 ] || #{ldd} lib/libfacter.so | grep libstdc++ | grep -v ' /lib'",
-        "[ $$(#{ldd} lib/libfacter.so | grep -c libgcc_s) -eq 0 ] || #{ldd} lib/libfacter.so | grep libgcc_s | grep -v ' /lib'"
-      ]
-    end
+    # Check that we're not linking against system libstdc++ and libgcc_s
+    tests = [
+      "#{ldd} lib/libfacter.so",
+      "[ $$(#{ldd} lib/libfacter.so | grep -c libstdc++) -eq 0 ] || #{ldd} lib/libfacter.so | grep libstdc++ | grep -v ' /lib'",
+      "[ $$(#{ldd} lib/libfacter.so | grep -c libgcc_s) -eq 0 ] || #{ldd} lib/libfacter.so | grep libgcc_s | grep -v ' /lib'",
+    ]
+  end
+
+  # Make test will explode horribly in a cross-compile situation
+  # Tests will be skipped on AIX until they are expected to pass
+  if !platform.is_cross_compiled? && !platform.is_aix?
+    tests << "LD_LIBRARY_PATH=#{settings[:libdir]} LIBPATH=#{settings[:libdir]} #{make} test ARGS=-V"
+  end
+
+  pkg.check do
+    tests
   end
 
   pkg.install_file ".gemspec", "#{settings[:gem_home]}/specifications/#{pkg.get_name}.gemspec"
