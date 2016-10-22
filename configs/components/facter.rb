@@ -125,7 +125,7 @@ component "facter" do |pkg, settings, platform|
 
   # curl is only used for compute clusters (GCE, EC2); so rpm, deb, and Windows
   skip_curl = 'ON'
-  if (platform.is_linux? && !platform.is_huaweios?) || platform.is_windows?
+  if (platform.is_linux? && !platform.is_huaweios? && !platform.is_cisco_wrlinux?) || platform.is_windows?
     pkg.build_requires "curl"
     skip_curl = 'OFF'
   end
