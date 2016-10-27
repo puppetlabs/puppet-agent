@@ -62,6 +62,7 @@ component "cpp-pcp-client" do |pkg, settings, platform|
           -DCMAKE_VERBOSE_MAKEFILE=ON \
           -DCMAKE_PREFIX_PATH=#{settings[:prefix]} \
           -DCMAKE_INSTALL_PREFIX=#{settings[:prefix]} \
+          -DCMAKE_INSTALL_RPATH=#{settings[:libdir]} \
           -DCMAKE_SYSTEM_PREFIX_PATH=#{settings[:prefix]} \
           -DBOOST_STATIC=ON \
           ."
