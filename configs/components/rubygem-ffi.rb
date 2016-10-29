@@ -10,7 +10,7 @@ component "rubygem-ffi" do |pkg, settings, platform|
       pkg.url "https://rubygems.org/downloads/ffi-#{pkg.get_version}-x86-mingw32.gem"
     end
 
-    pkg.build_requires "ruby"
+    pkg.build_requires "ruby-#{settings[:ruby_version]}"
 
     # Because we are cross-compiling on sparc, we can't use the rubygems we just built.
     # Instead we use the host gem installation and override GEM_HOME. Yay?

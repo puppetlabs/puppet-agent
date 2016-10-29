@@ -1,0 +1,84 @@
+From 25417e02b6faa0b78633038da436f25b35ab6c22 Mon Sep 17 00:00:00 2001
+From: Geoff Nichols <geoff.nichols@puppetlabs.com>
+Date: Mon, 11 May 2015 17:12:43 -0700
+Subject: [PATCH] AIX disable tests for Ruby bugs 2729 and 5234
+
+Prior to this commit, AIX ruby 2.1 builds sometimes fail
+with a "temporal unlocking already unlocked string" error
+message during "make test".
+
+These failures seems to likely be spurious, since a
+manual "make test" - run in the same build area as the failure -
+completes successfully.
+
+This commit disables the tests for Ruby bugs 2729 and 5234.
+---
+ bootstraptest/test_flow.rb | 52 +++++++++++++++++++++++-----------------------
+ 1 file changed, 26 insertions(+), 26 deletions(-)
+
+diff --git a/bootstraptest/test_flow.rb b/bootstraptest/test_flow.rb
+index 0390062..b4fcb4d 100644
+--- a/bootstraptest/test_flow.rb
++++ b/bootstraptest/test_flow.rb
+@@ -518,32 +518,32 @@ assert_equal %Q{ENSURE\n}, %q{
+   end
+   e = Bug2728.new
+ }],
+- ['[ruby-core:28132]', %q{
+-  class Bug2729
+-    include Enumerable
+-    def each
+-      begin
+-        yield :foo
+-      ensure
+-        proc {}.call
+-      end
+-    end
+-  end
+-  e = Bug2729.new
+-}],
+- ['[ruby-core:39125]', %q{
+-  class Bug5234
+-    include Enumerable
+-    def each
+-      begin
+-        yield :foo
+-      ensure
+-        proc
+-      end
+-    end
+-  end
+-  e = Bug5234.new
+-}],
++# ['[ruby-core:28132]', %q{
++#  class Bug2729
++#    include Enumerable
++#    def each
++#      begin
++#        yield :foo
++#      ensure
++#        proc {}.call
++#      end
++#    end
++#  end
++#  e = Bug2729.new
++#}],
++# ['[ruby-core:39125]', %q{
++#  class Bug5234
++#    include Enumerable
++#    def each
++#      begin
++#        yield :foo
++#      ensure
++#        proc
++#      end
++#    end
++#  end
++#  e = Bug5234.new
++#}],
+  ['[ruby-dev:45656]', %q{
+   class Bug6460
+     include Enumerable
+-- 
+2.3.2 (Apple Git-55)
+

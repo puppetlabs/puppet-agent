@@ -1,4 +1,4 @@
-component "ruby" do |pkg, settings, platform|
+component "ruby-2.1.9" do |pkg, settings, platform|
   pkg.version "2.1.9"
   pkg.md5sum "d9d2109d3827789344cc3aceb8e1d697"
   pkg.url "https://cache.ruby-lang.org/pub/ruby/2.1/ruby-#{pkg.get_version}.tar.gz"
@@ -6,7 +6,7 @@ component "ruby" do |pkg, settings, platform|
   if platform.is_windows?
     pkg.add_source "http://buildsources.delivery.puppetlabs.net/windows/elevate/elevate.exe", sum: "bd81807a5c13da32dd2a7157f66fa55d"
     pkg.add_source "file://resources/files/windows/elevate.exe.config", sum: "a5aecf3f7335fa1250a0f691d754d561"
-    pkg.add_source "file://resources/files/ruby/windows_ruby_gem_wrapper.bat"
+    pkg.add_source "file://resources/files/ruby_219/windows_ruby_gem_wrapper.bat"
   end
 
   pkg.replaces 'pe-ruby'
@@ -17,7 +17,7 @@ component "ruby" do |pkg, settings, platform|
   pkg.replaces 'pe-ruby-ldap'
   pkg.replaces 'pe-rubygem-gem2rpm'
 
-  base = 'resources/patches/ruby'
+  base = 'resources/patches/ruby_219'
   pkg.apply_patch "#{base}/libyaml_cve-2014-9130.patch"
 
   # These are a pretty smelly hack, and they run the risk of letting tests
@@ -100,7 +100,7 @@ component "ruby" do |pkg, settings, platform|
 
   # Cross-compiles require a hand-built rbconfig from the target system
   if platform.is_cross_compiled_linux? || platform.is_solaris? || platform.is_aix?
-    pkg.add_source "file://resources/files/rbconfig-#{settings[:platform_triple]}.rb"
+    pkg.add_source "file://resources/files/ruby_219/rbconfig/rbconfig-#{settings[:platform_triple]}.rb"
     pkg.build_requires 'runtime' if platform.is_cross_compiled_linux?
   end
 

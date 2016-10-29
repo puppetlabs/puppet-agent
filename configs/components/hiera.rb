@@ -1,7 +1,7 @@
 component "hiera" do |pkg, settings, platform|
   pkg.load_from_json('configs/components/hiera.json')
 
-  pkg.build_requires "ruby"
+  pkg.build_requires "ruby-#{settings[:ruby_version]}"
   pkg.build_requires "rubygem-deep-merge"
 
   pkg.replaces 'hiera', '2.0.0'
