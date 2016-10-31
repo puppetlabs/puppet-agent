@@ -1,7 +1,7 @@
 component "puppet" do |pkg, settings, platform|
   pkg.load_from_json("configs/components/puppet.json")
 
-  pkg.build_requires "ruby"
+  pkg.build_requires "ruby-#{settings[:ruby_version]}"
   pkg.build_requires "facter"
   pkg.build_requires "hiera"
 

@@ -86,6 +86,7 @@ project "puppet-agent" do |proj|
     proj.setting(:libdir, File.join(proj.prefix, "lib"))
   end
 
+  proj.setting(:ruby_version, "2.1.9")
   proj.setting(:gem_home, File.join(proj.libdir, "ruby", "gems", "2.1.0"))
   proj.setting(:ruby_vendordir, File.join(proj.libdir, "ruby", "vendor_ruby"))
 
@@ -206,13 +207,18 @@ project "puppet-agent" do |proj|
   proj.component "augeas" unless platform.is_windows?
   # Curl is only needed for compute clusters (GCE, EC2); so rpm, deb, and Windows
   proj.component "curl" if (platform.is_linux? && !platform.is_huaweios? && !platform.is_cisco_wrlinux?) || platform.is_windows?
-  proj.component "ruby"
+  proj.component "ruby-#{proj.ruby_version}"
   proj.component "nssm" if platform.is_windows?
   proj.component "ruby-stomp"
   proj.component "rubygem-deep-merge"
   proj.component "rubygem-net-ssh"
   proj.component "rubygem-hocon"
   proj.component "rubygem-semantic_puppet"
+  proj.component "rubygem-text"
+  proj.component "rubygem-locale"
+  proj.component "rubygem-gettext"
+  proj.component "rubygem-fast_gettext"
+  proj.component "rubygem-gettext-setup"
   if platform.is_windows?
     proj.component "rubygem-ffi"
     proj.component "rubygem-minitar"

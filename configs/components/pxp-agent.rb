@@ -65,6 +65,7 @@ component "pxp-agent" do |pkg, settings, platform|
           -DLEATHERMAN_GETTEXT=OFF \
           -DCMAKE_VERBOSE_MAKEFILE=ON \
           -DCMAKE_PREFIX_PATH=#{settings[:prefix]} \
+          -DCMAKE_INSTALL_RPATH=#{settings[:libdir]} \
           -DCMAKE_SYSTEM_PREFIX_PATH=#{settings[:prefix]} \
           -DMODULES_INSTALL_PATH=#{File.join(settings[:install_root], 'pxp-agent', 'modules')} \
           #{special_flags} \
