@@ -3,7 +3,7 @@ component "rubygem-win32-eventlog" do |pkg, settings, platform|
   pkg.md5sum "89b2e7dd8cc599168fa444e73c014c3d"
   pkg.url "https://rubygems.org/downloads/win32-eventlog-#{pkg.get_version}.gem"
 
-  pkg.build_requires "ruby"
+  pkg.build_requires "ruby-#{settings[:ruby_version]}"
 
   # Because we are cross-compiling on sparc, we can't use the rubygems we just built.
   # Instead we use the host gem installation and override GEM_HOME. Yay?
