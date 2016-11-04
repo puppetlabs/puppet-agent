@@ -260,10 +260,10 @@
     <String Id="WelcomeUpdateDlgDescriptionUpdate" Overridable="yes"><!-- _locID_text="WelcomeUpdateDlgDescriptionUpdate" _locComment="WelcomeUpdateDlgDescriptionUpdate" -->This will update [ProductName] to version [VersionUIString] and configure the system to fetch configurations every half hour.</String>
     <String Id="WelcomeDlgTitle" Overridable="yes"><!-- _locID_text="WelcomeDlgTitle" _locComment="WelcomeDlgTitle" -->{\WixUI_Font_Bigger}Welcome to the [ProductName] Setup Wizard</String>
 
-    <String Id="WarningDlg_Title" Overridable="yes"><!-- _locID_text="WarningDlg_Title" _locComment="WarningDlg_Title" -->[ProductName] Setup</String>
-    <String Id="WarningDlgBitmap" Overridable="yes"><!-- _locID_text="WarningDlgBitmap" _locComment="WarningDlgBitmap" -->WixUI_Bmp_Dialog</String>
-    <String Id="WarningDlgDescription" Overridable="yes"><!-- _locID_text="WarningDlgDescription" _locComment="WarningDlgDescription" -->Microsoft end of support for Windows Server 2003 / 2003R2 is July 14, 2015. The next version of [ProductName] won't support Windows 2003 / 2003R2. &#xD;&#xA;&#xD;&#xA;http://links.puppetlabs.com/deprecate-windows-2003</String>
-    <String Id="WarningDlgTitle" Overridable="yes"><!-- _locID_text="WarningDlgTitle" _locComment="WarningDlgTitle" -->{\WixUI_Font_Bigger}Operating System Compatibility Warning</String>
+    <String Id="Puppet32bitWarningDlg_Title" Overridable="yes"><!-- _locID_text="Puppet32bitWarningDlg_Title" _locComment="Puppet32bitWarningDlg_Title" -->[ProductName] Setup</String>
+    <String Id="Puppet32bitWarningDlgBitmap" Overridable="yes"><!-- _locID_text="Puppet32bitWarningDlgBitmap" _locComment="Puppet32bitWarningDlgBitmap" -->WixUI_Bmp_Dialog</String>
+    <String Id="Puppet32bitWarningDlgDescription" Overridable="yes"><!-- _locID_text="Puppet32bitWarningDlgDescription" _locComment="Puppet32bitWarningDlgDescription" -->By end of year 2016, running 32-bit Puppet agent on a 64-bit Windows system will be deprecated. Please update your Puppet agent installation to the 64-bit platform by December 31, 2016.</String>
+    <String Id="Puppet32bitWarningDlgTitle" Overridable="yes"><!-- _locID_text="Puppet32bitWarningDlgTitle" _locComment="Puppet32bitWarningDlgTitle" -->{\WixUI_Font_Bigger}Operating System Compatibility Warning</String>
 
     <String Id="WelcomeEulaDlg_Title" Overridable="yes"><!-- _locID_text="WelcomeEulaDlg_Title" _locComment="WelcomeEulaDlg_Title" -->[ProductName] Setup</String>
     <String Id="WelcomeEulaDlgBitmap" Overridable="yes"><!-- _locID_text="WelcomeEulaDlgBitmap" _locComment="WelcomeEulaDlgBitmap" -->WixUI_Bmp_Dialog</String>
