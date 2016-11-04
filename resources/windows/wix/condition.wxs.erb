@@ -8,15 +8,21 @@
     <ComponentGroup Id="FragmentCondition"/>
 
     <%- if @platform.architecture == "x64" -%>
-      <!-- http://wixtoolset.org/documentation/manual/v3/howtos/redistributables_and_install_checks/block_install_on_os.html
-        -->
+      <!-- http://wixtoolset.org/documentation/manual/v3/howtos/redistributables_and_install_checks/block_install_on_os.html -->
       <Condition Message="<%= settings[:product_name] %> is no longer supported on Windows Server 2003.">
         <![CDATA[Installed OR (VersionNT64 >= 600)]]>
       </Condition>
     <%- else %>
+      <!-- http://wixtoolset.org/documentation/manual/v3/howtos/redistributables_and_install_checks/block_install_on_os.html -->
       <Condition Message="<%= settings[:product_name] %> is no longer supported on Windows Server 2003.">
         <![CDATA[Installed OR (VersionNT >= 600)]]>
       </Condition>
+
+      <!--
+      <Condition Message="32 bit <%= settings[:product_name] %> is no longer supported on 64 bit Windows Operating Systems.">
+          <![CDATA[Installed OR VersionNT64]]>
+      </Condition>
+      -->
     <%- end -%>
 
     </Fragment>
