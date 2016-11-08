@@ -127,7 +127,7 @@ Puppet agent is licensed under the [Apache-2.0](LICENSE) license.
 
 Maintainers
 ---
-The Release and Client Engineering teams at Puppet Labs
+See [MAINTAINERS](MAINTAINERS)
 
 Running Tests
 ---
