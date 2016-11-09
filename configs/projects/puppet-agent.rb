@@ -1,6 +1,11 @@
 project "puppet-agent" do |proj|
   platform = proj.get_platform
 
+  # (PA-678) pe-r10k versions later than 2.5.0 ship gettext gems.
+  # Since we also ship those gems as part of puppet-agent
+  # at present, we need to conflict with pe-r10k > 2.5.0
+  proj.conflicts "pe-r10k", "2.5.0"
+
   # Project level settings our components will care about
   if platform.is_windows?
     proj.setting(:company_name, "Puppet Inc")
