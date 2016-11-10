@@ -3,6 +3,10 @@ platform "osx-10.12-x86_64" do |plat|
   plat.servicedir '/Library/LaunchDaemons'
   plat.codename "sierra"
 
+  plat.provision_with 'export HOMEBREW_NO_AUTO_UPDATE=true'
+  plat.provision_with 'export HOMEBREW_NO_EMOJI=true'
+  plat.provision_with 'export HOMEBREW_VERBOSE=true'
+
   plat.provision_with 'curl http://pl-build-tools.delivery.puppetlabs.net/osx/homebrew_sierra.tar.gz | tar -x --strip 1 -C /usr/local -f -'
   plat.provision_with 'ssh-keyscan github.delivery.puppetlabs.net >> ~/.ssh/known_hosts; /usr/local/bin/brew tap puppetlabs/brew-build-tools gitmirror@github.delivery.puppetlabs.net:puppetlabs-homebrew-build-tools'
   plat.provision_with '/usr/local/bin/brew tap-pin puppetlabs/brew-build-tools'
