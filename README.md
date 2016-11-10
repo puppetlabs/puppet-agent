@@ -8,6 +8,7 @@ The Puppet Agent
  * Installer plugin for OSX
  * License
  * Maintainers
+ * Running Tests
 
 Overview
 ---
@@ -128,3 +129,6 @@ Maintainers
 ---
 The Release and Client Engineering teams at Puppet Labs
 
+Running Tests
+---
+See [Acceptance README](acceptance/README)
