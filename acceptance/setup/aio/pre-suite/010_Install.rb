@@ -1,43 +1,42 @@
 require 'puppet/acceptance/common_utils'
-require 'puppet/acceptance/install_utils'
-
-extend Puppet::Acceptance::InstallUtils
 
 test_name "Install Packages"
 
 step "Install puppet-agent..." do
   opts = {
-    :puppet_collection    => 'PC1',
-    :puppet_agent_sha     => ENV['SHA'],
-    :puppet_agent_version => ENV['SUITE_VERSION'] || ENV['SHA']
+    :puppet_agent_version => ENV['SHA'],
+    :default_action => 'gem_install'
   }
   agents.each do |agent|
-    next if agent == master # Avoid SERVER-528
-    install_puppet_agent_dev_repo_on(agent, opts)
+    next if agent == master
+    if ENV['TESTING_RELEASED_PACKAGES']
+      # installs both release repo and agent package
+      install_puppet_agent_on(agent, opts)
+    else
+      opts.merge!({
+        :dev_builds_url => ENV['AGENT_DOWNLOAD_URL'],
+        :puppet_agent_sha => ENV['SHA']
+      })
+      # installs both development repo and agent package
+      install_puppet_agent_dev_repo_on(agent, opts)
+    end
   end
 end
 
-MASTER_PACKAGES = {
-  :redhat => [
-    'puppetserver',
-  ],
-  :debian => [
-    'puppetserver',
-  ],
-}
-
 step "Install puppetserver..." do
-  if ENV['SERVER_VERSION']
-    install_puppetlabs_dev_repo(master, 'puppetserver', ENV['SERVER_VERSION'])
-    install_puppetlabs_dev_repo(master, 'puppet-agent', ENV['SHA'])
-    master.install_package('puppetserver')
+  if ENV['TESTING_RELEASED_PACKAGES']
+    # unlike the install_puppet_agent_* beaker methods,
+    # install_puppetlabs_release_repo_on does not use pc1 by default. Have to
+    # supply pc1 arg to install from pc1 rather than latest in pre-puppet
+    # collection repos which was version 1.2.0.
+    install_puppetlabs_release_repo_on(master, 'pc1')
   else
-    # beaker can't install puppetserver from nightlies (BKR-673)
-    repo_configs_dir = 'repo-configs'
-    install_repos_on(master, 'puppetserver', 'nightly', repo_configs_dir)
-    install_repos_on(master, 'puppet-agent', ENV['SHA'], repo_configs_dir)
-    install_packages_on(master, MASTER_PACKAGES)
+    # the dev repos have only a single package, so we need one for both server
+    # and agent to satisfy server's dep on agent
+    install_puppetlabs_dev_repo(master, 'puppetserver', ENV['SERVER_VERSION'], nil, :dev_builds_url => ENV['SERVER_DOWNLOAD_URL'])
+    install_puppetlabs_dev_repo(master, 'puppet-agent', ENV['SHA'], nil, :dev_builds_url => ENV['AGENT_DOWNLOAD_URL'])
   end
+  master.install_package('puppetserver')
 end
 
 # make sure install is sane, beaker has already added puppet and ruby
@@ -65,5 +64,3 @@ if diff < 60000
 else
   logger.warn "Host times vary #{diff} ms, tests may fail"
 end
-
-configure_gem_mirror(hosts)
