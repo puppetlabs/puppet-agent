@@ -257,6 +257,7 @@ project "puppet-agent" do |proj|
 
   # Components only applicable on HuaweiOS
   if platform.is_huaweios?
+    proj.component "rubygem-net-ssh-telnet2"
     proj.component "rubygem-net-scp"
     proj.component "rubygem-mini_portile2"
     proj.component "rubygem-pkg-config"
