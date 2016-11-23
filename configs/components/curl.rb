@@ -10,6 +10,7 @@ component 'curl' do |pkg, settings, platform|
     pkg.build_requires 'runtime'
     pkg.environment "CC" => "/opt/pl-build-tools/bin/#{settings[:platform_triple]}-gcc"
     pkg.environment "PKG_CONFIG_PATH" => "/opt/puppetlabs/puppet/lib/pkgconfig"
+    pkg.environment "PATH" => "/opt/pl-build-tools/bin:$$PATH"
   end
 
   if platform.is_windows?
