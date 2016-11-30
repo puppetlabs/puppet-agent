@@ -4,7 +4,7 @@ HOSTS:
     roles:
       - master
     platform: el-7-x86_64
-    hypervisor: vcloud
+    hypervisor: vmpooler
     template: redhat-7-x86_64
   huawei-ce6850-2-debian-vm-eth0.ops.puppetlabs.net:
     roles:

@@ -4,7 +4,7 @@ HOSTS:
     roles:
       - master
     platform: el-7-x86_64
-    hypervisor: vcloud
+    hypervisor: vmpooler
     template: redhat-7-x86_64
   pe-aix-53-acceptance:
     roles:
