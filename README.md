@@ -8,6 +8,7 @@ The Puppet Agent
  * Installer plugin for OSX
  * License
  * Maintainers
+ * Running Tests
 
 Overview
 ---
@@ -126,5 +127,8 @@ Puppet agent is licensed under the [Apache-2.0](LICENSE) license.
 
 Maintainers
 ---
-The Release and Client Engineering teams at Puppet Labs
+See [MAINTAINERS](MAINTAINERS)
 
+Running Tests
+---
+See [Acceptance README](acceptance/README)
