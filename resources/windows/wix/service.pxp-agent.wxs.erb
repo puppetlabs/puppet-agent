@@ -22,7 +22,7 @@
                         Type="ownProcess"
                         ErrorControl="normal"
                         Vital="yes" />
-        <!-- Various registry keys documented at https://nssm.cc/usage -->
+        <!-- Various registry keys documented at https://nssm.cc/usage and https://github.com/kirillkovalenko/nssm -->
         <RegistryKey Root="HKLM" Key="SYSTEM\CurrentControlSet\Services\pxp-agent\Parameters">
           <RegistryValue Name="AppDirectory"
                          Value="[INSTALLDIR]pxp-agent\bin"
@@ -37,9 +37,13 @@
                          Value="PATH=[INSTALLDIR]pxp-agent\bin;[INSTALLDIR]puppet\bin;[INSTALLDIR]sys\ruby\bin;%PATH%"
                          Type="multiString"
                          Action="append" />
-          <!-- Skip responding to WM_QUIT and WM_CLOSE -->
+          <!-- Skip responding to WM_QUIT and WM_CLOSE; don't use TerminateProcess to prevent killing the entire process tree (PCP-276) -->
           <RegistryValue Name="AppStopMethodSkip"
-                         Value="6"
+                         Value="14"
+                         Type="integer" />
+          <!-- Set the flag for not killing the entire process tree (PCP-276) -->
+          <RegistryValue Name="AppKillProcessTree"
+                         Value="0"
                          Type="integer" />
           <RegistryKey Key="AppExit">
             <!-- Stop the service completely on exit(2) (Invalid configuration) otherwise restart with NSSM service throttling -->
