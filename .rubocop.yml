@@ -3,6 +3,7 @@ AllCops:
     - 'bin/**/*.rb'
     - 'configs/**/*.rb'
   Exclude:
+    - 'acceptance/**/*'
     - 'resources/**/*.rb'
     - 'ext/**/*'
     - 'vendor/**/*'
