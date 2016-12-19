@@ -4,6 +4,10 @@ component "puppet" do |pkg, settings, platform|
   pkg.build_requires "ruby-#{settings[:ruby_version]}"
   pkg.build_requires "facter"
   pkg.build_requires "hiera"
+  # Used to specify default directories when installing puppet
+  if platform.is_windows?
+    pkg.build_requires "rubygem-win32-dir"
+  end
 
   pkg.replaces 'puppet', '4.0.0'
   pkg.provides 'puppet', '4.0.0'
