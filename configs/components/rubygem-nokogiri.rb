@@ -9,7 +9,7 @@ component "rubygem-nokogiri" do |pkg, settings, platform|
     pkg.md5sum "8a783bdda33cf5f10afe84cf6fd8f28c"
   else
     pkg.url "https://rubygems.org/downloads/nokogiri-#{pkg.get_version}.gem"
-    pkg.md5sum "3e2169ebd67863a8a992289e2a887366"
+    pkg.md5sum "51402a536f389bfcef0ff1600b8acff5"
   end
 
   pkg.build_requires "ruby"
