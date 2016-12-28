@@ -21,7 +21,7 @@ component 'curl' do |pkg, settings, platform|
   end
 
   pkg.configure do
-    ["CFLAGS='#{settings[:cflags]}' \
+    ["CPPFLAGS='#{settings[:cppflags]}' \
       LDFLAGS='#{settings[:ldflags]}' \
      ./configure --prefix=#{settings[:prefix]} \
         --with-ssl=#{settings[:prefix]} \
