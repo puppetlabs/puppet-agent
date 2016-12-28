@@ -170,7 +170,8 @@ project "puppet-agent" do |proj|
 
   # Define default CFLAGS and LDFLAGS for most platforms, and then
   # tweak or adjust them as needed.
-  proj.setting(:cflags, "-I#{proj.includedir} -I/opt/pl-build-tools/include")
+  proj.setting(:cppflags, "-I#{proj.includedir} -I/opt/pl-build-tools/include")
+  proj.setting(:cflags, "#{proj.cppflags}")
   proj.setting(:ldflags, "-L#{proj.libdir} -L/opt/pl-build-tools/lib -Wl,-rpath=#{proj.libdir}")
 
   # Platform specific overrides or settings, which may override the defaults
@@ -179,7 +180,8 @@ project "puppet-agent" do |proj|
     proj.setting(:gcc_root, "C:/tools/mingw#{arch}")
     proj.setting(:gcc_bindir, "#{proj.gcc_root}/bin")
     proj.setting(:tools_root, "C:/tools/pl-build-tools")
-    proj.setting(:cflags, "-I#{proj.tools_root}/include -I#{proj.gcc_root}/include -I#{proj.includedir}")
+    proj.setting(:cppflags, "-I#{proj.tools_root}/include -I#{proj.gcc_root}/include -I#{proj.includedir}")
+    proj.setting(:cflags, "#{proj.cppflags}")
     proj.setting(:ldflags, "-L#{proj.tools_root}/lib -L#{proj.gcc_root}/lib -L#{proj.libdir}")
     proj.setting(:cygwin, "nodosfilewarning winsymlinks:native")
   end
@@ -191,7 +193,8 @@ project "puppet-agent" do |proj|
     # Additionally, OS X doesn't use RPATH for linking. We shouldn't
     # define it or try to force it in the linker, because this might
     # break gcc or clang if they try to use the RPATH values we forced.
-    proj.setting(:cflags, "-march=core2 -msse4 -I#{proj.includedir}")
+    proj.setting(:cppflags, "-I#{proj.includedir}")
+    proj.setting(:cflags, "-march=core2 -msse4 #{proj.cppflags}")
     proj.setting(:ldflags, "-L#{proj.libdir} ")
   end
 
