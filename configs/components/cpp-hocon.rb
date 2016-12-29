@@ -5,9 +5,16 @@ component "cpp-hocon" do |pkg, settings, platform|
 
   make = platform[:make]
 
-  # cmake on OSX is provided by brew
-  # a toolchain is not currently required for OSX since we're building with clang.
-  if platform.is_osx?
+  boost_static = "-DBOOST_STATIC=ON"
+
+  if platform.name =~ /^debian-9/
+    # These platforms use the OS vendor provided toolchain and build tools
+    toolchain = "-DCMAKE_TOOLCHAIN_FILE=$(workdir)/debian-native-toolchain.cmake.txt" if platform.is_deb?
+    boost_static = "-DBOOST_STATIC=OFF"
+    cmake = "cmake"
+  elsif platform.is_osx?
+    # cmake on OSX is provided by brew
+    # a toolchain is not currently required for OSX since we're building with clang.
     toolchain = ""
     cmake = "/usr/local/bin/cmake"
     special_flags = "-DCMAKE_CXX_FLAGS='#{settings[:cflags]}'"
@@ -45,7 +52,7 @@ component "cpp-hocon" do |pkg, settings, platform|
         -DCMAKE_PREFIX_PATH=#{settings[:prefix]} \
         -DCMAKE_INSTALL_PREFIX=#{settings[:prefix]} \
         #{special_flags} \
-        -DBOOST_STATIC=ON \
+        #{boost_static} \
         ."]
   end
 

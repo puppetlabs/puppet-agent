@@ -5,8 +5,11 @@ component "openssl" do |pkg, settings, platform|
 
   pkg.replaces 'pe-openssl'
 
-  # Use our toolchain on linux systems (it's not available on osx)
-  if platform.is_cross_compiled_linux?
+  if platform.name =~ /^debian-9/
+    # These platforms use the OS vendor provided toolchain and build tools
+    pkg.build_requires 'binutils'
+    pkg.build_requires 'gcc'
+  elsif platform.is_cross_compiled_linux?
     pkg.build_requires "pl-binutils-#{platform.architecture}"
     pkg.build_requires "pl-gcc-#{platform.architecture}"
     pkg.build_requires 'runtime'
