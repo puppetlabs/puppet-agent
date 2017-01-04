@@ -59,8 +59,8 @@ pe_platforms:
   - ubuntu-10.04-i386
 gpg_name: 'info@puppetlabs.com'
 gpg_key: '7F438280EF8D349F'
-deb_targets: 'lucid-i386 lucid-amd64 precise-i386 precise-amd64 squeeze-i386 squeeze-amd64 trusty-i386 trusty-amd64 wheezy-i386 wheezy-amd64 xenial-i386 xenial-amd64'
-rpm_targets: 'el-5-i386 el-5-x86_64 el-6-i386 el-6-x86_64 el-7-x86_64 sles-11-i386 sles-11-x86_64 sles-12-x86_64'
+deb_targets: 'precise-amd64 trusty-amd64 xenial-amd64'
+rpm_targets: 'el-6-x86_64 el-7-x86_64 sles-11-x86_64 sles-12-x86_64'
 sign_tar: FALSE
 osx_signing_cert: "Developer ID Installer: PUPPET LABS, INC. (VKGLGN2B6Y)"
 osx_signing_keychain: "/Users/jenkins/Library/Keychains/signing.keychain"
