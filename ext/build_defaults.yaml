@@ -9,8 +9,6 @@ foss_platforms:
   - debian-7-i386
   - debian-8-amd64
   - debian-8-i386
-  - debian-9-amd64
-  - debian-9-i386
   - el-5-i386
   - el-5-x86_64
   - el-6-i386
