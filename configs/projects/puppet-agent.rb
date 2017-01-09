@@ -177,18 +177,9 @@ project "puppet-agent" do |proj|
 
   # Define default CFLAGS and LDFLAGS for most platforms, and then
   # tweak or adjust them as needed.
-  if platform.name =~ /^debian-9/
-    # These platforms use the OS vendor provided toolchain and build tools
-    proj.setting(:cppflags, "-I#{proj.includedir}")
-    proj.setting(:cflags, "#{proj.cppflags}")
-    proj.setting(:ldflags, "-L#{proj.libdir} -Wl,-rpath=#{proj.libdir}")
-  else
-    # Set defaults to make use toolchain and build tools packages built
-    # from pl-build-tools-vanagon: https://github.com/puppetlabs/pl-build-tools-vanagon
-    proj.setting(:cppflags, "-I#{proj.includedir} -I/opt/pl-build-tools/include")
-    proj.setting(:cflags, "#{proj.cppflags}")
-    proj.setting(:ldflags, "-L#{proj.libdir} -L/opt/pl-build-tools/lib -Wl,-rpath=#{proj.libdir}")
-  end
+  proj.setting(:cppflags, "-I#{proj.includedir} -I/opt/pl-build-tools/include")
+  proj.setting(:cflags, "#{proj.cppflags}")
+  proj.setting(:ldflags, "-L#{proj.libdir} -L/opt/pl-build-tools/lib -Wl,-rpath=#{proj.libdir}")
 
   # Platform specific overrides or settings, which may override the defaults
   if platform.is_windows?
@@ -267,9 +258,7 @@ project "puppet-agent" do |proj|
     proj.component "shellpath"
   end
 
-  # Require runtime for all platforms except those built with OS
-  # vendor provided toolchain and build tools
-  proj.component "runtime" unless platform.name =~ /^debian-9/
+  proj.component "runtime"
 
   # Needed to avoid using readline on solaris and aix
   if platform.is_solaris? || platform.is_aix?

@@ -18,15 +18,7 @@ component "pxp-agent" do |pkg, settings, platform|
 
   special_flags = " -DCMAKE_INSTALL_PREFIX=#{settings[:prefix]} "
 
-  if platform.name =~ /^debian-9/
-    # These platforms use the OS vendor provided toolchain and build tools
-    pkg.build_requires "gcc"
-    pkg.build_requires "cmake"
-    pkg.build_requires "libboost-all-dev" if platform.is_deb?
-
-    cmake = "cmake"
-    toolchain = "-DCMAKE_TOOLCHAIN_FILE=$(workdir)/debian-native-toolchain.cmake.txt" if platform.is_deb?
-  elsif platform.is_aix?
+  if platform.is_aix?
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-gcc-5.2.0-1.aix#{platform.os_version}.ppc.rpm"
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-cmake-3.2.3-2.aix#{platform.os_version}.ppc.rpm"
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-boost-1.58.0-1.aix#{platform.os_version}.ppc.rpm"

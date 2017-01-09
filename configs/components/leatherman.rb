@@ -1,14 +1,9 @@
 component "leatherman" do |pkg, settings, platform|
   pkg.load_from_json('configs/components/leatherman.json')
 
-  if platform.name =~ /^debian-9/
-    # These platforms use the OS vendor provided toolchain and build tools
-    pkg.build_requires "gcc"
-    pkg.build_requires "cmake"
-    pkg.build_requires "libboost-all-dev" if platform.is_deb?
+  make = platform[:make]
 
-    pkg.add_source "file://resources/files/debian-native-toolchain.cmake.txt" if platform.is_deb?
-  elsif platform.is_osx?
+  if platform.is_osx?
     pkg.build_requires "cmake"
     pkg.build_requires "boost"
   elsif platform.name =~ /solaris-10/
@@ -41,24 +36,14 @@ component "leatherman" do |pkg, settings, platform|
     use_curl = 'TRUE'
   end
 
-  make = platform[:make]
-  # Require runtime for all platforms except those built with OS
-  # vendor provided toolchain and build tools
-  pkg.build_requires "runtime" unless platform.name =~ /^debian-9/
+  pkg.build_requires "runtime"
   pkg.build_requires "ruby-#{settings[:ruby_version]}"
 
   ruby = "#{settings[:host_ruby]} -rrbconfig"
 
-  boost_static = "-DBOOST_STATIC=ON"
-
-  if platform.name =~ /^debian-9/
-    # These platforms use the OS vendor provided toolchain and build tools
-    toolchain = "-DCMAKE_TOOLCHAIN_FILE=$(workdir)/debian-native-toolchain.cmake.txt" if platform.is_deb?
-    boost_static = "-DBOOST_STATIC=OFF"
-    cmake = "cmake"
-  elsif platform.is_osx?
-    # cmake on OSX is provided by brew
-    # a toolchain is not currently required for OSX since we're building with clang.
+  # cmake on OSX is provided by brew
+  # a toolchain is not currently required for OSX since we're building with clang.
+  if platform.is_osx?
     toolchain = ""
     cmake = "/usr/local/bin/cmake"
     special_flags = "-DCMAKE_CXX_FLAGS='#{settings[:cflags]}'"
@@ -104,7 +89,7 @@ component "leatherman" do |pkg, settings, platform|
         -DCMAKE_INSTALL_RPATH=#{settings[:libdir]} \
         -DLEATHERMAN_SHARED=TRUE \
         #{special_flags} \
-        #{boost_static} \
+        -DBOOST_STATIC=ON \
         -DLEATHERMAN_USE_CURL=#{use_curl} \
         ."]
   end
