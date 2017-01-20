@@ -9,9 +9,8 @@ project "puppet-agent" do |proj|
   # (PA-621) puppetserver versions prior to 2.7.2 do not ship
   # up-to-date version of several gems that puppet depends on,
   # such as gettext-setup and hocon. We need to conflict with
-  # puppetserver < 2.7.2 and pe-puppetserver < 2017.1.0.3.
+  # puppetserver < 2.7.2.
   proj.conflicts "puppetserver", "2.7.2"
-  proj.conflicts "pe-puppetserver", "2017.1.0.3"
 
   # Project level settings our components will care about
   if platform.is_windows?
