@@ -61,6 +61,105 @@ pe_platforms:
   - solaris-11-sparc
   - ubuntu-10.04-amd64
   - ubuntu-10.04-i386
+platform_repos:
+  - name: aix-5.3-power
+    repo_location: repos/aix/5.3/**/ppc
+  - name: aix-6.1-power
+    repo_location: repos/aix/6.1/**/ppc
+  - name: aix-7.1-power
+    repo_location: repos/aix/7.1/**/ppc
+  - name: cumulus-amd64
+    repo_location: repos/apt/cumulus
+  - name: eos-4-i386
+    repo_location: repos/eos/4/**/i386
+  - name: el-4-i386
+    repo_location: repos/el/4/**/i386
+  - name: el-4-x86_64
+    repo_location: repos/el/4/**/x86_64
+  - name: el-5-i386
+    repo_location: repos/el/5/**/i386
+  - name: el-5-x86_64
+    repo_location: repos/el/5/**/x86_64
+  - name: el-6-i386
+    repo_location: repos/el/6/**/i386
+  - name: el-6-x86_64
+    repo_location: repos/el/6/**/x86_64
+  - name: el-6-s390x
+    repo_location: repos/el/6/**/s390x
+  - name: el-7-x86_64
+    repo_location: repos/el/7/**/x86_64
+  - name: el-7-s390x
+    repo_location: repos/el/7/**/s390x
+  - name: sles-10-i386
+    repo_location: repos/sles/10/**/i386
+  - name: sles-10-x86_64
+    repo_location: repos/sles/10/**/x86_64
+  - name: sles-11-s390x
+    repo_location: repos/sles/11/**/s390x
+  - name: sles-11-i386
+    repo_location: repos/sles/11/**/i386
+  - name: sles-11-x86_64
+    repo_location: repos/sles/11/**/x86_64
+  - name: sles-12-s390x
+    repo_location: repos/sles/12/**/s390x
+  - name: sles-12-x86_64
+    repo_location: repos/sles/12/**/x86_64
+  - name: fedora-22-i386
+    repo_location: repos/fedora/f22/**/i386
+  - name: fedora-22-x86_64
+    repo_location: repos/fedora/f22/**/x86_64
+  - name: fedora-23-i386
+    repo_location: repos/fedora/f23/**/i386
+  - name: fedora-23-x86_64
+    repo_location: repos/fedora/f23/**/x86_64
+  - name: fedora-24-i386
+    repo_location: repos/fedora/f24/**/i386
+  - name: fedora-24-x86_64
+    repo_location: repos/fedora/f24/**/x86_64
+  - name: debian-7-i386
+    repo_location: repos/apt/wheezy
+  - name: debian-7-amd64
+    repo_location: repos/apt/wheezy
+  - name: debian-8-i386
+    repo_location: repos/apt/jessie
+  - name: debian-8-amd64
+    repo_location: repos/apt/jessie
+  - name: ubuntu-10.04-i386
+    repo_location: repos/apt/lucid
+  - name: ubuntu-10.04-amd64
+    repo_location: repos/apt/lucid
+  - name: ubuntu-12.04-i386
+    repo_location: repos/apt/precise
+  - name: ubuntu-12.04-amd64
+    repo_location: repos/apt/precise
+  - name: ubuntu-14.04-i386
+    repo_location: repos/apt/trusty
+  - name: ubuntu-14.04-amd64
+    repo_location: repos/apt/trusty
+  - name: ubuntu-15.10-i386
+    repo_location: repos/apt/wily
+  - name: ubuntu-15.10-amd64
+    repo_location: repos/apt/wily
+  - name: ubuntu-16.04-i386
+    repo_location: repos/apt/xenial
+  - name: ubuntu-16.04-amd64
+    repo_location: repos/apt/xenial
+  - name: osx-10.9
+    repo_location: repos/apple/10.9/**/x86_64/*.dmg
+  - name: osx-10.10
+    repo_location: repos/apple/10.10/**/x86_64/*.dmg
+  - name: osx-10.11
+    repo_location: repos/apple/10.11/**/x86_64/*.dmg
+  - name: osx-10.12
+    repo_location: repos/apple/10.12/**/x86_64/*.dmg
+  - name: solaris-10-i386
+    repo_location: repos/solaris/10/**/*.i386.pkg.gz
+  - name: solaris-10-sparc
+    repo_location: repos/solaris/10/**/*.sparc.pkg.gz
+  - name: solaris-11-i386
+    repo_location: repos/solaris/11/**/*.i386.p5p
+  - name: solaris-11-sparc
+    repo_location: repos/solaris/11/**/*.sparc.p5p
 gpg_name: 'info@puppetlabs.com'
 gpg_key: '7F438280EF8D349F'
 deb_targets: 'precise-amd64 trusty-amd64 xenial-amd64'
