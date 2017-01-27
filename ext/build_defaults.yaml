@@ -116,6 +116,10 @@ platform_repos:
     repo_location: repos/fedora/f24/**/i386
   - name: fedora-24-x86_64
     repo_location: repos/fedora/f24/**/x86_64
+  - name: fedora-25-i386
+    repo_location: repos/fedora/f25/**/i386
+  - name: fedora-25-x86_64
+    repo_location: repos/fedora/f25/**/x86_64
   - name: debian-7-i386
     repo_location: repos/apt/wheezy
   - name: debian-7-amd64
