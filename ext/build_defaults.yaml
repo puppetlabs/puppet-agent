@@ -15,14 +15,11 @@ foss_platforms:
   - el-6-x86_64
   - el-7-x86_64
   - eos-4-i386
-  - fedora-f22-i386
-  - fedora-f22-x86_64
   - fedora-f23-i386
   - fedora-f23-x86_64
   - fedora-f24-i386
   - fedora-f24-x86_64
   - huaweios-6-powerpc
-  - osx-10.9-x86_64
   - osx-10.10-x86_64
   - osx-10.11-x86_64
   - sles-11-i386
@@ -32,8 +29,6 @@ foss_platforms:
   - ubuntu-12.04-i386
   - ubuntu-14.04-amd64
   - ubuntu-14.04-i386
-  - ubuntu-15.10-amd64
-  - ubuntu-15.10-i386
   - ubuntu-16.04-amd64
   - ubuntu-16.04-i386
   - windows-2012-x86
@@ -46,16 +41,12 @@ pe_platforms:
   - el-4-x86_64
   - el-6-s390x
   - el-7-s390x
-  - sles-10-i386
-  - sles-10-x86_64
   - sles-11-s390x
   - sles-12-s390x
   - solaris-10-i386
   - solaris-10-sparc
   - solaris-11-i386
   - solaris-11-sparc
-  - ubuntu-10.04-amd64
-  - ubuntu-10.04-i386
 platform_repos:
   - name: aix-5.3-power
     repo_location: repos/aix/5.3/**/ppc
@@ -85,10 +76,6 @@ platform_repos:
     repo_location: repos/el/7/**/x86_64
   - name: el-7-s390x
     repo_location: repos/el/7/**/s390x
-  - name: sles-10-i386
-    repo_location: repos/sles/10/**/i386
-  - name: sles-10-x86_64
-    repo_location: repos/sles/10/**/x86_64
   - name: sles-11-s390x
     repo_location: repos/sles/11/**/s390x
   - name: sles-11-i386
@@ -99,10 +86,6 @@ platform_repos:
     repo_location: repos/sles/12/**/s390x
   - name: sles-12-x86_64
     repo_location: repos/sles/12/**/x86_64
-  - name: fedora-22-i386
-    repo_location: repos/fedora/f22/**/i386
-  - name: fedora-22-x86_64
-    repo_location: repos/fedora/f22/**/x86_64
   - name: fedora-23-i386
     repo_location: repos/fedora/f23/**/i386
   - name: fedora-23-x86_64
@@ -119,10 +102,6 @@ platform_repos:
     repo_location: repos/apt/jessie
   - name: debian-8-amd64
     repo_location: repos/apt/jessie
-  - name: ubuntu-10.04-i386
-    repo_location: repos/apt/lucid
-  - name: ubuntu-10.04-amd64
-    repo_location: repos/apt/lucid
   - name: ubuntu-12.04-i386
     repo_location: repos/apt/precise
   - name: ubuntu-12.04-amd64
@@ -131,16 +110,10 @@ platform_repos:
     repo_location: repos/apt/trusty
   - name: ubuntu-14.04-amd64
     repo_location: repos/apt/trusty
-  - name: ubuntu-15.10-i386
-    repo_location: repos/apt/wily
-  - name: ubuntu-15.10-amd64
-    repo_location: repos/apt/wily
   - name: ubuntu-16.04-i386
     repo_location: repos/apt/xenial
   - name: ubuntu-16.04-amd64
     repo_location: repos/apt/xenial
-  - name: osx-10.9
-    repo_location: repos/apple/10.9/**/x86_64/*.dmg
   - name: osx-10.10
     repo_location: repos/apple/10.10/**/x86_64/*.dmg
   - name: osx-10.11
