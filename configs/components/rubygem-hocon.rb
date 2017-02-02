@@ -1,6 +1,6 @@
 component "rubygem-hocon" do |pkg, settings, platform|
-  pkg.version "0.9.3"
-  pkg.md5sum "af89595899c3b893787045039ff02ee0"
+  pkg.version "1.1.3"
+  pkg.md5sum "4f0f875f38bc501157b44b99e1da9f72"
   pkg.url "https://rubygems.org/downloads/hocon-#{pkg.get_version}.gem"
 
   pkg.build_requires "ruby-#{settings[:ruby_version]}"

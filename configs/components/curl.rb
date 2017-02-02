@@ -8,7 +8,7 @@ component 'curl' do |pkg, settings, platform|
 
   if platform.is_cross_compiled_linux?
     pkg.build_requires 'runtime'
-    pkg.environment "CC" => "/opt/pl-build-tools/bin/#{settings[:platform_triple]}-gcc"
+    pkg.environment "PATH" => "/opt/pl-build-tools/bin:$$PATH:#{settings[:bindir]}"
     pkg.environment "PKG_CONFIG_PATH" => "/opt/puppetlabs/puppet/lib/pkgconfig"
     pkg.environment "PATH" => "/opt/pl-build-tools/bin:$$PATH"
   end
@@ -21,7 +21,7 @@ component 'curl' do |pkg, settings, platform|
   end
 
   pkg.configure do
-    ["CFLAGS='#{settings[:cflags]}' \
+    ["CPPFLAGS='#{settings[:cppflags]}' \
       LDFLAGS='#{settings[:ldflags]}' \
      ./configure --prefix=#{settings[:prefix]} \
         --with-ssl=#{settings[:prefix]} \
