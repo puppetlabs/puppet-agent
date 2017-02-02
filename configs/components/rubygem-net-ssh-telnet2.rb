@@ -1,9 +1,10 @@
-component "rubygem-gettext-setup" do |pkg, settings, platform|
-  pkg.version "0.10"
-  pkg.md5sum "7723f66324fd7f2952d6649a5e4a2539"
-  pkg.url "https://rubygems.org/downloads/gettext-setup-#{pkg.get_version}.gem"
+component "rubygem-net-ssh-telnet2" do |pkg, settings, platform|
+  pkg.version "0.1.1"
+  pkg.md5sum "8fba7aada691a0c10caf5b74f57cfef2"
+  pkg.url "https://rubygems.org/downloads/net-ssh-telnet2-#{pkg.get_version}.gem"
 
-  pkg.build_requires "ruby-#{settings[:ruby_version]}"
+  pkg.build_requires "ruby"
+  pkg.build_requires "rubygem-net-ssh"
 
   # When cross-compiling, we can't use the rubygems we just built.
   # Instead we use the host gem installation and override GEM_HOME. Yay?
@@ -16,6 +17,6 @@ component "rubygem-gettext-setup" do |pkg, settings, platform|
   pkg.environment "RUBYLIB" => "#{settings[:ruby_vendordir]}:$$RUBYLIB"
 
   pkg.install do
-    ["#{settings[:gem_install]} gettext-setup-#{pkg.get_version}.gem"]
+    ["#{settings[:gem_install]} net-ssh-telnet2-#{pkg.get_version}.gem"]
   end
 end

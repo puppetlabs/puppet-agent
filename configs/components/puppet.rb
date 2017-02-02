@@ -4,6 +4,10 @@ component "puppet" do |pkg, settings, platform|
   pkg.build_requires "ruby-#{settings[:ruby_version]}"
   pkg.build_requires "facter"
   pkg.build_requires "hiera"
+  # Used to specify default directories when installing puppet
+  if platform.is_windows?
+    pkg.build_requires "rubygem-win32-dir"
+  end
 
   pkg.replaces 'puppet', '4.0.0'
   pkg.provides 'puppet', '4.0.0'
@@ -133,6 +137,7 @@ component "puppet" do |pkg, settings, platform|
         --vardir=#{vardir} \
         --rundir=#{piddir} \
         --logdir=#{logdir} \
+        --localedir=#{settings[:datadir]}/locale \
         --configs \
         --quick \
         --no-batch-files \
@@ -185,6 +190,7 @@ component "puppet" do |pkg, settings, platform|
 
   pkg.directory vardir, mode: '0750'
   pkg.directory configdir
+  pkg.directory File.join(settings[:datadir], "locale")
   pkg.directory settings[:puppet_codedir]
   pkg.directory File.join(settings[:puppet_codedir], "modules")
   pkg.directory File.join(settings[:prefix], "modules")
