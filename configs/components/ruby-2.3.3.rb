@@ -141,7 +141,7 @@ component "ruby-2.3.3" do |pkg, settings, platform|
     pkg.environment "optflags" => "-O2"
   end
 
-  if platform.is_osx?
+  if platform.is_macos?
     pkg.environment "optflags" => settings[:cflags]
   end
 

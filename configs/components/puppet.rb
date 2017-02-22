@@ -101,7 +101,7 @@ component "puppet" do |pkg, settings, platform|
     pkg.requires 'tar' unless platform.is_aix?
   end
 
-  if platform.is_osx?
+  if platform.is_macos?
     pkg.add_source("file://resources/files/osx_paths.txt", sum: "077ceb5e2f71cf733190a61d2fd221fb")
     pkg.install_file("../osx_paths.txt", "/etc/paths.d/puppet-agent")
   end

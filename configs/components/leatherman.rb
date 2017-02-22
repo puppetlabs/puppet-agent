@@ -3,7 +3,7 @@ component "leatherman" do |pkg, settings, platform|
 
   make = platform[:make]
 
-  if platform.is_osx?
+  if platform.is_macos?
     pkg.build_requires "cmake"
     pkg.build_requires "boost"
   elsif platform.name =~ /solaris-10/
@@ -43,7 +43,7 @@ component "leatherman" do |pkg, settings, platform|
 
   # cmake on OSX is provided by brew
   # a toolchain is not currently required for OSX since we're building with clang.
-  if platform.is_osx?
+  if platform.is_macos?
     toolchain = ""
     cmake = "/usr/local/bin/cmake"
     special_flags = "-DCMAKE_CXX_FLAGS='#{settings[:cflags]}'"

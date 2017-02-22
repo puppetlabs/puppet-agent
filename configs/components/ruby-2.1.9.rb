@@ -124,7 +124,7 @@ component "ruby-2.1.9" do |pkg, settings, platform|
     pkg.environment "LDFLAGS" => "-Wl,-rpath=/opt/puppetlabs/puppet/lib"
   end
 
-  if platform.is_osx?
+  if platform.is_macos?
     pkg.environment "optflags" => settings[:cflags]
   end
 
