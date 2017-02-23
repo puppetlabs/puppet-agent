@@ -50,12 +50,7 @@
 
         <RegistryKey
             Root="HKLM"
-            Key="SYSTEM\CurrentControlSet\services\eventlog\Application\Puppet"
-            Action="createAndRemoveOnUninstall">
-          <RegistryValue
-            Type="string"
-            Name="EventMessageFile"
-            Value="[INSTALLDIR]puppet\bin\puppetres.dll"/>
+            Key="SYSTEM\CurrentControlSet\services\eventlog\Application\Puppet">
           <RegistryValue
             Type="integer"
             Name="TypesSupported"
