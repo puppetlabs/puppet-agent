@@ -233,7 +233,7 @@ component "facter" do |pkg, settings, platform|
   # Make test will explode horribly in a cross-compile situation
   # Tests will be skipped on AIX until they are expected to pass
   if !platform.is_cross_compiled? && !platform.is_aix?
-    tests << "LD_LIBRARY_PATH=#{settings[:libdir]} LIBPATH=#{settings[:libdir]} #{make} test ARGS=-V"
+    tests << "LD_LIBRARY_PATH=#{settings[:libdir]}:#{ENV['LD_LIBRARY_PATH']} LIBPATH=#{settings[:libdir]} #{make} test ARGS=-V"
   end
 
   pkg.check do

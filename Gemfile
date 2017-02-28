@@ -15,3 +15,4 @@ gem 'packaging', '~> 0.4', :github => 'puppetlabs/packaging'
 gem 'rake'
 gem 'json'
 gem 'rubocop', "~> 0.34.2"
+gem 'rspec'
