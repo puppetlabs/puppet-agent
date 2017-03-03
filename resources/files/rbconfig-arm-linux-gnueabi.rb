@@ -2,8 +2,8 @@
 # This file was created by puppet-agent for Debian-8-armel.
 
 module RbConfig
-  RUBY_VERSION == "2.3.1" or
-    raise "ruby lib version (2.3.1) doesn't match executable version (#{RUBY_VERSION})"
+  RUBY_VERSION == "2.3.3" or
+    raise "ruby lib version (2.3.3) doesn't match executable version (#{RUBY_VERSION})"
 
   TOPDIR = File.dirname(__FILE__).chomp!("/lib/ruby/2.3.0/arm-linux-gnueabi")
   DESTDIR = '' unless defined? DESTDIR
@@ -197,7 +197,7 @@ module RbConfig
   CONFIG["build_cpu"] = "arm"
   CONFIG["build"] = "arm-unknown-linux-gnueabi"
   CONFIG["RUBY_RELEASE_DATE"] = "2016-04-01"
-  CONFIG["RUBY_PROGRAM_VERSION"] = "2.3.1"
+  CONFIG["RUBY_PROGRAM_VERSION"] = "2.3.3"
   CONFIG["target_alias"] = "arm-linux-gnueabi"
   CONFIG["host_alias"] = ""
   CONFIG["build_alias"] = "arm-linux-gnueabi"
