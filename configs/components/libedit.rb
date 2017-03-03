@@ -3,8 +3,6 @@ component 'libedit' do |pkg, settings, platform|
   pkg.md5sum '43cdb5df3061d78b5e9d59109871b4f6'
   pkg.url "http://thrysoee.dk/editline/libedit-#{pkg.get_version}.tar.gz"
 
-  pkg.environment "PATH" => "/opt/pl-build-tools/bin:$$PATH"
-
   if platform.is_solaris?
     pkg.environment "CC" => "/opt/pl-build-tools/bin/#{settings[:platform_triple]}-gcc"
   elsif platform.is_aix?

@@ -23,6 +23,7 @@ component "leatherman" do |pkg, settings, platform|
     pkg.build_requires "cmake"
     pkg.build_requires "pl-toolchain-#{platform.architecture}"
     pkg.build_requires "pl-boost-#{platform.architecture}"
+    pkg.environment "PATH", "$(RUBY_BINDIR):$(PATH)"
   else
     pkg.build_requires "pl-gcc"
     pkg.build_requires "pl-cmake"

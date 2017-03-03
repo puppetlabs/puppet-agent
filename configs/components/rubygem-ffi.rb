@@ -16,7 +16,7 @@ component "rubygem-ffi" do |pkg, settings, platform|
     # Instead we use the host gem installation and override GEM_HOME. Yay?
     pkg.environment "GEM_HOME" => settings[:gem_home]
 
-    pkg.environment "PATH" => "$$(cygpath -u #{settings[:gcc_bindir]}):$$(cygpath -u #{settings[:ruby_bindir]}):$$(cygpath -u #{settings[:bindir]}):/cygdrive/c/Windows/system32:/cygdrive/c/Windows:/cygdrive/c/Windows/System32/WindowsPowerShell/v1.0"
+    pkg.environment "PATH", "$(RUBY_BINDIR):$(PATH)"
 
     # PA-25 in order to install gems in a cross-compiled environment we need to
     # set RUBYLIB to include puppet and hiera, so that their gemspecs can resolve

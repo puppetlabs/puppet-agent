@@ -10,7 +10,7 @@ component "rubygem-win32-process" do |pkg, settings, platform|
   pkg.environment "GEM_HOME" => settings[:gem_home]
 
   if platform.is_windows?
-    pkg.environment "PATH" => "$$(cygpath -u #{settings[:gcc_bindir]}):$$(cygpath -u #{settings[:ruby_bindir]}):$$(cygpath -u #{settings[:bindir]}):/cygdrive/c/Windows/system32:/cygdrive/c/Windows:/cygdrive/c/Windows/System32/WindowsPowerShell/v1.0"
+    pkg.environment "PATH", "$(RUBY_BINDIR):$(PATH)"
   end
 
   # PA-25 in order to install gems in a cross-compiled environment we need to

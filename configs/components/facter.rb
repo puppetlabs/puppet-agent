@@ -30,7 +30,7 @@ component "facter" do |pkg, settings, platform|
   pkg.build_requires "openssl"
 
   if platform.is_windows?
-    pkg.environment "PATH", "$(PROJECT_BINDIR):$(PATH)"
+    pkg.environment "PATH", "$(PROJECT_BINDIR):$(RUBY_BINDIR):$(PATH)"
   else
     pkg.environment "PATH", "#{settings[:bindir]}:$(PATH)"
   end

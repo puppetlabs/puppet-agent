@@ -119,7 +119,7 @@ component "ruby-2.3.3" do |pkg, settings, platform|
   if platform.is_cross_compiled_linux?
     pkg.build_requires 'pl-ruby'
     special_flags += " --with-baseruby=#{settings[:host_ruby]} "
-    pkg.environment "PATH" => "#{settings[:bindir]}:$$PATH"
+    pkg.environment "PATH", "#{settings[:bindir]}:$(PATH)"
     pkg.environment "CC" => "/opt/pl-build-tools/bin/#{settings[:platform_triple]}-gcc"
     pkg.environment "LDFLAGS" => "-Wl,-rpath=/opt/puppetlabs/puppet/lib"
   end
@@ -161,7 +161,7 @@ component "ruby-2.3.3" do |pkg, settings, platform|
     end
     pkg.build_requires 'libedit'
     pkg.build_requires 'runtime'
-    pkg.environment "PATH" => "#{settings[:bindir]}:/usr/ccs/bin:/usr/sfw/bin:$$PATH:/opt/csw/bin"
+    pkg.environment "PATH", "#{settings[:bindir]}:/usr/ccs/bin:/usr/sfw/bin:$(PATH):/opt/csw/bin"
     pkg.environment "CC" => "/opt/pl-build-tools/bin/#{settings[:platform_triple]}-gcc"
     pkg.environment "LDFLAGS" => "-Wl,-rpath=/opt/puppetlabs/puppet/lib"
   end
@@ -172,7 +172,15 @@ component "ruby-2.3.3" do |pkg, settings, platform|
     pkg.build_requires "pl-libffi-#{platform.architecture}"
     pkg.build_requires "pl-pdcurses-#{platform.architecture}"
 
-    pkg.environment "PATH" => "$$(cygpath -u #{settings[:gcc_bindir]}):$$(cygpath -u #{settings[:tools_root]}/bin):$$(cygpath -u #{settings[:tools_root]}/include):$$(cygpath -u #{settings[:bindir]}):$$(cygpath -u #{settings[:ruby_bindir]}):$$(cygpath -u #{settings[:includedir]}):$$PATH"
+    pkg.environment "PATH", %w(
+      $(PROJECT_BINDIR)
+      $(PROJECT_INCLUDEDIR)
+      $(TOOLS_BINDIR)
+      $(TOOLS_INCLUDEDIR)
+      $(RUBY_BINDIR)
+      $(PATH)
+    ).join(':')
+
     pkg.environment "CYGWIN" => settings[:cygwin]
     pkg.environment "optflags" => settings[:cflags] + " -O3"
     pkg.environment "LDFLAGS" => settings[:ldflags]
