@@ -53,9 +53,14 @@ project "puppet-agent" do |proj|
     proj.setting(:mco_libdir, File.join(proj.mco_root, "lib"))
     proj.setting(:pxp_root, File.join(proj.install_root, "pxp-agent"))
     proj.setting(:service_dir, File.join(proj.install_root, "service"))
+
     proj.setting(:windows_tools, File.join(proj.install_root, "sys/tools/bin"))
     proj.setting(:ruby_dir, File.join(proj.install_root, "sys/ruby"))
+
+    # Expose this as an environment variable that Windows components
+    # can access cheaply.
     proj.setting(:ruby_bindir, File.join(proj.ruby_dir, "bin"))
+    proj.environment "RUBY_BINDIR", "$(shell cygpath -u #{settings[:ruby_bindir]})"
   else
     proj.setting(:install_root, "/opt/puppetlabs")
     if platform.is_eos?
@@ -179,11 +184,32 @@ project "puppet-agent" do |proj|
     arch = platform.architecture == "x64" ? "64" : "32"
     proj.setting(:gcc_root, "C:/tools/mingw#{arch}")
     proj.setting(:gcc_bindir, "#{proj.gcc_root}/bin")
+    proj.environment "GCC_BINDIR", "$(shell cygpath -u #{settings[:gcc_bindir]})"
+
     proj.setting(:tools_root, "C:/tools/pl-build-tools")
+    proj.environment "TOOLS_BINDIR", "$(shell cygpath -u #{settings[:tools_root]}/bin)"
+    proj.environment "TOOLS_INCLUDEDIR", "$(shell cygpath -u #{settings[:tools_root]}/include)"
+
     proj.setting(:cppflags, "-I#{proj.tools_root}/include -I#{proj.gcc_root}/include -I#{proj.includedir}")
     proj.setting(:cflags, "#{proj.cppflags}")
     proj.setting(:ldflags, "-L#{proj.tools_root}/lib -L#{proj.gcc_root}/lib -L#{proj.libdir}")
-    proj.setting(:cygwin, "nodosfilewarning winsymlinks:native")
+
+    proj.environment "CYGWIN", "nodosfilewarning winsymlinks:native"
+    proj.environment "CHOCOLATEY_TOOLS", "$(shell cygpath -u C:/ProgramData/chocolatey/tools)"
+
+    proj.environment "PATH", %w(
+      $(GCC_BINDIR)
+      $(TOOLS_BIN)
+      $(PATH)
+    ).join(':')
+
+    # Windows has some weird feelings about libraries and executables
+    # living in the same place on disk. Some of the P-A components will
+    # require some weird additions to $PATH. We should expose them here,
+    # if only to minimize the number of subshells we need to run just to
+    # get to a point where compilation can begin.
+    proj.environment "PROJECT_BINDIR", "$(shell cygpath -u #{settings[:bindir]})"
+    proj.environment "PROJECT_INCLUDEDIR", "$(shell cygpath -u #{settings[:includedir]})"
   end
 
   if platform.is_macos?
