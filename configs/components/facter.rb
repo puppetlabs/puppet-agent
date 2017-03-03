@@ -160,7 +160,7 @@ component "facter" do |pkg, settings, platform|
   elsif platform.is_windows?
     pkg.environment "CYGWIN", settings[:cygwin]
 
-    cmake = "C:/ProgramData/chocolatey/bin/cmake.exe -G \"Unix Makefiles\""
+    cmake = %(C:/ProgramData/chocolatey/bin/cmake.exe -G "Unix Makefiles")
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=#{settings[:tools_root]}/pl-build-toolchain.cmake"
     special_flags = "-DCMAKE_INSTALL_PREFIX=#{settings[:facter_root]} \
                      -DRUBY_LIB_INSTALL=#{settings[:facter_root]}/lib "

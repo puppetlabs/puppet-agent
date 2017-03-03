@@ -21,7 +21,7 @@ component "cpp-hocon" do |pkg, settings, platform|
     # FACT-1156: If we build with -O3, solaris segfaults due to something in std::vector
     special_flags = "-DCMAKE_CXX_FLAGS_RELEASE='-O2 -DNDEBUG'"
   elsif platform.is_windows?
-    cmake = "C:/ProgramData/chocolatey/bin/cmake.exe -G \"Unix Makefiles\""
+    cmake = %(C:/ProgramData/chocolatey/bin/cmake.exe -G "Unix Makefiles")
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=#{settings[:tools_root]}/pl-build-toolchain.cmake"
   else
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/pl-build-toolchain.cmake"
