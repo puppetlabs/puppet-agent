@@ -181,7 +181,6 @@ component "ruby-2.3.3" do |pkg, settings, platform|
       $(PATH)
     ).join(':')
 
-    pkg.environment "CYGWIN", settings[:cygwin]
     pkg.environment "optflags", settings[:cflags] + " -O3"
     pkg.environment "LDFLAGS", settings[:ldflags]
 

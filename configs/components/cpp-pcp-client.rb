@@ -30,8 +30,6 @@ component "cpp-pcp-client" do |pkg, settings, platform|
     pkg.build_requires "pl-toolchain-#{platform.architecture}"
     pkg.build_requires "pl-boost-#{platform.architecture}"
 
-    pkg.environment "CYGWIN", settings[:cygwin]
-
     cmake = %(C:/ProgramData/chocolatey/bin/cmake.exe -G "Unix Makefiles")
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=#{settings[:tools_root]}/pl-build-toolchain.cmake"
   else
