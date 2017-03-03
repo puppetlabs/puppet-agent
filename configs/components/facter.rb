@@ -101,7 +101,7 @@ component "facter" do |pkg, settings, platform|
   end
 
   if java_home
-    pkg.environment "JAVA_HOME" => java_home
+    pkg.environment "JAVA_HOME", java_home
   end
 
   # Skip blkid unless we can ensure it exists at build time. Otherwise we depend
@@ -158,7 +158,7 @@ component "facter" do |pkg, settings, platform|
     # FACT-1156: If we build with -O3, solaris segfaults due to something in std::vector
     special_flags += " -DCMAKE_CXX_FLAGS_RELEASE='-O2 -DNDEBUG' "
   elsif platform.is_windows?
-    pkg.environment "CYGWIN" => settings[:cygwin]
+    pkg.environment "CYGWIN", settings[:cygwin]
 
     cmake = "C:/ProgramData/chocolatey/bin/cmake.exe -G \"Unix Makefiles\""
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=#{settings[:tools_root]}/pl-build-toolchain.cmake"

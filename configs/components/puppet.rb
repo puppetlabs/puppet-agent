@@ -107,9 +107,9 @@ component "puppet" do |pkg, settings, platform|
   end
 
   if platform.is_windows?
-    pkg.environment "FACTERDIR" => settings[:facter_root]
+    pkg.environment "FACTERDIR", settings[:facter_root]
     pkg.environment "PATH", "$(RUBY_BINDIR):$(PROJECT_BINDIR)$(PATH)"
-    pkg.environment "RUBYLIB" => "#{settings[:hiera_libdir]};#{settings[:facter_root]}/lib"
+    pkg.environment "RUBYLIB", "#{settings[:hiera_libdir]};#{settings[:facter_root]}/lib"
   end
 
   if platform.is_windows?

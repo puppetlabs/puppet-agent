@@ -29,8 +29,8 @@ component "virt-what" do |pkg, settings, platform|
     host_opt = "--host #{settings[:platform_triple]}"
 
     pkg.environment "PATH", "/opt/pl-build-tools/bin:$(PATH):#{settings[:bindir]}"
-    pkg.environment "CFLAGS" => settings[:cflags]
-    pkg.environment "LDFLAGS" => settings[:ldflags]
+    pkg.environment "CFLAGS", settings[:cflags]
+    pkg.environment "LDFLAGS", settings[:ldflags]
   end
 
   pkg.configure do

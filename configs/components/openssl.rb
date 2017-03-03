@@ -54,21 +54,21 @@ component "openssl" do |pkg, settings, platform|
     ldflags = ''
   elsif platform.is_huaweios?
     pkg.environment "PATH", "/opt/pl-build-tools/bin:$(PATH)"
-    pkg.environment "CC" => "/opt/pl-build-tools/bin/#{settings[:platform_triple]}-gcc"
+    pkg.environment "CC", "/opt/pl-build-tools/bin/#{settings[:platform_triple]}-gcc"
 
     target = 'linux-ppc'
     ldflags = "-R/opt/pl-build-tools/#{settings[:platform_triple]}/lib -Wl,-rpath=#{settings[:libdir]} -L/opt/pl-build-tools/#{settings[:platform_triple]}/lib"
     cflags = "#{settings[:cflags]} -fPIC"
   elsif platform.architecture == "s390x"
     pkg.environment "PATH", "/opt/pl-build-tools/bin:$(PATH)"
-    pkg.environment "CC" => "/opt/pl-build-tools/bin/#{settings[:platform_triple]}-gcc"
+    pkg.environment "CC", "/opt/pl-build-tools/bin/#{settings[:platform_triple]}-gcc"
 
     target = 'linux64-s390x'
     ldflags = "-Wl,-rpath=/opt/pl-build-tools/#{settings[:platform_triple]}/lib -Wl,-rpath=#{settings[:libdir]} -L/opt/pl-build-tools/#{settings[:platform_triple]}/lib"
     cflags = "#{settings[:cflags]} -fPIC"
   elsif platform.is_solaris?
     pkg.environment "PATH", "/opt/pl-build-tools/bin:$(PATH):/usr/local/bin:/usr/ccs/bin:/usr/sfw/bin"
-    pkg.environment "CC" => "/opt/pl-build-tools/bin/#{settings[:platform_triple]}-gcc"
+    pkg.environment "CC", "/opt/pl-build-tools/bin/#{settings[:platform_triple]}-gcc"
     if platform.architecture =~ /86/
       target = 'solaris-x86-gcc'
     else
@@ -82,7 +82,7 @@ component "openssl" do |pkg, settings, platform|
     target = 'aix-gcc'
     ldflags = ''
     cflags = "$${CFLAGS} -static-libgcc"
-    pkg.environment "CC" => "/opt/pl-build-tools/bin/gcc"
+    pkg.environment "CC", "/opt/pl-build-tools/bin/gcc"
   elsif platform.is_windows?
     target = platform.architecture == "x64" ? "mingw64" : "mingw"
     cflags = settings[:cflags]
@@ -90,7 +90,7 @@ component "openssl" do |pkg, settings, platform|
   elsif platform.name =~ /debian-8-arm/
     pkg.apply_patch 'resources/patches/openssl/openssl-1.0.0l-use-gcc-instead-of-makedepend.patch'
     pkg.environment "PATH", "/opt/pl-build-tools/bin:$(PATH)"
-    pkg.environment "CC" => "/opt/pl-build-tools/bin/#{settings[:platform_triple]}-gcc"
+    pkg.environment "CC", "/opt/pl-build-tools/bin/#{settings[:platform_triple]}-gcc"
     pkg.build_requires "xutils-dev"
     target = 'linux-armv4'
     ldflags = "-Wl,-rpath=/opt/pl-build-tools/#{settings[:platform_triple]}/lib -Wl,-rpath=#{settings[:libdir]} -L/opt/pl-build-tools/#{settings[:platform_triple]}/lib"

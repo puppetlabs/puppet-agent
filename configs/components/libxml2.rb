@@ -7,20 +7,20 @@ component "libxml2" do |pkg, settings, platform|
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-gcc-5.2.0-1.aix#{platform.os_version}.ppc.rpm"
   elsif platform.is_cross_compiled_linux?
     pkg.environment "PATH", "#{settings[:bindir]}:$(PATH)"
-    pkg.environment "CFLAGS" => settings[:cflags]
-    pkg.environment "LDFLAGS" => settings[:ldflags]
+    pkg.environment "CFLAGS", settings[:cflags]
+    pkg.environment "LDFLAGS", settings[:ldflags]
   elsif platform.is_solaris?
     pkg.environment "PATH", ":#{settings[:bindir]}:$(PATH):/usr/local/bin:/usr/ccs/bin:/usr/sfw/bin"
-    pkg.environment "CFLAGS" => settings[:cflags]
-    pkg.environment "LDFLAGS" => settings[:ldflags]
+    pkg.environment "CFLAGS", settings[:cflags]
+    pkg.environment "LDFLAGS", settings[:ldflags]
   elsif platform.is_macos?
-    pkg.environment "LDFLAGS" => settings[:ldflags]
-    pkg.environment "CFLAGS" => settings[:cflags]
+    pkg.environment "LDFLAGS", settings[:ldflags]
+    pkg.environment "CFLAGS", settings[:cflags]
   else
     pkg.build_requires "pl-gcc"
     pkg.build_requires "make"
-    pkg.environment "LDFLAGS" => settings[:ldflags]
-    pkg.environment "CFLAGS" => settings[:cflags]
+    pkg.environment "LDFLAGS", settings[:ldflags]
+    pkg.environment "CFLAGS", settings[:cflags]
   end
 
   if platform.is_cross_compiled? && platform.is_deb?

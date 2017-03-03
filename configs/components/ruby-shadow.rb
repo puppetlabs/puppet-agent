@@ -8,15 +8,15 @@ component "ruby-shadow" do |pkg, settings, platform|
 
   pkg.build_requires "ruby-#{settings[:ruby_version]}"
   pkg.environment "PATH", "$(PATH):/usr/ccs/bin:/usr/sfw/bin"
-  pkg.environment "CONFIGURE_ARGS" => '--vendor'
+  pkg.environment "CONFIGURE_ARGS", '--vendor'
 
   if platform.is_solaris?
     if platform.architecture == 'sparc'
-      pkg.environment "RUBY" => settings[:host_ruby]
+      pkg.environment "RUBY", settings[:host_ruby]
     end
     ruby = "#{settings[:host_ruby]} -r#{settings[:datadir]}/doc/rbconfig.rb"
   elsif platform.is_cross_compiled_linux?
-    pkg.environment "RUBY" => settings[:host_ruby]
+    pkg.environment "RUBY", settings[:host_ruby]
     ruby = "#{settings[:host_ruby]} -r#{settings[:datadir]}/doc/rbconfig.rb"
   else
     ruby = File.join(settings[:bindir], 'ruby')

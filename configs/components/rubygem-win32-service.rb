@@ -7,7 +7,7 @@ component "rubygem-win32-service" do |pkg, settings, platform|
 
   # Because we are cross-compiling on sparc, we can't use the rubygems we just built.
   # Instead we use the host gem installation and override GEM_HOME. Yay?
-  pkg.environment "GEM_HOME" => settings[:gem_home]
+  pkg.environment "GEM_HOME", settings[:gem_home]
 
   if platform.is_windows?
     pkg.environment "PATH", "$(RUBY_BINDIR):$(PATH)"
@@ -17,7 +17,7 @@ component "rubygem-win32-service" do |pkg, settings, platform|
   # set RUBYLIB to include puppet and hiera, so that their gemspecs can resolve
   # hiera/version and puppet/version requires. Without this the gem install
   # will fail by blowing out the stack.
-  pkg.environment "RUBYLIB" => "#{settings[:ruby_vendordir]}:$$RUBYLIB"
+  pkg.environment "RUBYLIB", "#{settings[:ruby_vendordir]}:$$RUBYLIB"
 
   pkg.install do
     ["#{settings[:gem_install]} win32-service-#{pkg.get_version}.gem"]

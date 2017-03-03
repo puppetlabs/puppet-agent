@@ -82,8 +82,8 @@ component "ruby-2.3.3" do |pkg, settings, platform|
   if platform.is_aix?
     pkg.apply_patch "#{base}/aix_ruby_2.1_libpath_with_opt_dir.patch"
     pkg.apply_patch "#{base}/aix_ruby_2.1_fix_make_test_failure.patch"
-    pkg.environment "CC" => "/opt/pl-build-tools/bin/gcc"
-    pkg.environment "LDFLAGS" => settings[:ldflags]
+    pkg.environment "CC", "/opt/pl-build-tools/bin/gcc"
+    pkg.environment "LDFLAGS", settings[:ldflags]
     pkg.build_requires "libedit"
     pkg.build_requires "runtime"
 
@@ -120,11 +120,11 @@ component "ruby-2.3.3" do |pkg, settings, platform|
     pkg.build_requires 'pl-ruby'
     special_flags += " --with-baseruby=#{settings[:host_ruby]} "
     pkg.environment "PATH", "#{settings[:bindir]}:$(PATH)"
-    pkg.environment "CC" => "/opt/pl-build-tools/bin/#{settings[:platform_triple]}-gcc"
-    pkg.environment "LDFLAGS" => "-Wl,-rpath=/opt/puppetlabs/puppet/lib"
+    pkg.environment "CC", "/opt/pl-build-tools/bin/#{settings[:platform_triple]}-gcc"
+    pkg.environment "LDFLAGS", "-Wl,-rpath=/opt/puppetlabs/puppet/lib"
   end
 
-  pkg.environment "optflags" => "-O2"
+  pkg.environment "optflags", "-O2"
 
   # The el-4-x86_64, el-5-i386 and sles-10-i386 platforms have issues when using -O3 compiling
   # ruby. This is *possibly* a limitatio of the versions of GCC we have running on those platforms.
@@ -133,16 +133,16 @@ component "ruby-2.3.3" do |pkg, settings, platform|
   #         - Sean P. McDonald 07/21/16
   if platform.is_el?
     if platform.os_version == "5" && platform.architecture == "i386"
-      pkg.environment "optflags" => "-O2"
+      pkg.environment "optflags", "-O2"
     elsif platform.os_version == "4" && platform.architecture == "x86_64"
-      pkg.environment "optflags" => "-O2"
+      pkg.environment "optflags", "-O2"
     end
   elsif platform.is_sles? && platform.os_version == "10" && platform.architecture == "i386"
-    pkg.environment "optflags" => "-O2"
+    pkg.environment "optflags", "-O2"
   end
 
   if platform.is_macos?
-    pkg.environment "optflags" => settings[:cflags]
+    pkg.environment "optflags", settings[:cflags]
   end
 
   if platform.is_solaris?
@@ -162,8 +162,8 @@ component "ruby-2.3.3" do |pkg, settings, platform|
     pkg.build_requires 'libedit'
     pkg.build_requires 'runtime'
     pkg.environment "PATH", "#{settings[:bindir]}:/usr/ccs/bin:/usr/sfw/bin:$(PATH):/opt/csw/bin"
-    pkg.environment "CC" => "/opt/pl-build-tools/bin/#{settings[:platform_triple]}-gcc"
-    pkg.environment "LDFLAGS" => "-Wl,-rpath=/opt/puppetlabs/puppet/lib"
+    pkg.environment "CC", "/opt/pl-build-tools/bin/#{settings[:platform_triple]}-gcc"
+    pkg.environment "LDFLAGS", "-Wl,-rpath=/opt/puppetlabs/puppet/lib"
   end
 
   if platform.is_windows?
@@ -181,9 +181,9 @@ component "ruby-2.3.3" do |pkg, settings, platform|
       $(PATH)
     ).join(':')
 
-    pkg.environment "CYGWIN" => settings[:cygwin]
-    pkg.environment "optflags" => settings[:cflags] + " -O3"
-    pkg.environment "LDFLAGS" => settings[:ldflags]
+    pkg.environment "CYGWIN", settings[:cygwin]
+    pkg.environment "optflags", settings[:cflags] + " -O3"
+    pkg.environment "LDFLAGS", settings[:ldflags]
 
     special_flags = " CPPFLAGS='-DFD_SETSIZE=2048' debugflags=-g --prefix=#{settings[:ruby_dir]} --with-opt-dir=#{settings[:prefix]} "
   end

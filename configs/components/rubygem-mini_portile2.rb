@@ -7,7 +7,7 @@ component "rubygem-mini_portile2" do |pkg, settings, platform|
 
   # When cross-compiling, we can't use the rubygems we just built.
   # Instead we use the host gem installation and override GEM_HOME. Yay?
-  pkg.environment "GEM_HOME" => settings[:gem_home]
+  pkg.environment "GEM_HOME", settings[:gem_home]
 
   if platform.is_windows?
     pkg.environment "PATH", "$(RUBY_BINDIR):$(PATH)"
@@ -17,7 +17,7 @@ component "rubygem-mini_portile2" do |pkg, settings, platform|
   # set RUBYLIB to include puppet and hiera, so that their gemspecs can resolve
   # hiera/version and puppet/version requires. Without this the gem install
   # will fail by blowing out the stack.
-  pkg.environment "RUBYLIB" => "#{settings[:ruby_vendordir]}:$$RUBYLIB"
+  pkg.environment "RUBYLIB", "#{settings[:ruby_vendordir]}:$$RUBYLIB"
 
   pkg.install do
     ["#{settings[:gem_install]} mini_portile2-#{pkg.get_version}.gem"]

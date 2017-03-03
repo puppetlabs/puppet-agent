@@ -40,7 +40,7 @@ component "pxp-agent" do |pkg, settings, platform|
     pkg.build_requires "pl-toolchain-#{platform.architecture}"
     pkg.build_requires "pl-boost-#{platform.architecture}"
 
-    pkg.environment "CYGWIN" => settings[:cygwin]
+    pkg.environment "CYGWIN", settings[:cygwin]
 
     special_flags = " -DCMAKE_INSTALL_PREFIX=#{settings[:pxp_root]} "
     cmake = "C:/ProgramData/chocolatey/bin/cmake.exe -G \"Unix Makefiles\""
