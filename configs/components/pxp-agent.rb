@@ -5,9 +5,9 @@ component "pxp-agent" do |pkg, settings, platform|
   cmake = "/opt/pl-build-tools/bin/cmake"
 
   if platform.is_windows?
-    pkg.environment "PATH" => "$$(cygpath -u #{settings[:gcc_bindir]}):$$(cygpath -u #{settings[:ruby_bindir]}):/cygdrive/c/Windows/system32:/cygdrive/c/Windows:/cygdrive/c/Windows/System32/WindowsPowerShell/v1.0"
+    pkg.environment "PATH", "$(RUBY_BINDIR):$(PROJECT_BINDIR):$(PATH)"
   else
-    pkg.environment "PATH" => "#{settings[:bindir]}:/opt/pl-build-tools/bin:$$PATH"
+    pkg.environment "PATH", "#{settings[:bindir]}:/opt/pl-build-tools/bin:$(PATH)"
   end
 
   pkg.build_requires "openssl"
@@ -40,11 +40,10 @@ component "pxp-agent" do |pkg, settings, platform|
     pkg.build_requires "pl-toolchain-#{platform.architecture}"
     pkg.build_requires "pl-boost-#{platform.architecture}"
 
-    make = "#{settings[:gcc_bindir]}/mingw32-make"
     pkg.environment "CYGWIN" => settings[:cygwin]
 
     special_flags = " -DCMAKE_INSTALL_PREFIX=#{settings[:pxp_root]} "
-    cmake = "C:/ProgramData/chocolatey/bin/cmake.exe -G \"MinGW Makefiles\""
+    cmake = "C:/ProgramData/chocolatey/bin/cmake.exe -G \"Unix Makefiles\""
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=#{settings[:tools_root]}/pl-build-toolchain.cmake"
   else
     pkg.build_requires "pl-gcc"
