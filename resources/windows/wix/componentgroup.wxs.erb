@@ -13,6 +13,7 @@
       <%- get_services.each do |service| -%>
       <ComponentGroupRef Id="<%= service.component_group_id %>" />
       <%- end -%>
+      <ComponentGroupRef Id="PuppetResComponentGroup" />
       <!-- All of these Include refs are expected to be present -->
       <ComponentGroupRef Id="FragmentProperties" />
       <ComponentGroupRef Id="FragmentSequences" />

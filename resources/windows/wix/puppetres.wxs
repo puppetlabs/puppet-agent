@@ -1,0 +1,52 @@
+<?xml version='1.0' encoding='windows-1252'?>
+<Wix xmlns='http://schemas.microsoft.com/wix/2006/wi' xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
+  <!--
+    This file was introduced to resolve PA-768, where the puppetres.dll file needs
+    be made a permanenent component along with its associated registry entry.
+
+    A corresponding filter line is also included in a project specific filter.xslt.erb file in this
+    resources/windows/wix directory which replaces the generic vanagon provided filter file.
+
+    The directory location for puppetres.dll also needs to be defined in a directory fragment.
+  -->
+  <Fragment>
+    <DirectoryRef Id="INSTALLDIR">
+      <Directory Id="PUPPETRESPUPPETDIR" Name="puppet">
+        <Directory Id="PUPPETRESPUPPETBINDIR" Name="bin" />
+      </Directory>
+    </DirectoryRef>
+  </Fragment>
+
+  <Fragment>
+    <ComponentGroup Id="PuppetResComponentGroup">
+      <Component Id="PuppetResRegistryEntries"
+          Guid="AAD2F7FE-2953-4D58-B4BD-28E1888D7798"
+          Permanent="yes"
+          Directory="TARGETDIR"
+          Win64="no">
+
+        <RegistryKey
+            Root="HKLM"
+            Key="SYSTEM\CurrentControlSet\services\eventlog\Application\Puppet"
+            ForceCreateOnInstall="yes">
+          <RegistryValue
+            Type="string"
+            Name="EventMessageFile"
+            Value="[INSTALLDIR]puppet\bin\puppetres.dll"/>
+        </RegistryKey>
+      </Component>
+
+      <Component
+          Id="PuppetResDllFileComp"
+          Directory="PUPPETRESPUPPETBINDIR"
+          Guid="A8032753-9CC7-45DF-815A-EBF17D48BE3F"
+          Permanent="yes">
+        <File
+            Id="PuppetResDllFile"
+            KeyPath="yes"
+            Source="$(var.AppSourcePath)\puppet\bin\puppetres.dll" />
+      </Component>
+    </ComponentGroup>
+
+  </Fragment>
+</Wix>
