@@ -8,6 +8,17 @@ component "puppet" do |pkg, settings, platform|
   if platform.is_windows?
     pkg.build_requires "rubygem-win32-dir"
   end
+  # Used to compile binary translation files
+  # i18n is not supported on Solaris
+  if platform.is_osx?
+    pkg.build_requires "gettext"
+  elsif platform.is_windows?
+    pkg.build_requires "pl-gettext-#{platform.architecture}"
+  elsif platform.is_aix?
+    pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-gettext-0.19.8-2.aix#{platform.os_version}.ppc.rpm"
+  elsif !platform.is_solaris?
+    pkg.build_requires "pl-gettext"
+  end
 
   pkg.replaces 'puppet', '4.0.0'
   pkg.provides 'puppet', '4.0.0'
@@ -88,6 +99,20 @@ component "puppet" do |pkg, settings, platform|
     # - Ryan "Rub some HEREDOC on it" McKern, June 8 2015
     # - Jira # RE-3954
     pkg.install_configfile 'puppet-agent.conf', File.join(settings[:tmpfilesdir], 'puppet-agent.conf')
+  end
+
+  # We do not currently support i18n on Solaris
+  unless platform.is_solaris?
+    if platform.is_windows?
+      msgfmt = "/cygdrive/c/tools/pl-build-tools/bin/msgfmt.exe"
+    elsif platform.is_osx?
+      msgfmt = "/usr/local/opt/gettext/bin/msgfmt"
+    else
+      msgfmt = "/opt/pl-build-tools/bin/msgfmt"
+    end
+    pkg.configure do
+      ["for dir in ./locales/*/ ; do [ -d \"$${dir}\" ] || continue ; [ -d \"$${dir}/LC_MESSAGES\" ] || /bin/mkdir \"$${dir}/LC_MESSAGES\" ; #{msgfmt} \"$${dir}/puppet.po\" -o \"$${dir}/LC_MESSAGES/puppet.mo\" ; done ;",]
+    end
   end
 
   # Puppet requires tar, otherwise PMT will not install modules
