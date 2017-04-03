@@ -1,5 +1,5 @@
 component "rubygem-locale" do |pkg, settings, platform|
-  pkg.version "2.1.2-2"
+  pkg.version "2.1.2"
   pkg.md5sum "def1e89d1d3126a0c684d3b7b20d88d4"
   pkg.url "https://rubygems.org/downloads/locale-#{pkg.get_version}.gem"
 
