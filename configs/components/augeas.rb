@@ -54,7 +54,7 @@ component 'augeas' do |pkg, settings, platform|
     pkg.requires 'libreadline6'
 
     pkg.build_requires 'pkg-config'
-    if platform.architecture =~ /arm/
+    if platform.is_cross_compiled_linux?
       pkg.environment "PATH" => "/opt/pl-build-tools/bin:$$PATH:#{settings[:bindir]}"
       pkg.environment "CFLAGS" => settings[:cflags]
       pkg.environment "LDFLAGS" => settings[:ldflags]
