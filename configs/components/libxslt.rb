@@ -7,31 +7,31 @@ component "libxslt" do |pkg, settings, platform|
 
   if platform.is_aix?
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-gcc-5.2.0-1.aix#{platform.os_version}.ppc.rpm"
-    pkg.environment "PATH" => "/opt/pl-build-tools/bin:$$PATH"
+    pkg.environment "PATH", "/opt/pl-build-tools/bin:$(PATH)"
   elsif platform.is_cross_compiled_linux?
-    pkg.environment "PATH" => "/opt/pl-build-tools/bin:$$PATH:#{settings[:bindir]}"
-    pkg.environment "CFLAGS" => settings[:cflags]
-    pkg.environment "LDFLAGS" => settings[:ldflags]
+    pkg.environment "PATH", "/opt/pl-build-tools/bin:$(PATH):#{settings[:bindir]}"
+    pkg.environment "CFLAGS", settings[:cflags]
+    pkg.environment "LDFLAGS", settings[:ldflags]
 
     # libxslt is picky about manually specifying the build host
     build = "--build x86_64-linux-gnu"
     # don't depend on libgcrypto
     disable_crypto = "--without-crypto"
   elsif platform.is_solaris?
-    pkg.environment "PATH" => "/opt/pl-build-tools/bin:$$PATH:/usr/local/bin:/usr/ccs/bin:/usr/sfw/bin:#{settings[:bindir]}"
-    pkg.environment "CFLAGS" => settings[:cflags]
-    pkg.environment "LDFLAGS" => settings[:ldflags]
+    pkg.environment "PATH", "/opt/pl-build-tools/bin:$(PATH):/usr/local/bin:/usr/ccs/bin:/usr/sfw/bin:#{settings[:bindir]}"
+    pkg.environment "CFLAGS", settings[:cflags]
+    pkg.environment "LDFLAGS", settings[:ldflags]
     # Configure on Solaris incorrectly passes flags to ld
     pkg.apply_patch 'resources/patches/libxslt/disable-version-script.patch'
     pkg.apply_patch 'resources/patches/libxslt/Update-missing-script-to-return-0.patch'
-  elsif platform.is_osx?
-    pkg.environment "LDFLAGS" => settings[:ldflags]
-    pkg.environment "CFLAGS" => settings[:cflags]
+  elsif platform.is_macos?
+    pkg.environment "LDFLAGS", settings[:ldflags]
+    pkg.environment "CFLAGS", settings[:cflags]
   else
     pkg.build_requires "pl-gcc"
     pkg.build_requires "make"
-    pkg.environment "LDFLAGS" => settings[:ldflags]
-    pkg.environment "CFLAGS" => settings[:cflags]
+    pkg.environment "LDFLAGS", settings[:ldflags]
+    pkg.environment "CFLAGS", settings[:cflags]
   end
 
   if platform.is_cross_compiled_linux? || platform.name =~ /solaris-11/

@@ -13,14 +13,14 @@ component 'augeas' do |pkg, settings, platform|
   pkg.build_requires "libxml2"
 
   # Ensure we're building against our own libraries when present
-  pkg.environment "PKG_CONFIG_PATH" => "/opt/puppetlabs/puppet/lib/pkgconfig"
+  pkg.environment "PKG_CONFIG_PATH", "/opt/puppetlabs/puppet/lib/pkgconfig"
 
   if platform.is_aix?
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-gcc-5.2.0-1.aix#{platform.os_version}.ppc.rpm"
     pkg.build_requires "http://osmirror.delivery.puppetlabs.net/AIX_MIRROR/pkg-config-0.19-6.aix5.2.ppc.rpm"
-    pkg.environment "CC" => "/opt/pl-build-tools/bin/gcc"
-    pkg.environment "LDFLAGS" => settings[:ldflags]
-    pkg.environment "CFLAGS" => "-I/opt/puppetlabs/puppet/include/"
+    pkg.environment "CC", "/opt/pl-build-tools/bin/gcc"
+    pkg.environment "LDFLAGS", settings[:ldflags]
+    pkg.environment "CFLAGS", "-I/opt/puppetlabs/puppet/include/"
     pkg.build_requires 'libedit'
     pkg.build_requires 'runtime'
   end
@@ -41,47 +41,47 @@ component 'augeas' do |pkg, settings, platform|
 
     if platform.architecture == "s390x"
       pkg.build_requires 'runtime'
-      pkg.environment "PATH" => "/opt/pl-build-tools/bin:$$PATH:#{settings[:bindir]}"
-      pkg.environment "CFLAGS" => settings[:cflags]
-      pkg.environment "LDFLAGS" => settings[:ldflags]
+      pkg.environment "PATH", "/opt/pl-build-tools/bin:$(PATH):#{settings[:bindir]}"
+      pkg.environment "CFLAGS", settings[:cflags]
+      pkg.environment "LDFLAGS", settings[:ldflags]
     end
   elsif platform.is_huaweios?
     pkg.build_requires 'runtime'
     pkg.build_requires 'pl-pkg-config'
 
-    pkg.environment "PATH" => "/opt/pl-build-tools/bin:$$PATH:#{settings[:bindir]}"
-    pkg.environment "CFLAGS" => settings[:cflags]
-    pkg.environment "LDFLAGS" => settings[:ldflags]
-    pkg.environment "PKG_CONFIG" => "/opt/pl-build-tools/bin/pkg-config"
+    pkg.environment "PATH", "/opt/pl-build-tools/bin:$(PATH):#{settings[:bindir]}"
+    pkg.environment "CFLAGS", settings[:cflags]
+    pkg.environment "LDFLAGS", settings[:ldflags]
+    pkg.environment "PKG_CONFIG", "/opt/pl-build-tools/bin/pkg-config"
   elsif platform.is_deb?
     pkg.build_requires 'libreadline-dev'
     pkg.requires 'libreadline6'
 
     pkg.build_requires 'pkg-config'
     if platform.architecture =~ /arm/
-      pkg.environment "PATH" => "/opt/pl-build-tools/bin:$$PATH:#{settings[:bindir]}"
-      pkg.environment "CFLAGS" => settings[:cflags]
-      pkg.environment "LDFLAGS" => settings[:ldflags]
+      pkg.environment "PATH", "/opt/pl-build-tools/bin:$(PATH):#{settings[:bindir]}"
+      pkg.environment "CFLAGS", settings[:cflags]
+      pkg.environment "LDFLAGS", settings[:ldflags]
     end
 
   elsif platform.is_solaris?
-    pkg.environment "PATH" => "/opt/pl-build-tools/bin:$$PATH:/usr/local/bin:/usr/ccs/bin:/usr/sfw/bin:#{settings[:bindir]}"
-    pkg.environment "CFLAGS" => settings[:cflags]
-    pkg.environment "LDFLAGS" => settings[:ldflags]
+    pkg.environment "PATH", "/opt/pl-build-tools/bin:$(PATH):/usr/local/bin:/usr/ccs/bin:/usr/sfw/bin:#{settings[:bindir]}"
+    pkg.environment "CFLAGS", settings[:cflags]
+    pkg.environment "LDFLAGS", settings[:ldflags]
     pkg.build_requires 'libedit'
     pkg.build_requires 'runtime'
     if platform.os_version == "10"
       pkg.build_requires 'pkgconfig'
-      pkg.environment "PKG_CONFIG_PATH" => "/opt/csw/lib/pkgconfig"
-      pkg.environment "PKG_CONFIG" => "/opt/csw/bin/pkg-config"
+      pkg.environment "PKG_CONFIG_PATH", "/opt/csw/lib/pkgconfig"
+      pkg.environment "PKG_CONFIG", "/opt/csw/bin/pkg-config"
     else
       pkg.build_requires 'pl-pkg-config'
-      pkg.environment "PKG_CONFIG_PATH" => "/usr/lib/pkgconfig"
-      pkg.environment "PKG_CONFIG" => "/opt/pl-build-tools/bin/pkg-config"
+      pkg.environment "PKG_CONFIG_PATH", "/usr/lib/pkgconfig"
+      pkg.environment "PKG_CONFIG", "/opt/pl-build-tools/bin/pkg-config"
     end
-  elsif platform.is_osx?
-    pkg.environment "PATH" => "$$PATH:/usr/local/bin"
-    pkg.environment "CFLAGS" => settings[:cflags]
+  elsif platform.is_macos?
+    pkg.environment "PATH", "$(PATH):/usr/local/bin"
+    pkg.environment "CFLAGS", settings[:cflags]
   end
 
   pkg.configure do
