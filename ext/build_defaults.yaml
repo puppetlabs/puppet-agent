@@ -141,6 +141,8 @@ platform_repos:
     repo_location: repos/solaris/11/**/*.i386.p5p
   - name: solaris-11-sparc
     repo_location: repos/solaris/11/**/*.sparc.p5p
+  - name: windows-2012-x86
+  - name: windows-2012-x64
 gpg_name: 'info@puppetlabs.com'
 gpg_key: '7F438280EF8D349F'
 deb_targets: 'precise-amd64 trusty-amd64 xenial-amd64'
