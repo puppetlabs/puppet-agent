@@ -5,6 +5,8 @@ begin
 rescue LoadError
 end
 
+load File.join(RAKE_ROOT, 'tasks', 'tag-checker.rake')
+
 build_defs_file = File.join(RAKE_ROOT, 'ext', 'build_defaults.yaml')
 if File.exist?(build_defs_file)
   begin
