@@ -25,6 +25,9 @@ BUILD_SOURCE         = ENV['BUILD_SOURCE'] || '0'
 
 PRESERVE             = ENV['PRESERVE'] || false
 
+# Whether to keep unit test files in the packaged MSI
+PRESERVE_TESTFILES   = ENV['PRESERVE_TESTFILES'] || false
+
 # Parsed information that we need to specify in order to know where to find different built facter bits
 # and correctly pass information to the facter build script
 script_arch          = ARCH == 'x64' ? '64' : '32'
@@ -153,6 +156,16 @@ fail "Copying source files for packaging failed" unless $?.success?
 # repeat for pxp-agent
 Kernel.system("set -vx;#{ssh_command} \"source .bash_profile ; mkdir -p #{archive_dest}/#{pxp_zipname}/modules ; cp -r /home/Administrator/cpp-pcp-client/release/bin #{archive_dest}/#{pxp_zipname} ; cp -r /home/Administrator/pxp-agent/release/bin #{archive_dest}/#{pxp_zipname}; cp -r /home/Administrator/pxp-agent/modules/pxp-module-puppet* #{archive_dest}/#{pxp_zipname}/modules \"")
 fail "Copying source files for packaging failed" unless $?.success?
+
+unless PRESERVE_TESTFILES
+  # Remove test files prior to zipping
+  # facter
+  Kernel.system("set -vx;#{ssh_command} \"source .bash_profile ; rm #{archive_dest}/#{facter_zipname}/bin/*_test.exe ; rm #{archive_dest}/#{facter_zipname}/bin/lth_cat.exe ;\"")
+  fail "Cleaning source files prior to packaging failed" unless $?.success?
+  # pxp-agent
+  Kernel.system("set -vx;#{ssh_command} \"source .bash_profile ; rm #{archive_dest}/#{pxp_zipname}/bin/*-unittests.* ; rm #{archive_dest}/#{pxp_zipname}/bin/lth_cat.exe ;\"")
+  fail "Cleaning source files prior to packaging failed" unless $?.success?
+end
 
 # Zip up the built archives
 Kernel.system("set -vx;#{ssh_command} \"source .bash_profile ; 7za.exe a -r -tzip #{facter_zipname}.zip 'C:\\cygwin64\\home\\Administrator\\archive\\#{facter_zipname}\\*'\"")
