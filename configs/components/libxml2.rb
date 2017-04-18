@@ -2,6 +2,10 @@ component "libxml2" do |pkg, settings, platform|
   pkg.version "2.9.4"
   pkg.md5sum "ae249165c173b1ff386ee8ad676815f5"
   pkg.url "http://xmlsoft.org/sources/#{pkg.get_name}-#{pkg.get_version}.tar.gz"
+  # CVE-related patches needed until libxml 2.9.5 is released:
+  pkg.apply_patch 'resources/patches/libxml2/fix_XPointer_paths_beginning_with_range-to_CVE-2016-5131.patch'
+  pkg.apply_patch 'resources/patches/libxml2/fix_comparison_with_root_node_in_xmlXPathCmpNodes.patch'
+  pkg.apply_patch 'resources/patches/libxml2/disallow_namespace_nodes_in_XPointer_ranges_CVE-2016-4658.patch'
 
   if platform.is_aix?
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-gcc-5.2.0-1.aix#{platform.os_version}.ppc.rpm"
