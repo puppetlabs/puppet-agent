@@ -2,42 +2,6 @@
 project: 'puppet-agent'
 packaging_url: 'git://github.com/puppetlabs/packaging.git --branch=master'
 packaging_repo: 'packaging'
-# foss_platforms will be shipped to the nightly repos
-foss_platforms:
-  - cumulus-2.2-amd64
-  - debian-7-amd64
-  - debian-7-i386
-  - debian-8-amd64
-  - debian-8-i386
-  - el-5-i386
-  - el-5-x86_64
-  - el-6-i386
-  - el-6-x86_64
-  - el-7-x86_64
-  - eos-4-i386
-  - fedora-f23-i386
-  - fedora-f23-x86_64
-  - fedora-f24-i386
-  - fedora-f24-x86_64
-  - fedora-f25-i386
-  - fedora-f25-x86_64
-  - huaweios-6-powerpc
-  - osx-10.10-x86_64
-  - osx-10.11-x86_64
-  - osx-10.12-x86_64
-  - sles-11-i386
-  - sles-11-x86_64
-  - sles-12-x86_64
-  - ubuntu-12.04-amd64
-  - ubuntu-12.04-i386
-  - ubuntu-14.04-amd64
-  - ubuntu-14.04-i386
-  - ubuntu-16.04-amd64
-  - ubuntu-16.04-i386
-  - ubuntu-16.10-amd64
-  - ubuntu-16.10-i386
-  - windows-2012-x86
-  - windows-2012-x64
 pe_platforms:
   - aix-5.3-power
   - aix-6.1-power
