@@ -15,8 +15,6 @@ foss_platforms:
   - el-6-x86_64
   - el-7-x86_64
   - eos-4-i386
-  - fedora-f23-i386
-  - fedora-f23-x86_64
   - fedora-f24-i386
   - fedora-f24-x86_64
   - fedora-f25-i386
@@ -28,8 +26,6 @@ foss_platforms:
   - sles-11-i386
   - sles-11-x86_64
   - sles-12-x86_64
-  - ubuntu-12.04-amd64
-  - ubuntu-12.04-i386
   - ubuntu-14.04-amd64
   - ubuntu-14.04-i386
   - ubuntu-16.04-amd64
@@ -43,8 +39,6 @@ pe_platforms:
   - aix-5.3-power
   - aix-6.1-power
   - aix-7.1-power
-  - el-4-i386
-  - el-4-x86_64
   - el-6-s390x
   - el-7-s390x
   - sles-11-s390x
@@ -64,10 +58,6 @@ platform_repos:
     repo_location: repos/apt/cumulus
   - name: eos-4-i386
     repo_location: repos/eos/4/**/i386
-  - name: el-4-i386
-    repo_location: repos/el/4/**/i386
-  - name: el-4-x86_64
-    repo_location: repos/el/4/**/x86_64
   - name: el-5-i386
     repo_location: repos/el/5/**/i386
   - name: el-5-x86_64
@@ -92,10 +82,6 @@ platform_repos:
     repo_location: repos/sles/12/**/s390x
   - name: sles-12-x86_64
     repo_location: repos/sles/12/**/x86_64
-  - name: fedora-23-i386
-    repo_location: repos/fedora/f23/**/i386
-  - name: fedora-23-x86_64
-    repo_location: repos/fedora/f23/**/x86_64
   - name: fedora-24-i386
     repo_location: repos/fedora/f24/**/i386
   - name: fedora-24-x86_64
@@ -112,10 +98,6 @@ platform_repos:
     repo_location: repos/apt/jessie
   - name: debian-8-amd64
     repo_location: repos/apt/jessie
-  - name: ubuntu-12.04-i386
-    repo_location: repos/apt/precise
-  - name: ubuntu-12.04-amd64
-    repo_location: repos/apt/precise
   - name: ubuntu-14.04-i386
     repo_location: repos/apt/trusty
   - name: ubuntu-14.04-amd64
