@@ -20,6 +20,9 @@ component "ruby-stomp" do |pkg, settings, platform|
   # hiera/version and puppet/version requires. Without this the gem install
   # will fail by blowing out the stack.
   pkg.environment "RUBYLIB" => "#{settings[:ruby_vendordir]}:$$RUBYLIB"
+  
+  base = 'resources/patches/ruby-stomp'
+  pkg.apply_patch "#{base}/verify_client_certs.patch"
 
   base = 'resources/patches/ruby-stomp'
   pkg.apply_patch "#{base}/verify_client_certs.patch", destination: "#{settings[:gem_home]}/gems/stomp-#{pkg.get_version}", after: "install"
