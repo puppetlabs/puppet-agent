@@ -201,6 +201,10 @@ component "ruby-2.1.9" do |pkg, settings, platform|
   end
 
   if platform.is_windows?
+    # Elevate.exe is simply used when one of the run_facter.bat or
+    # run_puppet.bat files are called. These set up the required environment
+    # for the program, and elevate.exe gives the program the elevated
+    # privileges it needs to run
     pkg.install_file "../elevate.exe", "#{settings[:windows_tools]}/elevate.exe"
     pkg.install_file "../elevate.exe.config", "#{settings[:windows_tools]}/elevate.exe.config"
     lib_type = platform.architecture == "x64" ? "seh" : "sjlj"
