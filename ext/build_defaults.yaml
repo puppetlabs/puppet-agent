@@ -128,7 +128,7 @@ platform_repos:
     repo_location: repos/solaris/11/**/*.sparc.p5p
 gpg_name: 'info@puppetlabs.com'
 gpg_key: '7F438280EF8D349F'
-deb_targets: 'precise-amd64 trusty-amd64 xenial-amd64'
+deb_targets: 'trusty-amd64 xenial-amd64'
 rpm_targets: 'el-6-x86_64 el-7-x86_64 sles-11-x86_64 sles-12-x86_64'
 sign_tar: FALSE
 osx_signing_cert: "Developer ID Installer: PUPPET LABS, INC. (VKGLGN2B6Y)"
