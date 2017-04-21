@@ -70,10 +70,10 @@ component "cpp-pcp-client" do |pkg, settings, platform|
   end
 
   pkg.build do
-    ["#{make} -j$(shell expr $(shell #{platform[:num_cores]}) + 1)"]
+    ["#{make}"]
   end
 
   pkg.install do
-    ["#{make} -j$(shell expr $(shell #{platform[:num_cores]}) + 1) install"]
+    ["#{make} install"]
   end
 end
