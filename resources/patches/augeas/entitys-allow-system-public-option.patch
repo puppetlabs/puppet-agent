@@ -1,0 +1,17 @@
+--- a/lenses/xml.aug	2016-11-09 15:18:34.000000000 -0800
++++ b/lenses/xml.aug	2016-11-09 15:19:19.000000000 -0800
+@@ -78,9 +78,12 @@
+ 
+ let att_list_def = decl_def /!ATTLIST/ att_def
+ 
+-let entity_def    = decl_def /!ENTITY/ ([sep_spc . label "#decl" . sto_dquote ])
++let entity_ext_def    = decl_def /!ENTITY/ (([ sep_spc . key /SYSTEM/ . [ sep_spc . label "#systemliteral" . sto_dquote ] ] |
++                                         [ sep_spc . key /PUBLIC/ . [ sep_spc . label "#pubidliteral" . sto_dquote ] . [ sep_spc . label "#systemliteral" . sto_dquote ] ]) )
+ 
+-let decl_def_item = elem_def | entity_def | att_list_def | notation_def
++let entity_int_def = decl_def /!ENTITY/ ([sep_spc . label "#decl" . sto_dquote ])
++
++let decl_def_item = elem_def | entity_int_def | entity_ext_def | att_list_def | notation_def
+ 
+ let decl_outer    = sep_osp . del /\[[ \n\t\r]*/ "[\n" .
+                     (decl_def_item . sep_osp )* . dels "]"

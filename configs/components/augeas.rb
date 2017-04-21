@@ -6,6 +6,7 @@ component 'augeas' do |pkg, settings, platform|
   pkg.replaces 'pe-augeas'
   pkg.apply_patch 'resources/patches/augeas/osx-stub-needed-readline-functions.patch'
   pkg.apply_patch 'resources/patches/augeas/sudoers-negated-command-alias.patch'
+  pkg.apply_patch 'resources/patches/augeas/entitys-allow-system-public-option.patch'
   if platform.is_sles? && platform.os_version == '10'
     pkg.apply_patch 'resources/patches/augeas/augeas-1.2.0-fix-services-sles10.patch'
   end
