@@ -7,7 +7,7 @@ component "rubygem-nokogiri" do |pkg, settings, platform|
     # :gem_home were then tar'ed up and packed into this container tarball.
     pkg.url "http://buildsources.delivery.puppetlabs.net/nokogiri-precompiled-huaweios-#{pkg.get_version}-for-ruby-#{settings[:ruby_version]}.tar.gz"
     if settings[:ruby_version] == "2.1.9"
-      pkg.md5sum "2ad8b4dd69f6e2b296dfaba293e9cb11"
+      pkg.md5sum "4bf7a53bbfa5593041f7698f4e56a8d1"
     elsif settings[:ruby_version] == "2.3.1"
       pkg.md5sum "d11bcd650dc4942aa198586f4ff04247"
     end
