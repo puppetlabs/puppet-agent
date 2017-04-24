@@ -36,7 +36,6 @@ foss_platforms:
   - windows-2012-x86
   - windows-2012-x64
 pe_platforms:
-  - aix-5.3-power
   - aix-6.1-power
   - aix-7.1-power
   - el-6-s390x
@@ -48,8 +47,6 @@ pe_platforms:
   - solaris-11-i386
   - solaris-11-sparc
 platform_repos:
-  - name: aix-5.3-power
-    repo_location: repos/aix/5.3/**/ppc
   - name: aix-6.1-power
     repo_location: repos/aix/6.1/**/ppc
   - name: aix-7.1-power
