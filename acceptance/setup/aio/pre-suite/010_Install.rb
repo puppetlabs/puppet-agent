@@ -4,7 +4,7 @@ test_name "Install Packages"
 
 step "Install puppet-agent..." do
   opts = {
-    :puppet_agent_version => ENV['SHA'],
+    :puppet_agent_version => ENV['SUITE_VERSION'] || ENV['SHA'],
     :default_action => 'gem_install'
   }
   agents.each do |agent|
