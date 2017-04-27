@@ -6,6 +6,7 @@ component "leatherman" do |pkg, settings, platform|
   if platform.is_osx?
     pkg.build_requires "cmake"
     pkg.build_requires "boost"
+    pkg.build_requires "gettext"
   elsif platform.name =~ /solaris-10/
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/solaris/10/pl-gcc-4.8.2-1.#{platform.architecture}.pkg.gz"
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/solaris/10/pl-binutils-2.25.#{platform.architecture}.pkg.gz"
@@ -19,14 +20,17 @@ component "leatherman" do |pkg, settings, platform|
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-gcc-5.2.0-1.aix#{platform.os_version}.ppc.rpm"
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-cmake-3.2.3-2.aix#{platform.os_version}.ppc.rpm"
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-boost-1.58.0-1.aix#{platform.os_version}.ppc.rpm"
+    pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-gettext-0.19.8-2.aix#{platform.os_version}.ppc.rpm"
   elsif platform.is_windows?
     pkg.build_requires "cmake"
     pkg.build_requires "pl-toolchain-#{platform.architecture}"
     pkg.build_requires "pl-boost-#{platform.architecture}"
+    pkg.build_requires "pl-gettext-#{platform.architecture}"
   else
     pkg.build_requires "pl-gcc"
     pkg.build_requires "pl-cmake"
     pkg.build_requires "pl-boost"
+    pkg.build_requires "pl-gettext"
   end
 
   # curl is only used for compute clusters (GCE, EC2); so rpm, deb, and Windows
@@ -40,6 +44,8 @@ component "leatherman" do |pkg, settings, platform|
   pkg.build_requires "ruby-#{settings[:ruby_version]}"
 
   ruby = "#{settings[:host_ruby]} -rrbconfig"
+
+  leatherman_locale_var = ""
 
   # cmake on OSX is provided by brew
   # a toolchain is not currently required for OSX since we're building with clang.
@@ -68,6 +74,9 @@ component "leatherman" do |pkg, settings, platform|
 
     cmake = "C:/ProgramData/chocolatey/bin/cmake.exe -G \"MinGW Makefiles\""
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=#{settings[:tools_root]}/pl-build-toolchain.cmake"
+
+    # Use environment variable set in environment.bat to find locale files
+    leatherman_locale_var = "-DLEATHERMAN_LOCALE_VAR='PL_BASEDIR' -DLEATHERMAN_LOCALE_INSTALL='puppet/share/locale'"
   else
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/pl-build-toolchain.cmake"
     cmake = "/opt/pl-build-tools/bin/cmake"
@@ -77,16 +86,20 @@ component "leatherman" do |pkg, settings, platform|
     end
   end
 
-  # Until we build our own gettext packages, disable using locales.
-  # gettext 0.17 is required to compile .mo files with msgctxt.
+  if platform.is_linux?
+    # Ensure our gettext packages are found before system versions
+    pkg.environment "PATH" => "/opt/pl-build-tools/bin:$$PATH"
+  end
+
   pkg.configure do
     ["#{cmake} \
         #{toolchain} \
-        -DLEATHERMAN_GETTEXT=OFF \
+        -DLEATHERMAN_GETTEXT=ON \
         -DCMAKE_VERBOSE_MAKEFILE=ON \
         -DCMAKE_PREFIX_PATH=#{settings[:prefix]} \
         -DCMAKE_INSTALL_PREFIX=#{settings[:prefix]} \
         -DCMAKE_INSTALL_RPATH=#{settings[:libdir]} \
+        #{leatherman_locale_var} \
         -DLEATHERMAN_SHARED=TRUE \
         #{special_flags} \
         -DBOOST_STATIC=ON \

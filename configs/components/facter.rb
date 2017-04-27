@@ -184,13 +184,11 @@ component "facter" do |pkg, settings, platform|
                        -DRUBY_LIB_INSTALL=#{settings[:ruby_vendordir]}"
   end
 
-  # Until we build our own gettext packages, disable using locales.
-  # gettext 0.17 is required to compile .mo files with msgctxt.
   # FACTER_RUBY Needs bindir
   pkg.configure do
     ["#{cmake} \
         #{toolchain} \
-        -DLEATHERMAN_GETTEXT=OFF \
+        -DLEATHERMAN_GETTEXT=ON \
         -DCMAKE_VERBOSE_MAKEFILE=ON \
         -DCMAKE_PREFIX_PATH=#{settings[:prefix]} \
         -DCMAKE_INSTALL_RPATH=#{settings[:libdir]} \

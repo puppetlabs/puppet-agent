@@ -56,13 +56,11 @@ component "pxp-agent" do |pkg, settings, platform|
     end
   end
 
-  # Until we build our own gettext packages, disable using locales.
-  # gettext 0.17 is required to compile .mo files with msgctxt.
   pkg.configure do
     [
       "#{cmake}\
       #{toolchain} \
-          -DLEATHERMAN_GETTEXT=OFF \
+          -DLEATHERMAN_GETTEXT=ON \
           -DCMAKE_VERBOSE_MAKEFILE=ON \
           -DCMAKE_PREFIX_PATH=#{settings[:prefix]} \
           -DCMAKE_INSTALL_RPATH=#{settings[:libdir]} \
