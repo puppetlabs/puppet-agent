@@ -77,7 +77,15 @@ component "ruby-2.3.3" do |pkg, settings, platform|
     },
     'arm-linux-gnueabi' => {
       :target_double => 'arm-linux-eabi'
-    }
+    },
+    'x86_64-w64-mingw32' => {
+      :sum => "fe5656cd5fcba0a63b18857275e03808",
+      :target_double => 'x64-mingw32',
+    },
+    'i686-w64-mingw32' => {
+      :sum => "795fd622cca6459146cfb226c74ba058",
+      :target_double => 'i386-mingw32',
+    },
   }
 
   special_flags = " --prefix=#{settings[:prefix]} --with-opt-dir=#{settings[:prefix]} "
@@ -102,8 +110,8 @@ component "ruby-2.3.3" do |pkg, settings, platform|
   end
 
 
-  # Cross-compiles require a hand-built rbconfig from the target system
-  if platform.is_cross_compiled_linux? || platform.is_solaris? || platform.is_aix?
+  # Cross-compiles require a hand-built rbconfig from the target system as does Solaris, AIX and Windies
+  if platform.is_cross_compiled_linux? || platform.is_solaris? || platform.is_aix? || platform.is_windows?
     pkg.add_source "file://resources/files/ruby_233/rbconfig/rbconfig-#{settings[:platform_triple]}.rb"
     pkg.build_requires 'runtime' if platform.is_cross_compiled_linux?
   end
@@ -243,7 +251,7 @@ component "ruby-2.3.3" do |pkg, settings, platform|
     end
     pkg.directory settings[:ruby_dir]
   end
-  if platform.is_cross_compiled_linux? || platform.is_solaris? || platform.is_aix?
+  if platform.is_cross_compiled_linux? || platform.is_solaris? || platform.is_aix? || platform.is_windows?
     # Here we replace the rbconfig from our ruby compiled with our toolchain
     # with an rbconfig from a ruby of the same version compiled with the system
     # gcc. Without this, the rbconfig will be looking for a gcc that won't
