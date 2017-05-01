@@ -1,0 +1,36 @@
+From eab87f54b983957b4717b6ce8e78f1541d1a1cf6 Mon Sep 17 00:00:00 2001
+From: Shaun Jackman <sjackman@gmail.com>
+Date: Thu, 23 Feb 2017 09:40:57 -0800
+Subject: [PATCH] Add needs :cxx14
+
+---
+ Library/Homebrew/compilers.rb | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
+
+diff --git a/Library/Homebrew/compilers.rb b/Library/Homebrew/compilers.rb
+index 51f0919..63e48db 100644
+--- /usr/local/Library/Homebrew/compilers.rb
++++ /usr/local/Library/Homebrew/compilers.rb
+@@ -67,7 +67,18 @@ class CompilerFailure
+       create(:gcc => "4.5"),
+       create(:gcc => "4.6"),
+     ],
+-    :openmp => [
++    cxx14: [
++      create(:clang) { build 600 },
++      create(:gcc_4_0),
++      create(:gcc_4_2),
++      create(gcc: "4.3"),
++      create(gcc: "4.4"),
++      create(gcc: "4.5"),
++      create(gcc: "4.6"),
++      create(gcc: "4.7"),
++      create(gcc: "4.8"),
++    ],
++    openmp: [
+       create(:clang),
+     ],
+   }
+-- 
+2.8.1
+
