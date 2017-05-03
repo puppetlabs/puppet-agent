@@ -76,7 +76,7 @@ component "leatherman" do |pkg, settings, platform|
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=#{settings[:tools_root]}/pl-build-toolchain.cmake"
 
     # Use environment variable set in environment.bat to find locale files
-    leatherman_locale_var = "-DLEATHERMAN_LOCALE_VAR='PL_BASEDIR' -DLEATHERMAN_LOCALE_INSTALL='puppet/share/locale'"
+    leatherman_locale_var = "-DLEATHERMAN_LOCALE_VAR='PUPPET_DIR' -DLEATHERMAN_LOCALE_INSTALL='share/locale'"
   else
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/pl-build-toolchain.cmake"
     cmake = "/opt/pl-build-tools/bin/cmake"
