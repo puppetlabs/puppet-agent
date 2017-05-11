@@ -35,10 +35,6 @@ component 'augeas' do |pkg, settings, platform|
       pkg.requires 'readline'
     end
 
-    if platform.name =~ /el-4/
-      pkg.build_requires 'runtime'
-    end
-
     if platform.architecture == "s390x"
       pkg.build_requires 'runtime'
       pkg.environment "PATH" => "/opt/pl-build-tools/bin:$$PATH:#{settings[:bindir]}"
