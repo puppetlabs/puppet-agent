@@ -9,7 +9,7 @@ component "rubygem-nokogiri" do |pkg, settings, platform|
     if settings[:ruby_version] == "2.1.9"
       pkg.md5sum "2ad8b4dd69f6e2b296dfaba293e9cb11"
     elsif settings[:ruby_version] == "2.3.3"
-      pkg.md5sum "443e5b3bea092cd955e125c8e8bda0d6"
+      pkg.md5sum "65620f5c36061fbb07076cdbe086fd35"
     end
   else
     pkg.url "https://rubygems.org/downloads/nokogiri-#{pkg.get_version}.gem"
