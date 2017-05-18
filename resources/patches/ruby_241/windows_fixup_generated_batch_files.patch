@@ -1,0 +1,86 @@
+From 91287532614937a13af146f94c83b487141452d2 Mon Sep 17 00:00:00 2001
+From: Geoff Nichols <geoff.nichols@puppetlabs.com>
+Date: Wed, 4 Nov 2015 12:05:37 -0800
+Subject: [PATCH] (PUP-4077) Use Ruby in CWD, but fallback to PATH
+
+ - Previously the .bat shims generated when executing a gem install on
+   Windows were changed in our custom built Ruby to always prefer the
+   ruby.exe in the same working directory as the binary shims.  This
+   worked as desired to ensure that the vendored gems / binary shims
+   shipped with Puppet on Windows would always use the vendored Ruby
+   that we ship.
+
+   However, we've recently created a need in our CI environment to also
+   use the Ruby version that we build custom / vendor (partially due
+   to our custom Ruby supporting Windows 2003 with Ruby 2.1.5 whereas
+   the RubyInstaller version does not).  In the spec running environment
+   Pik is used to select a Ruby and inject it into PATH.  When gems are
+   installed via bundle install --path .bundle/gems, the expectation is
+   that the Ruby being used is the Pik'd version.  In other words, the
+   use case is slightly different from the vendored Ruby shipped and
+   packaged in the MSI.  Therefore, the batch file generation has been
+   modified to first favor a ruby.exe in the current working directory,
+   but to fallback to using PATH otherwise.
+---
+ lib/rubygems/commands/setup_command.rb | 13 +++++++++----
+ lib/rubygems/installer.rb              | 13 +++++++++----
+ 2 files changed, 18 insertions(+), 8 deletions(-)
+
+diff --git a/lib/rubygems/commands/setup_command.rb b/lib/rubygems/commands/setup_command.rb
+index d3ef9ef..3faafbc 100644
+--- a/lib/rubygems/commands/setup_command.rb
++++ b/lib/rubygems/commands/setup_command.rb
+@@ -242,14 +242,19 @@ def install_executables(bin_dir)
+           bin_cmd_file = File.join Dir.tmpdir, "#{bin_file}.bat"
+
+           File.open bin_cmd_file, 'w' do |file|
+-            file.puts <<-TEXT
++            file.puts <<-SCRIPT
+ @ECHO OFF
+ IF NOT "%~f0" == "~f0" GOTO :WinNT
+-@"#{File.basename(Gem.ruby).chomp('"')}" "#{dest_file}" %1 %2 %3 %4 %5 %6 %7 %8 %9
++ECHO.This version of Ruby has not been built with support for Windows 95/98/Me.
+ GOTO :EOF
+ :WinNT
+-@"#{File.basename(Gem.ruby).chomp('"')}" "%~dpn0" %*
+-TEXT
++IF EXIST "%~dp0ruby.exe" (
++  SET RUBY_EXE_PATH="%~dp0ruby.exe"
++) ELSE (
++  SET RUBY_EXE_PATH="ruby.exe"
++)
++@%RUBY_EXE_PATH% "%~dpn0" %*
++SCRIPT
+           end
+
+           install bin_cmd_file, "#{dest_file}.bat", :mode => 0755
+diff --git a/lib/rubygems/installer.rb b/lib/rubygems/installer.rb
+index 7b4979d..2489713 100644
+--- a/lib/rubygems/installer.rb
++++ b/lib/rubygems/installer.rb
+@@ -722,14 +722,19 @@ def app_script_text(bin_file_name)
+
+   def windows_stub_script(bindir, bin_file_name)
+     ruby = Gem.ruby.gsub(/^\"|\"$/, "").tr(File::SEPARATOR, "\\")
+-    return <<-TEXT
++    return <<-SCRIPT
+ @ECHO OFF
+ IF NOT "%~f0" == "~f0" GOTO :WinNT
+-@"#{ruby}" "#{File.join(bindir, bin_file_name)}" %1 %2 %3 %4 %5 %6 %7 %8 %9
++ECHO.This version of Ruby has not been built with support for Windows 95/98/Me.
+ GOTO :EOF
+ :WinNT
+-@"#{ruby}" "%~dpn0" %*
+-TEXT
++IF EXIST "%~dp0ruby.exe" (
++  SET RUBY_EXE_PATH="%~dp0ruby.exe"
++) ELSE (
++  SET RUBY_EXE_PATH="ruby.exe"
++)
++@%RUBY_EXE_PATH% "%~dpn0" %*
++SCRIPT
+   end
+
+   ##
+--
+2.4.9 (Apple Git-60)
