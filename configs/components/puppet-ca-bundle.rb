@@ -5,11 +5,9 @@ component "puppet-ca-bundle" do |pkg, settings, platform|
 
   java_available = true
   case platform.name
-  when /fedora-f20/
-    pkg.build_requires 'java-1.7.0-openjdk-devel'
-  when /(el-(6|7)|fedora-(f21|f22|f23|f24))/
+  when /(el-(6|7)|fedora-f24)/
     pkg.build_requires 'java-1.8.0-openjdk-devel'
-  when /(debian-(7|8)|ubuntu-(12|14))/
+  when /(debian-(7|8)|ubuntu-14)/
     pkg.build_requires 'openjdk-7-jdk'
   when /(debian-9|ubuntu-(15|16))/
     pkg.build_requires 'openjdk-8-jdk'
