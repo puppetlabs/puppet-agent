@@ -138,15 +138,13 @@ component "ruby-2.3.3" do |pkg, settings, platform|
 
   pkg.environment "optflags" => "-O2"
 
-  # The el-4-x86_64, el-5-i386 and sles-10-i386 platforms have issues when using -O3 compiling
+  # The el-5-i386 and sles-10-i386 platforms have issues when using -O3 compiling
   # ruby. This is *possibly* a limitatio of the versions of GCC we have running on those platforms.
   # We should revisit these optimizations once GCC 6.1 is in production for us.
   #
   #         - Sean P. McDonald 07/21/16
   if platform.is_el?
     if platform.os_version == "5" && platform.architecture == "i386"
-      pkg.environment "optflags" => "-O2"
-    elsif platform.os_version == "4" && platform.architecture == "x86_64"
       pkg.environment "optflags" => "-O2"
     end
   elsif platform.is_sles? && platform.os_version == "10" && platform.architecture == "i386"
