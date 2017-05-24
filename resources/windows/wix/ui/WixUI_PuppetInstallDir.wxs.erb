@@ -14,7 +14,6 @@
 <!--
 First-time install dialog sequence:
  - WixUI_PuppetWelcomeDlg
- - WixUI_Puppet32bitWarningDlg (applicable to 32bit agent on 64bit OS)
  - WixUI_PuppetLicenseAgreementDlg
  - WixUI_PuppetInstallDirDlg
  - WixUI_VerifyReadyDlg
@@ -28,7 +27,6 @@ Maintenance dialog sequence:
 
 Patch dialog sequence:
  - WixUI_PuppetWelcomeDlg
- - WixUI_Puppet32bitWarningDlg (applicable to 32bit agent on 64bit OS)
  - WixUI_VerifyReadyDlg
 
 -->
@@ -93,14 +91,9 @@ Patch dialog sequence:
 
       <Publish Dialog="PuppetWelcomeDlg" Control="Next" Event="NewDialog" Value="PuppetLicenseAgreementDlg"><![CDATA[NOT VersionNT64 AND NOT Installed]]></Publish>
       <Publish Dialog="PuppetWelcomeDlg" Control="Next" Event="NewDialog" Value="VerifyReadyDlg"><![CDATA[NOT VersionNT64 AND Installed AND PATCH]]></Publish>
-      <Publish Dialog="PuppetWelcomeDlg" Control="Next" Event="NewDialog" Value="Puppet32bitWarningDlg"><![CDATA[VersionNT64]]></Publish>
 
       <Publish Dialog="PuppetLicenseAgreementDlg" Control="Back" Event="NewDialog" Value="PuppetWelcomeDlg"><![CDATA[VersionNT >= 600]]></Publish>
-      <Publish Dialog="PuppetLicenseAgreementDlg" Control="Back" Event="NewDialog" Value="Puppet32bitWarningDlg"><![CDATA[VersionNT < 600]]></Publish>
       <Publish Dialog="PuppetLicenseAgreementDlg" Control="Next" Event="NewDialog" Value="PuppetInstallDirDlg">LicenseAccepted = "1"</Publish>
-
-      <Publish Dialog="Puppet32bitWarningDlg" Control="Next" Event="NewDialog" Value="PuppetLicenseAgreementDlg">NOT Installed</Publish>
-      <Publish Dialog="Puppet32bitWarningDlg" Control="Next" Event="NewDialog" Value="VerifyReadyDlg">Installed AND PATCH</Publish>
 
       <Publish Dialog="PuppetInstallDirDlg" Control="Back" Event="NewDialog" Value="PuppetLicenseAgreementDlg">1</Publish>
       <Publish Dialog="PuppetInstallDirDlg" Control="Next" Event="SetTargetPath" Value="[WIXUI_INSTALLDIR]" Order="1">1</Publish>
@@ -113,7 +106,6 @@ Patch dialog sequence:
       <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="PuppetInstallDirDlg" Order="1">NOT Installed</Publish>
       <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="MaintenanceTypeDlg" Order="2">Installed AND NOT PATCH</Publish>
       <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="PuppetWelcomeDlg" Order="2"><![CDATA[NOT VersionNT64 AND Installed AND PATCH]]></Publish>
-      <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="Puppet32bitWarningDlg" Order="2"><![CDATA[VersionNT64 AND Installed AND PATCH]]></Publish>
 
       <Publish Dialog="MaintenanceWelcomeDlg" Control="Next" Event="NewDialog" Value="MaintenanceTypeDlg">1</Publish>
 

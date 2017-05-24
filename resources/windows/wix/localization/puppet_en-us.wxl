@@ -260,11 +260,6 @@
     <String Id="WelcomeUpdateDlgDescriptionUpdate" Overridable="yes"><!-- _locID_text="WelcomeUpdateDlgDescriptionUpdate" _locComment="WelcomeUpdateDlgDescriptionUpdate" -->This will update [ProductName] to version [VersionUIString] and configure the system to fetch configurations every half hour given a valid master. This installer also includes tooling to run Puppet standalone, independent of a master.</String>
     <String Id="WelcomeDlgTitle" Overridable="yes"><!-- _locID_text="WelcomeDlgTitle" _locComment="WelcomeDlgTitle" -->{\WixUI_Font_Bigger}Welcome to the [ProductName] Setup Wizard</String>
 
-    <String Id="Puppet32bitWarningDlg_Title" Overridable="yes"><!-- _locID_text="Puppet32bitWarningDlg_Title" _locComment="Puppet32bitWarningDlg_Title" -->[ProductName] Setup</String>
-    <String Id="Puppet32bitWarningDlgBitmap" Overridable="yes"><!-- _locID_text="Puppet32bitWarningDlgBitmap" _locComment="Puppet32bitWarningDlgBitmap" -->WixUI_Bmp_Dialog</String>
-    <String Id="Puppet32bitWarningDlgDescription" Overridable="yes"><!-- _locID_text="Puppet32bitWarningDlgDescription" _locComment="Puppet32bitWarningDlgDescription" -->By end of year 2016, running 32-bit Puppet agent on a 64-bit Windows system will be deprecated. Please update your Puppet agent installation to the 64-bit platform by December 31, 2016.</String>
-    <String Id="Puppet32bitWarningDlgTitle" Overridable="yes"><!-- _locID_text="Puppet32bitWarningDlgTitle" _locComment="Puppet32bitWarningDlgTitle" -->{\WixUI_Font_Bigger}Operating System Compatibility Warning</String>
-
     <String Id="WelcomeEulaDlg_Title" Overridable="yes"><!-- _locID_text="WelcomeEulaDlg_Title" _locComment="WelcomeEulaDlg_Title" -->[ProductName] Setup</String>
     <String Id="WelcomeEulaDlgBitmap" Overridable="yes"><!-- _locID_text="WelcomeEulaDlgBitmap" _locComment="WelcomeEulaDlgBitmap" -->WixUI_Bmp_Dialog</String>
     <String Id="WelcomeEulaDlgLicenseAcceptedCheckBox" Overridable="yes"><!-- _locID_text="WelcomeEulaDlgLicenseAcceptedCheckBox" _locComment="WelcomeEulaDlgLicenseAcceptedCheckBox" -->I &amp;accept the terms in the License Agreement</String>
