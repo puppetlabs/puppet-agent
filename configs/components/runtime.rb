@@ -19,7 +19,7 @@ component "runtime" do |pkg, settings, platform|
 
   if platform.is_cross_compiled?
     libdir = File.join("/opt/pl-build-tools", settings[:platform_triple], "lib")
-    libdir = File.join("/opt/pl-build-tools", settings[:platform_triple], "lib64") if platform.architecture == "s390x"
+    libdir = File.join("/opt/pl-build-tools", settings[:platform_triple], "lib64") if platform.architecture =~ /s390x|ppc64le/
   elsif platform.is_solaris? || platform.architecture =~ /i\d86/
     libdir = "/opt/pl-build-tools/lib"
   elsif platform.architecture =~ /64/
