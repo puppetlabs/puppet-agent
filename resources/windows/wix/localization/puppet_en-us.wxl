@@ -256,8 +256,8 @@
 
     <String Id="WelcomeDlg_Title" Overridable="yes"><!-- _locID_text="WelcomeDlg_Title" _locComment="WelcomeDlg_Title" -->[ProductName] Setup</String>
     <String Id="WelcomeDlgBitmap" Overridable="yes"><!-- _locID_text="WelcomeDlgBitmap" _locComment="WelcomeDlgBitmap" -->WixUI_Bmp_Dialog</String>
-    <String Id="WelcomeDlgDescription" Overridable="yes"><!-- _locID_text="WelcomeDlgDescription" _locComment="WelcomeDlgDescription" -->This will install [ProductName] [VersionUIString] and configure the system to fetch configurations every half hour.</String>
-    <String Id="WelcomeUpdateDlgDescriptionUpdate" Overridable="yes"><!-- _locID_text="WelcomeUpdateDlgDescriptionUpdate" _locComment="WelcomeUpdateDlgDescriptionUpdate" -->This will update [ProductName] to version [VersionUIString] and configure the system to fetch configurations every half hour.</String>
+    <String Id="WelcomeDlgDescription" Overridable="yes"><!-- _locID_text="WelcomeDlgDescription" _locComment="WelcomeDlgDescription" -->This will install [ProductName] [VersionUIString] and configure the system to fetch configurations every half hour given a valid master.  This installer also includes tooling to run Puppet standalone, independent of a master.</String>
+    <String Id="WelcomeUpdateDlgDescriptionUpdate" Overridable="yes"><!-- _locID_text="WelcomeUpdateDlgDescriptionUpdate" _locComment="WelcomeUpdateDlgDescriptionUpdate" -->This will update [ProductName] to version [VersionUIString] and configure the system to fetch configurations every half hour given a valid master. This installer also includes tooling to run Puppet standalone, independent of a master.</String>
     <String Id="WelcomeDlgTitle" Overridable="yes"><!-- _locID_text="WelcomeDlgTitle" _locComment="WelcomeDlgTitle" -->{\WixUI_Font_Bigger}Welcome to the [ProductName] Setup Wizard</String>
 
     <String Id="Puppet32bitWarningDlg_Title" Overridable="yes"><!-- _locID_text="Puppet32bitWarningDlg_Title" _locComment="Puppet32bitWarningDlg_Title" -->[ProductName] Setup</String>
