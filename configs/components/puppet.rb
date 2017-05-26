@@ -236,4 +236,9 @@ component "puppet" do |pkg, settings, platform|
   if platform.is_eos?
     pkg.link "#{settings[:sysconfdir]}", "#{settings[:link_sysconfdir]}"
   end
+
+  pkg.configfile File.join(configdir, 'hiera.yaml')
+  pkg.add_preinstall_action ["upgrade"], ["if [ -e #{File.join(settings[:puppet_codedir], 'hiera.yaml')} ]; then cp #{File.join(settings[:puppet_codedir], 'hiera.yaml')} #{File.join(settings[:puppet_codedir], 'hiera.yaml.pkg-old')}; fi"]
+  pkg.add_postinstall_action ["upgrade"], ["if [ -e #{File.join(settings[:puppet_codedir], 'hiera.yaml.pkg-old')} ]; then mv #{File.join(settings[:puppet_codedir], 'hiera.yaml.pkg-old')} #{File.join(settings[:puppet_codedir], 'hiera.yaml')}; fi"]
+
 end
