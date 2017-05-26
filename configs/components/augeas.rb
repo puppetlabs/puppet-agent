@@ -1,11 +1,9 @@
 component 'augeas' do |pkg, settings, platform|
-  pkg.version '1.4.0'
-  pkg.md5sum 'a2536a9c3d744dc09d234228fe4b0c93'
-  pkg.url "http://download.augeas.net/augeas-#{pkg.get_version}.tar.gz"
+  pkg.version '1.8.0'
+  pkg.md5sum 'cc99cf86ec5f5c4dac71f2800bde2758'
+  pkg.url "http://buildsources.delivery.puppetlabs.net/augeas-#{pkg.get_version}.tar.gz"
 
   pkg.replaces 'pe-augeas'
-  pkg.apply_patch 'resources/patches/augeas/osx-stub-needed-readline-functions.patch'
-  pkg.apply_patch 'resources/patches/augeas/sudoers-negated-command-alias.patch'
   if platform.is_sles? && platform.os_version == '10'
     pkg.apply_patch 'resources/patches/augeas/augeas-1.2.0-fix-services-sles10.patch'
   end
