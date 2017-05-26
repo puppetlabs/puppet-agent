@@ -198,6 +198,7 @@ component "puppet" do |pkg, settings, platform|
   pkg.directory File.join(settings[:puppet_codedir], 'environments', 'production')
   pkg.directory File.join(settings[:puppet_codedir], 'environments', 'production', 'manifests')
   pkg.directory File.join(settings[:puppet_codedir], 'environments', 'production', 'modules')
+  pkg.directory File.join(settings[:puppet_codedir], 'environments', 'production', 'data')
   pkg.install_configfile 'conf/environment.conf', File.join(settings[:puppet_codedir], 'environments', 'production', 'environment.conf')
 
   if platform.is_windows?
@@ -211,4 +212,9 @@ component "puppet" do |pkg, settings, platform|
   if platform.is_eos?
     pkg.link "#{settings[:sysconfdir]}", "#{settings[:link_sysconfdir]}"
   end
+
+  pkg.install_file "ext/hiera/hiera.yaml", File.join(settings[:puppet_codedir], 'environments', 'production', 'hiera.yaml')
+  pkg.configfile File.join(settings[:puppet_codedir], 'environments', 'production', 'hiera.yaml')
+  pkg.configfile File.join(configdir, 'hiera.yaml')
+
 end
