@@ -33,7 +33,14 @@ step "Install puppetserver..." do
   else
     # the dev repos have only a single package, so we need one for both server
     # and agent to satisfy server's dep on agent
-    install_puppetlabs_dev_repo(master, 'puppetserver', ENV['SERVER_VERSION'], nil, :dev_builds_url => ENV['SERVER_DOWNLOAD_URL'])
+    if ENV['SERVER_VERSION'].nil? || ENV['SERVER_VERSION'] == 'latest'
+      server_version = 'latest'
+      server_download_url = "http://nightlies.puppet.com"
+    else
+      server_version = ENV['SERVER_VERSION']
+      server_download_url = "http://builds.delivery.puppetlabs.net"
+    end
+    install_puppetlabs_dev_repo(master, 'puppetserver', server_version, nil, :dev_builds_url => server_download_url)
     install_puppetlabs_dev_repo(master, 'puppet-agent', ENV['SHA'], nil, :dev_builds_url => ENV['AGENT_DOWNLOAD_URL'])
   end
   master.install_package('puppetserver')
