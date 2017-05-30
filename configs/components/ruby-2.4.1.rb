@@ -33,43 +33,43 @@ component "ruby-2.4.1" do |pkg, settings, platform|
   #   - bba35c1e: (RE-5290) Update ruby for a cross-compile on solaris 10
   rbconfig_info = {
     'powerpc-ibm-aix5.3.0.0' => {
-      :sum => "5c445630ac67ddf61d16eb47a4ff955b",
+      :sum => "7a53afc1c192517c4d6ab1864c8b4a39",
       :target_double => "powerpc-aix5.3.0.0",
     },
     'powerpc-ibm-aix6.1.0.0' => {
-      :sum => "82ee3719187cba9bbf6f4b7088b52305",
+      :sum => "dd3232f385602b45bdbf5e60128d8a19",
       :target_double => "powerpc-aix6.1.0.0",
     },
     'powerpc-ibm-aix7.1.0.0' => {
-      :sum => "960fb03d7818fec612f3be598c6964d2",
+      :sum => "5ba750ff904c51104d9eb33716370b84",
       :target_double => "powerpc-aix7.1.0.0",
      },
     'powerpc-linux-gnu' => {
-      :sum => "763f316f8f43878d1f3bd5aa6bbe36e8",
+      :sum => "2f942f5500de901e2c42fc8a9b23d30d",
       :target_double => "powerpc-linux",
     },
     'powerpc64le-linux-gnu' => {
-      :sum => "c76357879d97fea04bd1d4df099acdec",
+      :sum => "a81f50765d8ecf25c0db1870a88af49e",
       :target_double => "powerpc64le-linux",
     },
     's390x-linux-gnu' => {
-      :sum => "dc6341fff1d00b3ba22dc1b9e6d5532f",
+      :sum => "cbcf3d927bf69b15deb7a7555efdc04e",
       :target_double => "s390x-linux",
     },
     'i386-pc-solaris2.10' => {
-      :sum => "9078034711ef1b047dcb7416134c55ae",
+      :sum => "a3c043187b645c315aff56dadf996570",
       :target_double => 'i386-solaris2.10',
     },
     'sparc-sun-solaris2.10' => {
-      :sum => "3fbceb4f70e086a6df52c206ca17211b",
+      :sum => "72b7fdb633be6d3a6f611bc57ad8bc82",
       :target_double => 'sparc-solaris2.10',
     },
     'i386-pc-solaris2.11' => {
-      :sum => "224822682a570aceec965c75ca00d882",
+      :sum => "7adedea72967ffae053ac8930f153e64",
       :target_double => 'i386-solaris2.11',
     },
     'sparc-sun-solaris2.11' => {
-      :sum => "f2a40c4bff028dffc880a40b2806a361",
+      :sum => "89956d3af3481972c20f250b56e527e7",
       :target_double => 'sparc-solaris2.11',
     },
     'arm-linux-gnueabihf' => {
@@ -79,11 +79,11 @@ component "ruby-2.4.1" do |pkg, settings, platform|
       :target_double => 'arm-linux-eabi'
     },
     'x86_64-w64-mingw32' => {
-      :sum => "fe5656cd5fcba0a63b18857275e03808",
+      :sum => "a93cbbeebb5f30ddf3e40de653f42ac9",
       :target_double => 'x64-mingw32',
     },
     'i686-w64-mingw32' => {
-      :sum => "795fd622cca6459146cfb226c74ba058",
+      :sum => "07d789921e433dd7afdeb46a5d22d1f5",
       :target_double => 'i386-mingw32',
     },
   }
