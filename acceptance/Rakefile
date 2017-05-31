@@ -171,17 +171,6 @@ def set_environment_variables_for_install(install_released_packages)
   ENV['SERVER_DOWNLOAD_URL'] ||= DEFAULT_NIGHTLIES_DOWNLOAD_URL
   ENV['SERVER_VERSION'] ||= 'latest'
 
-  # We can only use a SHAs of "latest" if we're downloading from nightlies, as
-  # our other options, such as 'builds.delivery.puppetlabs.net', do not have
-  # "latest" directories.
-  if ENV['SHA'] == 'latest' and ENV['AGENT_DOWNLOAD_URL'] != DEFAULT_NIGHTLIES_DOWNLOAD_URL
-    fail "Can only use ENV['SHA'] == 'latest' if ENV['AGENT_DOWNLOAD_URL'] == '#{DEFAULT_NIGHTLIES_DOWNLOAD_URL}'"
-  end
-
-  if ENV['SERVER_VERSION'] == 'latest' and ENV['SERVER_DOWNLOAD_URL'] != DEFAULT_NIGHTLIES_DOWNLOAD_URL
-    fail "Can only use ENV['SERVER_VERSION'] == 'latest' if ENV['SERVER_DOWNLOAD_URL'] == '#{DEFAULT_NIGHTLIES_DOWNLOAD_URL}'"
-  end
-
   # If this is a test of public / final release packages,
   # TESTING_RELEASED_PACKAGES is a string value we use to tell the
   # puppet agent pre-suite that we're testing public release packages, not dev
