@@ -12,8 +12,8 @@ module RbConfig
   CONFIG["DESTDIR"] = DESTDIR
   CONFIG["MAJOR"] = "2"
   CONFIG["MINOR"] = "4"
-  CONFIG["TEENY"] = "0"
-  CONFIG["PATCHLEVEL"] = "112"
+  CONFIG["TEENY"] = "1"
+  CONFIG["PATCHLEVEL"] = "111"
   CONFIG["INSTALL"] = '/opt/csw/bin/ginstall -c'
   CONFIG["EXEEXT"] = ""
   CONFIG["prefix"] = (TOPDIR || DESTDIR + "/opt/puppetlabs/puppet")
