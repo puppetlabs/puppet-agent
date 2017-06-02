@@ -50,6 +50,29 @@ End If
       ]]>
     </CustomAction>
 
+    <!-- Custom action to get the localised name for the "Everyone" (or World) user as
+         WixUtil:OSInfo Custom action doesn't return this value.
+         Equivalent of     (Get-WmiObject Win32_Account | where { $_.SID -eq "S-1-1-0" }).name
+      -->
+    <CustomAction
+      Id="GetLocalisedAccountNames"
+      Script="vbscript"
+      Execute="firstSequence"
+      Return="check">
+        <![CDATA[
+      On Error Resume Next
+      Dim ojbLocator:  set objLocator = CreateObject("WbemScripting.SWbemLocator")
+      Dim objWMI:      set objWMI = objLocator.ConnectServer(".", "root/cimv2")
+      Dim sidEveryone: sidEveryone = "S-1-1-0"
+      Dim sidAdmins:   sidAdmins   = "S-1-5-32-544"
+      Dim objSIDEveryone: set objSIDEveryone = objWMI.Get("Win32_SID='" & sidEveryone & "'")
+      Dim objSIDAdmins:   set objSIDAdmins = objWMI.Get("Win32_SID='" & sidAdmins & "'")
+      Session.Property("PUP_LCL_ACCOUNT_EVERYONE") = objSIDEveryone.AccountName
+      Session.Property("PUP_LCL_ACCOUNT_ADMINISTRATORS") = objSIDAdmins.AccountName
+        ]]>
+    </CustomAction>
+
+
     <!-- Custom Actions to handle command line property values that override
          remembered property values -->
     <!-- INSTALLDIR -->
