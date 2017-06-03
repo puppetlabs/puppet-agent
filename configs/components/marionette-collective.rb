@@ -119,4 +119,6 @@ component "marionette-collective" do |pkg, settings, platform|
   pkg.configfile File.join(configdir, 'server.cfg')
   pkg.configfile File.join(configdir, 'facts.yaml')
   pkg.configfile "/etc/logrotate.d/mcollective" if platform.is_linux?
+
+  pkg.link "#{settings[:bindir]}/mco", "#{settings[:link_bindir]}/mco" unless platform.is_windows?
 end
