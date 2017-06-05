@@ -109,6 +109,8 @@ component "marionette-collective" do |pkg, settings, platform|
 
   if platform.is_windows?
     pkg.directory File.join(settings[:sysconfdir], 'mcollective', 'var', 'log')
+  else
+    pkg.directory File.join(settings[:logdir], 'mcollective'), mode: "0750"
   end
 
   # Bring in the client.cfg and server.cfg from ext/aio.
