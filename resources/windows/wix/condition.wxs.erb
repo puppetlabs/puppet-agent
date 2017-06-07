@@ -18,11 +18,10 @@
         <![CDATA[Installed OR (VersionNT >= 600)]]>
       </Condition>
 
-      <!--
       <Condition Message="32 bit <%= settings[:product_name] %> is no longer supported on 64 bit Windows Operating Systems.">
-          <![CDATA[Installed OR VersionNT64]]>
+          <![CDATA[Installed OR Not VersionNT64]]>
       </Condition>
-      -->
+
     <%- end -%>
 
     </Fragment>
