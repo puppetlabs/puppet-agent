@@ -217,4 +217,8 @@ component "puppet" do |pkg, settings, platform|
   pkg.configfile File.join(settings[:puppet_codedir], 'environments', 'production', 'hiera.yaml')
   pkg.configfile File.join(configdir, 'hiera.yaml')
 
+  # This is a copy of the code from hiera.rb to make a backup of an existing hiera.yaml file in :puppet_codedir (even though the new file(s) aren't put there).
+  # A new ticket https://tickets.puppetlabs.com/browse/PA-1169 has been raised to address upgrade handling of hiera.yaml, so this will be dealt with in that ticket.
+  pkg.add_preinstall_action ["upgrade"], ["if [ -e #{File.join(settings[:puppet_codedir], 'hiera.yaml')} ]; then cp #{File.join(settings[:puppet_codedir], 'hiera.yaml')} #{File.join(settings[:puppet_codedir], 'hiera.yaml.pkg-old')}; fi"]
+  pkg.add_postinstall_action ["upgrade"], ["if [ -e #{File.join(settings[:puppet_codedir], 'hiera.yaml.pkg-old')} ]; then mv #{File.join(settings[:puppet_codedir], 'hiera.yaml.pkg-old')} #{File.join(settings[:puppet_codedir], 'hiera.yaml')}; fi"]
 end
