@@ -23,6 +23,7 @@ component "ruby-stomp" do |pkg, settings, platform|
 
   base = 'resources/patches/ruby-stomp'
   pkg.apply_patch "#{base}/verify_client_certs.patch", destination: "#{settings[:gem_home]}/gems/stomp-#{pkg.get_version}", after: "install"
+  pkg.apply_patch "#{base}/connection_loss_reconnect_fix.patch", destination: "#{settings[:gem_home]}/gems/stomp-#{pkg.get_version}", after: "install"
 
   pkg.install do
     ["#{settings[:gem_install]} stomp-#{pkg.get_version}.gem"]

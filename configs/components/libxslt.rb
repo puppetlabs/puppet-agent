@@ -5,6 +5,9 @@ component "libxslt" do |pkg, settings, platform|
 
   pkg.build_requires "libxml2"
 
+  pkg.apply_patch 'resources/patches/libxslt/fix-heap-overread.patch'
+  pkg.apply_patch 'resources/patches/libxslt/check-for-integer-overflow.patch'
+
   if platform.is_aix?
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-gcc-5.2.0-1.aix#{platform.os_version}.ppc.rpm"
     pkg.environment "PATH" => "/opt/pl-build-tools/bin:$$PATH"
