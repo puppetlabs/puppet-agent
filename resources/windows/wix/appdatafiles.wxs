@@ -37,12 +37,12 @@
             <Directory Id="FactsDotD" Name="facts.d"/>
           </Directory>
           <Directory Id="CodeDir" Name="code">
-            <Directory Id="HieraDataDir" Name="hieradata"/>
             <Directory Id="CodeModulesDir" Name="modules"/>
             <Directory Id="EnvironmentsDir" Name="environments">
               <Directory Id="ProductionDir" Name="production">
                 <Directory Id="ManifestsDir" Name="manifests"/>
                 <Directory Id="ModulesDir" Name="modules"/>
+                <Directory Id="Hiera5DataDir" Name="data"/>
               </Directory>
             </Directory>
           </Directory>
@@ -82,13 +82,9 @@
       <Component
         Id="PuppetConfUnconditionalSettings"
         Permanent="yes"
-        Guid="B9179A60-483F-4F32-8E3F-AD632B0DEBB4"
+        Guid="6753F049-CA11-43E2-854E-B467026F9A2F"
         Directory="PuppetConfDir">
         <CreateFolder />
-        <File
-          Id="HieraConf"
-          KeyPath="yes"
-          Source="SourceDir\CommonAppDataFolder\Puppetlabs\puppet\etc\hiera.yaml" />
         <IniFile
           Id="PuppetConfServer" Name="puppet.conf"
           Action="addLine"
@@ -159,6 +155,28 @@
           Directory="PuppetConfDir" />
       </Component>
       <Component
+        Id="PuppetConfHiera"
+        Permanent="yes"
+        Guid="998A7670-BF42-4F03-B144-4528EADD0CE3"
+        Directory="PuppetConfDir">
+        <CreateFolder />
+        <File
+          Id="HieraConf"
+          KeyPath="yes"
+          Source="SourceDir\CommonAppDataFolder\Puppetlabs\puppet\etc\hiera.yaml" />
+      </Component>
+      <Component
+        Id="PuppetProductionHiera"
+        Permanent="yes"
+        Guid="8384543A-F693-45B3-92E3-E0CB879A78E0"
+        Directory="ProductionDir">
+        <CreateFolder />
+        <File
+          Id="HieraProductionConf"
+          KeyPath="yes"
+          Source="SourceDir\CommonAppDataFolder\Puppetlabs\code\environments\production\hiera.yaml" />
+      </Component>
+      <Component
         Id="PuppetVarDir"
         Permanent="yes"
         Guid="B95A17F3-CF5E-4EC7-859E-F10C0965645F"
@@ -197,10 +215,10 @@
         <CreateFolder />
       </Component>
       <Component
-        Id="HieraDataDir"
+        Id="Hiera5DataDir"
         Permanent="yes"
         Guid="2438387C-BEA5-47C1-8B43-46FE30E14BEA"
-        Directory="HieraDataDir">
+        Directory="Hiera5DataDir">
         <CreateFolder />
       </Component>
       <Component
