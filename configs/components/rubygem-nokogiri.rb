@@ -9,7 +9,7 @@ component "rubygem-nokogiri" do |pkg, settings, platform|
     if settings[:ruby_version] == "2.1.9"
       pkg.md5sum "016db16f78d9e6d0c3ead89093e610a2"
     elsif settings[:ruby_version] == "2.3.3"
-      pkg.md5sum "65620f5c36061fbb07076cdbe086fd35"
+      pkg.md5sum "035323b6d738d6c7397917ebe4644b6b"
     elsif settings[:ruby_version] == "2.4.1"
       pkg.md5sum "b5ba7041673b4c313dc8e0071b5b09ce"
     end
