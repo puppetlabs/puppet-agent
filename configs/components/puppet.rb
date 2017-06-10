@@ -223,6 +223,7 @@ component "puppet" do |pkg, settings, platform|
   pkg.directory File.join(settings[:puppet_codedir], 'environments', 'production')
   pkg.directory File.join(settings[:puppet_codedir], 'environments', 'production', 'manifests')
   pkg.directory File.join(settings[:puppet_codedir], 'environments', 'production', 'modules')
+  pkg.directory File.join(settings[:puppet_codedir], 'environments', 'production', 'data')
   pkg.install_configfile 'conf/environment.conf', File.join(settings[:puppet_codedir], 'environments', 'production', 'environment.conf')
 
   if platform.is_windows?
@@ -236,4 +237,54 @@ component "puppet" do |pkg, settings, platform|
   if platform.is_eos?
     pkg.link "#{settings[:sysconfdir]}", "#{settings[:link_sysconfdir]}"
   end
+
+  pkg.install_file "ext/hiera/hiera.yaml", File.join(settings[:puppet_codedir], 'environments', 'production', 'hiera.yaml')
+  pkg.configfile File.join(settings[:puppet_codedir], 'environments', 'production', 'hiera.yaml')
+  pkg.configfile File.join(configdir, 'hiera.yaml')
+
+  old_hiera = File.join(settings[:puppet_codedir], 'hiera.yaml')
+  new_hiera = File.join(configdir, 'hiera.yaml')
+  env_hiera = File.join(settings[:puppet_codedir], 'environments', 'production', 'hiera.yaml')
+  preinstall = <<-PREINST
+# Backup the old hiera location, so that we
+# can drop it back in place if the package manager
+# tries to remove it.
+if [ -e #{old_hiera} ]; then
+  cp #{old_hiera}{,.pkg-old}
+fi
+
+
+# Flag the global and production hiera.yaml files for
+# removal, if the user doesn't have them configured.
+if [ \\\( ! -e #{new_hiera} \\\) -a -e #{env_hiera} ]; then
+  touch #{new_hiera}.rm
+fi
+if [ \\\( ! -e #{env_hiera} \\\) -a \\\( -e #{new_hiera} -o -e #{old_hiera} \\\) ]; then
+  touch #{env_hiera}.rm
+fi
+PREINST
+
+  postinstall = <<-POSTINST
+# Restore the old hiera, if it existed
+if [ -e #{old_hiera}.pkg-old ]; then
+  cp #{old_hiera}{.pkg-old,}
+fi
+
+# Remove any extra hiera config files we laid down
+if [ -e #{new_hiera}.rm ]; then
+  rm #{new_hiera}.rm
+  if [ -e #{new_hiera} ]; then
+    rm #{new_hiera}
+  fi
+fi
+if [ -e #{env_hiera}.rm ]; then
+  rm #{env_hiera}.rm
+  if [ -e #{env_hiera} ]; then
+    rm #{env_hiera}
+  fi
+fi
+POSTINST
+
+  pkg.add_preinstall_action ["upgrade"], [preinstall]
+  pkg.add_postinstall_action ["upgrade"], [postinstall]
 end
