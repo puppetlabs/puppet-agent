@@ -241,10 +241,11 @@ component "puppet" do |pkg, settings, platform|
   pkg.configfile File.join(settings[:puppet_codedir], 'environments', 'production', 'hiera.yaml')
   pkg.configfile File.join(configdir, 'hiera.yaml')
 
-  old_hiera = File.join(settings[:puppet_codedir], 'hiera.yaml')
-  new_hiera = File.join(configdir, 'hiera.yaml')
-  env_hiera = File.join(settings[:puppet_codedir], 'environments', 'production', 'hiera.yaml')
-  preinstall = <<-PREINST
+  unless platform.is_windows?
+    old_hiera = File.join(settings[:puppet_codedir], 'hiera.yaml')
+    new_hiera = File.join(configdir, 'hiera.yaml')
+    env_hiera = File.join(settings[:puppet_codedir], 'environments', 'production', 'hiera.yaml')
+    preinstall = <<-PREINST
 # Backup the old hiera location, so that we
 # can drop it back in place if the package manager
 # tries to remove it.
@@ -284,6 +285,7 @@ if [ -e #{env_hiera}.rm ]; then
 fi
 POSTINST
 
-  pkg.add_preinstall_action ["upgrade"], [preinstall]
-  pkg.add_postinstall_action ["upgrade"], [postinstall]
+    pkg.add_preinstall_action ["upgrade"], [preinstall]
+    pkg.add_postinstall_action ["upgrade"], [postinstall]
+  end
 end

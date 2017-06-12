@@ -158,6 +158,7 @@
       <Component
         Id="PuppetConfHiera"
         Permanent="yes"
+        NeverOverwrite="yes"
         Guid="998A7670-BF42-4F03-B144-4528EADD0CE3"
         Directory="PuppetConfDir">
         <CreateFolder />
@@ -165,10 +166,12 @@
           Id="HieraConf"
           KeyPath="yes"
           Source="SourceDir\CommonAppDataFolder\Puppetlabs\puppet\etc\hiera.yaml" />
+        <Condition>NOT PUP_PREEXISTING_CODE_HIERA AND NOT PUP_PREEXISTING_CONF_HIERA</Condition>
       </Component>
       <Component
         Id="PuppetProductionHiera"
         Permanent="yes"
+        NeverOverwrite="yes"
         Guid="8384543A-F693-45B3-92E3-E0CB879A78E0"
         Directory="ProductionDir">
         <CreateFolder />
@@ -176,6 +179,7 @@
           Id="HieraProductionConf"
           KeyPath="yes"
           Source="SourceDir\CommonAppDataFolder\Puppetlabs\code\environments\production\hiera.yaml" />
+        <Condition>NOT PUP_PREEXISTING_CODE_HIERA AND NOT PUP_PREEXISTING_CONF_HIERA</Condition>
       </Component>
       <Component
         Id="PuppetVarDir"
