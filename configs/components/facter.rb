@@ -247,7 +247,6 @@ component "facter" do |pkg, settings, platform|
     pkg.install_file "../facter_interactive.bat", "#{settings[:link_bindir]}/facter_interactive.bat"
     pkg.install_file "../run_facter_interactive.bat", "#{settings[:link_bindir]}/run_facter_interactive.bat"
   end
-  pkg.link "#{settings[:bindir]}/facter", "#{settings[:link_bindir]}/facter" unless platform.is_windows?
   if platform.is_windows?
     pkg.directory File.join(settings[:sysconfdir], 'facter', 'facts.d')
   else

@@ -232,7 +232,6 @@ component "puppet" do |pkg, settings, platform|
     pkg.directory File.join(settings[:logdir], 'puppet'), mode: "0750"
   end
 
-  pkg.link "#{settings[:bindir]}/puppet", "#{settings[:link_bindir]}/puppet" unless platform.is_windows?
   if platform.is_eos?
     pkg.link "#{settings[:sysconfdir]}", "#{settings[:link_sysconfdir]}"
   end

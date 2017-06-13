@@ -255,6 +255,11 @@ project "puppet-agent" do |proj|
 
   proj.component "runtime"
 
+  # Windows doesn't need these wrappers, only unix platforms
+  unless platform.is_windows?
+    proj.component "wrapper-script"
+  end
+
   # Needed to avoid using readline on solaris and aix
   if platform.is_solaris? || platform.is_aix?
     proj.component "libedit"
