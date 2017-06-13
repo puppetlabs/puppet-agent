@@ -10,6 +10,7 @@
     Permanent="yes" on each file/folder component.
   -->
   <Fragment>
+
     <DirectoryRef Id="TARGETDIR">
       <Directory Id="CommonAppDataFolder" Name="CommonAppData">
         <Directory Id="APPDATADIR" Name="PuppetLabs">
@@ -185,8 +186,8 @@
         Guid="4E7C234B-2837-4459-A20E-9503A922FCB9"
         Directory="FactsDotD">
         <CreateFolder>
-          <Permission GenericAll="yes" User="Administrators" />
-          <Permission GenericRead="yes" GenericExecute="yes" User="Everyone" />
+          <Permission GenericAll="yes" User="[PUP_LCL_ACCOUNT_ADMINISTRATORS]" />
+          <Permission GenericRead="yes" GenericExecute="yes" User="[PUP_LCL_ACCOUNT_EVERYONE]" />
         </CreateFolder>
       </Component>
       <Component
