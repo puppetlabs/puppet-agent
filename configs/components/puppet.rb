@@ -223,6 +223,7 @@ component "puppet" do |pkg, settings, platform|
   pkg.directory File.join(settings[:puppet_codedir], 'environments', 'production')
   pkg.directory File.join(settings[:puppet_codedir], 'environments', 'production', 'manifests')
   pkg.directory File.join(settings[:puppet_codedir], 'environments', 'production', 'modules')
+  pkg.directory File.join(settings[:puppet_codedir], 'environments', 'production', 'data')
   pkg.install_configfile 'conf/environment.conf', File.join(settings[:puppet_codedir], 'environments', 'production', 'environment.conf')
 
   if platform.is_windows?
@@ -234,5 +235,62 @@ component "puppet" do |pkg, settings, platform|
 
   if platform.is_eos?
     pkg.link "#{settings[:sysconfdir]}", "#{settings[:link_sysconfdir]}"
+  end
+
+  pkg.install_file "ext/hiera/hiera.yaml", File.join(settings[:puppet_codedir], 'environments', 'production', 'hiera.yaml')
+  pkg.configfile File.join(settings[:puppet_codedir], 'environments', 'production', 'hiera.yaml')
+  pkg.configfile File.join(configdir, 'hiera.yaml')
+
+  unless platform.is_windows?
+    old_hiera = File.join(settings[:puppet_codedir], 'hiera.yaml')
+    cnf_hiera = File.join(configdir, 'hiera.yaml')
+    env_hiera = File.join(settings[:puppet_codedir], 'environments', 'production', 'hiera.yaml')
+    rmv_hiera = File.join(configdir, 'remove_hiera5_files.rm')
+
+    # Pre-Install script to save copies of existing hiera configuration files.
+    # This also creates "marker files to indicate that the files pre-existed."
+    preinstall = <<-PREINST
+# Backup the old hiera configs if present, so that we
+# can drop them back in place if the package manager
+# tries to remove it.
+if [ -e #{old_hiera} ]; then
+  mv #{old_hiera}{,.pkg-old}
+  touch #{rmv_hiera}
+fi
+if [ -e #{cnf_hiera} ]; then
+  mv #{cnf_hiera}{,.pkg-old}
+  touch #{rmv_hiera}
+fi
+if [ -e #{env_hiera} ]; then
+  mv #{env_hiera}{,.pkg-old}
+  touch #{rmv_hiera}
+fi
+PREINST
+
+    # Post-install script to restore old hiera config files if the have been saved.
+    # and remove any extre hiera configuration files that we laid down
+    postinstall = <<-POSTINST
+# Remove any extra hiera config files we laid down if prev config present
+if [ -e #{rmv_hiera} ]; then
+  rm -f #{cnf_hiera}
+  rm -f #{env_hiera}
+  rm -f #{rmv_hiera}
+fi
+
+# Restore the old hiera, if it existed
+if [ -e #{old_hiera}.pkg-old ]; then
+  mv #{old_hiera}{.pkg-old,}
+fi
+if [ -e #{cnf_hiera}.pkg-old ]; then
+  mv #{cnf_hiera}{.pkg-old,}
+fi
+if [ -e #{env_hiera}.pkg-old ]; then
+  mv #{env_hiera}{.pkg-old,}
+fi
+
+POSTINST
+
+    pkg.add_preinstall_action ["upgrade"], [preinstall]
+    pkg.add_postinstall_action ["upgrade"], [postinstall]
   end
 end
