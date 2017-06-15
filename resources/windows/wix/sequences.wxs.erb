@@ -14,7 +14,6 @@
         CMDLINE_INSTALLDIR
       </Custom>
       <Custom Action='SetIniPropertyValues' After='AppSearch' />
-      <Custom Action='GetLocalisedAccountNames' After='AppSearch' />
       <!-- PUPPET_MASTER_SERVER -->
       <Custom Action='SetFromIniPuppetMasterServer' Before='FileCost'>
         INI_PUPPET_MASTER_SERVER
@@ -69,6 +68,7 @@
 
     <InstallExecuteSequence>
       <Custom Action='SetIniPropertyValues' After='AppSearch' />
+      <Custom Action='GetLocalisedAccountNames' After='AppSearch' />
       <!-- INSTALLDIR -->
       <Custom Action='SaveCmdLineInstallDir' Before='AppSearch' />
       <Custom Action='SetFromCmdLineInstallDir' After='AppSearch'>
