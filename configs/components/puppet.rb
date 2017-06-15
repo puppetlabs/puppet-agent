@@ -254,11 +254,15 @@ component "puppet" do |pkg, settings, platform|
 # can drop them back in place if the package manager
 # tries to remove it.
 if [ -e #{old_hiera} ]; then
-  cp #{old_hiera}{,.pkg-old}
+  mv #{old_hiera}{,.pkg-old}
   touch #{rmv_hiera}
 fi
 if [ -e #{cnf_hiera} ]; then
-  cp #{cnf_hiera}{,.pkg-old}
+  mv #{cnf_hiera}{,.pkg-old}
+  touch #{rmv_hiera}
+fi
+if [ -e #{env_hiera} ]; then
+  mv #{env_hiera}{,.pkg-old}
   touch #{rmv_hiera}
 fi
 PREINST
@@ -275,13 +279,15 @@ fi
 
 # Restore the old hiera, if it existed
 if [ -e #{old_hiera}.pkg-old ]; then
-  cp #{old_hiera}{.pkg-old,}
-  rm -f #{old_hiera}.pkg-old
+  mv #{old_hiera}{.pkg-old,}
 fi
 if [ -e #{cnf_hiera}.pkg-old ]; then
-  cp #{cnf_hiera}{.pkg-old,}
-  rm -f #{cnf_hiera}.pkg-old
+  mv #{cnf_hiera}{.pkg-old,}
 fi
+if [ -e #{env_hiera}.pkg-old ]; then
+  mv #{env_hiera}{.pkg-old,}
+fi
+
 POSTINST
 
     pkg.add_preinstall_action ["upgrade"], [preinstall]
