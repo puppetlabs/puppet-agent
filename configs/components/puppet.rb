@@ -243,60 +243,44 @@ component "puppet" do |pkg, settings, platform|
 
   unless platform.is_windows?
     old_hiera = File.join(settings[:puppet_codedir], 'hiera.yaml')
-    new_hiera = File.join(configdir, 'hiera.yaml')
+    cnf_hiera = File.join(configdir, 'hiera.yaml')
     env_hiera = File.join(settings[:puppet_codedir], 'environments', 'production', 'hiera.yaml')
+    rmv_hiera = File.join(configdir, 'remove_hiera5_files.rm')
 
     # Pre-Install script to save copies of existing hiera configuration files.
     # This also creates "marker files to indicate that the files pre-existed."
     preinstall = <<-PREINST
-# Backup the old hiera location, so that we
-# can drop it back in place if the package manager
+# Backup the old hiera configs if present, so that we
+# can drop them back in place if the package manager
 # tries to remove it.
 if [ -e #{old_hiera} ]; then
   cp #{old_hiera}{,.pkg-old}
+  touch #{rmv_hiera}
 fi
-# Same treatment for conf/new hiera location
-if [ -e #{new_hiera} ]; then
-  cp #{new_hiera}{,.pkg-old}
-fi
-
-# Flag the global and production hiera.yaml files for
-# removal, if the user doesn't have them configured.
-if [ \\\( ! -e #{new_hiera} \\\) -a -e #{env_hiera} ]; then
-  touch #{new_hiera}.rm
-fi
-if [ \\\( ! -e #{env_hiera} \\\) -a \\\( -e #{new_hiera} -o -e #{old_hiera} \\\) ]; then
-  touch #{env_hiera}.rm
+if [ -e #{cnf_hiera} ]; then
+  cp #{cnf_hiera}{,.pkg-old}
+  touch #{rmv_hiera}
 fi
 PREINST
 
     # Post-install script to restore old hiera config files if the have been saved.
     # and remove any extre hiera configuration files that we laid down
     postinstall = <<-POSTINST
+# Remove any extra hiera config files we laid down if prev config present
+if [ -e #{rmv_hiera} ]; then
+  rm -f #{cnf_hiera}
+  rm -f #{env_hiera}
+  rm -f #{rmv_hiera}
+fi
+
 # Restore the old hiera, if it existed
 if [ -e #{old_hiera}.pkg-old ]; then
   cp #{old_hiera}{.pkg-old,}
   rm -f #{old_hiera}.pkg-old
 fi
-
-# Remove any extra hiera config files we laid down
-if [ -e #{new_hiera}.rm ]; then
-  rm -f #{new_hiera}.rm
-  if [ -e #{new_hiera} ]; then
-    rm -f #{new_hiera}
-  fi
-fi
-if [ -e #{env_hiera}.rm ]; then
-  rm -f #{env_hiera}.rm
-  if [ -e #{env_hiera} ]; then
-    rm -f #{env_hiera}
-  fi
-fi
-
-# Finally restore the old conf/env hiera, if it existed
-if [ -e #{new_hiera}.pkg-old ]; then
-  cp #{new_hiera}{.pkg-old,}
-  rm -f #{env_hiera}.pkg-old
+if [ -e #{cnf_hiera}.pkg-old ]; then
+  cp #{cnf_hiera}{.pkg-old,}
+  rm -f #{cnf_hiera}.pkg-old
 fi
 POSTINST
 
