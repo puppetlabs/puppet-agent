@@ -245,6 +245,9 @@ component "puppet" do |pkg, settings, platform|
     old_hiera = File.join(settings[:puppet_codedir], 'hiera.yaml')
     new_hiera = File.join(configdir, 'hiera.yaml')
     env_hiera = File.join(settings[:puppet_codedir], 'environments', 'production', 'hiera.yaml')
+
+    # Pre-Install script to save copies of existing hiera configuration files.
+    # This also creates "marker files to indicate that the files pre-existed."
     preinstall = <<-PREINST
 # Backup the old hiera location, so that we
 # can drop it back in place if the package manager
@@ -252,7 +255,10 @@ component "puppet" do |pkg, settings, platform|
 if [ -e #{old_hiera} ]; then
   cp #{old_hiera}{,.pkg-old}
 fi
-
+# Same treatment for conf/new hiera location
+if [ -e #{new_hiera} ]; then
+  cp #{new_hiera}{,.pkg-old}
+fi
 
 # Flag the global and production hiera.yaml files for
 # removal, if the user doesn't have them configured.
@@ -264,24 +270,33 @@ if [ \\\( ! -e #{env_hiera} \\\) -a \\\( -e #{new_hiera} -o -e #{old_hiera} \\\)
 fi
 PREINST
 
+    # Post-install script to restore old hiera config files if the have been saved.
+    # and remove any extre hiera configuration files that we laid down
     postinstall = <<-POSTINST
 # Restore the old hiera, if it existed
 if [ -e #{old_hiera}.pkg-old ]; then
   cp #{old_hiera}{.pkg-old,}
+  rm -f #{old_hiera}.pkg-old
 fi
 
 # Remove any extra hiera config files we laid down
 if [ -e #{new_hiera}.rm ]; then
-  rm #{new_hiera}.rm
+  rm -f #{new_hiera}.rm
   if [ -e #{new_hiera} ]; then
-    rm #{new_hiera}
+    rm -f #{new_hiera}
   fi
 fi
 if [ -e #{env_hiera}.rm ]; then
-  rm #{env_hiera}.rm
+  rm -f #{env_hiera}.rm
   if [ -e #{env_hiera} ]; then
-    rm #{env_hiera}
+    rm -f #{env_hiera}
   fi
+fi
+
+# Finally restore the old conf/env hiera, if it existed
+if [ -e #{new_hiera}.pkg-old ]; then
+  cp #{new_hiera}{.pkg-old,}
+  rm -f #{env_hiera}.pkg-old
 fi
 POSTINST
 
