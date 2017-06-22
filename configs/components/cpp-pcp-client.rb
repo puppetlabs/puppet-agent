@@ -21,7 +21,7 @@ component "cpp-pcp-client" do |pkg, settings, platform|
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-yaml-cpp-0.5.1-1.aix#{platform.os_version}.ppc.rpm"
     # This should be moved to the toolchain file
     platform_flags = '-DCMAKE_SHARED_LINKER_FLAGS="-Wl,-bbigtoc"'
-  elsif platform.is_osx?
+  elsif platform.is_macos?
     cmake = "/usr/local/bin/cmake"
     platform_flags = "-DCMAKE_CXX_FLAGS='#{settings[:cflags]}'"
     toolchain = ""

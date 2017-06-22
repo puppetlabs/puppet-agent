@@ -32,7 +32,7 @@ component "openssl" do |pkg, settings, platform|
     pkg.apply_patch 'resources/patches/openssl/add-shell-to-engines_makefile.patch'
     pkg.apply_patch 'resources/patches/openssl/openssl-1.0.0l-use-gcc-instead-of-makedepend.patch'
     pkg.build_requires 'runtime'
-  elsif platform.is_osx?
+  elsif platform.is_macos?
     pkg.build_requires 'makedepend'
   elsif platform.is_windows?
     pkg.apply_patch 'resources/patches/openssl/openssl-1.0.0l-use-gcc-instead-of-makedepend.patch'
@@ -45,7 +45,7 @@ component "openssl" do |pkg, settings, platform|
     pkg.build_requires "runtime"
   end
 
-  if platform.is_osx?
+  if platform.is_macos?
     pkg.environment "PATH" => "/opt/pl-build-tools/bin:$$PATH:/usr/local/bin"
     target = 'darwin64-x86_64-cc'
     cflags = settings[:cflags]

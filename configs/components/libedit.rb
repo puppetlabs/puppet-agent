@@ -13,7 +13,7 @@ component 'libedit' do |pkg, settings, platform|
     pkg.environment "LDFLAGS" => settings[:ldflags]
   end
 
-  if platform.is_osx?
+  if platform.is_macos?
     pkg.environment "CFLAGS" => settings[:cflags]
   end
 

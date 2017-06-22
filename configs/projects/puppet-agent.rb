@@ -61,7 +61,7 @@ project "puppet-agent" do |proj|
     if platform.is_eos?
       proj.setting(:sysconfdir, "/persist/sys/etc/puppetlabs")
       proj.setting(:link_sysconfdir, "/etc/puppetlabs")
-    elsif platform.is_osx?
+    elsif platform.is_macos?
       proj.setting(:sysconfdir, "/private/etc/puppetlabs")
     else
       proj.setting(:sysconfdir, "/etc/puppetlabs")
@@ -157,7 +157,7 @@ project "puppet-agent" do |proj|
 
   if platform.is_solaris?
     proj.identifier "puppetlabs.com"
-  elsif platform.is_osx?
+  elsif platform.is_macos?
     proj.identifier "com.puppetlabs"
   end
 
@@ -187,7 +187,7 @@ project "puppet-agent" do |proj|
     proj.setting(:cygwin, "nodosfilewarning winsymlinks:native")
   end
 
-  if platform.is_osx?
+  if platform.is_macos?
     # For OS X, we should optimize for an older architecture than Apple
     # currently ships for; there's a lot of older xeon chips based on
     # that architecture still in use throughout the Mac ecosystem.
@@ -276,7 +276,7 @@ project "puppet-agent" do |proj|
   end
 
   # Components only applicable on OSX
-  if platform.is_osx?
+  if platform.is_macos?
     proj.component "cfpropertylist"
   end
 

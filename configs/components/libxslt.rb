@@ -27,7 +27,7 @@ component "libxslt" do |pkg, settings, platform|
     # Configure on Solaris incorrectly passes flags to ld
     pkg.apply_patch 'resources/patches/libxslt/disable-version-script.patch'
     pkg.apply_patch 'resources/patches/libxslt/Update-missing-script-to-return-0.patch'
-  elsif platform.is_osx?
+  elsif platform.is_macos?
     pkg.environment "LDFLAGS" => settings[:ldflags]
     pkg.environment "CFLAGS" => settings[:cflags]
   else

@@ -36,7 +36,7 @@ component "facter" do |pkg, settings, platform|
   end
 
   # OSX uses clang and system openssl.  cmake comes from brew.
-  if platform.is_osx?
+  if platform.is_macos?
     pkg.build_requires "cmake"
     pkg.build_requires "boost"
     pkg.build_requires "yaml-cpp"
@@ -139,7 +139,7 @@ component "facter" do |pkg, settings, platform|
 
   # cmake on OSX is provided by brew
   # a toolchain is not currently required for OSX since we're building with clang.
-  if platform.is_osx?
+  if platform.is_macos?
     toolchain = ""
     cmake = "/usr/local/bin/cmake"
     special_flags += "-DCMAKE_CXX_FLAGS='#{settings[:cflags]}'"
@@ -212,7 +212,7 @@ component "facter" do |pkg, settings, platform|
     ["#{make} -j$(shell expr $(shell #{platform[:num_cores]}) + 1) install"]
   end
 
-  if platform.is_osx?
+  if platform.is_macos?
     ldd = "otool -L"
   else
     ldd = "ldd"

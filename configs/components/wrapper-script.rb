@@ -9,7 +9,7 @@ component "wrapper-script" do |pkg, settings, platform|
 
   if platform.is_aix?
     pkg.install_file "aix-wrapper.sh", wrapper, mode: '0755'
-  elsif platform.is_osx?
+  elsif platform.is_macos?
     pkg.install_file "osx-wrapper.sh", wrapper, mode: '0755'
   else
     pkg.install_file "sysv-wrapper.sh", wrapper, mode: '0755'

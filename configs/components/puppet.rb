@@ -10,7 +10,7 @@ component "puppet" do |pkg, settings, platform|
   end
   # Used to compile binary translation files
   # i18n is not supported on Solaris
-  if platform.is_osx?
+  if platform.is_macos?
     pkg.build_requires "gettext"
   elsif platform.is_windows?
     pkg.build_requires "pl-gettext-#{platform.architecture}"
@@ -105,7 +105,7 @@ component "puppet" do |pkg, settings, platform|
   unless platform.is_solaris?
     if platform.is_windows?
       msgfmt = "/cygdrive/c/tools/pl-build-tools/bin/msgfmt.exe"
-    elsif platform.is_osx?
+    elsif platform.is_macos?
       msgfmt = "/usr/local/opt/gettext/bin/msgfmt"
     else
       msgfmt = "/opt/pl-build-tools/bin/msgfmt"
@@ -126,7 +126,7 @@ component "puppet" do |pkg, settings, platform|
     pkg.requires 'tar' unless platform.is_aix?
   end
 
-  if platform.is_osx?
+  if platform.is_macos?
     pkg.add_source("file://resources/files/osx_paths.txt", sum: "077ceb5e2f71cf733190a61d2fd221fb")
     pkg.install_file("../osx_paths.txt", "/etc/paths.d/puppet-agent")
   end
