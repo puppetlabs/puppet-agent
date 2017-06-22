@@ -69,8 +69,8 @@ component "leatherman" do |pkg, settings, platform|
     special_flags = "-DCMAKE_CXX_FLAGS_RELEASE='-O2 -DNDEBUG'"
   elsif platform.is_windows?
     make = "#{settings[:gcc_bindir]}/mingw32-make"
-    pkg.environment "PATH" => "$$(cygpath -u #{settings[:gcc_bindir]}):$$(cygpath -u #{settings[:ruby_bindir]}):/cygdrive/c/Windows/system32:/cygdrive/c/Windows:/cygdrive/c/Windows/System32/WindowsPowerShell/v1.0"
-    pkg.environment "CYGWIN" => settings[:cygwin]
+    pkg.environment "PATH", "$$(cygpath -u #{settings[:gcc_bindir]}):$$(cygpath -u #{settings[:ruby_bindir]}):/cygdrive/c/Windows/system32:/cygdrive/c/Windows:/cygdrive/c/Windows/System32/WindowsPowerShell/v1.0"
+    pkg.environment "CYGWIN", settings[:cygwin]
 
     cmake = "C:/ProgramData/chocolatey/bin/cmake.exe -G \"MinGW Makefiles\""
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=#{settings[:tools_root]}/pl-build-toolchain.cmake"
@@ -88,7 +88,7 @@ component "leatherman" do |pkg, settings, platform|
 
   if platform.is_linux?
     # Ensure our gettext packages are found before system versions
-    pkg.environment "PATH" => "/opt/pl-build-tools/bin:$$PATH"
+    pkg.environment "PATH", "/opt/pl-build-tools/bin:$$PATH"
   end
 
   pkg.configure do

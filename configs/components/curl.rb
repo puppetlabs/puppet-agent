@@ -8,16 +8,16 @@ component 'curl' do |pkg, settings, platform|
 
   if platform.is_cross_compiled_linux?
     pkg.build_requires 'runtime'
-    pkg.environment "PATH" => "/opt/pl-build-tools/bin:$$PATH:#{settings[:bindir]}"
-    pkg.environment "PKG_CONFIG_PATH" => "/opt/puppetlabs/puppet/lib/pkgconfig"
-    pkg.environment "PATH" => "/opt/pl-build-tools/bin:$$PATH"
+    pkg.environment "PATH", "/opt/pl-build-tools/bin:$$PATH:#{settings[:bindir]}"
+    pkg.environment "PKG_CONFIG_PATH", "/opt/puppetlabs/puppet/lib/pkgconfig"
+    pkg.environment "PATH", "/opt/pl-build-tools/bin:$$PATH"
   end
 
   if platform.is_windows?
     pkg.build_requires "runtime"
 
-    pkg.environment "PATH" => "$$(cygpath -u #{settings[:gcc_bindir]}):$$PATH"
-    pkg.environment "CYGWIN" => settings[:cygwin]
+    pkg.environment "PATH", "$$(cygpath -u #{settings[:gcc_bindir]}):$$PATH"
+    pkg.environment "CYGWIN", settings[:cygwin]
   end
 
   pkg.configure do

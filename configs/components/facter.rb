@@ -30,9 +30,9 @@ component "facter" do |pkg, settings, platform|
   pkg.build_requires "openssl"
 
   if platform.is_windows?
-    pkg.environment "PATH" => "$$(cygpath -u #{settings[:gcc_bindir]}):$$(cygpath -u #{settings[:ruby_bindir]}):$$(cygpath -u #{settings[:bindir]}):/cygdrive/c/Windows/system32:/cygdrive/c/Windows:/cygdrive/c/Windows/System32/WindowsPowerShell/v1.0"
+    pkg.environment "PATH", "$$(cygpath -u #{settings[:gcc_bindir]}):$$(cygpath -u #{settings[:ruby_bindir]}):$$(cygpath -u #{settings[:bindir]}):/cygdrive/c/Windows/system32:/cygdrive/c/Windows:/cygdrive/c/Windows/System32/WindowsPowerShell/v1.0"
   else
-    pkg.environment "PATH" => "#{settings[:bindir]}:$$PATH"
+    pkg.environment "PATH", "#{settings[:bindir]}:$$PATH"
   end
 
   # OSX uses clang and system openssl.  cmake comes from brew.
@@ -99,7 +99,7 @@ component "facter" do |pkg, settings, platform|
   end
 
   if java_home
-    pkg.environment "JAVA_HOME" => java_home
+    pkg.environment "JAVA_HOME", java_home
   end
 
   # Skip blkid unless we can ensure it exists at build time. Otherwise we depend
@@ -159,7 +159,7 @@ component "facter" do |pkg, settings, platform|
     special_flags += " -DCMAKE_CXX_FLAGS_RELEASE='-O2 -DNDEBUG' "
   elsif platform.is_windows?
     make = "#{settings[:gcc_bindir]}/mingw32-make"
-    pkg.environment "CYGWIN" => settings[:cygwin]
+    pkg.environment "CYGWIN", settings[:cygwin]
 
     cmake = "C:/ProgramData/chocolatey/bin/cmake.exe -G \"MinGW Makefiles\""
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=#{settings[:tools_root]}/pl-build-toolchain.cmake"

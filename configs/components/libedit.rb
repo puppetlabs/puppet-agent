@@ -3,18 +3,18 @@ component 'libedit' do |pkg, settings, platform|
   pkg.md5sum '43cdb5df3061d78b5e9d59109871b4f6'
   pkg.url "http://thrysoee.dk/editline/libedit-#{pkg.get_version}.tar.gz"
 
-  pkg.environment "PATH" => "/opt/pl-build-tools/bin:$$PATH"
+  pkg.environment "PATH", "/opt/pl-build-tools/bin:$$PATH"
 
   if platform.is_solaris?
-    pkg.environment "CC" => "/opt/pl-build-tools/bin/#{settings[:platform_triple]}-gcc"
+    pkg.environment "CC", "/opt/pl-build-tools/bin/#{settings[:platform_triple]}-gcc"
   elsif platform.is_aix?
     pkg.build_requires "http://osmirror.delivery.puppetlabs.net/AIX_MIRROR/gawk-3.1.3-1.aix5.1.ppc.rpm"
-    pkg.environment "CC" => "/opt/pl-build-tools/bin/gcc"
-    pkg.environment "LDFLAGS" => settings[:ldflags]
+    pkg.environment "CC", "/opt/pl-build-tools/bin/gcc"
+    pkg.environment "LDFLAGS", settings[:ldflags]
   end
 
   if platform.is_macos?
-    pkg.environment "CFLAGS" => settings[:cflags]
+    pkg.environment "CFLAGS", settings[:cflags]
   end
 
   pkg.configure do
