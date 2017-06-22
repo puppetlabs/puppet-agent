@@ -107,6 +107,29 @@ component "pxp-agent" do |pkg, settings, platform|
       pkg.add_postinstall_action ["install"], ["update-rc.d pxp-agent disable > /dev/null || :"]
     elsif platform.is_sles?
       pkg.install_service "ext/suse/pxp-agent.init", "ext/redhat/pxp-agent.sysconfig"
+      # Releases of pxp-agent from 1.5.3 to 1.6.0 used a symlink to a versioned binary. When
+      # upgrading to a new version, the binary name changes. Zypper fails to refresh the service
+      # when the binary used by the running service is removed on SLES 11. Manually clean up and
+      # restart the service if a dead service is detected.
+      # Most of this is cribbed from the pxp-agent service script. However, we only want to
+      # use kill instead of killproc during upgrades that go wrong.
+      pkg.add_postinstall_action ["upgrade"],
+        [<<-HERE.undent
+          if [[ ! -z `service pxp-agent status 2>&1 | grep dead` ]] ; then
+            exec=/opt/puppetlabs/puppet/bin/pxp-agent
+            lockfile=/var/lock/subsys/pxp-agent
+            pidfile=/var/run/puppetlabs/pxp-agent.pid
+            if [ -f "$pidfile" ]; then
+              PID=$(cat "$pidfile")
+              OTHERPID=$(pgrep -f "$exec")
+              if [ "$PID" = "$OTHERPID" ] ; then
+                kill -QUIT $PID && rm -f "$lockfile" "$pidfile"
+                service pxp-agent start
+              fi
+            fi
+          fi
+          HERE
+        ]
     elsif platform.is_rpm?
       pkg.install_service "ext/redhat/pxp-agent.init", "ext/redhat/pxp-agent.sysconfig"
     end
