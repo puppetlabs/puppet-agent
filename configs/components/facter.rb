@@ -30,9 +30,9 @@ component "facter" do |pkg, settings, platform|
   pkg.build_requires "openssl"
 
   if platform.is_windows?
-    pkg.environment "PATH", "$$(cygpath -u #{settings[:gcc_bindir]}):$$(cygpath -u #{settings[:ruby_bindir]}):$$(cygpath -u #{settings[:bindir]}):/cygdrive/c/Windows/system32:/cygdrive/c/Windows:/cygdrive/c/Windows/System32/WindowsPowerShell/v1.0"
+    pkg.environment "PATH", "$(shell cygpath -u #{settings[:gcc_bindir]}):$(shell cygpath -u #{settings[:ruby_bindir]}):$(shell cygpath -u #{settings[:bindir]}):/cygdrive/c/Windows/system32:/cygdrive/c/Windows:/cygdrive/c/Windows/System32/WindowsPowerShell/v1.0"
   else
-    pkg.environment "PATH", "#{settings[:bindir]}:$$PATH"
+    pkg.environment "PATH", "#{settings[:bindir]}:$(PATH)"
   end
 
   # OSX uses clang and system openssl.  cmake comes from brew.

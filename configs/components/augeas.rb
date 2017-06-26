@@ -35,7 +35,7 @@ component 'augeas' do |pkg, settings, platform|
 
     if platform.architecture =~ /ppc64le|s390x/
       pkg.build_requires 'runtime'
-      pkg.environment "PATH", "/opt/pl-build-tools/bin:$$PATH:#{settings[:bindir]}"
+      pkg.environment "PATH", "/opt/pl-build-tools/bin:$(PATH):#{settings[:bindir]}"
       pkg.environment "CFLAGS", settings[:cflags]
       pkg.environment "LDFLAGS", settings[:ldflags]
     end
@@ -43,7 +43,7 @@ component 'augeas' do |pkg, settings, platform|
     pkg.build_requires 'runtime'
     pkg.build_requires 'pl-pkg-config'
 
-    pkg.environment "PATH", "/opt/pl-build-tools/bin:$$PATH:#{settings[:bindir]}"
+    pkg.environment "PATH", "/opt/pl-build-tools/bin:$(PATH):#{settings[:bindir]}"
     pkg.environment "CFLAGS", settings[:cflags]
     pkg.environment "LDFLAGS", settings[:ldflags]
     pkg.environment "PKG_CONFIG", "/opt/pl-build-tools/bin/pkg-config"
@@ -53,13 +53,13 @@ component 'augeas' do |pkg, settings, platform|
 
     pkg.build_requires 'pkg-config'
     if platform.is_cross_compiled_linux?
-      pkg.environment "PATH", "/opt/pl-build-tools/bin:$$PATH:#{settings[:bindir]}"
+      pkg.environment "PATH", "/opt/pl-build-tools/bin:$(PATH):#{settings[:bindir]}"
       pkg.environment "CFLAGS", settings[:cflags]
       pkg.environment "LDFLAGS", settings[:ldflags]
     end
 
   elsif platform.is_solaris?
-    pkg.environment "PATH", "/opt/pl-build-tools/bin:$$PATH:/usr/local/bin:/usr/ccs/bin:/usr/sfw/bin:#{settings[:bindir]}"
+    pkg.environment "PATH", "/opt/pl-build-tools/bin:$(PATH):/usr/local/bin:/usr/ccs/bin:/usr/sfw/bin:#{settings[:bindir]}"
     pkg.environment "CFLAGS", settings[:cflags]
     pkg.environment "LDFLAGS", settings[:ldflags]
     pkg.build_requires 'libedit'
@@ -74,7 +74,7 @@ component 'augeas' do |pkg, settings, platform|
       pkg.environment "PKG_CONFIG", "/opt/pl-build-tools/bin/pkg-config"
     end
   elsif platform.is_macos?
-    pkg.environment "PATH", "$$PATH:/usr/local/bin"
+    pkg.environment "PATH", "$(PATH):/usr/local/bin"
     pkg.environment "CFLAGS", settings[:cflags]
   end
 

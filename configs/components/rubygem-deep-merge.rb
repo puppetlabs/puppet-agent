@@ -8,7 +8,7 @@ component "rubygem-deep-merge" do |pkg, settings, platform|
   pkg.build_requires "ruby-#{settings[:ruby_version]}"
 
   if platform.is_windows?
-    pkg.environment "PATH", "$$(cygpath -u #{settings[:gcc_bindir]}):$$(cygpath -u #{settings[:ruby_bindir]}):$$(cygpath -u #{settings[:bindir]}):/cygdrive/c/Windows/system32:/cygdrive/c/Windows:/cygdrive/c/Windows/System32/WindowsPowerShell/v1.0"
+    pkg.environment "PATH", "$(shell cygpath -u #{settings[:gcc_bindir]}):$(shell cygpath -u #{settings[:ruby_bindir]}):$(shell cygpath -u #{settings[:bindir]}):/cygdrive/c/Windows/system32:/cygdrive/c/Windows:/cygdrive/c/Windows/System32/WindowsPowerShell/v1.0"
   end
 
   # Because we are cross-compiling on sparc, we can't use the rubygems we just built.
@@ -19,7 +19,7 @@ component "rubygem-deep-merge" do |pkg, settings, platform|
   # set RUBYLIB to include puppet and hiera, so that their gemspecs can resolve
   # hiera/version and puppet/version requires. Without this the gem install
   # will fail by blowing out the stack.
-  pkg.environment "RUBYLIB", "#{settings[:ruby_vendordir]}:$$RUBYLIB"
+  pkg.environment "RUBYLIB", "#{settings[:ruby_vendordir]}:$(RUBYLIB)"
 
   pkg.install do
     ["#{settings[:gem_install]} deep_merge-#{pkg.get_version}.gem"]

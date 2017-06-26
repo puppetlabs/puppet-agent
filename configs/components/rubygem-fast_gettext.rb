@@ -13,7 +13,7 @@ component "rubygem-fast_gettext" do |pkg, settings, platform|
   # set RUBYLIB to include puppet and hiera, so that their gemspecs can resolve
   # hiera/version and puppet/version requires. Without this the gem install
   # will fail by blowing out the stack.
-  pkg.environment "RUBYLIB", "#{settings[:ruby_vendordir]}:$$RUBYLIB"
+  pkg.environment "RUBYLIB", "#{settings[:ruby_vendordir]}:$(RUBYLIB)"
 
   pkg.install do
     ["#{settings[:gem_install]} fast_gettext-#{pkg.get_version}.gem"]

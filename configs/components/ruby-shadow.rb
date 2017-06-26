@@ -7,7 +7,7 @@ component "ruby-shadow" do |pkg, settings, platform|
   pkg.replaces 'pe-ruby-shadow'
 
   pkg.build_requires "ruby-#{settings[:ruby_version]}"
-  pkg.environment "PATH", "$$PATH:/usr/ccs/bin:/usr/sfw/bin"
+  pkg.environment "PATH", "$(PATH):/usr/ccs/bin:/usr/sfw/bin"
   pkg.environment "CONFIGURE_ARGS", '--vendor'
 
   if platform.is_solaris?
