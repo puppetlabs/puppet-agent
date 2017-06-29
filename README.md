@@ -100,7 +100,6 @@ Here's a sample snippet used for a stable -> master merge:
 ```
 git merge --no-commit --no-ff stable
 for i in {hiera,facter,puppet,marionette-collective,pxp-agent,cpp-pcp-client}; do git checkout master -- configs/components/$i.json;done
-git checkout master -- configs/components/windows_puppet.json
 git commit -m "(maint) Restore promoted components refs after merge from stable"
 ```
 
