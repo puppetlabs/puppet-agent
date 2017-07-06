@@ -2,6 +2,7 @@ component "rubygem-win32-process" do |pkg, settings, platform|
   pkg.version "0.7.4"
   pkg.md5sum "3231cf152383fb2d792dcac8036b060f"
   pkg.url "https://rubygems.org/downloads/win32-process-#{pkg.get_version}.gem"
+  pkg.mirror "http://buildsources.delivery.puppetlabs.net/win32-process-#{pkg.get_version}.gem"
 
   pkg.build_requires "ruby-#{settings[:ruby_version]}"
 

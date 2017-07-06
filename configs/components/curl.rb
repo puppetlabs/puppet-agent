@@ -2,6 +2,7 @@ component 'curl' do |pkg, settings, platform|
   pkg.version '7.51.0'
   pkg.md5sum '490e19a8ccd1f4a244b50338a0eb9456'
   pkg.url "https://curl.haxx.se/download/curl-#{pkg.get_version}.tar.gz"
+  pkg.mirror "http://buildsources.delivery.puppetlabs.net/curl-#{pkg.get_version}.tar.gz"
 
   pkg.build_requires "openssl"
   pkg.build_requires "puppet-ca-bundle"

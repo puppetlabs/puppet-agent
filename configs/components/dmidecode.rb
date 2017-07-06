@@ -2,6 +2,7 @@ component 'dmidecode' do |pkg, settings, platform|
   pkg.version '2.12'
   pkg.md5sum '02ee243e1ecac7fe0d04428aec85f63a'
   pkg.url "http://download.savannah.gnu.org/releases/dmidecode/dmidecode-#{pkg.get_version}.tar.gz"
+  pkg.mirror "http://buildsources.delivery.puppetlabs.net/dmidecode-#{pkg.get_version}.tar.gz"
 
   pkg.apply_patch "resources/patches/dmidecode/dmidecode-1.173.patch"
   pkg.apply_patch "resources/patches/dmidecode/dmidecode-1.175.patch"

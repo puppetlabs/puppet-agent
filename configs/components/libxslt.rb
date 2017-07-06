@@ -2,6 +2,7 @@ component "libxslt" do |pkg, settings, platform|
   pkg.version "1.1.29"
   pkg.md5sum "a129d3c44c022de3b9dcf6d6f288d72e"
   pkg.url "http://xmlsoft.org/sources/#{pkg.get_name}-#{pkg.get_version}.tar.gz"
+  pkg.mirror "http://buildsources.delivery.puppetlabs.net/libxslt-#{pkg.get_version}.tar.gz"
 
   pkg.build_requires "libxml2"
 

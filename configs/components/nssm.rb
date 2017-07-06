@@ -2,6 +2,7 @@ component "nssm" do |pkg, settings, platform|
   pkg.version "2.24"
   pkg.md5sum "b2edd0e4a7a7be9d157c0da0ef65b1bc"
   pkg.url "https://nssm.cc/release/nssm-#{pkg.get_version}.zip"
+  pkg.mirror "http://buildsources.delivery.puppetlabs.net/nssm-#{pkg.get_version}.zip"
 
   # Because we're unpacking a zip archive, we need to set the path to the executable.
   # We don't automatically have this set on windows, unfortunately. We need to set the

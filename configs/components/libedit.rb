@@ -2,6 +2,7 @@ component 'libedit' do |pkg, settings, platform|
   pkg.version '20150325-3.1'
   pkg.md5sum '43cdb5df3061d78b5e9d59109871b4f6'
   pkg.url "http://thrysoee.dk/editline/libedit-#{pkg.get_version}.tar.gz"
+  pkg.mirror "http://buildsources.delivery.puppetlabs.net/libedit-#{pkg.get_version}.tar.gz"
 
   pkg.environment "PATH", "/opt/pl-build-tools/bin:$(PATH)"
 

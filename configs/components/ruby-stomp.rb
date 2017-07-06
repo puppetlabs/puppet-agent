@@ -2,6 +2,7 @@ component "ruby-stomp" do |pkg, settings, platform|
   pkg.version "1.3.3"
   pkg.md5sum "50a2c1b66982b426d67a83f56f4bc0e2"
   pkg.url "https://rubygems.org/downloads/stomp-#{pkg.get_version}.gem"
+  pkg.mirror "http://buildsources.delivery.puppetlabs.net/stomp-#{pkg.get_version}.gem"
 
   pkg.replaces 'pe-ruby-stomp'
 

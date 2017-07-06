@@ -2,6 +2,7 @@ component "rubygem-gettext-setup" do |pkg, settings, platform|
   pkg.version "0.24"
   pkg.md5sum "f766a5e12bbad9f85905638c500e08f6"
   pkg.url "https://rubygems.org/downloads/gettext-setup-#{pkg.get_version}.gem"
+  pkg.mirror "http://buildsources.delivery.puppetlabs.net/gettext-setup-#{pkg.get_version}.gem"
 
   pkg.build_requires "ruby-#{settings[:ruby_version]}"
 

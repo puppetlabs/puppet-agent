@@ -2,6 +2,7 @@ component "rubygem-text" do |pkg, settings, platform|
   pkg.version "1.3.1"
   pkg.md5sum "514c3d1db7a955fe793fc0cb149c164f"
   pkg.url "https://rubygems.org/downloads/text-#{pkg.get_version}.gem"
+  pkg.mirror "http://buildsources.delivery.puppetlabs.net/text-#{pkg.get_version}.gem"
 
   pkg.build_requires "ruby-#{settings[:ruby_version]}"
 

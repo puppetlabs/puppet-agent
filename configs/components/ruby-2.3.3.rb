@@ -2,6 +2,7 @@ component "ruby-2.3.3" do |pkg, settings, platform|
   pkg.version "2.3.3"
   pkg.md5sum "e485f3a55649eb24a1e2e1a40bc120df"
   pkg.url "https://cache.ruby-lang.org/pub/ruby/2.3/ruby-#{pkg.get_version}.tar.gz"
+  pkg.mirror "http://buildsources.delivery.puppetlabs.net/ruby-#{pkg.get_version}.tar.gz"
 
   if platform.is_windows?
     pkg.add_source "http://buildsources.delivery.puppetlabs.net/windows/elevate/elevate.exe", sum: "bd81807a5c13da32dd2a7157f66fa55d"

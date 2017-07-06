@@ -2,6 +2,7 @@ component "rubygem-win32-dir" do |pkg, settings, platform|
   pkg.version "0.4.9"
   pkg.md5sum "df14aa01bd6011f4b6332a05e15b7fb8"
   pkg.url "https://rubygems.org/downloads/win32-dir-#{pkg.get_version}.gem"
+  pkg.mirror "http://buildsources.delivery.puppetlabs.net/win32-dir-#{pkg.get_version}.gem"
 
   pkg.build_requires "ruby-#{settings[:ruby_version]}"
 
