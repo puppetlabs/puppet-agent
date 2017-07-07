@@ -40,7 +40,7 @@ action=nocheck
 # Install to the default base directory.
 basedir=default" > /var/tmp/vanagon-noask;
   pkgadd -n -a /var/tmp/vanagon-noask -G -d http://get.opencsw.org/now all;
-  /opt/csw/bin/pkgutil -y -i curl rsync gmake pkgconfig ggrep;
+  /opt/csw/bin/pkgutil -y -i rsync gmake pkgconfig ggrep;
   # RE-6121 openssl 1.0.2e requires functionality not in sytem grep
   ln -sf /opt/csw/bin/ggrep /usr/bin/grep;
   ln -sf /opt/csw/bin/rsync /usr/bin/rsync;
