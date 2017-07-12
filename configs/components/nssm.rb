@@ -1,6 +1,6 @@
 component "nssm" do |pkg, settings, platform|
   pkg.version "2.24"
-  pkg.md5sum "0fa251d152383ded6850097279291bb0"
+  pkg.md5sum "b2edd0e4a7a7be9d157c0da0ef65b1bc"
   pkg.url "https://nssm.cc/release/nssm-#{pkg.get_version}.zip"
 
   # Because we're unpacking a zip archive, we need to set the path to the executable.
@@ -10,5 +10,5 @@ component "nssm" do |pkg, settings, platform|
 
   win_arch = platform.architecture == "x64" ? "win64" : "win32"
 
-  pkg.install_file "#{win_arch}/nssm.exe", "#{settings[:service_dir]}/nssm.exe"
+  pkg.install_file "nssm-2.24/#{win_arch}/nssm.exe", "#{settings[:service_dir]}/nssm.exe"
 end
