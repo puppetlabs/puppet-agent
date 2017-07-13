@@ -7,7 +7,7 @@ component "ruby-selinux" do |pkg, settings, platform|
     pkg.url "http://pkgs.fedoraproject.org/repo/pkgs/libselinux/libselinux-1.33.4.tgz/08762379de2242926854080dad649b67/libselinux-1.33.4.tgz"
   else
     pkg.version "2.0.94"
-    pkg.md5sum "f814c71fca5a85ebfeb81b57afed59db"
+    pkg.md5sum "544f75aab11c2af352facc51af12029f"
     pkg.url "https://raw.githubusercontent.com/wiki/SELinuxProject/selinux/files/releases/20100525/devel/libselinux-#{pkg.get_version}.tar.gz"
   end
 
