@@ -49,6 +49,14 @@ component "ruby-2.1.9" do |pkg, settings, platform|
       :sum => "763f316f8f43878d1f3bd5aa6bbe36e8",
       :target_double => "powerpc-linux",
     },
+    'ppc64le-redhat-linux' => {
+      :sum => "e417b94501dce4b876fc8c787b629b6f",
+      :target_double => "powerpc64le-linux",
+    },
+    'powerpc64le-linux-gnu' => {
+      :sum => "097961a3a7fcf4397ca0f9c62469c760",
+      :target_double => "powerpc64le-linux",
+    },
     's390x-linux-gnu' => {
       :sum => "dc6341fff1d00b3ba22dc1b9e6d5532f",
       :target_double => "s390x-linux",
