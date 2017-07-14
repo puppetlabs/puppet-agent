@@ -2,6 +2,7 @@ component "ruby-2.1.9" do |pkg, settings, platform|
   pkg.version "2.1.9"
   pkg.md5sum "d9d2109d3827789344cc3aceb8e1d697"
   pkg.url "https://cache.ruby-lang.org/pub/ruby/2.1/ruby-#{pkg.get_version}.tar.gz"
+  pkg.mirror "http://buildsources.delivery.puppetlabs.net/ruby-#{pkg.get_version}.tar.gz"
 
   if platform.is_windows?
     pkg.add_source "http://buildsources.delivery.puppetlabs.net/windows/elevate/elevate.exe", sum: "bd81807a5c13da32dd2a7157f66fa55d"
@@ -96,8 +97,8 @@ component "ruby-2.1.9" do |pkg, settings, platform|
     pkg.apply_patch "#{base}/aix_ruby_2.1_libpath_with_opt_dir.patch"
     pkg.apply_patch "#{base}/aix_ruby_2.1_fix_proctitle.patch"
     pkg.apply_patch "#{base}/aix_ruby_2.1_fix_make_test_failure.patch"
-    pkg.environment "CC" => "/opt/pl-build-tools/bin/gcc"
-    pkg.environment "LDFLAGS" => settings[:ldflags]
+    pkg.environment "CC", "/opt/pl-build-tools/bin/gcc"
+    pkg.environment "LDFLAGS", settings[:ldflags]
     pkg.build_requires "libedit"
     pkg.build_requires "runtime"
 
@@ -135,13 +136,13 @@ component "ruby-2.1.9" do |pkg, settings, platform|
   if platform.is_cross_compiled_linux?
     pkg.build_requires 'pl-ruby'
     special_flags += " --with-baseruby=#{settings[:host_ruby]} "
-    pkg.environment "PATH" => "#{settings[:bindir]}:$$PATH"
-    pkg.environment "CC" => "/opt/pl-build-tools/bin/#{settings[:platform_triple]}-gcc"
-    pkg.environment "LDFLAGS" => "-Wl,-rpath=/opt/puppetlabs/puppet/lib"
+    pkg.environment "PATH", "#{settings[:bindir]}:$(PATH)"
+    pkg.environment "CC", "/opt/pl-build-tools/bin/#{settings[:platform_triple]}-gcc"
+    pkg.environment "LDFLAGS", "-Wl,-rpath=/opt/puppetlabs/puppet/lib"
   end
 
-  if platform.is_osx?
-    pkg.environment "optflags" => settings[:cflags]
+  if platform.is_macos?
+    pkg.environment "optflags", settings[:cflags]
   end
 
   if platform.is_solaris?
@@ -157,9 +158,9 @@ component "ruby-2.1.9" do |pkg, settings, platform|
     end
     pkg.build_requires 'libedit'
     pkg.build_requires 'runtime'
-    pkg.environment "PATH" => "#{settings[:bindir]}:/usr/ccs/bin:/usr/sfw/bin:$$PATH:/opt/csw/bin"
-    pkg.environment "CC" => "/opt/pl-build-tools/bin/#{settings[:platform_triple]}-gcc"
-    pkg.environment "LDFLAGS" => "-Wl,-rpath=/opt/puppetlabs/puppet/lib"
+    pkg.environment "PATH", "#{settings[:bindir]}:/usr/ccs/bin:/usr/sfw/bin:$(PATH):/opt/csw/bin"
+    pkg.environment "CC", "/opt/pl-build-tools/bin/#{settings[:platform_triple]}-gcc"
+    pkg.environment "LDFLAGS", "-Wl,-rpath=/opt/puppetlabs/puppet/lib"
   end
 
   if platform.is_windows?
@@ -168,10 +169,10 @@ component "ruby-2.1.9" do |pkg, settings, platform|
     pkg.build_requires "pl-libffi-#{platform.architecture}"
     pkg.build_requires "pl-pdcurses-#{platform.architecture}"
 
-    pkg.environment "PATH" => "$$(cygpath -u #{settings[:gcc_bindir]}):$$(cygpath -u #{settings[:tools_root]}/bin):$$(cygpath -u #{settings[:tools_root]}/include):$$(cygpath -u #{settings[:bindir]}):$$(cygpath -u #{settings[:ruby_bindir]}):$$(cygpath -u #{settings[:includedir]}):$$PATH"
-    pkg.environment "CYGWIN" => settings[:cygwin]
-    pkg.environment "optflags" => settings[:cflags] + " -O3"
-    pkg.environment "LDFLAGS" => settings[:ldflags]
+    pkg.environment "PATH", "$(shell cygpath -u #{settings[:gcc_bindir]}):$(shell cygpath -u #{settings[:tools_root]}/bin):$(shell cygpath -u #{settings[:tools_root]}/include):$(shell cygpath -u #{settings[:bindir]}):$(shell cygpath -u #{settings[:ruby_bindir]}):$(shell cygpath -u #{settings[:includedir]}):$(PATH)"
+    pkg.environment "CYGWIN", settings[:cygwin]
+    pkg.environment "optflags", settings[:cflags] + " -O3"
+    pkg.environment "LDFLAGS", settings[:ldflags]
 
     special_flags = " CPPFLAGS='-DFD_SETSIZE=2048' debugflags=-g --prefix=#{settings[:ruby_dir]} --with-opt-dir=#{settings[:prefix]} "
   end

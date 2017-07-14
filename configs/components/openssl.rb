@@ -2,6 +2,7 @@ component "openssl" do |pkg, settings, platform|
   pkg.version "1.0.2k"
   pkg.md5sum "f965fc0bf01bf882b31314b61391ae65"
   pkg.url "https://openssl.org/source/openssl-#{pkg.get_version}.tar.gz"
+  pkg.mirror "http://buildsources.delivery.puppetlabs.net/openssl-#{pkg.get_version}.tar.gz"
 
   pkg.replaces 'pe-openssl'
 
@@ -32,7 +33,7 @@ component "openssl" do |pkg, settings, platform|
     pkg.apply_patch 'resources/patches/openssl/add-shell-to-engines_makefile.patch'
     pkg.apply_patch 'resources/patches/openssl/openssl-1.0.0l-use-gcc-instead-of-makedepend.patch'
     pkg.build_requires 'runtime'
-  elsif platform.is_osx?
+  elsif platform.is_macos?
     pkg.build_requires 'makedepend'
   elsif platform.is_windows?
     pkg.apply_patch 'resources/patches/openssl/openssl-1.0.0l-use-gcc-instead-of-makedepend.patch'
@@ -45,41 +46,41 @@ component "openssl" do |pkg, settings, platform|
     pkg.build_requires "runtime"
   end
 
-  if platform.is_osx?
-    pkg.environment "PATH" => "/opt/pl-build-tools/bin:$$PATH:/usr/local/bin"
+  if platform.is_macos?
+    pkg.environment "PATH", "/opt/pl-build-tools/bin:$(PATH):/usr/local/bin"
     target = 'darwin64-x86_64-cc'
     cflags = settings[:cflags]
     ldflags = ''
   elsif platform.is_huaweios?
-    pkg.environment "PATH" => "/opt/pl-build-tools/bin:$$PATH"
-    pkg.environment "CC" => "/opt/pl-build-tools/bin/#{settings[:platform_triple]}-gcc"
+    pkg.environment "PATH", "/opt/pl-build-tools/bin:$(PATH)"
+    pkg.environment "CC", "/opt/pl-build-tools/bin/#{settings[:platform_triple]}-gcc"
 
     target = 'linux-ppc'
     ldflags = "-R/opt/pl-build-tools/#{settings[:platform_triple]}/lib -Wl,-rpath=#{settings[:libdir]} -L/opt/pl-build-tools/#{settings[:platform_triple]}/lib"
     cflags = "#{settings[:cflags]} -fPIC"
   elsif platform.name =~ /ubuntu-16\.04-ppc64el/
-    pkg.environment "PATH" => "/opt/pl-build-tools/bin:$$PATH"
-    pkg.environment "CC" => "/opt/pl-build-tools/bin/#{settings[:platform_triple]}-gcc"
+    pkg.environment "PATH", "/opt/pl-build-tools/bin:$(PATH)"
+    pkg.environment "CC", "/opt/pl-build-tools/bin/#{settings[:platform_triple]}-gcc"
 
     target = 'linux-ppc64le'
     cflags = "#{settings[:cflags]} -fPIC"
   elsif platform.architecture == "s390x"
-    pkg.environment "PATH" => "/opt/pl-build-tools/bin:$$PATH"
-    pkg.environment "CC" => "/opt/pl-build-tools/bin/#{settings[:platform_triple]}-gcc"
+    pkg.environment "PATH", "/opt/pl-build-tools/bin:$(PATH)"
+    pkg.environment "CC", "/opt/pl-build-tools/bin/#{settings[:platform_triple]}-gcc"
 
     target = 'linux64-s390x'
     ldflags = "-Wl,-rpath=/opt/pl-build-tools/#{settings[:platform_triple]}/lib -Wl,-rpath=#{settings[:libdir]} -L/opt/pl-build-tools/#{settings[:platform_triple]}/lib"
     cflags = "#{settings[:cflags]} -fPIC"
   elsif platform.architecture == "ppc64le"
-    pkg.environment "PATH" => "/opt/pl-build-tools/bin:$$PATH"
-    pkg.environment "CC" => "/opt/pl-build-tools/bin/#{settings[:platform_triple]}-gcc"
+    pkg.environment "PATH", "/opt/pl-build-tools/bin:$(PATH)"
+    pkg.environment "CC", "/opt/pl-build-tools/bin/#{settings[:platform_triple]}-gcc"
 
     target = 'linux-ppc64le'
     ldflags = "-Wl,-rpath=/opt/pl-build-tools/#{settings[:platform_triple]}/lib -Wl,-rpath=#{settings[:libdir]} -L/opt/pl-build-tools/#{settings[:platform_triple]}/lib"
     cflags = "#{settings[:cflags]} -fPIC"
   elsif platform.is_solaris?
-    pkg.environment "PATH" => "/opt/pl-build-tools/bin:$$PATH:/usr/local/bin:/usr/ccs/bin:/usr/sfw/bin"
-    pkg.environment "CC" => "/opt/pl-build-tools/bin/#{settings[:platform_triple]}-gcc"
+    pkg.environment "PATH", "/opt/pl-build-tools/bin:$(PATH):/usr/local/bin:/usr/ccs/bin:/usr/sfw/bin"
+    pkg.environment "CC", "/opt/pl-build-tools/bin/#{settings[:platform_triple]}-gcc"
     if platform.architecture =~ /86/
       target = 'solaris-x86-gcc'
     else
@@ -93,23 +94,23 @@ component "openssl" do |pkg, settings, platform|
     target = 'aix-gcc'
     ldflags = ''
     cflags = "$${CFLAGS} -static-libgcc"
-    pkg.environment "CC" => "/opt/pl-build-tools/bin/gcc"
+    pkg.environment "CC", "/opt/pl-build-tools/bin/gcc"
   elsif platform.is_windows?
     target = platform.architecture == "x64" ? "mingw64" : "mingw"
-    pkg.environment "PATH" => "$$(cygpath -u #{settings[:gcc_bindir]}):$$PATH"
-    pkg.environment "CYGWIN" => settings[:cygwin]
+    pkg.environment "PATH", "$(shell cygpath -u #{settings[:gcc_bindir]}):$(PATH)"
+    pkg.environment "CYGWIN", settings[:cygwin]
     cflags = settings[:cflags]
     ldflags = settings[:ldflags]
   elsif platform.name =~ /debian-8-arm/
     pkg.apply_patch 'resources/patches/openssl/openssl-1.0.0l-use-gcc-instead-of-makedepend.patch'
-    pkg.environment "PATH" => "/opt/pl-build-tools/bin:$$PATH"
-    pkg.environment "CC" => "/opt/pl-build-tools/bin/#{settings[:platform_triple]}-gcc"
+    pkg.environment "PATH", "/opt/pl-build-tools/bin:$(PATH)"
+    pkg.environment "CC", "/opt/pl-build-tools/bin/#{settings[:platform_triple]}-gcc"
     pkg.build_requires "xutils-dev"
     target = 'linux-armv4'
     ldflags = "-Wl,-rpath=/opt/pl-build-tools/#{settings[:platform_triple]}/lib -Wl,-rpath=#{settings[:libdir]} -L/opt/pl-build-tools/#{settings[:platform_triple]}/lib"
     cflags = "#{settings[:cflags]} -fPIC"
   else
-    pkg.environment "PATH" => "/opt/pl-build-tools/bin:$$PATH:/usr/local/bin"
+    pkg.environment "PATH", "/opt/pl-build-tools/bin:$(PATH):/usr/local/bin"
     if platform.architecture =~ /86$/
       target = 'linux-elf'
       sslflags = '386'

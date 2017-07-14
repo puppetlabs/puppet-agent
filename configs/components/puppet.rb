@@ -10,7 +10,7 @@ component "puppet" do |pkg, settings, platform|
   end
   # Used to compile binary translation files
   # i18n is not supported on Solaris
-  if platform.is_osx?
+  if platform.is_macos?
     pkg.build_requires "gettext"
   elsif platform.is_windows?
     pkg.build_requires "pl-gettext-#{platform.architecture}"
@@ -105,7 +105,7 @@ component "puppet" do |pkg, settings, platform|
   unless platform.is_solaris?
     if platform.is_windows?
       msgfmt = "/cygdrive/c/tools/pl-build-tools/bin/msgfmt.exe"
-    elsif platform.is_osx?
+    elsif platform.is_macos?
       msgfmt = "/usr/local/opt/gettext/bin/msgfmt"
     else
       msgfmt = "/opt/pl-build-tools/bin/msgfmt"
@@ -126,15 +126,15 @@ component "puppet" do |pkg, settings, platform|
     pkg.requires 'tar' unless platform.is_aix?
   end
 
-  if platform.is_osx?
+  if platform.is_macos?
     pkg.add_source("file://resources/files/osx_paths.txt", sum: "077ceb5e2f71cf733190a61d2fd221fb")
     pkg.install_file("../osx_paths.txt", "/etc/paths.d/puppet-agent")
   end
 
   if platform.is_windows?
-    pkg.environment "FACTERDIR" => settings[:facter_root]
-    pkg.environment "PATH" => "$$(cygpath -u #{settings[:gcc_bindir]}):$$(cygpath -u #{settings[:ruby_bindir]}):$$(cygpath -u #{settings[:bindir]}):/cygdrive/c/Windows/system32:/cygdrive/c/Windows:/cygdrive/c/Windows/System32/WindowsPowerShell/v1.0"
-    pkg.environment "RUBYLIB" => "#{settings[:hiera_libdir]};#{settings[:facter_root]}/lib"
+    pkg.environment "FACTERDIR", settings[:facter_root]
+    pkg.environment "PATH", "$(shell cygpath -u #{settings[:gcc_bindir]}):$(shell cygpath -u #{settings[:ruby_bindir]}):$(shell cygpath -u #{settings[:bindir]}):/cygdrive/c/Windows/system32:/cygdrive/c/Windows:/cygdrive/c/Windows/System32/WindowsPowerShell/v1.0"
+    pkg.environment "RUBYLIB", "#{settings[:hiera_libdir]};#{settings[:facter_root]}/lib"
   end
 
   if platform.is_windows?

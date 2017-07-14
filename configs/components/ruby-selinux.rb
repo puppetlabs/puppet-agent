@@ -5,10 +5,12 @@ component "ruby-selinux" do |pkg, settings, platform|
     pkg.md5sum "08762379de2242926854080dad649b67"
     pkg.apply_patch "resources/patches/ruby-selinux/libselinux-rhat.patch"
     pkg.url "http://pkgs.fedoraproject.org/repo/pkgs/libselinux/libselinux-1.33.4.tgz/08762379de2242926854080dad649b67/libselinux-1.33.4.tgz"
+    pkg.mirror "http://buildsources.delivery.puppetlabs.net/libselinux-#{pkg.get_version}.tgz"
   else
     pkg.version "2.0.94"
     pkg.md5sum "544f75aab11c2af352facc51af12029f"
     pkg.url "https://raw.githubusercontent.com/wiki/SELinuxProject/selinux/files/releases/20100525/devel/libselinux-#{pkg.get_version}.tar.gz"
+    pkg.mirror "http://buildsources.delivery.puppetlabs.net/libselinux-#{pkg.get_version}.tar.gz"
   end
 
   pkg.replaces 'pe-ruby-selinux'
@@ -25,7 +27,7 @@ component "ruby-selinux" do |pkg, settings, platform|
   if platform.is_cross_compiled_linux?
     cc = "/opt/pl-build-tools/bin/#{settings[:platform_triple]}-gcc"
     system_include = "-I/opt/pl-build-tools/#{settings[:platform_triple]}/sysroot/usr/include"
-    pkg.environment "RUBY" => settings[:host_ruby]
+    pkg.environment "RUBY", settings[:host_ruby]
     ruby = "#{settings[:host_ruby]} -r#{settings[:datadir]}/doc/rbconfig.rb"
   end
 
