@@ -110,7 +110,9 @@ component "facter" do |pkg, settings, platform|
     skip_blkid = 'OFF'
   elsif platform.is_rpm?
     if (platform.is_el? && platform.os_version.to_i >= 6) || (platform.is_sles? && platform.os_version.to_i >= 11) || platform.is_fedora?
-      pkg.build_requires "libblkid-devel" unless platform.architecture == "s390x"
+      # Ensure libblkid-devel isn't installed for all cross-compiled builds,
+      # otherwise the build will fail trying to link to the x86_64 libblkid:
+      pkg.build_requires "libblkid-devel" unless platform.is_cross_compiled?
       skip_blkid = 'OFF'
     elsif (platform.is_el? && platform.os_version.to_i < 6) || (platform.is_sles? && platform.os_version.to_i < 11)
       pkg.build_requires "e2fsprogs-devel"

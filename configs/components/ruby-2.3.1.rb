@@ -48,6 +48,14 @@ component "ruby-2.3.1" do |pkg, settings, platform|
       :sum => "763f316f8f43878d1f3bd5aa6bbe36e8",
       :target_double => "powerpc-linux",
     },
+    'ppc64le-redhat-linux' => {
+      :sum => "4559d7ec5815da93a309fdc33e69023b",
+      :target_double => "powerpc64le-linux",
+    },
+    'powerpc64le-linux-gnu' => {
+      :sum => "c76357879d97fea04bd1d4df099acdec",
+      :target_double => "powerpc64le-linux",
+    },
     's390x-linux-gnu' => {
       :sum => "dc6341fff1d00b3ba22dc1b9e6d5532f",
       :target_double => "s390x-linux",
@@ -128,7 +136,7 @@ component "ruby-2.3.1" do |pkg, settings, platform|
   pkg.environment "optflags" => "-O2"
 
   # The el-5-i386 and sles-10-i386 platforms have issues when using -O3 compiling
-  # ruby. This is *possibly* a limitatio of the versions of GCC we have running on those platforms.
+  # ruby. This is *possibly* a limitation of the versions of GCC we have running on those platforms.
   # We should revisit these optimizations once GCC 6.1 is in production for us.
   #
   #         - Sean P. McDonald 07/21/16

@@ -14,6 +14,7 @@ foss_platforms:
   - el-6-i386
   - el-6-x86_64
   - el-7-x86_64
+  - el-7-ppc64le
   - eos-4-i386
   - fedora-f24-i386
   - fedora-f24-x86_64
@@ -30,6 +31,7 @@ foss_platforms:
   - ubuntu-14.04-i386
   - ubuntu-16.04-amd64
   - ubuntu-16.04-i386
+  - ubuntu-16.04-ppc64el
   - ubuntu-16.10-amd64
   - ubuntu-16.10-i386
   - windows-2012-x86
@@ -71,6 +73,8 @@ platform_repos:
     repo_location: repos/el/7/**/x86_64
   - name: el-7-s390x
     repo_location: repos/el/7/**/s390x
+  - name: el-7-ppc64le
+    repo_location: repos/el/7/**/ppc64le
   - name: sles-11-s390x
     repo_location: repos/sles/11/**/s390x
   - name: sles-11-i386
@@ -104,6 +108,8 @@ platform_repos:
   - name: ubuntu-16.04-i386
     repo_location: repos/apt/xenial
   - name: ubuntu-16.04-amd64
+    repo_location: repos/apt/xenial
+  - name: ubuntu-16.04-ppc64el
     repo_location: repos/apt/xenial
   - name: ubuntu-16.10-i386
     repo_location: repos/apt/yakkety

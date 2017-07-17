@@ -28,8 +28,10 @@ component "libxml2" do |pkg, settings, platform|
     pkg.environment "CFLAGS" => settings[:cflags]
   end
 
+  # The system pkg-config has been found to pass incorrect build flags on
+  # some (but not all) cross-compiled debian-based platforms:
   if platform.is_cross_compiled? && platform.is_deb?
-    pkg.build_requires "pl-pkg-config"
+    pkg.build_requires "pl-pkg-config" unless platform.name =~ /ubuntu-16\.04-ppc64el/
   end
 
   if platform.is_cross_compiled_linux? || platform.name =~ /solaris-11/
