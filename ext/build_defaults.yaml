@@ -32,8 +32,6 @@ foss_platforms:
   - ubuntu-16.04-amd64
   - ubuntu-16.04-i386
   - ubuntu-16.04-ppc64el
-  - ubuntu-16.10-amd64
-  - ubuntu-16.10-i386
   - windows-2012-x86
   - windows-2012-x64
 pe_platforms:
@@ -111,10 +109,6 @@ platform_repos:
     repo_location: repos/apt/xenial
   - name: ubuntu-16.04-ppc64el
     repo_location: repos/apt/xenial
-  - name: ubuntu-16.10-i386
-    repo_location: repos/apt/yakkety
-  - name: ubuntu-16.10-amd64
-    repo_location: repos/apt/yakkety
   - name: osx-10.10
     repo_location: repos/apple/10.10/**/x86_64/*.dmg
   - name: osx-10.11
