@@ -10,5 +10,4 @@ platform "osx-10.10-x86_64" do |plat|
   plat.provision_with '/usr/local/bin/osx-deps apple-clt-7.2 pkg-config'
   plat.install_build_dependencies_with "/usr/local/bin/osx-deps "
   plat.vmpooler_template "osx-1010-x86_64"
-  plat.output_dir File.join("apple", "10.10", "PC1", "x86_64")
 end

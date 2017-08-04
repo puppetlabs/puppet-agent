@@ -54,6 +54,4 @@ basedir=default" > /var/tmp/vanagon-noask;
   tmpdir=$(mktemp -p /var/tmp -d); (cd ${tmpdir} && curl -O #{base_url}/${pkg} && gunzip -c ${pkg} | pkgadd -d /dev/stdin -a /var/tmp/vanagon-noask all); \
   done
   ntpdate pool.ntp.org]
-
-  plat.output_dir File.join("solaris", "10", "PC1")
 end
