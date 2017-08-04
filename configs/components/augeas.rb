@@ -49,7 +49,11 @@ component 'augeas' do |pkg, settings, platform|
     pkg.environment "PKG_CONFIG" => "/opt/pl-build-tools/bin/pkg-config"
   elsif platform.is_deb?
     pkg.build_requires 'libreadline-dev'
-    pkg.requires 'libreadline6'
+    if platform.name =~ /debian-9/
+      pkg.requires 'libreadline7'
+    else
+      pkg.requires 'libreadline6'
+    end
 
     pkg.build_requires 'pkg-config'
     if platform.is_cross_compiled_linux?
