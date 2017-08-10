@@ -9,6 +9,8 @@ foss_platforms:
   - debian-7-i386
   - debian-8-amd64
   - debian-8-i386
+  - debian-9-amd64
+  - debian-9-i386
   - el-5-i386
   - el-5-x86_64
   - el-6-i386
@@ -31,8 +33,6 @@ foss_platforms:
   - ubuntu-16.04-amd64
   - ubuntu-16.04-i386
   - ubuntu-16.04-ppc64el
-  - ubuntu-16.10-amd64
-  - ubuntu-16.10-i386
   - windows-2012-x86
   - windows-2012-x64
 pe_platforms:
@@ -97,6 +97,10 @@ platform_repos:
     repo_location: repos/apt/jessie
   - name: debian-8-amd64
     repo_location: repos/apt/jessie
+  - name: debian-9-i386
+    repo_location: repos/apt/stretch
+  - name: debian-9-amd64
+    repo_location: repos/apt/stretch
   - name: ubuntu-14.04-i386
     repo_location: repos/apt/trusty
   - name: ubuntu-14.04-amd64
@@ -107,10 +111,6 @@ platform_repos:
     repo_location: repos/apt/xenial
   - name: ubuntu-16.04-ppc64el
     repo_location: repos/apt/xenial
-  - name: ubuntu-16.10-i386
-    repo_location: repos/apt/yakkety
-  - name: ubuntu-16.10-amd64
-    repo_location: repos/apt/yakkety
   - name: osx-10.10
     repo_location: repos/apple/10.10/**/x86_64/*.dmg
   - name: osx-10.11
