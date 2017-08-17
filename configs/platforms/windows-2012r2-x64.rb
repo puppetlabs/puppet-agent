@@ -5,7 +5,7 @@ platform "windows-2012r2-x64" do |plat|
 
   # We need to ensure we install chocolatey prior to adding any nuget repos. Otherwise, everything will fall over
   install_script = File.expand_path('../../resources/windows/install-chocolatey.ps1', __FILE__)
-  choco_bootstrap = URI.join('file:///', install_script)
+  choco_bootstrap = "file:///#{install_script}"
   puts "file uri: #{choco_bootstrap}"
   plat.add_build_repository choco_bootstrap
 
