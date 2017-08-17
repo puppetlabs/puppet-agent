@@ -3,8 +3,9 @@ platform "windows-2012r2-x86" do |plat|
 
   plat.servicetype "windows"
 
-  # We need to ensure we install chocolatey prior to adding any nuget repos. Otherwise, everything will fall over
-  plat.add_build_repository "http://buildsources.delivery.puppetlabs.net/windows/chocolatey/install-chocolatey.ps1"
+  # Pin chocolatey to version 0.9.9.11
+  # Uses a special versioned chocolatey download file in buildsources.
+  plat.add_build_repository "http://buildsources.delivery.puppetlabs.net/windows/chocolatey/install-chocolatey-0.9.9.11.ps1"
   plat.add_build_repository "http://nexus.delivery.puppetlabs.net/service/local/nuget/temp-build-tools/"
   plat.add_build_repository "http://nexus.delivery.puppetlabs.net/service/local/nuget/nuget-pl-build-tools/"
 
