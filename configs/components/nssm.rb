@@ -2,11 +2,12 @@ component "nssm" do |pkg, settings, platform|
   pkg.load_from_json("configs/components/nssm.json")
 
   build_arch = platform.architecture == "x64" ? "x64" : "Win32"
+  platform_toolset = 'v141'
+  target_platform_version = '8.1'
 
   pkg.install do
     [
-      "/cygdrive/c/Program\\ files\\ \\(x86\\)/Microsoft\\ Visual\\ Studio/2017/BuildTools/Common7/Tools/vsdevcmd.bat",
-      "/cygdrive/c/Program\\ Files\\ \\(x86\\)/Microsoft\\ Visual\\ Studio/2017/BuildTools/MSBuild/15.0/Bin/msbuild.exe nssm.vcxproj /detailedsummary /p:Configuration=Release /p:OutDir=./out /p:Platform=#{build_arch} /p:PlatformToolset=v141 /p:TargetPlatformVersion=8.1",
+      "#{settings[:msbuild]} nssm.vcxproj /detailedsummary /p:Configuration=Release /p:OutDir=./out /p:Platform=#{build_arch} /p:PlatformToolset=#{platform_toolset} /p:TargetPlatformVersion=#{target_platform_version}",
     ]
   end
 

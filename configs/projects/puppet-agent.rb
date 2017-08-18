@@ -179,6 +179,12 @@ project "puppet-agent" do |proj|
   if platform.is_windows?
     arch = platform.architecture == "x64" ? "64" : "32"
     proj.setting(:gcc_root, "C:/tools/mingw#{arch}")
+    proj.setting(:vs_version, '2017')
+    # The msbuild command needs to be surrounded in quotes and shelled
+    # out to cmd.exe because otherwise cygwin will treat the && in bash and
+    # fail. Even though the invocation of msbuild is in quotes, parameters
+    # sent to it don't need extra quotes or escaping.
+    proj.setting(:msbuild, "cmd.exe /C \"C:/tools/vsdevcmd.bat && msbuild\"")
     proj.setting(:gcc_bindir, "#{proj.gcc_root}/bin")
     proj.setting(:tools_root, "C:/tools/pl-build-tools")
     proj.setting(:cppflags, "-I#{proj.tools_root}/include -I#{proj.gcc_root}/include -I#{proj.includedir}")
