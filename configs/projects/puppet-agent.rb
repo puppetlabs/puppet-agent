@@ -183,7 +183,7 @@ project "puppet-agent" do |proj|
     proj.setting(:tools_root, "C:/tools/pl-build-tools")
     proj.setting(:cppflags, "-I#{proj.tools_root}/include -I#{proj.gcc_root}/include -I#{proj.includedir}")
     proj.setting(:cflags, "#{proj.cppflags}")
-    proj.setting(:ldflags, "-L#{proj.tools_root}/lib -L#{proj.gcc_root}/lib -L#{proj.libdir}")
+    proj.setting(:ldflags, "-L#{proj.tools_root}/lib -L#{proj.gcc_root}/lib -L#{proj.libdir} -Wl,--nxcompat -Wl,--dynamicbase")
     proj.setting(:cygwin, "nodosfilewarning winsymlinks:native")
   end
 
