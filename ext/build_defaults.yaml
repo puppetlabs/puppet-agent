@@ -1,6 +1,6 @@
 ---
 project: 'puppet-agent'
-packaging_url: 'git://github.com/melissa/packaging.git --branch=ticket/1.0.x/mac-win-eos-linking'
+packaging_url: 'git://github.com/puppetlabs/packaging.git --branch=1.0.x'
 packaging_repo: 'packaging'
 # foss_platforms will be shipped to the nightly repos
 foss_platforms:
