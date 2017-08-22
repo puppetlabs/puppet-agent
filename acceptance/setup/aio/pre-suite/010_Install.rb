@@ -7,19 +7,14 @@ step "Install puppet-agent..." do
     :puppet_agent_version => ENV['SUITE_VERSION'] || ENV['SHA'],
     :default_action => 'gem_install'
   }
-  agents.each do |agent|
-    next if agent == master
-    if ENV['TESTING_RELEASED_PACKAGES']
+  if ENV['TESTING_RELEASED_PACKAGES']
+    agents.each do |agent|
       # installs both release repo and agent package
       install_puppet_agent_on(agent, opts)
-    else
-      opts.merge!({
-        :dev_builds_url => ENV['AGENT_DOWNLOAD_URL'],
-        :puppet_agent_sha => ENV['SHA']
-      })
-      # installs both development repo and agent package
-      install_puppet_agent_dev_repo_on(agent, opts)
     end
+  else
+    # installs both development repo and agent package
+    install_from_build_data_url('puppet-agent', ENV['SHA'])
   end
 end
 
