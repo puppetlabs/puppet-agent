@@ -14,7 +14,7 @@ step "Install puppet-agent..." do
     end
   else
     # installs both development repo and agent package
-    install_from_build_data_url('puppet-agent', "http://builds.delivery.puppetlabs.net/puppet-agent/#{ENV['SHA']}")
+    install_from_build_data_url('puppet-agent', "http://builds.delivery.puppetlabs.net/puppet-agent/#{ENV['SHA']}/artifacts/#{ENV['SHA']}.yaml")
   end
 end
 
