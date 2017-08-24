@@ -82,11 +82,13 @@ component "pxp-agent" do |pkg, settings, platform|
 
   pkg.directory File.join(settings[:sysconfdir], 'pxp-agent')
   if platform.is_windows?
+    pkg.directory File.join(settings[:sysconfdir], 'pxp-agent', 'etc', 'modules')
     pkg.directory File.join(settings[:sysconfdir], 'pxp-agent', 'var', 'spool')
     pkg.directory File.join(settings[:sysconfdir], 'pxp-agent', 'tasks-cache')
     pkg.directory File.join(settings[:sysconfdir], 'pxp-agent', 'var', 'log')
     pkg.directory File.join(settings[:sysconfdir], 'pxp-agent', 'var', 'run')
   else
+    pkg.directory File.join(settings[:sysconfdir], 'pxp-agent', 'modules'), mode: "0750"
     pkg.directory File.join(settings[:install_root], 'pxp-agent', 'spool'), mode: "0750"
     pkg.directory File.join(settings[:install_root], 'pxp-agent', 'tasks-cache'), mode: "0750"
     pkg.directory File.join(settings[:logdir], 'pxp-agent'), mode: "0750"
