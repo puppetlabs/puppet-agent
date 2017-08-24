@@ -33,13 +33,7 @@ component "leatherman" do |pkg, settings, platform|
     pkg.build_requires "pl-gettext"
   end
 
-  # curl is only used for compute clusters (GCE, EC2); so rpm, deb, and Windows
-  use_curl = 'FALSE'
-  if (platform.is_linux? && !platform.is_huaweios? && !platform.is_cisco_wrlinux?) || platform.is_windows?
-    pkg.build_requires "curl"
-    use_curl = 'TRUE'
-  end
-
+  pkg.build_requires "curl"
   pkg.build_requires "runtime"
   pkg.build_requires "ruby-#{settings[:ruby_version]}"
 
@@ -52,7 +46,7 @@ component "leatherman" do |pkg, settings, platform|
   if platform.is_macos?
     toolchain = ""
     cmake = "/usr/local/bin/cmake"
-    special_flags = "-DCMAKE_CXX_FLAGS='#{settings[:cflags]}'"
+    special_flags = "-DCMAKE_CXX_FLAGS='#{settings[:cflags]}' -DLEATHERMAN_MOCK_CURL=FALSE"
   elsif platform.is_cross_compiled_linux?
     ruby = "#{settings[:host_ruby]} -r#{settings[:datadir]}/doc/rbconfig.rb"
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/#{settings[:platform_triple]}/pl-build-toolchain.cmake"
@@ -103,7 +97,6 @@ component "leatherman" do |pkg, settings, platform|
         -DLEATHERMAN_SHARED=TRUE \
         #{special_flags} \
         -DBOOST_STATIC=ON \
-        -DLEATHERMAN_USE_CURL=#{use_curl} \
         ."]
   end
 
