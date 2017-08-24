@@ -4,6 +4,11 @@ component 'curl' do |pkg, settings, platform|
   pkg.url "https://curl.haxx.se/download/curl-#{pkg.get_version}.tar.gz"
   pkg.mirror "http://buildsources.delivery.puppetlabs.net/curl-#{pkg.get_version}.tar.gz"
 
+  if platform.is_aix?
+    # Patch to disable _ALL_SOURCE when including select.h from multi.c. See patch for details.
+    pkg.apply_patch 'resources/patches/curl/curl-7.55.1-aix-poll.patch'
+  end
+
   pkg.build_requires "openssl"
   pkg.build_requires "puppet-ca-bundle"
 
