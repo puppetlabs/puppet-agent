@@ -216,7 +216,7 @@ project "puppet-agent" do |proj|
   # Then the dependencies
   proj.component "augeas" unless platform.is_windows?
   # Curl is only needed for compute clusters (GCE, EC2); so rpm, deb, and Windows
-  proj.component "curl" if (platform.is_linux? && !platform.is_huaweios? && !platform.is_cisco_wrlinux?) || platform.is_windows?
+  proj.component "curl"
   proj.component "ruby-#{proj.ruby_version}"
   proj.component "nssm" if platform.is_windows?
   proj.component "ruby-stomp"
