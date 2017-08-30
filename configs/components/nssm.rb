@@ -1,15 +1,15 @@
 component "nssm" do |pkg, settings, platform|
-  pkg.version "2.24"
-  pkg.md5sum "b2edd0e4a7a7be9d157c0da0ef65b1bc"
-  pkg.url "https://nssm.cc/release/nssm-#{pkg.get_version}.zip"
-  pkg.mirror "http://buildsources.delivery.puppetlabs.net/nssm-#{pkg.get_version}.zip"
+  pkg.load_from_json("configs/components/nssm.json")
 
-  # Because we're unpacking a zip archive, we need to set the path to the executable.
-  # We don't automatically have this set on windows, unfortunately. We need to set the
-  # path to have access to 7za.
-  pkg.environment "PATH", "/cygdrive/c/ProgramData/chocolatey/tools:$(PATH)" if platform.is_windows?
+  build_arch = platform.architecture == "x64" ? "x64" : "Win32"
+  platform_toolset = 'v141'
+  target_platform_version = '8.1'
 
-  win_arch = platform.architecture == "x64" ? "win64" : "win32"
+  pkg.install do
+    [
+      "#{settings[:msbuild]} nssm.vcxproj /detailedsummary /p:Configuration=Release /p:OutDir=.\\\\out\\\\ /p:Platform=#{build_arch} /p:PlatformToolset=#{platform_toolset} /p:TargetPlatformVersion=#{target_platform_version}",
+    ]
+  end
 
-  pkg.install_file "nssm-2.24/#{win_arch}/nssm.exe", "#{settings[:service_dir]}/nssm.exe"
+  pkg.install_file "out/nssm.exe", "#{settings[:service_dir]}/nssm.exe"
 end
