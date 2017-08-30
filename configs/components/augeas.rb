@@ -4,6 +4,7 @@ component 'augeas' do |pkg, settings, platform|
   pkg.url "http://buildsources.delivery.puppetlabs.net/augeas-#{pkg.get_version}.tar.gz"
 
   pkg.replaces 'pe-augeas'
+  pkg.apply_patch 'resources/patches/augeas/src-pathx.c-parse_name-correctly-handle-trailing-ws.patch'
   if platform.is_sles? && platform.os_version == '10'
     pkg.apply_patch 'resources/patches/augeas/augeas-1.2.0-fix-services-sles10.patch'
   end

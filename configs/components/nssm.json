@@ -1,5 +1,1 @@
-{
-  "version": "2.24",
-  "md5sum": "0fa251d152383ded6850097279291bb0",
-  "url": "http://buildsources.delivery.puppetlabs.net/windows/nssm/nssm-2.24.zip"
-}
+{"url": "git://github.com/puppetlabs/nssm.git", "ref": "2ad14eb370f16025fcc6db3123b523403d9e7886"}
