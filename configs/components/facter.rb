@@ -20,6 +20,11 @@ component "facter" do |pkg, settings, platform|
   pkg.build_requires 'runtime'
   pkg.build_requires 'cpp-hocon'
 
+  unless platform.is_aix? or platform.is_solaris?
+    # libwhereami doesn't support AIX or Solaris yet
+    pkg.build_requires "libwhereami"
+  end
+
   if platform.is_linux? && !platform.is_huaweios?
     # Running facter (as part of testing) expects virt-what is available
     pkg.build_requires 'virt-what'

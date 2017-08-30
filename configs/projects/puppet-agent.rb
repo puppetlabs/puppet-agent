@@ -220,6 +220,10 @@ project "puppet-agent" do |proj|
   proj.component "cpp-pcp-client"
   proj.component "pxp-agent"
 
+  unless platform.is_solaris? or platform.is_aix?
+    proj.component "libwhereami"
+  end
+
   # Then the dependencies
   proj.component "augeas" unless platform.is_windows?
   # Curl is only needed for compute clusters (GCE, EC2); so rpm, deb, and Windows
