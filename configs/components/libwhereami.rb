@@ -24,6 +24,10 @@ component "libwhereami" do |pkg, settings, platform|
   else
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/pl-build-toolchain.cmake"
     cmake = "/opt/pl-build-tools/bin/cmake"
+
+    if platform.is_cisco_wrlinux?
+      special_flags = "-DLEATHERMAN_USE_LOCALES=OFF"
+    end
   end
 
   # Until we build our own gettext packages, disable using locales.
