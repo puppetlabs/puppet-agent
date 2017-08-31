@@ -1,10 +1,9 @@
 component 'augeas' do |pkg, settings, platform|
-  pkg.version '1.8.0'
-  pkg.md5sum 'cc99cf86ec5f5c4dac71f2800bde2758'
+  pkg.version '1.8.1'
+  pkg.md5sum '623ff89d71a42fab9263365145efdbfa'
   pkg.url "http://buildsources.delivery.puppetlabs.net/augeas-#{pkg.get_version}.tar.gz"
 
   pkg.replaces 'pe-augeas'
-  pkg.apply_patch 'resources/patches/augeas/src-pathx.c-parse_name-correctly-handle-trailing-ws.patch'
   if platform.is_sles? && platform.os_version == '10'
     pkg.apply_patch 'resources/patches/augeas/augeas-1.2.0-fix-services-sles10.patch'
   end
