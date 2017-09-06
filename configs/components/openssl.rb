@@ -15,7 +15,9 @@ component "openssl" do |pkg, settings, platform|
     pkg.build_requires 'xorg-x11-util-devel' if platform.name =~ /^sles/
     pkg.build_requires 'xutils-dev' if platform.is_deb?
   elsif platform.is_linux?
-    pkg.build_requires 'pl-binutils'
+    unless platform.is_fedora? && platform.os_version.delete('f').to_i >= 26
+      pkg.build_requires 'pl-binutils'
+    end
     pkg.build_requires 'pl-gcc'
   elsif platform.is_solaris?
     if platform.os_version == "10"
