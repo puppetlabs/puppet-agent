@@ -1,6 +1,6 @@
 ---
 project: 'puppet-agent'
-packaging_url: 'git://github.com/puppetlabs/packaging.git --branch=1.0.x'
+packaging_url: 'git://github.com/puppetlabs/packaging.git --branch=maint/1.0.x/revert-staging-changes'
 packaging_repo: 'packaging'
 # foss_platforms will be shipped to the nightly repos
 foss_platforms:
