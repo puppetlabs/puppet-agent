@@ -5,6 +5,7 @@ Gemfile.lock
 Gemfile.local
 *.log
 ext/packaging
+ext/build_metadata.json
 pkg/*
 *.swp
 acceptance/junit/*

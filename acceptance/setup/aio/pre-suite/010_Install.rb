@@ -7,19 +7,16 @@ step "Install puppet-agent..." do
     :puppet_agent_version => ENV['SUITE_VERSION'] || ENV['SHA'],
     :default_action => 'gem_install'
   }
-  agents.each do |agent|
-    next if agent == master
-    if ENV['TESTING_RELEASED_PACKAGES']
+  if ENV['TESTING_RELEASED_PACKAGES']
+    agents.each do |agent|
       # installs both release repo and agent package
       install_puppet_agent_on(agent, opts)
-    else
-      opts.merge!({
-        :dev_builds_url => ENV['AGENT_DOWNLOAD_URL'],
-        :puppet_agent_sha => ENV['SHA']
-      })
-      # installs both development repo and agent package
-      install_puppet_agent_dev_repo_on(agent, opts)
     end
+  else
+    # installs both development repo and agent package
+    # this grabs all active hosts and runs the command on them, so we do not
+    # have to iterate over all the hosts like we do above
+    install_from_build_data_url('puppet-agent', "http://builds.delivery.puppetlabs.net/puppet-agent/#{ENV['SHA']}/artifacts/#{ENV['SHA']}.yaml")
   end
 end
 
@@ -76,7 +73,7 @@ step "Install puppetserver..." do
     end
   else
     install_puppetlabs_dev_repo(master, 'puppetserver', server_version, nil, :dev_builds_url => server_download_url)
-    install_puppetlabs_dev_repo(master, 'puppet-agent', ENV['SHA'])
+    install_from_build_data_url('puppet-agent', "http://builds.delivery.puppetlabs.net/puppet-agent/#{ENV['SHA']}/artifacts/#{ENV['SHA']}.yaml")
     master.install_package('puppetserver')
   end
 
