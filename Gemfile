@@ -11,7 +11,7 @@ def vanagon_location_for(place)
 end
 
 gem 'vanagon', *vanagon_location_for(ENV['VANAGON_LOCATION'] || '~> 0.13.1')
-gem 'packaging', :github => 'melissa/packaging', :branch => 'maint/1.0.x/revert-staging-changes'
+gem 'packaging', :github => 'puppetlabs/packaging', :branch => '1.0.x'
 gem 'rake'
 gem 'json'
 gem 'rubocop', "~> 0.34.2"
