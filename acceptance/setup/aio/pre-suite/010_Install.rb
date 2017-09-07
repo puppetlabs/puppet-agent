@@ -14,6 +14,8 @@ step "Install puppet-agent..." do
     end
   else
     # installs both development repo and agent package
+    # this grabs all active hosts and runs the command on them, so we do not
+    # have to iterate over all the hosts like we do above
     install_from_build_data_url('puppet-agent', "http://builds.delivery.puppetlabs.net/puppet-agent/#{ENV['SHA']}/artifacts/#{ENV['SHA']}.yaml")
   end
 end
