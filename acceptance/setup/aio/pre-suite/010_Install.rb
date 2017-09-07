@@ -73,7 +73,7 @@ step "Install puppetserver..." do
     end
   else
     install_puppetlabs_dev_repo(master, 'puppetserver', server_version, nil, :dev_builds_url => server_download_url)
-    install_puppetlabs_dev_repo(master, 'puppet-agent', ENV['SHA'])
+    install_from_build_data_url('puppet-agent', "http://builds.delivery.puppetlabs.net/puppet-agent/#{ENV['SHA']}/artifacts/#{ENV['SHA']}.yaml")
     master.install_package('puppetserver')
   end
 
