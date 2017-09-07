@@ -100,7 +100,7 @@ EOS
   else
     agent_target = ENV['TEST_TARGET'] || DEFAULT_AGENT_TEST_TARGET
     master_target = ENV['MASTER_TEST_TARGET'] || DEFAULT_MASTER_TEST_TARGET
-    targets = "#{master_target}-#{agent_target}{packaging_platform=fedora-25-x86_64}"
+    targets = "#{master_target}-#{agent_target}"
 
     cli = BeakerHostGenerator::CLI.new([targets, '--disable-default-role', '--osinfo-version', '1'])
     ENV['BEAKER_HOSTS'] = "tmp/#{targets}-#{SecureRandom.uuid}.yaml"
