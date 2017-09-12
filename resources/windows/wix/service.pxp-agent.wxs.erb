@@ -52,6 +52,10 @@
           <RegistryValue Name="AppKillProcessTree"
                          Value="0"
                          Type="integer" />
+         <!-- Set AppNoConsole=1 to deal with Win-10 Creator's update issue (PA-1502) -->
+         <RegistryValue Name="AppNoConsole"
+                        Value="1"
+                        Type="integer" />
           <RegistryKey Key="AppExit">
             <!-- Stop the service completely on exit(2) (Invalid configuration) otherwise restart with NSSM service throttling -->
             <!-- nssm AppExit codes reference https://nssm.cc/usage#exit -->
