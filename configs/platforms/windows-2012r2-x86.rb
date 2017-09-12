@@ -4,8 +4,9 @@ platform "windows-2012r2-x86" do |plat|
   plat.servicetype "windows"
 
   # We need to ensure we install chocolatey prior to adding any nuget repos. Otherwise, everything will fall over
-  helper_dir = File.expand_path('../../resources/windows/helpers', __FILE__)
-  plat.ship_workdir(helper_dir)
+  choco_source = File.expand_path('../../resources/windows/helpers/chocolatey-install.ps1', __FILE__)
+  choco_dest = 'C:\\Windows\\Temp\\chocolatey-install.ps1'
+  Vanagon::Utilities.rsync_to(choco_source, , choco_dest)
 
   choco_bootstrap = "file://C:\\Windows\\Temp\\install-chocolatey.ps1"
   plat.add_build_repository choco_bootstrap
