@@ -33,10 +33,10 @@
           <RegistryValue Name="AppParameters"
                          Value=""
                          Type="expandable" />
-          <RegistryValue Name="AppEnvironmentExtra"
-                         Value="PATH=[INSTALLDIR]pxp-agent\bin;[INSTALLDIR]puppet\bin;[INSTALLDIR]sys\ruby\bin;%PATH%"
-                         Type="multiString"
-                         Action="append" />
+          <RegistryValue Name="AppEnvironmentExtra" Type="multiString">
+                         <MultiStringValue>PATH=[INSTALLDIR]pxp-agent\bin;[INSTALLDIR]puppet\bin;[INSTALLDIR]facter\bin;[INSTALLDIR]sys\ruby\bin;%PATH%</MultiStringValue>
+                         <MultiStringValue>RUBYLIB=[INSTALLDIR]puppet\lib;[INSTALLDIR]hiera\lib;[INSTALLDIR]mcollective\lib;[INSTALLDIR]facter\lib;%RUBYLIB%</MultiStringValue>
+          </RegistryValue>
           <!-- Write stdout/stderr to the same log file to catch startup errors -->
           <RegistryValue Name="AppStdout"
                          Value="[pxpAgentDataFolderLog]\nssm.log"
