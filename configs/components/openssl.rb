@@ -5,34 +5,23 @@ component "openssl" do |pkg, settings, platform|
   pkg.mirror "http://buildsources.delivery.puppetlabs.net/openssl-#{pkg.get_version}.tar.gz"
 
   pkg.replaces 'pe-openssl'
+  pkg.build_requires 'runtime'
 
   # Use our toolchain on linux systems (it's not available on osx)
   if platform.is_cross_compiled_linux?
-    pkg.build_requires "pl-binutils-#{platform.architecture}"
-    pkg.build_requires "pl-gcc-#{platform.architecture}"
-    pkg.build_requires 'runtime'
     # needed for the makedepend command
     pkg.build_requires 'imake' if platform.name =~ /^el/
     pkg.build_requires 'xorg-x11-util-devel' if platform.name =~ /^sles/
     pkg.build_requires 'xutils-dev' if platform.is_deb?
-  elsif platform.is_linux?
-    pkg.build_requires 'pl-binutils'
-    pkg.build_requires 'pl-gcc'
   elsif platform.is_solaris?
     if platform.os_version == "10"
-      pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/solaris/10/pl-gcc-4.8.2-1.#{platform.architecture}.pkg.gz"
-      pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/solaris/10/pl-binutils-2.25.#{platform.architecture}.pkg.gz"
       pkg.apply_patch 'resources/patches/openssl/solaris-10-domd-shell-compatability-fix.patch'
-    elsif platform.os_version == "11"
-      pkg.build_requires "pl-gcc-#{platform.architecture}"
     end
-    pkg.build_requires 'runtime'
     pkg.apply_patch 'resources/patches/openssl/add-shell-to-engines_makefile.patch'
     pkg.apply_patch 'resources/patches/openssl/openssl-1.0.0l-use-gcc-instead-of-makedepend.patch'
   elsif platform.is_aix?
     pkg.apply_patch 'resources/patches/openssl/add-shell-to-engines_makefile.patch'
     pkg.apply_patch 'resources/patches/openssl/openssl-1.0.0l-use-gcc-instead-of-makedepend.patch'
-    pkg.build_requires 'runtime'
   elsif platform.is_macos?
     pkg.build_requires 'makedepend'
   elsif platform.is_windows?
@@ -43,7 +32,6 @@ component "openssl" do |pkg, settings, platform|
     # different compiler. Given our openssl should only be interacting with things that we build,
     # we can ensure everything is build with the same compiler.
     pkg.apply_patch 'resources/patches/openssl/openssl-mingw-do-not-build-applink.patch'
-    pkg.build_requires "runtime"
   end
 
   if platform.is_macos?
@@ -90,7 +78,6 @@ component "openssl" do |pkg, settings, platform|
     ldflags = "-R/opt/pl-build-tools/#{settings[:platform_triple]}/lib -Wl,-rpath=#{settings[:libdir]} -L/opt/pl-build-tools/#{settings[:platform_triple]}/lib"
     cflags = "#{settings[:cflags]} -fPIC"
   elsif platform.is_aix?
-    pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-gcc-5.2.0-1.aix#{platform.os_version}.ppc.rpm"
     target = 'aix-gcc'
     ldflags = ''
     cflags = "$${CFLAGS} -static-libgcc"
