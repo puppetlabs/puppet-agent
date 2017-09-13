@@ -53,6 +53,10 @@ component "ruby-2.4.1" do |pkg, settings, platform|
       :sum => "75f856df15c48c50514c803947f60bf9",
       :target_double => "powerpc64le-linux",
     },
+    'powerpc64le-suse-linux' => {
+      :sum => "00247ac1d0a9e59b1fcfb72025e7d628",
+      :target_double => "powerpc64le-linux",
+    },
     'powerpc64le-linux-gnu' => {
       :sum => "55e9426a06726f2baa82cc561f073fbf",
       :target_double => "powerpc64le-linux",
