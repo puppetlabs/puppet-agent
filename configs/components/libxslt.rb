@@ -10,7 +10,6 @@ component "libxslt" do |pkg, settings, platform|
   pkg.apply_patch 'resources/patches/libxslt/check-for-integer-overflow.patch'
 
   if platform.is_aix?
-    pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-gcc-5.2.0-1.aix#{platform.os_version}.ppc.rpm"
     pkg.environment "PATH", "/opt/pl-build-tools/bin:$(PATH)"
   elsif platform.is_cross_compiled_linux?
     pkg.environment "PATH", "/opt/pl-build-tools/bin:$(PATH):#{settings[:bindir]}"
@@ -32,14 +31,9 @@ component "libxslt" do |pkg, settings, platform|
     pkg.environment "LDFLAGS", settings[:ldflags]
     pkg.environment "CFLAGS", settings[:cflags]
   else
-    pkg.build_requires "pl-gcc"
     pkg.build_requires "make"
     pkg.environment "LDFLAGS", settings[:ldflags]
     pkg.environment "CFLAGS", settings[:cflags]
-  end
-
-  if platform.is_cross_compiled_linux? || platform.name =~ /solaris-11/
-    pkg.build_requires "pl-gcc-#{platform.architecture}"
   end
 
   pkg.configure do
