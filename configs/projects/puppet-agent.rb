@@ -98,6 +98,7 @@ project "puppet-agent" do |proj|
   # Cross-compiled Linux platforms
   platform_triple = "powerpc-linux-gnu" if platform.is_huaweios?
   platform_triple = "ppc64le-redhat-linux" if platform.architecture == "ppc64le"
+  platform_triple = "powerpc64le-suse-linux" if platform.architecture == "ppc64le" && platform.name =~ /^sles-/
   platform_triple = "powerpc64le-linux-gnu" if platform.architecture == "ppc64el"
   platform_triple = "s390x-linux-gnu" if platform.architecture == "s390x"
   platform_triple = "arm-linux-gnueabihf" if platform.name == 'debian-8-armhf'
@@ -179,11 +180,17 @@ project "puppet-agent" do |proj|
   if platform.is_windows?
     arch = platform.architecture == "x64" ? "64" : "32"
     proj.setting(:gcc_root, "C:/tools/mingw#{arch}")
+    proj.setting(:vs_version, '2017')
+    # The msbuild command needs to be surrounded in quotes and shelled
+    # out to cmd.exe because otherwise cygwin will treat the && in bash and
+    # fail. Even though the invocation of msbuild is in quotes, parameters
+    # sent to it don't need extra quotes or escaping.
+    proj.setting(:msbuild, "cmd.exe /C \"C:/tools/vsdevcmd.bat && msbuild\"")
     proj.setting(:gcc_bindir, "#{proj.gcc_root}/bin")
     proj.setting(:tools_root, "C:/tools/pl-build-tools")
     proj.setting(:cppflags, "-I#{proj.tools_root}/include -I#{proj.gcc_root}/include -I#{proj.includedir}")
     proj.setting(:cflags, "#{proj.cppflags}")
-    proj.setting(:ldflags, "-L#{proj.tools_root}/lib -L#{proj.gcc_root}/lib -L#{proj.libdir}")
+    proj.setting(:ldflags, "-L#{proj.tools_root}/lib -L#{proj.gcc_root}/lib -L#{proj.libdir} -Wl,--nxcompat -Wl,--dynamicbase")
     proj.setting(:cygwin, "nodosfilewarning winsymlinks:native")
   end
 
@@ -213,10 +220,14 @@ project "puppet-agent" do |proj|
   proj.component "cpp-pcp-client"
   proj.component "pxp-agent"
 
+  unless platform.is_solaris? or platform.is_aix?
+    proj.component "libwhereami"
+  end
+
   # Then the dependencies
   proj.component "augeas" unless platform.is_windows?
   # Curl is only needed for compute clusters (GCE, EC2); so rpm, deb, and Windows
-  proj.component "curl" if (platform.is_linux? && !platform.is_huaweios? && !platform.is_cisco_wrlinux?) || platform.is_windows?
+  proj.component "curl"
   proj.component "ruby-#{proj.ruby_version}"
   proj.component "nssm" if platform.is_windows?
   proj.component "ruby-stomp"

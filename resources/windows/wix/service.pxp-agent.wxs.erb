@@ -37,6 +37,13 @@
                          Value="PATH=[INSTALLDIR]pxp-agent\bin;[INSTALLDIR]puppet\bin;[INSTALLDIR]sys\ruby\bin;%PATH%"
                          Type="multiString"
                          Action="append" />
+          <!-- Write stdout/stderr to the same log file to catch startup errors -->
+          <RegistryValue Name="AppStdout"
+                         Value="[pxpAgentDataFolderLog]\nssm.log"
+                         Type="string" />
+          <RegistryValue Name="AppStderr"
+                         Value="[pxpAgentDataFolderLog]\nssm.log"
+                         Type="string" />
           <!-- Skip responding to WM_QUIT and WM_CLOSE; don't use TerminateProcess to prevent killing the entire process tree (PCP-276) -->
           <RegistryValue Name="AppStopMethodSkip"
                          Value="14"

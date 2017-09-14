@@ -18,11 +18,7 @@ component "pxp-agent" do |pkg, settings, platform|
 
   special_flags = " -DCMAKE_INSTALL_PREFIX=#{settings[:prefix]} "
 
-  if platform.is_aix?
-    pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-gcc-5.2.0-1.aix#{platform.os_version}.ppc.rpm"
-    pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-cmake-3.2.3-2.aix#{platform.os_version}.ppc.rpm"
-    pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-boost-1.58.0-1.aix#{platform.os_version}.ppc.rpm"
-  elsif platform.is_macos?
+  if platform.is_macos?
     cmake = "/usr/local/bin/cmake"
     toolchain = ""
     special_flags += "-DCMAKE_CXX_FLAGS='#{settings[:cflags]}'"
@@ -36,24 +32,14 @@ component "pxp-agent" do |pkg, settings, platform|
     # PCP-87: If we build with -O3, solaris segfaults due to something in std::vector
     special_flags += " -DCMAKE_CXX_FLAGS_RELEASE='-O2 -DNDEBUG' "
   elsif platform.is_windows?
-    pkg.build_requires "cmake"
-    pkg.build_requires "pl-toolchain-#{platform.architecture}"
-    pkg.build_requires "pl-boost-#{platform.architecture}"
-
     make = "#{settings[:gcc_bindir]}/mingw32-make"
     pkg.environment "CYGWIN", settings[:cygwin]
 
     special_flags = " -DCMAKE_INSTALL_PREFIX=#{settings[:pxp_root]} "
     cmake = "C:/ProgramData/chocolatey/bin/cmake.exe -G \"MinGW Makefiles\""
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=#{settings[:tools_root]}/pl-build-toolchain.cmake"
-  else
-    pkg.build_requires "pl-gcc"
-    pkg.build_requires "pl-cmake"
-    pkg.build_requires "pl-boost"
-
-    if platform.is_cisco_wrlinux?
-      special_flags += " -DLEATHERMAN_USE_LOCALES=OFF "
-    end
+  elsif platform.is_cisco_wrlinux?
+    special_flags += " -DLEATHERMAN_USE_LOCALES=OFF "
   end
 
   pkg.configure do
@@ -84,12 +70,14 @@ component "pxp-agent" do |pkg, settings, platform|
   if platform.is_windows?
     pkg.directory File.join(settings[:sysconfdir], 'pxp-agent', 'etc', 'modules')
     pkg.directory File.join(settings[:sysconfdir], 'pxp-agent', 'var', 'spool')
+    pkg.directory File.join(settings[:sysconfdir], 'pxp-agent', 'tasks-cache')
     pkg.directory File.join(settings[:sysconfdir], 'pxp-agent', 'var', 'log')
     pkg.directory File.join(settings[:sysconfdir], 'pxp-agent', 'var', 'run')
   else
-    pkg.directory File.join(settings[:sysconfdir], 'pxp-agent', 'modules')
-    pkg.directory File.join(settings[:install_root], 'pxp-agent', 'spool')
-    pkg.directory File.join(settings[:logdir], 'pxp-agent')
+    pkg.directory File.join(settings[:sysconfdir], 'pxp-agent', 'modules'), mode: "0750"
+    pkg.directory File.join(settings[:install_root], 'pxp-agent', 'spool'), mode: "0750"
+    pkg.directory File.join(settings[:install_root], 'pxp-agent', 'tasks-cache'), mode: "0750"
+    pkg.directory File.join(settings[:logdir], 'pxp-agent'), mode: "0750"
   end
 
   case platform.servicetype

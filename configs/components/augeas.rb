@@ -1,6 +1,6 @@
 component 'augeas' do |pkg, settings, platform|
-  pkg.version '1.8.0'
-  pkg.md5sum 'cc99cf86ec5f5c4dac71f2800bde2758'
+  pkg.version '1.8.1'
+  pkg.md5sum '623ff89d71a42fab9263365145efdbfa'
   pkg.url "http://buildsources.delivery.puppetlabs.net/augeas-#{pkg.get_version}.tar.gz"
 
   pkg.replaces 'pe-augeas'
@@ -14,7 +14,6 @@ component 'augeas' do |pkg, settings, platform|
   pkg.environment "PKG_CONFIG_PATH", "/opt/puppetlabs/puppet/lib/pkgconfig"
 
   if platform.is_aix?
-    pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-gcc-5.2.0-1.aix#{platform.os_version}.ppc.rpm"
     pkg.build_requires "http://osmirror.delivery.puppetlabs.net/AIX_MIRROR/pkg-config-0.19-6.aix5.2.ppc.rpm"
     pkg.environment "CC", "/opt/pl-build-tools/bin/gcc"
     pkg.environment "LDFLAGS", settings[:ldflags]
@@ -49,7 +48,11 @@ component 'augeas' do |pkg, settings, platform|
     pkg.environment "PKG_CONFIG", "/opt/pl-build-tools/bin/pkg-config"
   elsif platform.is_deb?
     pkg.build_requires 'libreadline-dev'
-    pkg.requires 'libreadline6'
+    if platform.name =~ /debian-9/
+      pkg.requires 'libreadline7'
+    else
+      pkg.requires 'libreadline6'
+    end
 
     pkg.build_requires 'pkg-config'
     if platform.is_cross_compiled_linux?

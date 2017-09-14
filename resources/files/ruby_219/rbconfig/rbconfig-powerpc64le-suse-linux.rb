@@ -1,4 +1,4 @@
-# This file was created from a native ruby build on a RHEL 7.3 ppc64le system.
+# This file was created from a native ruby build on a SLES 12 SP2 ppc64le system.
 # Any changes made to this file will be lost the next time ruby is built.
 
 module RbConfig
@@ -35,7 +35,7 @@ module RbConfig
   CONFIG["RUBY_SEARCH_PATH"] = ""
   CONFIG["UNIVERSAL_INTS"] = ""
   CONFIG["UNIVERSAL_ARCHNAMES"] = ""
-  CONFIG["configure_args"] = " '--prefix=/opt/puppetlabs/puppet' '--with-opt-dir=/opt/puppetlabs/puppet' '--enable-shared' '--enable-bundled-libyaml' '--disable-install-doc'"
+  CONFIG["configure_args"] = " '--prefix=/opt/puppetlabs/puppet' '--with-opt-dir=/opt/puppetlabs/puppet' '--enable-shared' '--enable-bundled-libyaml' '--disable-install-doc' '--disable-install-rdoc'"
   CONFIG["vendorarchdir"] = "$(vendorlibdir)/$(sitearch)"
   CONFIG["vendorlibdir"] = "$(vendordir)/$(ruby_version)"
   CONFIG["vendordir"] = "$(rubylibprefix)/vendor_ruby"
@@ -179,18 +179,18 @@ module RbConfig
   CONFIG["target_os"] = "linux"
   CONFIG["target_vendor"] = "unknown"
   CONFIG["target_cpu"] = "powerpc64le"
-  CONFIG["target"] = "powerpc64le-redhat-linux-gnu"
+  CONFIG["target"] = "powerpc64le-unknown-linux-gnu"
   CONFIG["host_os"] = "linux-gnu"
   CONFIG["host_vendor"] = "unknown"
   CONFIG["host_cpu"] = "powerpc64le"
-  CONFIG["host"] = "powerpc64le-redhat-linux-gnu"
+  CONFIG["host"] = "powerpc64le-unknown-linux-gnu"
   CONFIG["RUBY_VERSION_NAME"] = "$(RUBY_BASE_NAME)-$(ruby_version)"
   CONFIG["RUBYW_BASE_NAME"] = "rubyw"
   CONFIG["RUBY_BASE_NAME"] = "ruby"
   CONFIG["build_os"] = "linux-gnu"
   CONFIG["build_vendor"] = "unknown"
   CONFIG["build_cpu"] = "powerpc64le"
-  CONFIG["build"] = "powerpc64le-redhat-linux-gnu"
+  CONFIG["build"] = "powerpc64le-unknown-linux-gnu"
   CONFIG["RUBY_RELEASE_DATE"] = "2016-03-30"
   CONFIG["RUBY_PROGRAM_VERSION"] = "2.1.9"
   CONFIG["target_alias"] = ""
