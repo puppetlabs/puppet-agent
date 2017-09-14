@@ -3,7 +3,7 @@
 #
 # The module storing Ruby interpreter configurations on building.
 #
-# This file was created from a native ruby build on a RHEL 7.3 ppc64le system.
+# This file was created from a native ruby build on a SLES 12 SP2 ppc64le system.
 # It contains build information for ruby which is used e.g. by mkmf to build
 # compatible native extensions.  Any changes made to this file will be
 # lost the next time ruby is built.
@@ -127,7 +127,7 @@ module RbConfig
   CONFIG["CCDLFLAGS"] = "-fPIC"
   CONFIG["STATIC"] = ""
   CONFIG["ARCH_FLAG"] = ""
-  CONFIG["DLDFLAGS"] = "-L/opt/puppetlabs/puppet/lib  -Wl,-R/opt/puppetlabs/puppet/lib"
+  CONFIG["DLDFLAGS"] = "-Wl,--compress-debug-sections=zlib -L/opt/puppetlabs/puppet/lib  -Wl,-R/opt/puppetlabs/puppet/lib"
   CONFIG["ALLOCA"] = ""
   CONFIG["codesign"] = ""
   CONFIG["POSTLINK"] = ":"
@@ -160,7 +160,7 @@ module RbConfig
   CONFIG["AR"] = "ar"
   CONFIG["RANLIB"] = "ranlib"
   CONFIG["try_header"] = ""
-  CONFIG["CC_VERSION_MESSAGE"] = "gcc (GCC) 4.8.5 20150623 (Red Hat 4.8.5-16)\nCopyright (C) 2015 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."
+  CONFIG["CC_VERSION_MESSAGE"] = "gcc (SUSE Linux) 4.8.5\nCopyright (C) 2015 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."
   CONFIG["CC_VERSION"] = "$(CC) --version"
   CONFIG["CSRCFLAG"] = ""
   CONFIG["COUTFLAG"] = "-o "
@@ -186,18 +186,18 @@ module RbConfig
   CONFIG["target_os"] = "linux"
   CONFIG["target_vendor"] = "unknown"
   CONFIG["target_cpu"] = "powerpc64le"
-  CONFIG["target"] = "powerpc64le-redhat-linux-gnu"
+  CONFIG["target"] = "powerpc64le-unknown-linux-gnu"
   CONFIG["host_os"] = "linux-gnu"
   CONFIG["host_vendor"] = "unknown"
   CONFIG["host_cpu"] = "powerpc64le"
-  CONFIG["host"] = "powerpc64le-redhat-linux-gnu"
+  CONFIG["host"] = "powerpc64le-unknown-linux-gnu"
   CONFIG["RUBY_VERSION_NAME"] = "$(RUBY_BASE_NAME)-$(ruby_version)"
   CONFIG["RUBYW_BASE_NAME"] = "rubyw"
   CONFIG["RUBY_BASE_NAME"] = "ruby"
   CONFIG["build_os"] = "linux-gnu"
   CONFIG["build_vendor"] = "unknown"
   CONFIG["build_cpu"] = "powerpc64le"
-  CONFIG["build"] = "powerpc64le-redhat-linux-gnu"
+  CONFIG["build"] = "powerpc64le-unknown-linux-gnu"
   CONFIG["RUBY_PROGRAM_VERSION"] = "2.4.1"
   CONFIG["cxxflags"] = "$(optflags) $(debugflags) $(warnflags)"
   CONFIG["cppflags"] = ""
