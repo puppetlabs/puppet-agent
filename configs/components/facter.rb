@@ -19,11 +19,7 @@ component "facter" do |pkg, settings, platform|
   pkg.build_requires 'leatherman'
   pkg.build_requires 'runtime'
   pkg.build_requires 'cpp-hocon'
-
-  unless platform.is_aix? or platform.is_solaris?
-    # libwhereami doesn't support AIX or Solaris yet
-    pkg.build_requires "libwhereami"
-  end
+  pkg.build_requires 'libwhereami'
 
   if platform.is_linux? && !platform.is_huaweios?
     # Running facter (as part of testing) expects virt-what is available
@@ -156,7 +152,7 @@ component "facter" do |pkg, settings, platform|
     cmake = "/opt/pl-build-tools/bin/cmake"
 
     if platform.is_cisco_wrlinux?
-      special_flags += " -DLEATHERMAN_USE_LOCALES=OFF "
+      special_flags += " -DLEATHERMAN_USE_LOCALES=OFF"
     end
   end
 
