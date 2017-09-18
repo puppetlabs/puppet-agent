@@ -74,7 +74,9 @@ component "pxp-agent" do |pkg, settings, platform|
     pkg.directory File.join(settings[:sysconfdir], 'pxp-agent', 'var', 'log')
     pkg.directory File.join(settings[:sysconfdir], 'pxp-agent', 'var', 'run')
   else
-    pkg.directory File.join(settings[:sysconfdir], 'pxp-agent', 'modules'), mode: "0750"
+    # Output directories (spool, tasks-cache, logdir) are restricted to root agent.
+    # Modules is left readable so non-root agents can also use the installed modules.
+    pkg.directory File.join(settings[:sysconfdir], 'pxp-agent', 'modules'), mode: "0755"
     pkg.directory File.join(settings[:install_root], 'pxp-agent', 'spool'), mode: "0750"
     pkg.directory File.join(settings[:install_root], 'pxp-agent', 'tasks-cache'), mode: "0750"
     pkg.directory File.join(settings[:logdir], 'pxp-agent'), mode: "0750"
