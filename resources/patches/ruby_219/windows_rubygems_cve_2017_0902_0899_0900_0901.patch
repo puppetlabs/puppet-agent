@@ -1,0 +1,141 @@
+From 97c6e3934c68e90592f6913f68861d0dbc49c6a4 Mon Sep 17 00:00:00 2001
+From: usa <usa@b2dd03c8-39d4-4d8f-98ff-823fe69b080e>
+Date: Sun, 10 Sep 2017 01:10:24 +0000
+Subject: [PATCH] * lib/rubygems: fix several vulnerabilities in RubyGems; bump
+ to version   2.4.5.3. [Backport #13842]
+
+git-svn-id: svn+ssh://ci.ruby-lang.org/ruby/branches/ruby_2_2@59805 b2dd03c8-39d4-4d8f-98ff-823fe69b080e
+---
+ lib/rubygems/commands/query_command.rb |  5 +++--
+ lib/rubygems/installer.rb              |  7 +++++++
+ lib/rubygems/remote_fetcher.rb         |  2 +-
+ lib/rubygems/specification.rb          | 12 ++++++++++--
+ lib/rubygems/text.rb                   | 15 ++++++++++++++-
+ 5 files changed, 35 insertions(+), 6 deletions(-)
+
+diff --git a/lib/rubygems/commands/query_command.rb b/lib/rubygems/commands/query_command.rb
+index 432250e033..44364cfab2 100644
+--- a/lib/rubygems/commands/query_command.rb
++++ b/lib/rubygems/commands/query_command.rb
+@@ -218,7 +218,7 @@ is too hard to use.
+         end
+       end
+ 
+-      output << make_entry(matching_tuples, platforms)
++      output << clean_text(make_entry(matching_tuples, platforms))
+     end
+   end
+ 
+@@ -336,7 +336,8 @@ is too hard to use.
+   end
+ 
+   def spec_summary entry, spec
+-    entry << "\n\n" << format_text(spec.summary, 68, 4)
++    summary = truncate_text(spec.summary, "the summary for #{spec.full_name}")
++    entry << "\n\n" << format_text(summary, 68, 4)
+   end
+ 
+ end
+diff --git a/lib/rubygems/installer.rb b/lib/rubygems/installer.rb
+index 10fc1a34a5..a27569fe2e 100644
+--- a/lib/rubygems/installer.rb
++++ b/lib/rubygems/installer.rb
+@@ -646,6 +646,11 @@ class Gem::Installer
+       unpack or File.writable?(gem_home)
+   end
+ 
++  def verify_spec_name
++    return if spec.name =~ Gem::Specification::VALID_NAME_PATTERN
++    raise Gem::InstallError, "#{spec} has an invalid name"
++  end
++
+   ##
+   # Return the text for an application file.
+ 
+@@ -771,6 +776,8 @@ TEXT
+ 
+     ensure_loadable_spec
+ 
++    verify_spec_name
++
+     if options[:install_as_default]
+       Gem.ensure_default_gem_subdirectories gem_home
+     else
+diff --git a/lib/rubygems/remote_fetcher.rb b/lib/rubygems/remote_fetcher.rb
+index b1f6dd17fc..2b9d61c0a1 100644
+--- a/lib/rubygems/remote_fetcher.rb
++++ b/lib/rubygems/remote_fetcher.rb
+@@ -96,7 +96,7 @@ class Gem::RemoteFetcher
+     else
+       target = res.target.to_s.strip
+ 
+-      if /\.#{Regexp.quote(host)}\z/ =~ target
++      if URI("http://" + target).host.end_with?(".#{host}")
+         return URI.parse "#{uri.scheme}://#{target}#{uri.path}"
+       end
+ 
+diff --git a/lib/rubygems/specification.rb b/lib/rubygems/specification.rb
+index ab1cd92270..faca837128 100644
+--- a/lib/rubygems/specification.rb
++++ b/lib/rubygems/specification.rb
+@@ -106,6 +106,8 @@ class Gem::Specification < Gem::BasicSpecification
+ 
+   private_constant :LOAD_CACHE if defined? private_constant
+ 
++  VALID_NAME_PATTERN = /\A[a-zA-Z0-9\.\-\_]+\z/ # :nodoc:
++
+   # :startdoc:
+ 
+   ##
+@@ -2477,9 +2479,15 @@ class Gem::Specification < Gem::BasicSpecification
+       end
+     end
+ 
+-    unless String === name then
++    if !name.is_a?(String) then
++      raise Gem::InvalidSpecificationException,
++            "invalid value for attribute name: \"#{name.inspect}\" must be a string"
++    elsif name !~ /[a-zA-Z]/ then
++      raise Gem::InvalidSpecificationException,
++            "invalid value for attribute name: #{name.dump} must include at least one letter"
++    elsif name !~ VALID_NAME_PATTERN then
+       raise Gem::InvalidSpecificationException,
+-            "invalid value for attribute name: \"#{name.inspect}\""
++            "invalid value for attribute name: #{name.dump} can only include letters, numbers, dashes, and underscores"
+     end
+ 
+     if raw_require_paths.empty? then
+diff --git a/lib/rubygems/text.rb b/lib/rubygems/text.rb
+index 5c9287ad2e..86a722ffc0 100644
+--- a/lib/rubygems/text.rb
++++ b/lib/rubygems/text.rb
+@@ -6,12 +6,25 @@ require 'rubygems'
+ module Gem::Text
+ 
+   ##
++  # Remove any non-printable characters and make the text suitable for
++  # printing.
++  def clean_text(text)
++    text.gsub(/[\000-\b\v-\f\016-\037\177]/, ".".freeze)
++  end
++
++  def truncate_text(text, description, max_length = 100_000)
++    raise ArgumentError, "max_length must be positive" unless max_length > 0
++    return text if text.size <= max_length
++    "Truncating #{description} to #{max_length.to_s.reverse.gsub(/...(?=.)/,'\&,').reverse} characters:\n" + text[0, max_length]
++  end
++
++  ##
+   # Wraps +text+ to +wrap+ characters and optionally indents by +indent+
+   # characters
+ 
+   def format_text(text, wrap, indent=0)
+     result = []
+-    work = text.dup
++    work = clean_text(text)
+ 
+     while work.length > wrap do
+       if work =~ /^(.{0,#{wrap}})[ \n]/ then
+-- 
+2.13.5 (Apple Git-94)
+

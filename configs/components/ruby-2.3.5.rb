@@ -1,12 +1,12 @@
-component "ruby-2.3.1" do |pkg, settings, platform|
-  pkg.version "2.3.1"
-  pkg.md5sum "0d896c2e7fd54f722b399f407e48a4c6"
+component "ruby-2.3.5" do |pkg, settings, platform|
+  pkg.version "2.3.5"
+  pkg.md5sum "dda70c000632a83af5d15dfcf3e00a3e"
   pkg.url "https://cache.ruby-lang.org/pub/ruby/2.3/ruby-#{pkg.get_version}.tar.gz"
 
   if platform.is_windows?
     pkg.add_source "http://buildsources.delivery.puppetlabs.net/windows/elevate/elevate.exe", sum: "bd81807a5c13da32dd2a7157f66fa55d"
     pkg.add_source "file://resources/files/windows/elevate.exe.config", sum: "a5aecf3f7335fa1250a0f691d754d561"
-    pkg.add_source "file://resources/files/ruby_231/windows_ruby_gem_wrapper.bat"
+    pkg.add_source "file://resources/files/ruby_235/windows_ruby_gem_wrapper.bat"
   end
 
   pkg.replaces 'pe-ruby'
@@ -17,7 +17,7 @@ component "ruby-2.3.1" do |pkg, settings, platform|
   pkg.replaces 'pe-ruby-ldap'
   pkg.replaces 'pe-rubygem-gem2rpm'
 
-  base = 'resources/patches/ruby_231'
+  base = 'resources/patches/ruby_235'
 
   # These are a pretty smelly hack, and they run the risk of letting tests
   # based on the generated data (that should otherwise fail) pass
@@ -109,7 +109,7 @@ component "ruby-2.3.1" do |pkg, settings, platform|
 
   # Cross-compiles require a hand-built rbconfig from the target system
   if platform.is_cross_compiled_linux? || platform.is_solaris? || platform.is_aix?
-    pkg.add_source "file://resources/files/ruby_231/rbconfig/rbconfig-#{settings[:platform_triple]}.rb"
+    pkg.add_source "file://resources/files/ruby_235/rbconfig/rbconfig-#{settings[:platform_triple]}.rb"
     pkg.build_requires 'runtime' if platform.is_cross_compiled_linux?
   end
 
@@ -161,7 +161,7 @@ component "ruby-2.3.1" do |pkg, settings, platform|
         pkg.build_requires 'pl-ruby'
       end
 
-      # During Ruby 2.3.1's configure step on a cross-compiled host, the system cannot
+      # During Ruby 2.3.5's configure step on a cross-compiled host, the system cannot
       # determine whether recvmsg requires peek when closing fds, so we must set it
       # manually. Without this, we were getting builds missing the socket library (PA-544).
       special_flags += " --with-baseruby=#{settings[:host_ruby]} --enable-close-fds-by-recvmsg-with-peek "

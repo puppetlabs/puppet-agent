@@ -20,6 +20,13 @@ component "ruby-2.1.9" do |pkg, settings, platform|
   base = 'resources/patches/ruby_219'
   pkg.apply_patch "#{base}/libyaml_cve-2014-9130.patch"
 
+  # Patches from Ruby 2.4.2 security fixes. See the description and
+  # comments of RE-9323 for more details.
+  pkg.apply_patch "#{base}/cve-2017-0898.patch"
+  pkg.apply_patch "#{base}/cve-2017-10784.patch"
+  pkg.apply_patch "#{base}/cve-2017-14033.patch"
+  pkg.apply_patch "#{base}/cve-2017-14064.patch"
+
   # These are a pretty smelly hack, and they run the risk of letting tests
   # based on the generated data (that should otherwise fail) pass
   # erroneously. We should probably fix the "not shipping our compiler"
@@ -108,6 +115,9 @@ component "ruby-2.1.9" do |pkg, settings, platform|
     pkg.apply_patch "#{base}/windows_remove_DL_deprecated_warning.patch"
     pkg.apply_patch "#{base}/windows_ruby_2.1_update_to_rubygems_2.4.5.1.patch"
     pkg.apply_patch "#{base}/update_rbinstall_for_windows.patch"
+    pkg.apply_patch "#{base}/windows_rubygems_cve_2017_0902_0899_0900_0901.patch"
+  else
+    pkg.apply_patch "#{base}/rubygems_cve_2017_0902_0899_0900_0901.patch"
   end
 
   # Cross-compiles require a hand-built rbconfig from the target system
