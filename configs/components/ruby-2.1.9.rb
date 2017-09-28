@@ -138,19 +138,19 @@ component "ruby-2.1.9" do |pkg, settings, platform|
     pkg.build_requires "pl-zlib-#{platform.architecture}"
   end
 
-  if platform.is_cross_compiled_linux?
+
+  if platform.is_osx?
+    pkg.environment "optflags" => settings[:cflags]
+  elsif platform.is_aix?
+    # for whatever reason AIX builds fail when setting PATH CC or LDFLAGS, so
+    # the aix builds don't configure any of those
+  elsif platform.is_cross_compiled_linux?
     pkg.build_requires 'pl-ruby'
     special_flags += " --with-baseruby=#{settings[:host_ruby]} "
     pkg.environment "PATH" => "#{settings[:bindir]}:$$PATH"
     pkg.environment "CC" => "/opt/pl-build-tools/bin/#{settings[:platform_triple]}-gcc"
     pkg.environment "LDFLAGS" => "-Wl,-rpath=/opt/puppetlabs/puppet/lib"
-  end
-
-  if platform.is_osx?
-    pkg.environment "optflags" => settings[:cflags]
-  end
-
-  if platform.is_solaris?
+  elsif platform.is_solaris?
     if platform.architecture == "sparc"
       if platform.os_version == "10"
         # ruby1.8 is not new enough to successfully cross-compile ruby 2.1.x (it doesn't understand the --disable-gems flag)
@@ -166,9 +166,7 @@ component "ruby-2.1.9" do |pkg, settings, platform|
     pkg.environment "PATH" => "#{settings[:bindir]}:/usr/ccs/bin:/usr/sfw/bin:$$PATH:/opt/csw/bin"
     pkg.environment "CC" => "/opt/pl-build-tools/bin/#{settings[:platform_triple]}-gcc"
     pkg.environment "LDFLAGS" => "-Wl,-rpath=/opt/puppetlabs/puppet/lib"
-  end
-
-  if platform.is_windows?
+  elsif platform.is_windows?
     pkg.build_requires "pl-gdbm-#{platform.architecture}"
     pkg.build_requires "pl-iconv-#{platform.architecture}"
     pkg.build_requires "pl-libffi-#{platform.architecture}"
@@ -180,6 +178,13 @@ component "ruby-2.1.9" do |pkg, settings, platform|
     pkg.environment "LDFLAGS" => settings[:ldflags]
 
     special_flags = " CPPFLAGS='-DFD_SETSIZE=2048' debugflags=-g --prefix=#{settings[:ruby_dir]} --with-opt-dir=#{settings[:prefix]} "
+  else
+    pkg.environment "PATH" => "#{settings[:bindir]}:$$PATH"
+    pkg.environment "CC" => "/opt/pl-build-tools/bin/gcc"
+    pkg.environment "LDFLAGS" => "-Wl,-rpath=/opt/puppetlabs/puppet/lib"
+    if platform.is_el? && platform.os_version.to_i == 5
+      pkg.environment "CPPFLAGS" => "-fgnu89-inline"
+    end
   end
 
 
