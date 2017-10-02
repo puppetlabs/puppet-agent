@@ -1,13 +1,13 @@
-component "ruby-2.3.3" do |pkg, settings, platform|
-  pkg.version "2.3.3"
-  pkg.md5sum "e485f3a55649eb24a1e2e1a40bc120df"
+component "ruby-2.3.5" do |pkg, settings, platform|
+  pkg.version "2.3.5"
+  pkg.md5sum "dda70c000632a83af5d15dfcf3e00a3e"
   pkg.url "https://cache.ruby-lang.org/pub/ruby/2.3/ruby-#{pkg.get_version}.tar.gz"
   pkg.mirror "http://buildsources.delivery.puppetlabs.net/ruby-#{pkg.get_version}.tar.gz"
 
   if platform.is_windows?
     pkg.add_source "http://buildsources.delivery.puppetlabs.net/windows/elevate/elevate.exe", sum: "bd81807a5c13da32dd2a7157f66fa55d"
     pkg.add_source "file://resources/files/windows/elevate.exe.config", sum: "a5aecf3f7335fa1250a0f691d754d561"
-    pkg.add_source "file://resources/files/ruby_233/windows_ruby_gem_wrapper.bat"
+    pkg.add_source "file://resources/files/ruby_235/windows_ruby_gem_wrapper.bat"
   end
 
   pkg.replaces 'pe-ruby'
@@ -18,7 +18,7 @@ component "ruby-2.3.3" do |pkg, settings, platform|
   pkg.replaces 'pe-ruby-ldap'
   pkg.replaces 'pe-rubygem-gem2rpm'
 
-  base = 'resources/patches/ruby_233'
+  base = 'resources/patches/ruby_235'
 
   # These are a pretty smelly hack, and they run the risk of letting tests
   # based on the generated data (that should otherwise fail) pass
@@ -97,12 +97,19 @@ component "ruby-2.3.3" do |pkg, settings, platform|
 
 
   if platform.is_aix?
-    pkg.apply_patch "#{base}/aix_ruby_2.1_libpath_with_opt_dir.patch"
+    # TODO: Remove this patch once PA-1607 is resolved.
+    pkg.apply_patch "#{base}/aix_revert_configure_in_changes.patch"
+
+    pkg.apply_patch "#{base}/aix_ruby_libpath_with_opt_dir.patch"
+    pkg.apply_patch "#{base}/aix_use_pl_build_tools_autoconf.patch"
     pkg.apply_patch "#{base}/aix_ruby_2.1_fix_make_test_failure.patch"
     pkg.environment "CC", "/opt/pl-build-tools/bin/gcc"
     pkg.environment "LDFLAGS", settings[:ldflags]
     pkg.build_requires "libedit"
     pkg.build_requires "runtime"
+
+    # TODO: Remove this once PA-1607 is resolved.
+    pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/5.3/ppc/pl-autoconf-2.69-1.aix5.3.ppc.rpm"
 
     # This normalizes the build string to something like AIX 7.1.0.0 rather
     # than AIX 7.1.0.2 or something
@@ -117,7 +124,7 @@ component "ruby-2.3.3" do |pkg, settings, platform|
 
   # Cross-compiles require a hand-built rbconfig from the target system as does Solaris, AIX and Windies
   if platform.is_cross_compiled_linux? || platform.is_solaris? || platform.is_aix? || platform.is_windows?
-    pkg.add_source "file://resources/files/ruby_233/rbconfig/rbconfig-#{settings[:platform_triple]}.rb"
+    pkg.add_source "file://resources/files/ruby_235/rbconfig/rbconfig-#{settings[:platform_triple]}.rb"
     pkg.build_requires 'runtime' if platform.is_cross_compiled_linux?
   end
 
@@ -169,7 +176,7 @@ component "ruby-2.3.3" do |pkg, settings, platform|
         pkg.build_requires 'pl-ruby'
       end
 
-      # During Ruby 2.3.3's configure step on a cross-compiled host, the system cannot
+      # During Ruby 2.3.5's configure step on a cross-compiled host, the system cannot
       # determine whether recvmsg requires peek when closing fds, so we must set it
       # manually. Without this, we were getting builds missing the socket library (PA-544).
       special_flags += " --with-baseruby=#{settings[:host_ruby]} --enable-close-fds-by-recvmsg-with-peek "
@@ -195,6 +202,8 @@ component "ruby-2.3.3" do |pkg, settings, platform|
     special_flags = " CPPFLAGS='-DFD_SETSIZE=2048' debugflags=-g --prefix=#{settings[:ruby_dir]} --with-opt-dir=#{settings[:prefix]} "
   end
 
+  # TODO: Remove this once PA-1607 is resolved.
+  pkg.configure { ["/opt/pl-build-tools/bin/autoconf"] } if platform.is_aix?
 
   # Here we set --enable-bundled-libyaml to ensure that the libyaml included in
   # ruby is used, even if the build system has a copy of libyaml available

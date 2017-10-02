@@ -1,12 +1,11 @@
 
-# This file was created by PuppetAgent for HuaweiOS (Debian 8 PPC).  Any
-# changes made to this file will be lost the next time ruby is built.
+# This file was created by puppet-agent for Debian-8-armhf.
 
 module RbConfig
-  RUBY_VERSION == "2.3.3" or
-    raise "ruby lib version (2.3.3) doesn't match executable version (#{RUBY_VERSION})"
+  RUBY_VERSION == "2.3.5" or
+    raise "ruby lib version (2.3.5) doesn't match executable version (#{RUBY_VERSION})"
 
-  TOPDIR = File.dirname(__FILE__).chomp!("/lib/ruby/2.3.0/powerpc-linux")
+  TOPDIR = File.dirname(__FILE__).chomp!("/lib/ruby/2.3.0/arm-linux-gnueabihf")
   DESTDIR = '' unless defined? DESTDIR
   CONFIG = {}
   CONFIG["DESTDIR"] = DESTDIR
@@ -48,7 +47,7 @@ module RbConfig
   CONFIG["rubylibdir"] = "$(rubylibprefix)/$(ruby_version)"
   CONFIG["ruby_version"] = "2.3.0"
   CONFIG["sitearch"] = "$(arch)"
-  CONFIG["arch"] = "powerpc-linux"
+  CONFIG["arch"] = "arm-linux-gnueabihf"
   CONFIG["sitearchincludedir"] = "$(includedir)/$(sitearch)"
   CONFIG["archincludedir"] = "$(includedir)/$(arch)"
   CONFIG["sitearchlibdir"] = "$(libdir)/$(sitearch)"
@@ -182,26 +181,26 @@ module RbConfig
   CONFIG["NACL_SDK_VARIANT"] = ""
   CONFIG["NACL_SDK_ROOT"] = ""
   CONFIG["NACL_TOOLCHAIN"] = ""
-  CONFIG["target_os"] = "linux-gnu"
+  CONFIG["target_os"] = "linux-gnueabihf"
   CONFIG["target_vendor"] = "unknown"
-  CONFIG["target_cpu"] = "powerpc"
-  CONFIG["target"] = "powerpc-linux-gnu"
-  CONFIG["host_os"] = "linux-gnu"
+  CONFIG["target_cpu"] = "arm"
+  CONFIG["target"] = "arm-unknown-linux-gnueabihf"
+  CONFIG["host_os"] = "linux-gnueabihf"
   CONFIG["host_vendor"] = "unknown"
-  CONFIG["host_cpu"] = "powerpc"
-  CONFIG["host"] = "powerpc-linux-gnu"
+  CONFIG["host_cpu"] = "arm"
+  CONFIG["host"] = "arm-unknown-linux-gnueabihf"
   CONFIG["RUBY_VERSION_NAME"] = "$(RUBY_BASE_NAME)-$(ruby_version)"
   CONFIG["RUBYW_BASE_NAME"] = "rubyw"
   CONFIG["RUBY_BASE_NAME"] = "ruby"
-  CONFIG["build_os"] = "linux-gnu"
+  CONFIG["build_os"] = "linux-gnueabihf"
   CONFIG["build_vendor"] = "unknown"
-  CONFIG["build_cpu"] = "powerpc"
-  CONFIG["build"] = "powerpc-linux-gnu"
-  CONFIG["RUBY_RELEASE_DATE"] = "2015-04-13"
-  CONFIG["RUBY_PROGRAM_VERSION"] = "2.3.3"
-  CONFIG["target_alias"] = "powerpc-linux-gnu"
+  CONFIG["build_cpu"] = "arm"
+  CONFIG["build"] = "arm-unknown-linux-gnueabihf"
+  CONFIG["RUBY_RELEASE_DATE"] = "2016-04-01"
+  CONFIG["RUBY_PROGRAM_VERSION"] = "2.3.5"
+  CONFIG["target_alias"] = "arm-linux-gnueabihf"
   CONFIG["host_alias"] = ""
-  CONFIG["build_alias"] = "powerpc-linux-gnu"
+  CONFIG["build_alias"] = "arm-linux-gnueabihf"
   CONFIG["LIBS"] = "-lpthread -lgmp -ldl -lcrypt -lm "
   CONFIG["ECHO_T"] = ""
   CONFIG["ECHO_N"] = "-n"
