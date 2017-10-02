@@ -1,13 +1,13 @@
-component "ruby-2.4.1" do |pkg, settings, platform|
-  pkg.version "2.4.1"
-  pkg.md5sum "782bca562e474dd25956dd0017d92677"
+component "ruby-2.4.2" do |pkg, settings, platform|
+  pkg.version "2.4.2"
+  pkg.md5sum "fe106eed9738c4e03813ab904f8d891c"
   pkg.url "https://cache.ruby-lang.org/pub/ruby/2.4/ruby-#{pkg.get_version}.tar.gz"
   pkg.mirror "http://buildsources.delivery.puppetlabs.net/ruby-#{pkg.get_version}.tar.gz"
 
   if platform.is_windows?
     pkg.add_source "http://buildsources.delivery.puppetlabs.net/windows/elevate/elevate.exe", sum: "bd81807a5c13da32dd2a7157f66fa55d"
     pkg.add_source "file://resources/files/windows/elevate.exe.config", sum: "a5aecf3f7335fa1250a0f691d754d561"
-    pkg.add_source "file://resources/files/ruby_241/windows_ruby_gem_wrapper.bat"
+    pkg.add_source "file://resources/files/ruby_242/windows_ruby_gem_wrapper.bat"
   end
 
   pkg.replaces 'pe-ruby'
@@ -18,7 +18,9 @@ component "ruby-2.4.1" do |pkg, settings, platform|
   pkg.replaces 'pe-ruby-ldap'
   pkg.replaces 'pe-rubygem-gem2rpm'
 
-  base = 'resources/patches/ruby_241'
+  base = 'resources/patches/ruby_242'
+
+  pkg.apply_patch "#{base}/ostruct_remove_safe_nav_operator.patch"
 
   # These are a pretty smelly hack, and they run the risk of letting tests
   # based on the generated data (that should otherwise fail) pass
@@ -101,10 +103,17 @@ component "ruby-2.4.1" do |pkg, settings, platform|
 
 
   if platform.is_aix?
-    pkg.apply_patch "#{base}/aix_ruby_2.1_libpath_with_opt_dir.patch"
+    # TODO: Remove this patch once PA-1607 is resolved.
+    pkg.apply_patch "#{base}/aix_revert_configure_in_changes.patch"
+
+    pkg.apply_patch "#{base}/aix_ruby_libpath_with_opt_dir.patch"
+    pkg.apply_patch "#{base}/aix_use_pl_build_tools_autoconf.patch"
     pkg.apply_patch "#{base}/aix_ruby_2.1_fix_make_test_failure.patch"
     pkg.build_requires "libedit"
     pkg.build_requires "runtime"
+
+    # TODO: Remove this once PA-1607 is resolved.
+    pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/5.3/ppc/pl-autoconf-2.69-1.aix5.3.ppc.rpm"
 
     # This normalizes the build string to something like AIX 7.1.0.0 rather
     # than AIX 7.1.0.2 or something
@@ -120,7 +129,7 @@ component "ruby-2.4.1" do |pkg, settings, platform|
 
   # Cross-compiles require a hand-built rbconfig from the target system as does Solaris, AIX and Windies
   if platform.is_cross_compiled_linux? || platform.is_solaris? || platform.is_aix? || platform.is_windows?
-    pkg.add_source "file://resources/files/ruby_241/rbconfig/rbconfig-#{settings[:platform_triple]}.rb"
+    pkg.add_source "file://resources/files/ruby_242/rbconfig/rbconfig-#{settings[:platform_triple]}.rb"
     pkg.build_requires 'runtime' if platform.is_cross_compiled_linux?
   end
 
@@ -206,6 +215,9 @@ component "ruby-2.4.1" do |pkg, settings, platform|
       pkg.environment "CPPFLAGS" => "-fgnu89-inline"
     end
   end
+
+  # TODO: Remove this once PA-1607 is resolved.
+  pkg.configure { ["/opt/pl-build-tools/bin/autoconf"] } if platform.is_aix?
 
   # Here we set --enable-bundled-libyaml to ensure that the libyaml included in
   # ruby is used, even if the build system has a copy of libyaml available

@@ -12,7 +12,7 @@
 
 module RbConfig
   RUBY_VERSION.start_with?("2.4.") or
-    raise "ruby lib version (2.4.1) doesn't match executable version (#{RUBY_VERSION})"
+    raise "ruby lib version (2.4.2) doesn't match executable version (#{RUBY_VERSION})"
 
   # Ruby installed directory.
   TOPDIR = File.dirname(__FILE__).chomp!("/lib/ruby/2.4.0/x64-mingw32")
@@ -23,7 +23,7 @@ module RbConfig
   CONFIG["DESTDIR"] = DESTDIR
   CONFIG["MAJOR"] = "2"
   CONFIG["MINOR"] = "4"
-  CONFIG["TEENY"] = "1"
+  CONFIG["TEENY"] = "2"
   CONFIG["PATCHLEVEL"] = "111"
   CONFIG["INSTALL"] = '/bin/install -c'
   CONFIG["EXEEXT"] = ".exe"
@@ -200,7 +200,7 @@ module RbConfig
   CONFIG["build_vendor"] = "unknown"
   CONFIG["build_cpu"] = "x86_64"
   CONFIG["build"] = "x86_64-unknown-cygwin"
-  CONFIG["RUBY_PROGRAM_VERSION"] = "2.4.1"
+  CONFIG["RUBY_PROGRAM_VERSION"] = "2.4.2"
   CONFIG["cxxflags"] = "$(optflags) $(debugflags) $(warnflags)"
   CONFIG["cppflags"] = ""
   CONFIG["cflags"] = "$(optflags) $(debugflags) $(warnflags)"
