@@ -9,6 +9,21 @@ step "Install puppet-agent..." do
   }
   agents.each do |agent|
     next if agent == master
+    
+    # Move the openssl libs package to a newer version on redhat platforms
+    use_system_openssl = ENV['USE_SYSTEM_OPENSSL']
+
+    if use_system_openssl && agent[:platform].match(/(?:el-7|redhat-7)/)
+      rhel7_openssl_version = ENV['RHEL7_OPENSSL_VERSION']
+      if rhel7_openssl_version.to_s.empty?
+        # Fallback to some default is none is provided
+        rhel7_openssl_version = "openssl-1.0.1e-51.el7_2.4.x86_64"
+      end
+      on(agent, "yum -y install " +  rhel7_openssl_version) 
+    else
+      step "Skipping upgrade of openssl package... (" + agent[:platform] + ")"
+    end
+
     if ENV['TESTING_RELEASED_PACKAGES']
       # installs both release repo and agent package
       install_puppet_agent_on(agent, opts)
@@ -31,6 +46,21 @@ step "Install puppetserver..." do
     server_version = ENV['SERVER_VERSION']
     server_download_url = "http://builds.delivery.puppetlabs.net"
   end
+
+  # Move the openssl libs package to a newer version on redhat7 platforms
+  use_system_openssl = ENV['USE_SYSTEM_OPENSSL']
+
+  if use_system_openssl && master[:platform].match(/(?:el-7|redhat-7)/)
+    rhel7_openssl_version = ENV['RHEL7_OPENSSL_VERSION']
+    if rhel7_openssl_version.to_s.empty?
+      # Fallback to some default is none is provided
+      rhel7_openssl_version = "openssl-1.0.1e-51.el7_2.4.x86_64"
+    end
+    on(master, "yum -y install " +  rhel7_openssl_version) 
+  else
+    step "Skipping upgrade of openssl package... (" + master[:platform] + ")"
+  end
+
   if master[:hypervisor] == 'ec2'
     if master[:platform].match(/(?:el|centos|oracle|redhat|scientific)/)
       # An EC2 master instance does not have access to puppetlabs.net for getting
