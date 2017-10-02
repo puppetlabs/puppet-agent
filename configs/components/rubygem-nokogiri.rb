@@ -8,7 +8,7 @@ component "rubygem-nokogiri" do |pkg, settings, platform|
     pkg.url "http://buildsources.delivery.puppetlabs.net/nokogiri-precompiled-huaweios-#{pkg.get_version}-patch1-for-ruby-#{settings[:ruby_version]}.tar.gz"
     if settings[:ruby_version] == "2.1.9"
       pkg.md5sum "016db16f78d9e6d0c3ead89093e610a2"
-    elsif settings[:ruby_version] == "2.3.5"
+    elsif settings[:ruby_version] == "2.3.1"
       pkg.md5sum "f58c591200f9393e3ceb81d8c5d1d40c"
     end
   else
