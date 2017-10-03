@@ -1,6 +1,6 @@
 component "ruby-stomp" do |pkg, settings, platform|
-  pkg.version "1.3.3"
-  pkg.md5sum "50a2c1b66982b426d67a83f56f4bc0e2"
+  pkg.version "1.4.4"
+  pkg.md5sum "1224b9efe7381cea25c506c9c6e28373"
   pkg.url "https://rubygems.org/downloads/stomp-#{pkg.get_version}.gem"
   pkg.mirror "http://buildsources.delivery.puppetlabs.net/stomp-#{pkg.get_version}.gem"
 
@@ -21,10 +21,6 @@ component "ruby-stomp" do |pkg, settings, platform|
   # hiera/version and puppet/version requires. Without this the gem install
   # will fail by blowing out the stack.
   pkg.environment "RUBYLIB", "#{settings[:ruby_vendordir]}:$(RUBYLIB)"
-
-  base = 'resources/patches/ruby-stomp'
-  pkg.apply_patch "#{base}/verify_client_certs.patch", destination: "#{settings[:gem_home]}/gems/stomp-#{pkg.get_version}", after: "install"
-  pkg.apply_patch "#{base}/connection_loss_reconnect_fix.patch", destination: "#{settings[:gem_home]}/gems/stomp-#{pkg.get_version}", after: "install"
 
   pkg.install do
     ["#{settings[:gem_install]} stomp-#{pkg.get_version}.gem"]
