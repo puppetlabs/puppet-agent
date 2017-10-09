@@ -15,7 +15,12 @@ component "facter" do |pkg, settings, platform|
   pkg.replaces 'pe-facter'
 
   pkg.build_requires "ruby-#{settings[:ruby_version]}"
-  pkg.build_requires 'openssl'
+  if settings[:vendor_openssl] == "no"
+    pkg.build_requires 'openssl-devel'
+  else
+    pkg.build_requires 'openssl'
+  end
+
   pkg.build_requires 'leatherman'
   pkg.build_requires 'runtime'
   pkg.build_requires 'cpp-hocon'
@@ -28,7 +33,6 @@ component "facter" do |pkg, settings, platform|
 
   # Running facter (as part of testing) expects augtool are available
   pkg.build_requires 'augeas' unless platform.is_windows?
-  pkg.build_requires "openssl"
 
   if platform.is_windows?
     pkg.environment "PATH", "$(shell cygpath -u #{settings[:gcc_bindir]}):$(shell cygpath -u #{settings[:ruby_bindir]}):$(shell cygpath -u #{settings[:bindir]}):/cygdrive/c/Windows/system32:/cygdrive/c/Windows:/cygdrive/c/Windows/System32/WindowsPowerShell/v1.0"
