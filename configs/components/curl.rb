@@ -9,7 +9,12 @@ component 'curl' do |pkg, settings, platform|
     pkg.apply_patch 'resources/patches/curl/curl-7.55.1-aix-poll.patch'
   end
 
-  pkg.build_requires "openssl"
+  if settings[:vendor_openssl] == "no"
+    pkg.build_requires 'openssl-devel'
+  else
+    pkg.build_requires 'openssl'
+  end
+
   pkg.build_requires "puppet-ca-bundle"
 
   if platform.is_cross_compiled_linux?
