@@ -1,0 +1,32 @@
+From 9487bc8fc54ba4faa34c950f6c2e62f9ebfe248f Mon Sep 17 00:00:00 2001
+From: Enis Inan <enis.inan@enis.inan-C02M48DGFD57>
+Date: Tue, 3 Oct 2017 07:25:47 -0700
+Subject: [PATCH] The "&." operator was introduced in Ruby 2.3.0.
+ pl-build-tools-vanagon currently uses Ruby 2.1.9. So when we try to install
+ ruby 2.4.2 using tool/rbinstall.rb, we will get a syntax error in
+ lib/ostruct.rb, specifically at Line 191 that points to the use of the "&."
+ operator. This patch removes the "&." operator from Line 191 in
+ lib/ostruct.rb, which is how it was in Ruby 2.4.1.
+
+If pl-build-tools-vanagon's ruby does get updated to 2.3 and above, then
+this patch should no longer be used.
+---
+ lib/ostruct.rb | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/lib/ostruct.rb b/lib/ostruct.rb
+index 1d42321b66..333f65c232 100644
+--- a/lib/ostruct.rb
++++ b/lib/ostruct.rb
+@@ -188,7 +188,7 @@ def freeze
+ 
+   def respond_to_missing?(mid, include_private = false)
+     mname = mid.to_s.chomp("=").to_sym
+-    @table&.key?(mname) || super
++    @table.key?(mname) || super
+   end
+ 
+   def method_missing(mid, *args) # :nodoc:
+-- 
+2.13.5 (Apple Git-94)
+
