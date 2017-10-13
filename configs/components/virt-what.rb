@@ -22,15 +22,12 @@ component "virt-what" do |pkg, settings, platform|
   if platform.is_linux?
     if platform.architecture =~ /ppc64le$/
       host_opt = '--host powerpc64le-unknown-linux-gnu'
-    elsif platform.is_cross_compiled_linux?
-      host_opt = "--host #{settings[:platform_triple]}"
     end
-    pkg.environment "PATH" => "/opt/pl-build-tools/bin:$$PATH:#{settings[:bindir]}"
-    pkg.environment "CFLAGS" => settings[:cflags]
-    pkg.environment "LDFLAGS" => settings[:ldflags]
-  elsif platform.is_windows?
-    #nothing to see here
-  else
+  end
+
+  if platform.is_cross_compiled_linux?
+    host_opt = "--host #{settings[:platform_triple]}"
+
     pkg.environment "PATH" => "/opt/pl-build-tools/bin:$$PATH:#{settings[:bindir]}"
     pkg.environment "CFLAGS" => settings[:cflags]
     pkg.environment "LDFLAGS" => settings[:ldflags]
