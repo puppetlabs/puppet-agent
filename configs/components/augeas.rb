@@ -38,6 +38,9 @@ component 'augeas' do |pkg, settings, platform|
       pkg.environment "CFLAGS", settings[:cflags]
       pkg.environment "LDFLAGS", settings[:ldflags]
     end
+    pkg.environment "PATH" => "/opt/pl-build-tools/bin:$$PATH:#{settings[:bindir]}"
+    pkg.environment "CFLAGS" => settings[:cflags]
+    pkg.environment "LDFLAGS" => settings[:ldflags]
   elsif platform.is_huaweios?
     pkg.build_requires 'runtime'
     pkg.build_requires 'pl-pkg-config'
@@ -77,8 +80,14 @@ component 'augeas' do |pkg, settings, platform|
       pkg.environment "PKG_CONFIG", "/opt/pl-build-tools/bin/pkg-config"
     end
   elsif platform.is_macos?
-    pkg.environment "PATH", "$(PATH):/usr/local/bin"
-    pkg.environment "CFLAGS", settings[:cflags]
+    pkg.environment "PATH" => "$$PATH:/usr/local/bin"
+    pkg.environment "CFLAGS" => settings[:cflags]
+  elsif platform.is_windows?
+    #nothing to see here
+  else
+    pkg.environment "PATH" => "/opt/pl-build-tools/bin:$$PATH:#{settings[:bindir]}"
+    pkg.environment "CFLAGS" => settings[:cflags]
+    pkg.environment "LDFLAGS" => settings[:ldflags]
   end
 
   pkg.configure do
