@@ -19,6 +19,11 @@ component "openssl" do |pkg, settings, platform|
       pkg.build_requires 'pl-binutils'
     end
     pkg.build_requires 'pl-gcc'
+
+    if platform.name =~ /debian-8-arm/
+      pkg.build_requires "xutils-dev"
+      pkg.apply_patch 'resources/patches/openssl/openssl-1.0.0l-use-gcc-instead-of-makedepend.patch'
+    end
   elsif platform.is_solaris?
     if platform.os_version == "10"
       pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/solaris/10/pl-gcc-4.8.2-1.#{platform.architecture}.pkg.gz"
@@ -52,33 +57,25 @@ component "openssl" do |pkg, settings, platform|
     target = 'darwin64-x86_64-cc'
     cflags = settings[:cflags]
     ldflags = ''
-  elsif platform.is_huaweios?
+  elsif platform.is_cross_compiled_linux?
     pkg.environment "PATH" => "/opt/pl-build-tools/bin:$$PATH"
     pkg.environment "CC" => "/opt/pl-build-tools/bin/#{settings[:platform_triple]}-gcc"
 
-    target = 'linux-ppc'
-    ldflags = "-R/opt/pl-build-tools/#{settings[:platform_triple]}/lib -Wl,-rpath=#{settings[:libdir]} -L/opt/pl-build-tools/#{settings[:platform_triple]}/lib"
     cflags = "#{settings[:cflags]} -fPIC"
-  elsif platform.name =~ /ubuntu-16\.04-ppc64el/
-    pkg.environment "PATH" => "/opt/pl-build-tools/bin:$$PATH"
-    pkg.environment "CC" => "/opt/pl-build-tools/bin/#{settings[:platform_triple]}-gcc"
-
-    target = 'linux-ppc64le'
-    cflags = "#{settings[:cflags]} -fPIC"
-  elsif platform.architecture == "s390x"
-    pkg.environment "PATH" => "/opt/pl-build-tools/bin:$$PATH"
-    pkg.environment "CC" => "/opt/pl-build-tools/bin/#{settings[:platform_triple]}-gcc"
-
-    target = 'linux64-s390x'
     ldflags = "-Wl,-rpath=/opt/pl-build-tools/#{settings[:platform_triple]}/lib -Wl,-rpath=#{settings[:libdir]} -L/opt/pl-build-tools/#{settings[:platform_triple]}/lib"
-    cflags = "#{settings[:cflags]} -fPIC"
-  elsif platform.architecture == "ppc64le"
-    pkg.environment "PATH" => "/opt/pl-build-tools/bin:$$PATH"
-    pkg.environment "CC" => "/opt/pl-build-tools/bin/#{settings[:platform_triple]}-gcc"
 
-    target = 'linux-ppc64le'
-    ldflags = "-Wl,-rpath=/opt/pl-build-tools/#{settings[:platform_triple]}/lib -Wl,-rpath=#{settings[:libdir]} -L/opt/pl-build-tools/#{settings[:platform_triple]}/lib"
-    cflags = "#{settings[:cflags]} -fPIC"
+    if platform.is_huaweios?
+      ldflags = "-R/opt/pl-build-tools/#{settings[:platform_triple]}/lib -Wl,-rpath=#{settings[:libdir]} -L/opt/pl-build-tools/#{settings[:platform_triple]}/lib"
+      target = 'linux-ppc'
+    elsif platform.architecture == "aarch64"
+      target = 'linux-aarch64'
+    elsif platform.name =~ /debian-8-arm/
+      target = 'linux-armv4'
+    elsif platform.architecture =~ /ppc64/
+      target = 'linux-ppc64le'
+    elsif platform.architecture == "s390x"
+      target = 'linux64-s390x'
+    end
   elsif platform.is_solaris?
     pkg.environment "PATH" => "/opt/pl-build-tools/bin:$$PATH:/usr/local/bin:/usr/ccs/bin:/usr/sfw/bin"
     pkg.environment "CC" => "/opt/pl-build-tools/bin/#{settings[:platform_triple]}-gcc"
@@ -102,14 +99,6 @@ component "openssl" do |pkg, settings, platform|
     pkg.environment "CYGWIN" => settings[:cygwin]
     cflags = settings[:cflags]
     ldflags = settings[:ldflags]
-  elsif platform.name =~ /debian-8-arm/
-    pkg.apply_patch 'resources/patches/openssl/openssl-1.0.0l-use-gcc-instead-of-makedepend.patch'
-    pkg.environment "PATH" => "/opt/pl-build-tools/bin:$$PATH"
-    pkg.environment "CC" => "/opt/pl-build-tools/bin/#{settings[:platform_triple]}-gcc"
-    pkg.build_requires "xutils-dev"
-    target = 'linux-armv4'
-    ldflags = "-Wl,-rpath=/opt/pl-build-tools/#{settings[:platform_triple]}/lib -Wl,-rpath=#{settings[:libdir]} -L/opt/pl-build-tools/#{settings[:platform_triple]}/lib"
-    cflags = "#{settings[:cflags]} -fPIC"
   else
     pkg.environment "PATH" => "/opt/pl-build-tools/bin:$$PATH:/usr/local/bin"
     if platform.architecture =~ /86$/
