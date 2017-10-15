@@ -47,6 +47,10 @@ component "ruby-2.4.2" do |pkg, settings, platform|
       :sum => "5ba750ff904c51104d9eb33716370b84",
       :target_double => "powerpc-aix7.1.0.0",
      },
+    'aarch64-redhat-linux' => {
+      :sum => "30b729a8397b0ce82a1d45cd00e4bd86",
+      :target_double => "aarch64-linux",
+    },
     'powerpc-linux-gnu' => {
       :sum => "2f942f5500de901e2c42fc8a9b23d30d",
       :target_double => "powerpc-linux",
