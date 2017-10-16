@@ -14,6 +14,12 @@ component "libwhereami" do |pkg, settings, platform|
   elsif platform.is_cross_compiled_linux?
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/#{settings[:platform_triple]}/pl-build-toolchain.cmake"
     cmake = "/opt/pl-build-tools/bin/cmake"
+  elsif platform.is_solaris?
+    toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/#{settings[:platform_triple]}/pl-build-toolchain.cmake"
+    cmake = "/opt/pl-build-tools/i386-pc-solaris2.#{platform.os_version}/bin/cmake"
+
+    # FACT-1156: If we build with -O3, solaris segfaults due to something in std::vector
+    special_flags = "-DCMAKE_CXX_FLAGS_RELEASE='-O2 -DNDEBUG'"
   elsif platform.is_windows?
     make = "#{settings[:gcc_bindir]}/mingw32-make"
     pkg.environment "PATH", "$(shell cygpath -u #{settings[:gcc_bindir]}):$(shell cygpath -u #{settings[:bindir]}):/cygdrive/c/Windows/system32:/cygdrive/c/Windows:/cygdrive/c/Windows/System32/WindowsPowerShell/v1.0"
@@ -45,6 +51,18 @@ component "libwhereami" do |pkg, settings, platform|
 
   # Make test will explode horribly in a cross-compile situation
   if platform.is_cross_compiled?
+    test = "/bin/true"
+  else
+    test = "#{make} test ARGS=-V"
+  end
+
+  if platform.is_solaris? && platform.architecture != 'sparc'
+    test = "LANG=C LC_ALL=C #{test}"
+  end
+
+  # Make test will explode horribly in a cross-compile situation
+  # Tests will be skipped on AIX until they are expected to pass
+  if platform.is_cross_compiled? || platform.is_aix?
     test = "/bin/true"
   else
     test = "#{make} test ARGS=-V"

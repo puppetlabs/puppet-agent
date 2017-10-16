@@ -219,10 +219,7 @@ project "puppet-agent" do |proj|
   proj.component "marionette-collective"
   proj.component "cpp-pcp-client"
   proj.component "pxp-agent"
-
-  unless platform.is_solaris? or platform.is_aix?
-    proj.component "libwhereami"
-  end
+  proj.component "libwhereami"
 
   # Then the dependencies
   proj.component "augeas" unless platform.is_windows?
