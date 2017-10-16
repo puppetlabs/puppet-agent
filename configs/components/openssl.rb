@@ -13,6 +13,16 @@ component "openssl" do |pkg, settings, platform|
     pkg.build_requires 'imake' if platform.name =~ /^el/
     pkg.build_requires 'xorg-x11-util-devel' if platform.name =~ /^sles/
     pkg.build_requires 'xutils-dev' if platform.is_deb?
+  elsif platform.is_linux?
+    unless platform.is_fedora? && platform.os_version.delete('f').to_i >= 26
+      pkg.build_requires 'pl-binutils'
+    end
+    pkg.build_requires 'pl-gcc'
+
+    if platform.name =~ /debian-8-arm/
+      pkg.build_requires "xutils-dev"
+      pkg.apply_patch 'resources/patches/openssl/openssl-1.0.0l-use-gcc-instead-of-makedepend.patch'
+    end
   elsif platform.is_solaris?
     if platform.os_version == "10"
       pkg.apply_patch 'resources/patches/openssl/solaris-10-domd-shell-compatability-fix.patch'
@@ -39,13 +49,6 @@ component "openssl" do |pkg, settings, platform|
     target = 'darwin64-x86_64-cc'
     cflags = settings[:cflags]
     ldflags = ''
-  elsif platform.is_huaweios?
-    pkg.environment "PATH", "/opt/pl-build-tools/bin:$(PATH)"
-    pkg.environment "CC", "/opt/pl-build-tools/bin/#{settings[:platform_triple]}-gcc"
-
-    target = 'linux-ppc'
-    ldflags = "-R/opt/pl-build-tools/#{settings[:platform_triple]}/lib -Wl,-rpath=#{settings[:libdir]} -L/opt/pl-build-tools/#{settings[:platform_triple]}/lib"
-    cflags = "#{settings[:cflags]} -fPIC"
   elsif platform.name =~ /ubuntu-16\.04-ppc64el/
     pkg.environment "PATH", "/opt/pl-build-tools/bin:$(PATH)"
     pkg.environment "CC", "/opt/pl-build-tools/bin/#{settings[:platform_triple]}-gcc"
@@ -62,10 +65,17 @@ component "openssl" do |pkg, settings, platform|
   elsif platform.architecture == "ppc64le"
     pkg.environment "PATH", "/opt/pl-build-tools/bin:$(PATH)"
     pkg.environment "CC", "/opt/pl-build-tools/bin/#{settings[:platform_triple]}-gcc"
-
-    target = 'linux-ppc64le'
     ldflags = "-Wl,-rpath=/opt/pl-build-tools/#{settings[:platform_triple]}/lib -Wl,-rpath=#{settings[:libdir]} -L/opt/pl-build-tools/#{settings[:platform_triple]}/lib"
     cflags = "#{settings[:cflags]} -fPIC"
+    if platform.architecture == "aarch64"
+      target = 'linux-aarch64'
+    elsif platform.name =~ /debian-8-arm/
+      target = 'linux-armv4'
+    elsif platform.architecture =~ /ppc64/
+      target = 'linux-ppc64le'
+    elsif platform.architecture == "s390x"
+      target = 'linux64-s390x'
+    end
   elsif platform.is_solaris?
     pkg.environment "PATH", "/opt/pl-build-tools/bin:$(PATH):/usr/local/bin:/usr/ccs/bin:/usr/sfw/bin"
     pkg.environment "CC", "/opt/pl-build-tools/bin/#{settings[:platform_triple]}-gcc"
