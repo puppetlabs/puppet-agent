@@ -23,7 +23,6 @@ component "libxml2" do |pkg, settings, platform|
     pkg.environment "CFLAGS", settings[:cflags]
   else
     pkg.build_requires "make"
-    pkg.environment "PATH" => "/opt/pl-build-tools/bin:$$PATH:#{settings[:bindir]}"
     pkg.environment "LDFLAGS" => settings[:ldflags]
     pkg.environment "CFLAGS" => settings[:cflags]
   end
