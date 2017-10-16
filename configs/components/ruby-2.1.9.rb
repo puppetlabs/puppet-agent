@@ -21,6 +21,13 @@ component "ruby-2.1.9" do |pkg, settings, platform|
   base = 'resources/patches/ruby_219'
   pkg.apply_patch "#{base}/libyaml_cve-2014-9130.patch"
 
+  # Patches from Ruby 2.4.2 security fixes. See the description and
+  # comments of RE-9323 for more details.
+  pkg.apply_patch "#{base}/cve-2017-0898.patch"
+  pkg.apply_patch "#{base}/cve-2017-10784.patch"
+  pkg.apply_patch "#{base}/cve-2017-14033.patch"
+  pkg.apply_patch "#{base}/cve-2017-14064.patch"
+
   # These are a pretty smelly hack, and they run the risk of letting tests
   # based on the generated data (that should otherwise fail) pass
   # erroneously. We should probably fix the "not shipping our compiler"
@@ -117,6 +124,9 @@ component "ruby-2.1.9" do |pkg, settings, platform|
     pkg.apply_patch "#{base}/windows_remove_DL_deprecated_warning.patch"
     pkg.apply_patch "#{base}/windows_ruby_2.1_update_to_rubygems_2.4.5.1.patch"
     pkg.apply_patch "#{base}/update_rbinstall_for_windows.patch"
+    pkg.apply_patch "#{base}/windows_rubygems_cve_2017_0902_0899_0900_0901.patch"
+  else
+    pkg.apply_patch "#{base}/rubygems_cve_2017_0902_0899_0900_0901.patch"
   end
 
   # Cross-compiles require a hand-built rbconfig from the target system as does Solaris, AIX and Windies
@@ -137,19 +147,19 @@ component "ruby-2.1.9" do |pkg, settings, platform|
     pkg.build_requires "pl-zlib-#{platform.architecture}"
   end
 
-  if platform.is_cross_compiled_linux?
-    pkg.build_requires 'pl-ruby'
-    special_flags += " --with-baseruby=#{settings[:host_ruby]} "
-    pkg.environment "PATH", "#{settings[:bindir]}:$(PATH)"
-    pkg.environment "CC", "/opt/pl-build-tools/bin/#{settings[:platform_triple]}-gcc"
-    pkg.environment "LDFLAGS", "-Wl,-rpath=/opt/puppetlabs/puppet/lib"
-  end
 
   if platform.is_macos?
-    pkg.environment "optflags", settings[:cflags]
-  end
-
-  if platform.is_solaris?
+    pkg.environment "optflags" => settings[:cflags]
+  elsif platform.is_aix?
+    # for whatever reason AIX builds fail when setting PATH CC or LDFLAGS, so
+    # the aix builds don't configure any of those
+  elsif platform.is_cross_compiled_linux?
+    pkg.build_requires 'pl-ruby'
+    special_flags += " --with-baseruby=#{settings[:host_ruby]} "
+    pkg.environment "PATH" => "#{settings[:bindir]}:$$PATH"
+    pkg.environment "CC" => "/opt/pl-build-tools/bin/#{settings[:platform_triple]}-gcc"
+    pkg.environment "LDFLAGS" => "-Wl,-rpath=/opt/puppetlabs/puppet/lib"
+  elsif platform.is_solaris?
     if platform.architecture == "sparc"
       if platform.os_version == "10"
         # ruby1.8 is not new enough to successfully cross-compile ruby 2.1.x (it doesn't understand the --disable-gems flag)
@@ -162,12 +172,10 @@ component "ruby-2.1.9" do |pkg, settings, platform|
     end
     pkg.build_requires 'libedit'
     pkg.build_requires 'runtime'
-    pkg.environment "PATH", "#{settings[:bindir]}:/usr/ccs/bin:/usr/sfw/bin:$(PATH):/opt/csw/bin"
-    pkg.environment "CC", "/opt/pl-build-tools/bin/#{settings[:platform_triple]}-gcc"
-    pkg.environment "LDFLAGS", "-Wl,-rpath=/opt/puppetlabs/puppet/lib"
-  end
-
-  if platform.is_windows?
+    pkg.environment "PATH" => "#{settings[:bindir]}:/usr/ccs/bin:/usr/sfw/bin:$$PATH:/opt/csw/bin"
+    pkg.environment "CC" => "/opt/pl-build-tools/bin/#{settings[:platform_triple]}-gcc"
+    pkg.environment "LDFLAGS" => "-Wl,-rpath=/opt/puppetlabs/puppet/lib"
+  elsif platform.is_windows?
     pkg.build_requires "pl-gdbm-#{platform.architecture}"
     pkg.build_requires "pl-iconv-#{platform.architecture}"
     pkg.build_requires "pl-libffi-#{platform.architecture}"
@@ -179,6 +187,13 @@ component "ruby-2.1.9" do |pkg, settings, platform|
     pkg.environment "LDFLAGS", settings[:ldflags]
 
     special_flags = " CPPFLAGS='-DFD_SETSIZE=2048' debugflags=-g --prefix=#{settings[:ruby_dir]} --with-opt-dir=#{settings[:prefix]} "
+  else
+    pkg.environment "PATH" => "#{settings[:bindir]}:$$PATH"
+    pkg.environment "CC" => "/opt/pl-build-tools/bin/gcc"
+    pkg.environment "LDFLAGS" => "-Wl,-rpath=/opt/puppetlabs/puppet/lib"
+    if platform.is_el? && platform.os_version.to_i == 5
+      pkg.environment "CPPFLAGS" => "-fgnu89-inline"
+    end
   end
 
 

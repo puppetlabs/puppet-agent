@@ -1,0 +1,105 @@
+From 41edb194057a42a3996d0a85a61d9c76a3af367c Mon Sep 17 00:00:00 2001
+From: Enis Inan <enis.inan@enis.inan-C02M48DGFD57>
+Date: Wed, 4 Oct 2017 13:26:27 -0700
+Subject: [PATCH] This patch reverts the changes to configure.in caused by
+ commit 3825bbfca96abdcef6d124cb85b855151749d826 for Ruby 2.3.3 => 2.3.5 that
+ resulted in build failures on AIX. The patch should be removed once PA-1607
+ is resolved.
+
+---
+ configure.in | 43 ++++++++++++++++++++-----------------------
+ 1 file changed, 20 insertions(+), 23 deletions(-)
+
+diff --git a/configure.in b/configure.in
+index c69cb40cf3..df003c72b0 100644
+--- a/configure.in
++++ b/configure.in
+@@ -787,24 +787,6 @@ AC_DEFUN([RUBY_TRY_LDFLAGS], [
+     save_LDFLAGS=
+ ])
+ 
+-: ${RPATHFLAG=''}
+-rpathflag=''
+-AS_IF([test x"${RPATHFLAG}" = x], [
+-    AS_CASE(["$target_os"],
+-	[hpux*], [AS_IF([test "$rb_cv_prog_gnu_ld" = no], [rpathflag='+b '])],
+-	[aix*], [rpathflag='-blibpath:'],
+-	[for rpathflag in -R "-rpath "; do
+-	    AS_CASE("$rpathflag",
+-		    [*" "], [AS_CASE(["${linker_flag}"],
+-				     [*,], [rpathflag=`echo "$rpathflag" | tr ' ' ,`])])
+-	    rpathflag="${linker_flag}${rpathflag}"
+-	    RUBY_TRY_LDFLAGS([${rpathflag}.], [], [rpathflag=])
+-	    AS_IF([test "x${rpathflag}" != x], [])
+-        done])
+-], [
+-    rpathflag=`echo "$RPATHFLAG" | sed 's/%.*//'`
+-])
+-
+ AS_CASE([$RUBY_PATCHLEVEL], [-*],
+ 	[particular_werror_flags=yes], [particular_werror_flags=no])
+ AC_ARG_ENABLE(werror,
+@@ -1004,7 +986,7 @@ AC_ARG_WITH(opt-dir,
+ 	[
+ 		val=`echo "$PATH_SEPARATOR$withval" | sed "s|$PATH_SEPARATOR\([[^$PATH_SEPARATOR]*]\)| -I\1/include|g;s/^ //"`
+ 		CPPFLAGS="$CPPFLAGS $val"
+-		val=`echo "$PATH_SEPARATOR$withval" | sed "s|$PATH_SEPARATOR\([[^$PATH_SEPARATOR]*]\)| -L\1/lib${rpathflag:+ $rpathflag\\\\1/lib}|g;s/^ //"`
++		val=`echo "$PATH_SEPARATOR$withval" | sed "s|$PATH_SEPARATOR\([[^$PATH_SEPARATOR]*]\)| -L\1/lib|g;s/^ //"`
+ 		LDFLAGS="$LDFLAGS $val"
+ 		LDFLAGS_OPTDIR="$val"
+ 		OPT_DIR="$withval"
+@@ -3174,6 +3156,7 @@ AC_SUBST(LIBEXT)dnl
+ AC_SUBST(ASMEXT, S)dnl
+ 
+ STATIC=
++: ${PATHFLAG=''}
+ 
+ if test "$with_dln_a_out" != yes; then
+   rb_cv_dlopen=unknown
+@@ -3212,6 +3195,9 @@ if test "$with_dln_a_out" != yes; then
+ 			: ${LDSHARED='$(LD) -b'}
+ 			XLDFLAGS="$XLDFLAGS -Wl,-E"
+ 			: ${LIBPATHENV=SHLIB_PATH}
++			if test "$rb_cv_prog_gnu_ld" = no; then
++			    RPATHFLAG=' +b %1$-s'
++			fi
+ 			rb_cv_dlopen=yes],
+ 	[solaris*], [	if test "$GCC" = yes; then
+ 			    : ${LDSHARED='$(CC) -shared'}
+@@ -3282,6 +3268,7 @@ if test "$with_dln_a_out" != yes; then
+                         TRY_LINK='$(CC) $(LDFLAGS) -oconftest $(INCFLAGS) -I$(hdrdir) $(CPPFLAGS)'
+                         TRY_LINK="$TRY_LINK"' $(CFLAGS) $(src) $(LIBPATH) $(LOCAL_LIBS) $(LIBS)'
+ 			: ${LIBPATHENV=LIBPATH}
++			RPATHFLAG=" ${linker_flag}-blibpath:%1\$-s:${prefix}/lib:${LIBPATH:-/usr/lib:/lib}"
+ 			rb_cv_dlopen=yes],
+ 	[nto-qnx*], [	DLDFLAGS="$DLDFLAGS -L/lib -L/usr/lib -L/usr/local/lib"
+ 			: ${LDSHARED='$(LD) -Bshareable -x'}
+@@ -3317,11 +3304,21 @@ if test "$with_dln_a_out" != yes; then
+       ])
+   fi
+ 
+-  AS_IF([test "$enable_rpath:${RPATHFLAG}" = yes:], [
+-      AS_IF([test "x$rpathflag" != x], [
++  if test "$enable_rpath" = yes; then
++    if test x"${RPATHFLAG}" = x; then
++      for rpathflag in -R "-rpath "; do
++	AS_CASE("$rpathflag",
++		[*" "], [AS_CASE(["${linker_flag}"],
++				 [*,], [rpathflag=`echo "$rpathflag" | tr ' ' ,`])])
++	rpathflag="${linker_flag}${rpathflag}"
++	RUBY_TRY_LDFLAGS([${rpathflag}.], [], [rpathflag=])
++	if test "x${rpathflag}" != x; then
+ 	  RPATHFLAG=" ${rpathflag}%1\$-s"
+-      ])
+-  ])
++	  break
++	fi
++      done
++    fi
++  fi
+ fi
+ if test "${LDSHAREDXX}" = ""; then
+     AS_CASE(["${LDSHARED}"],
+-- 
+2.13.5 (Apple Git-94)
+
