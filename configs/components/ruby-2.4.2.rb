@@ -113,6 +113,8 @@ component "ruby-2.4.2" do |pkg, settings, platform|
     pkg.apply_patch "#{base}/aix_ruby_libpath_with_opt_dir.patch"
     pkg.apply_patch "#{base}/aix_use_pl_build_tools_autoconf.patch"
     pkg.apply_patch "#{base}/aix_ruby_2.1_fix_make_test_failure.patch"
+    pkg.environment "CC", "/opt/pl-build-tools/bin/gcc"
+    pkg.environment "LDFLAGS", settings[:ldflags]
     pkg.build_requires "libedit"
     pkg.build_requires "runtime"
 
@@ -152,6 +154,9 @@ component "ruby-2.4.2" do |pkg, settings, platform|
   if platform.is_cross_compiled_linux?
     pkg.build_requires 'pl-ruby'
     special_flags += " --with-baseruby=#{settings[:host_ruby]} "
+    pkg.environment "PATH", "#{settings[:bindir]}:$(PATH)"
+    pkg.environment "CC", "/opt/pl-build-tools/bin/#{settings[:platform_triple]}-gcc"
+    pkg.environment "LDFLAGS", "-Wl,-rpath=/opt/puppetlabs/puppet/lib"
   end
 
   pkg.environment "optflags", "-O2"
@@ -173,10 +178,9 @@ component "ruby-2.4.2" do |pkg, settings, platform|
 
   if platform.is_macos?
     pkg.environment "optflags", settings[:cflags]
-  elsif platform.is_aix?
-    pkg.environment "CC", "/opt/pl-build-tools/bin/gcc"
-    pkg.environment "LDFLAGS", settings[:ldflags]
-  elsif platform.is_solaris?
+  end
+
+  if platform.is_solaris?
     if platform.architecture == "sparc"
       if platform.os_version == "10"
         # ruby1.8 is not new enough to successfully cross-compile ruby 2.1.x (it doesn't understand the --disable-gems flag)
@@ -195,11 +199,9 @@ component "ruby-2.4.2" do |pkg, settings, platform|
     pkg.environment "PATH", "#{settings[:bindir]}:/usr/ccs/bin:/usr/sfw/bin:$(PATH):/opt/csw/bin"
     pkg.environment "CC", "/opt/pl-build-tools/bin/#{settings[:platform_triple]}-gcc"
     pkg.environment "LDFLAGS", "-Wl,-rpath=/opt/puppetlabs/puppet/lib"
-  elsif platform.is_cross_compiled_linux?
-    pkg.environment "PATH", "#{settings[:bindir]}:$(PATH)"
-    pkg.environment "CC", "/opt/pl-build-tools/bin/#{settings[:platform_triple]}-gcc"
-    pkg.environment "LDFLAGS", "-Wl,-rpath=/opt/puppetlabs/puppet/lib"
-  elsif platform.is_windows?
+  end
+
+  if platform.is_windows?
     pkg.build_requires "pl-gdbm-#{platform.architecture}"
     pkg.build_requires "pl-iconv-#{platform.architecture}"
     pkg.build_requires "pl-libffi-#{platform.architecture}"
@@ -211,13 +213,6 @@ component "ruby-2.4.2" do |pkg, settings, platform|
     pkg.environment "LDFLAGS", settings[:ldflags]
 
     special_flags = " CPPFLAGS='-DFD_SETSIZE=2048' debugflags=-g --prefix=#{settings[:ruby_dir]} --with-opt-dir=#{settings[:prefix]} "
-  else
-    pkg.environment "PATH" => "#{settings[:bindir]}:$$PATH"
-    pkg.environment "CC" => "/opt/pl-build-tools/bin/gcc"
-    pkg.environment "LDFLAGS" => "-Wl,-rpath=/opt/puppetlabs/puppet/lib"
-    if platform.is_el? && platform.os_version.to_i == 5
-      pkg.environment "CPPFLAGS" => "-fgnu89-inline"
-    end
   end
 
   # TODO: Remove this once PA-1607 is resolved.
