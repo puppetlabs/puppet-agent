@@ -1,17 +1,23 @@
 component 'dmidecode' do |pkg, settings, platform|
-  pkg.version '2.12'
-  pkg.md5sum '02ee243e1ecac7fe0d04428aec85f63a'
+  if platform.name == 'el-7-aarch64'
+    pkg.version '3.1'
+    pkg.md5sum '7798f68a02b82358c44af913da3b6b42'
+  else
+    pkg.version '2.12'
+    pkg.md5sum '02ee243e1ecac7fe0d04428aec85f63a'
+
+    pkg.apply_patch 'resources/patches/dmidecode/dmidecode-1.173.patch'
+    pkg.apply_patch 'resources/patches/dmidecode/dmidecode-1.175.patch'
+    pkg.apply_patch 'resources/patches/dmidecode/dmidecode-1.176.patch'
+    pkg.apply_patch 'resources/patches/dmidecode/dmidecode-1.177.patch'
+    pkg.apply_patch 'resources/patches/dmidecode/dmidecode-1.181.patch'
+    pkg.apply_patch 'resources/patches/dmidecode/dmidecode-1.182.patch'
+    pkg.apply_patch 'resources/patches/dmidecode/dmidecode-1.195.patch'
+  end
+
+  pkg.apply_patch 'resources/patches/dmidecode/dmidecode-install-to-bin.patch'
   pkg.url "http://download.savannah.gnu.org/releases/dmidecode/dmidecode-#{pkg.get_version}.tar.gz"
   pkg.mirror "http://buildsources.delivery.puppetlabs.net/dmidecode-#{pkg.get_version}.tar.gz"
-
-  pkg.apply_patch "resources/patches/dmidecode/dmidecode-1.173.patch"
-  pkg.apply_patch "resources/patches/dmidecode/dmidecode-1.175.patch"
-  pkg.apply_patch "resources/patches/dmidecode/dmidecode-1.176.patch"
-  pkg.apply_patch "resources/patches/dmidecode/dmidecode-1.177.patch"
-  pkg.apply_patch "resources/patches/dmidecode/dmidecode-1.181.patch"
-  pkg.apply_patch "resources/patches/dmidecode/dmidecode-1.182.patch"
-  pkg.apply_patch "resources/patches/dmidecode/dmidecode-1.195.patch"
-  pkg.apply_patch "resources/patches/dmidecode/dmidecode-install-to-bin.patch"
 
   pkg.environment "LDFLAGS", settings[:ldflags]
   pkg.environment "CFLAGS", settings[:cflags]
