@@ -17,6 +17,7 @@ foss_platforms:
   - el-6-x86_64
   - el-7-x86_64
   - el-7-ppc64le
+  - el-7-aarch64
   - eos-4-i386
   - fedora-f25-i386
   - fedora-f25-x86_64
@@ -71,6 +72,8 @@ platform_repos:
     repo_location: repos/el/7/**/s390x
   - name: el-7-ppc64le
     repo_location: repos/el/7/**/ppc64le
+  - name: el-7-aarch64
+    repo_location: repos/el/7/**/aarch64
   - name: sles-11-s390x
     repo_location: repos/sles/11/**/s390x
   - name: sles-11-i386
