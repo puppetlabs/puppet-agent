@@ -45,7 +45,7 @@ basedir=default" > /var/tmp/vanagon-noask;
   ln -sf /opt/csw/bin/ggrep /usr/bin/grep;
   ln -sf /opt/csw/bin/rsync /usr/bin/rsync;
   # RE-5250 - Solaris 10 templates are awful
-  /opt/csw/bin/pkgutil -l glibc-devel | xargs -I{} pkgrm -n -a /var/tmp/vanagon-noask {};
+  /opt/csw/bin/pkgutil -l gcc | xargs -I{} pkgrm -n -a /var/tmp/vanagon-noask {};
   /opt/csw/bin/pkgutil -l ruby | xargs -I{} pkgrm -n -a /var/tmp/vanagon-noask {};
   /opt/csw/bin/pkgutil -l readline | xargs -I{} pkgrm -n -a /var/tmp/vanagon-noask {};
 
