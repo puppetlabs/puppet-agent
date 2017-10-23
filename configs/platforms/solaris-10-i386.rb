@@ -41,7 +41,7 @@ basedir=default" > /var/tmp/vanagon-noask;
   # RE-6121 openssl 1.0.2e requires functionality not in sytem grep
   ln -sf /opt/csw/bin/ggrep /usr/bin/grep;
   # RE-5250 - Solaris 10 templates are awful
-  /opt/csw/bin/pkgutil -l glibc-devel | xargs -I{} pkgrm -n -a /var/tmp/vanagon-noask {};
+  /opt/csw/bin/pkgutil -l gcc | xargs -I{} pkgrm -n -a /var/tmp/vanagon-noask {};
   /opt/csw/bin/pkgutil -l ruby | xargs -I{} pkgrm -n -a /var/tmp/vanagon-noask {};
   /opt/csw/bin/pkgutil -l readline | xargs -I{} pkgrm -n -a /var/tmp/vanagon-noask {};
 
