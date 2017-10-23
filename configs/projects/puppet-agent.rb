@@ -1,5 +1,9 @@
 
 def use_system_openssl?
+  # Presently .i.e as of Oct 22 there is no way to specify an environment variable
+  # in PA CI so we are going to hard code it till there is support for FIPS platforms
+  return true
+
   # Debugging: Ensure that required parameter in CI show up as environment variables.
   sys_ssl = ENV["USE_SYSTEM_OPENSSL"]
   warn "Use system openssl: " + "#{sys_ssl}"
@@ -266,7 +270,7 @@ project "puppet-agent" do |proj|
   proj.component "ruby-augeas" unless platform.is_windows?
 
   if use_system_openssl?
-    if platform.name =~ /^el-(6|7)-.*/ || platform.name =~ /^fedora-f(24|25).*/
+    if platform.name =~ /^el-(6|7)-.*/ || platform.name =~ /^fedora-f(24|25|26).*/
       # Currently we plan to support linking against system openssl only on these platforms.
       proj.setting(:vendor_openssl, "no")
     else
