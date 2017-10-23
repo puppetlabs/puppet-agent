@@ -70,7 +70,7 @@ test_name 'PA-1319: Validate that the vendored ruby can load gems and is configu
       # use pl-build-tools' gcc on AIX machines
       gem = "export PATH=\"/opt/pl-build-tools/bin:$PATH\" && #{gem}" if agent['platform'] =~ /aix/
 
-      on(agent, "#{gem} install sqlite3")
+      on(agent, "#{gem} install sqlite3 #{"-v 1.3.11" if agent['platform'] =~ /el-5/}")
       listed_gems = on(agent, "#{gem} list").stdout.chomp
       assert_match(/sqlite3/, listed_gems, "'gem install' failed to build the sqlite3 gem")
     end
