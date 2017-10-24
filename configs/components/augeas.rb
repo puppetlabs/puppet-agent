@@ -71,7 +71,7 @@ component 'augeas' do |pkg, settings, platform|
       pkg.environment "PKG_CONFIG", "/opt/pl-build-tools/bin/pkg-config"
     end
   elsif platform.is_macos?
-    pkg.environment "PATH" => "$$PATH:/usr/local/bin"
+    pkg.environment "PATH" => "$(PATH):/usr/local/bin"
     pkg.environment "CFLAGS" => settings[:cflags]
   end
 
