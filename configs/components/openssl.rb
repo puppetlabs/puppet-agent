@@ -49,6 +49,14 @@ component "openssl" do |pkg, settings, platform|
     target = 'darwin64-x86_64-cc'
     cflags = settings[:cflags]
     ldflags = ''
+  elsif platform.is_huaweios?
+    pkg.environment "PATH", "/opt/pl-build-tools/bin:$(PATH)"
+    pkg.environment "CC", "/opt/pl-build-tools/bin/#{settings[:platform_triple]}-gcc"
+  elsif platform.is_cross_compiled_linux?
+    pkg.environment "PATH" => "/opt/pl-build-tools/bin:$$PATH"
+    pkg.environment "CC" => "/opt/pl-build-tools/bin/#{settings[:platform_triple]}-gcc"
+
+    cflags = "#{settings[:cflags]} -fPIC"
   elsif platform.name =~ /ubuntu-16\.04-ppc64el/
     pkg.environment "PATH", "/opt/pl-build-tools/bin:$(PATH)"
     pkg.environment "CC", "/opt/pl-build-tools/bin/#{settings[:platform_triple]}-gcc"
@@ -66,8 +74,11 @@ component "openssl" do |pkg, settings, platform|
     pkg.environment "PATH", "/opt/pl-build-tools/bin:$(PATH)"
     pkg.environment "CC", "/opt/pl-build-tools/bin/#{settings[:platform_triple]}-gcc"
     ldflags = "-Wl,-rpath=/opt/pl-build-tools/#{settings[:platform_triple]}/lib -Wl,-rpath=#{settings[:libdir]} -L/opt/pl-build-tools/#{settings[:platform_triple]}/lib"
-    cflags = "#{settings[:cflags]} -fPIC"
-    if platform.architecture == "aarch64"
+
+    if platform.is_huaweios?
+      ldflags = "-R/opt/pl-build-tools/#{settings[:platform_triple]}/lib -Wl,-rpath=#{settings[:libdir]} -L/opt/pl-build-tools/#{settings[:platform_triple]}/lib"
+      target = 'linux-ppc'
+    elsif platform.architecture == "aarch64"
       target = 'linux-aarch64'
     elsif platform.name =~ /debian-8-arm/
       target = 'linux-armv4'
