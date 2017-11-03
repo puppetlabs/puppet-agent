@@ -17,6 +17,7 @@ DEFAULT_TEST_TARGETS = "#{DEFAULT_MASTER_TEST_TARGET}-#{DEFAULT_AGENT_TEST_TARGE
 
 DEFAULT_INTERNAL_DOWNLOAD_URL = "http://builds.delivery.puppetlabs.net"
 DEFAULT_NIGHTLIES_DOWNLOAD_URL = "http://nightlies.puppet.com"
+SSH_KEYFILE = ENV['KEYFILE'] || "~/.ssh/id_rsa-acceptance"
 
 module HarnessOptions
 
@@ -28,7 +29,7 @@ module HarnessOptions
     :color => false,
     :root_keys => true,
     :ssh => {
-      :keys => ["~/.ssh/id_rsa-acceptance"],
+      :keys => [SSH_KEYFILE],
     },
     :xml => true,
     :timesync => false,

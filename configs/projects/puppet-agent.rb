@@ -81,6 +81,9 @@ project "puppet-agent" do |proj|
   proj.setting(:datadir, File.join(proj.prefix, "share"))
   proj.setting(:mandir, File.join(proj.datadir, "man"))
 
+  proj.setting(:artifactory_url, "https://artifactory.delivery.puppetlabs.net/artifactory")
+  proj.setting(:buildsources_url, "#{proj.artifactory_url}/generic/buildsources")
+
   if platform.is_windows?
     proj.setting(:host_ruby, File.join(proj.ruby_bindir, "ruby.exe"))
     proj.setting(:host_gem, File.join(proj.ruby_bindir, "gem.bat"))
