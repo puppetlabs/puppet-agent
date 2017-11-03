@@ -12,6 +12,12 @@
       Id="ARPHELPLINK"
       Value="<%= settings[:links][:HelpLink] %>" />
 
+    <!-- Reinstallmode default to always replace files -->
+    <!-- https://msdn.microsoft.com/en-us/library/aa371182%28v=vs.85%29.aspx -->
+    <Property
+      Id="REINSTALLMODE"
+      Value="amus"/>
+
     <!-- This property is used in the localization strings for the GUI -->
     <Property
       Id="VersionUIString"
