@@ -4,6 +4,7 @@ output/*
 Gemfile.lock
 Gemfile.local
 *.log
+ext/build_metadata.json
 ext/packaging
 pkg/*
 *.swp

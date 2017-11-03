@@ -67,7 +67,7 @@ cd $toolsDir
 
 Verify-Tool '7za' ''
 
-$buildSourcesURL = "http://buildsources.delivery.puppetlabs.net/windows"
+$buildSourcesURL = "https://artifactory.delivery.puppetlabs.net/artifactory/generic/buildsources/windows"
 $s3URL = "https://s3.amazonaws.com/kylo-pl-bucket"
 
 if ($buildSource) {
