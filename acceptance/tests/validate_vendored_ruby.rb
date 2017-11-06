@@ -27,7 +27,12 @@ def setup_build_environment(agent)
     # PA-1638
     gem_install_sqlite3 += " -v 1.3.11" 
   when /solaris-11-i386/
-    gem_install_sqlite3 = "export PATH=\"/usr/sfw/bin:$PATH\" && #{gem_install_sqlite3}"
+    # for some reason pkg install does not install developer/gcc-48 for sol 11, so need
+    # to use the one provided by pl-build-tools instead.
+    on(agent, "curl -O http://pl-build-tools.delivery.puppetlabs.net/solaris/11/sol-11-i386-compiler.tar.gz")
+    on(agent, "gunzip sol-11-i386-compiler.tar.gz && tar -xf sol-11-i386-compiler.tar")
+    on(agent, "mv pl-build-tools/ /opt/")
+    gem_install_sqlite3 = "export PATH=\"/opt/pl-build-tools/i386/bin:/usr/sfw/bin:$PATH\" && #{gem_install_sqlite3}"
   when /solaris-11-sparc/
     install_package_on_agent.call("developer/gcc-48")
     gem_install_sqlite3 = "export PATH=\"/usr/gcc/4.8/bin:$PATH\" && #{gem_install_sqlite3}"
@@ -51,15 +56,16 @@ def setup_build_environment(agent)
     on(agent, "echo \"#{vanagon_noask_contents}\" > #{vanagon_noask_path}")
 
     on(agent, "pkgadd -n -a #{vanagon_noask_path} -G -d http://get.opencsw.org/now all")
-    ["rsync", "gmake", "pkgconfig", "ggrep"].each { |pkg| install_package_on_agent.call(pkg) }
+    ["rsync", "gmake", "pkgconfig", "ggrep", "gcc4core"].each { |pkg| install_package_on_agent.call(pkg) }
     install_package_on_agent.call("coreutils") if agent['platform'] =~ /sparc/
     on(agent, "ln -sf /opt/csw/bin/rsync /usr/bin/rsync")
     ["glibc-devel", "ruby", "readline"].each do |pkg|
       on(agent, "/opt/csw/bin/pkgutil -l #{pkg} | xargs -I{} pkgrm -n -a #{vanagon_noask_path} {}")
     end
 
+    bin_dirs = ["/opt/csw/bin"]
     if agent['platform'] =~ /sparc/
-      gem_install_sqlite3 = "export PATH=\"/usr/sfw/bin:/usr/ccs/bin:$PATH\" && #{gem_install_sqlite3}"
+      bin_dirs.concat(["/usr/sfw/bin", "/usr/ccs/bin"])
     else
       # for some reason, sparc has everything else that it needs (system headers, gcc, etc.),
       # but i386 does not. the code below ensures that all these dev tools are installed for i386.
@@ -77,6 +83,8 @@ def setup_build_environment(agent)
         on(agent, in_temp_dir.call("gunzip -c #{pkg_gz} | pkgadd -d /dev/stdin -a #{vanagon_noask_path} all"))
       end
     end
+
+    gem_install_sqlite3 = "export PATH=\"#{bin_dirs.join(":")}:$PATH\" && #{gem_install_sqlite3}"
   end
 
   gem_install_sqlite3
