@@ -42,35 +42,16 @@ module Puppet
         # set default options
         options[:mkdirs] ||= false
         options[:mode] ||= "755"
-        unless options[:owner]
-          if host['roles'].include?('master') then
-            options[:owner] = host.puppet['user']
-          else
-            options[:owner] = root_user(host)
-          end
-        end
-        unless options[:group]
-          if host['roles'].include?('master') then
-            options[:group] = host.puppet['group']
-          else
-            options[:group] = root_group(host)
-          end
-        end
+        options[:owner] ||= root_user(host)
+        options[:group] ||= root_group(host)
 
         file_path = get_test_file_path(host, file_rel_path)
 
         mkdirs(host, File.dirname(file_path)) if (options[:mkdirs] == true)
         create_remote_file(host, file_path, file_content)
 
-        #
-        # NOTE: we need these chown/chmod calls because the acceptance framework connects to the nodes as "root", but
-        #  puppet 'master' runs as user 'puppet'.  Therefore, in order for puppet master to be able to read any files
-        #  that we've created, we have to carefully set their permissions
-        #
-
         chown(host, options[:owner], options[:group], file_path)
         chmod(host, options[:mode], file_path)
-
       end
 
 
@@ -156,17 +137,12 @@ module Puppet
         @cur_test_file = @path
         @cur_test_file_shortname = File.basename(@cur_test_file, File.extname(@cur_test_file))
 
-        # we need one list of all of the hosts, to assist in managing temp dirs.  It's possible
-        # that the master is also an agent, so this will consolidate them into a unique set
-        @all_hosts = Set[master, *agents]
-
-        # now we can create a hash of temp dirs--one per host, and unique to this test--without worrying about
-        # doing it twice on any individual host
-        @host_test_tmp_dirs = Hash[@all_hosts.map do |host| [host.name, tmpdir(host, @cur_test_file_shortname)] end ]
+        # now we can create a hash of temp dirs--one per host, and unique to this test
+        @host_test_tmp_dirs = Hash[agents.map do |host| [host.name, tmpdir(host, @cur_test_file_shortname)] end ]
       end
 
       def remove_temp_dirs()
-        @all_hosts.each do |host|
+        agents.each do |host|
           on(host, "rm -rf #{@host_test_tmp_dirs[host.name]}")
         end
       end
