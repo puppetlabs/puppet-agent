@@ -25,10 +25,9 @@ bundle exec rake -T
 ```
 
 * run tests against puppet agent 1.7.0 on agent platform windows
-2016 x64, downloaded from builds.delivery.puppetlabs.net, using the latest nightly
-build of puppet server running on centos 7 x64.
+2016 x64, downloaded from builds.delivery.puppetlabs.net
 ```
-bundle exec rake acceptance:development SHA='1.7.0' TEST_TARGET=windows2016-64a MASTER_TEST_TARGET=centos7-64ma
+bundle exec rake acceptance:development SHA='1.7.0' TEST_TARGET=windows2016-64a
 ``` 
 
 * run tests against the latest nightly build of puppet agent on the public
@@ -38,9 +37,7 @@ bundle exec rake acceptance:development SHA='latest' AGENT_DOWNLOAD_URL='http://
 ``` 
 
  * run tests against the released 1.8.0 puppet agent packages on our production
- repos (ie yum.puppet.com) on the ubuntu 16.04 64-bit platform using the latest
- puppet server version also in the production repos on the default puppet server
- test target.
+ repos (ie yum.puppet.com) on the ubuntu 16.04 64-bit platform
 ```
 bundle exec rake acceptance:released SHA='1.8.0' TEST_TARGET=ubuntu1604-64a
 ```
@@ -61,19 +58,6 @@ bundle exec rake acceptance:released SHA='1.8.0' TEST_TARGET=ubuntu1604-64a
 > Supply a test target in the form beaker-hostgenerator accepts, e.g.
 > ubuntu1504-64a. Defaults to a constant defined in [Rakefile](Rakefile).
  
-* MASTER_TEST_TARGET='beaker-hostgenerator target'
-> Override the default master test target in the form beaker-hostgenerator
-> accepts, e.g. ubuntu1504-64a. Defaults to a constant defined in
-> [Rakefile](Rakefile). This is the platform that Puppet Server will be
-> installed on.
- 
-* SERVER_VERSION='SHA'
-> Supply git ref (sha or tag) of Puppet Server to use in testing. If no
-> SERVER_VERSION is provided, the latest nightly build of Puppet Server will be
-> used from http://nightlies.puppet.com. Ignored by `rake acceptance:released`
-> which will install the latest/current version of Puppet Server from the Puppet
-> production repos (ie yum.puppet.com).
- 
 * AGENT_DOWNLOAD_URL='http://example.com'
 > Supply the url of the host serving packages of puppet agent to test matching
 > `SHA`. Ignored by `rake acceptance:released` which always uses the production
@@ -85,17 +69,6 @@ bundle exec rake acceptance:released SHA='1.8.0' TEST_TARGET=ubuntu1604-64a
 > 
 > Default: http://builds.delivery.puppetlabs.net.
  
-* SERVER_DOWNLOAD_URL='http://example.com'
-> Supply the url of the host serving packages of puppet server to test against
-> packages of puppet agent. Ignored by `rake acceptance:released` which always
-> uses the production Puppet repository urls.
->
-> Valid values are:
-> * http://builds.delivery.puppetlabs.net (Puppet internal builds)
-> * http://nightlies.puppet.com (Puppet public nightly builds)
-> 
-> Default: http://nightlies.puppet.com 
-
 * TESTS='path/to/test,and/more/tests'
 > Supply a comma-separated string (no spaces) of specific test(s) to run.
 > All pre-suites will be run, unless a specific pre-suite file is supplied as the

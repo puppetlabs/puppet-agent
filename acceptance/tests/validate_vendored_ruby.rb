@@ -152,7 +152,7 @@ test_name 'PA-1319: Validate that the vendored ruby can load gems and is configu
 
   step "'gem install' successfully installs a gem with native extensions" do
     # SLES POWER machines will be skipped until OPS-15487 is resolved
-    agents_to_skip = select_hosts({:platform => [/windows/, /cisco/, /eos/, /cumulus/, /sles.+ppc/]}, agents)
+    agents_to_skip = select_hosts({:platform => [/windows/, /cisco/, /eos/, /cumulus/]}, agents)
     agents_to_test = agents - agents_to_skip
     agents_to_test.each do |agent|
       gem_install_sqlite3 = setup_build_environment(agent)
