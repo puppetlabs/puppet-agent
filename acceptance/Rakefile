@@ -11,9 +11,7 @@ REPO="puppet-agent"
 REPO_CONFIGS_DIR = "repo-configs"
 CLEAN.include('tmp', 'log', 'junit')
 
-DEFAULT_AGENT_TEST_TARGET = 'windows2012r2-64a'
-DEFAULT_MASTER_TEST_TARGET = 'redhat7-64ma'
-DEFAULT_TEST_TARGETS = "#{DEFAULT_MASTER_TEST_TARGET}-#{DEFAULT_AGENT_TEST_TARGET}"
+DEFAULT_TEST_TARGETS = 'redhat7-64a-windows2012r2-64a'
 
 DEFAULT_INTERNAL_DOWNLOAD_URL = "http://builds.delivery.puppetlabs.net"
 DEFAULT_NIGHTLIES_DOWNLOAD_URL = "http://nightlies.puppet.com"
@@ -99,9 +97,7 @@ EOS
   if config and File.exists?(config)
     config_opt = "--hosts=#{config}"
   else
-    agent_target = ENV['TEST_TARGET'] || DEFAULT_AGENT_TEST_TARGET
-    master_target = ENV['MASTER_TEST_TARGET'] || DEFAULT_MASTER_TEST_TARGET
-    targets = "#{master_target}-#{agent_target}"
+    targets = ENV['TEST_TARGET'] || DEFAULT_TEST_TARGETS
 
     cli = BeakerHostGenerator::CLI.new([targets, '--disable-default-role', '--osinfo-version', '1'])
     ENV['BEAKER_HOSTS'] = "tmp/#{targets}-#{SecureRandom.uuid}.yaml"
@@ -145,7 +141,6 @@ def generate_config_for_latest_hosts
       'roles' => [ 'agent'],
       'platform' => node_info[:platform],
     }
-    preserved_config_hash['HOSTS'][fqdn]['roles'].unshift('master') if node_info[:node_label] =~ /master/
   end
 
   puts "\n\n"
@@ -169,8 +164,6 @@ def set_environment_variables_for_install(install_released_packages)
   end
 
   ENV['AGENT_DOWNLOAD_URL'] ||= DEFAULT_INTERNAL_DOWNLOAD_URL
-  ENV['SERVER_DOWNLOAD_URL'] ||= DEFAULT_NIGHTLIES_DOWNLOAD_URL
-  ENV['SERVER_VERSION'] ||= 'latest'
 
   # If this is a test of public / final release packages,
   # TESTING_RELEASED_PACKAGES is a string value we use to tell the
@@ -201,16 +194,7 @@ USAGE
 
     TEST_TARGET='beaker-hostgenerator target'
       Supply a test target in the form beaker-hostgenerator accepts, e.g.
-      ubuntu1504-64a. Defaults to #{DEFAULT_AGENT_TEST_TARGET}.
-
-    MASTER_TEST_TARGET='beaker-hostgenerator target'
-      Override the default master test target in the form beaker-hostgenerator
-      accepts, e.g. ubuntu1504-64a. Defaults to #{DEFAULT_MASTER_TEST_TARGET}.
-
-    SERVER_VERSION='SHA'
-      Supply git ref (sha or tag) of Puppet Server to use in testing. If no
-      SERVER_VERSION is provided, the latest nightly build of Puppet Server
-      will be used from #{DEFAULT_NIGHTLIES_DOWNLOAD_URL}.
+      ubuntu1504-64a. Defaults to #{DEFAULT_TEST_TARGETS}.
 
     AGENT_DOWNLOAD_URL='http://example.com'
       Supply the url of the host serving packages of #{REPO} to test matching
@@ -221,16 +205,6 @@ USAGE
         * #{DEFAULT_NIGHTLIES_DOWNLOAD_URL} (Puppet public nightly builds)
 
       Default: #{DEFAULT_INTERNAL_DOWNLOAD_URL}.
-
-    SERVER_DOWNLOAD_URL='http://example.com'
-      Supply the url of the host serving packages of puppet server to test
-      against packages of #{REPO}. Ignored by `rake acceptance:released` which
-      always downloads from public production Puppet repositories.
-      Valid values are:
-        * #{DEFAULT_INTERNAL_DOWNLOAD_URL} (Puppet internal builds)
-        * #{DEFAULT_NIGHTLIES_DOWNLOAD_URL} (Puppet public nightly builds)
-
-      Default: #{DEFAULT_NIGHTLIES_DOWNLOAD_URL}
 
     TESTS='path/to/test,and/more/tests'
       Supply a comma-separated string (no spaces) of specific test(s) to run.
