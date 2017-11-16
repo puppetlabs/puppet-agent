@@ -156,7 +156,7 @@ component "ruby-2.4.2" do |pkg, settings, platform|
     special_flags += " --with-baseruby=#{settings[:host_ruby]} "
     pkg.environment "PATH", "#{settings[:bindir]}:$(PATH)"
     pkg.environment "CC", "/opt/pl-build-tools/bin/#{settings[:platform_triple]}-gcc"
-    pkg.environment "LDFLAGS", "-Wl,-rpath=/opt/puppetlabs/puppet/lib"
+    pkg.environment "LDFLAGS", "-Wl,-rpath=#{settings[:libdir]}"
   end
 
   pkg.environment "optflags", "-O2"
@@ -198,7 +198,7 @@ component "ruby-2.4.2" do |pkg, settings, platform|
     pkg.build_requires 'runtime'
     pkg.environment "PATH", "#{settings[:bindir]}:/usr/ccs/bin:/usr/sfw/bin:$(PATH):/opt/csw/bin"
     pkg.environment "CC", "/opt/pl-build-tools/bin/#{settings[:platform_triple]}-gcc"
-    pkg.environment "LDFLAGS", "-Wl,-rpath=/opt/puppetlabs/puppet/lib"
+    pkg.environment "LDFLAGS", "-Wl,-rpath=#{settings[:libdir]}"
   end
 
   if platform.is_windows?
