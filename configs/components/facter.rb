@@ -20,7 +20,7 @@ component "facter" do |pkg, settings, platform|
   pkg.build_requires 'runtime'
   pkg.build_requires 'cpp-hocon'
 
-  unless platform.is_aix? or platform.is_solaris?
+  unless platform.is_aix? || platform.is_solaris?
     # libwhereami doesn't support AIX or Solaris yet
     pkg.build_requires "libwhereami"
   end
