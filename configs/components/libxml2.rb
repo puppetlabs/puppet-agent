@@ -8,7 +8,7 @@ component "libxml2" do |pkg, settings, platform|
   pkg.apply_patch 'resources/patches/libxml2/disallow_namespace_nodes_in_XPointer_ranges_CVE-2016-4658.patch'
 
   if platform.is_aix?
-    pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-gcc-5.2.0-1.aix#{platform.os_version}.ppc.rpm"
+    pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-gcc-5.2.0-11.aix#{platform.os_version}.ppc.rpm"
     pkg.environment "PATH" => "/opt/pl-build-tools/bin:$$PATH"
   elsif platform.is_cross_compiled_linux?
     pkg.environment "PATH" => "/opt/pl-build-tools/bin:$$PATH:#{settings[:bindir]}"

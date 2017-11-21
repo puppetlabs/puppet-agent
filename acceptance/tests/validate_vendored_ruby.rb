@@ -19,13 +19,13 @@ def setup_build_environment(agent)
   gem_install_sqlite3 = gem_command(agent) + " install sqlite3"
   install_package_on_agent = package_installer(agent)
 
-  case agent['platform'] 
+  case agent['platform']
   when /aix/
     # use pl-build-tools' gcc on AIX machines
     gem_install_sqlite3 = "export PATH=\"/opt/pl-build-tools/bin:$PATH\" && #{gem_install_sqlite3}"
   when /el-5/
     # PA-1638
-    gem_install_sqlite3 += " -v 1.3.11" 
+    gem_install_sqlite3 += " -v 1.3.11"
   when /solaris-11-i386/
     # for some reason pkg install does not install developer/gcc-48 for sol 11, so need
     # to use the one provided by pl-build-tools instead.
@@ -78,7 +78,7 @@ def setup_build_environment(agent)
         in_temp_dir = lambda do |cmd|
           "pushd #{tmpdir} && #{cmd} && popd"
         end
-  
+
         on(agent, in_temp_dir.call("curl -O #{base_url}/#{pkg_gz}"))
         on(agent, in_temp_dir.call("gunzip -c #{pkg_gz} | pkgadd -d /dev/stdin -a #{vanagon_noask_path} all"))
       end
@@ -93,14 +93,14 @@ end
 def install_dependencies(agent)
   return if agent['platform'] =~ /osx|solaris-11|sparc/
 
-  install_package_on_agent = package_installer(agent) 
+  install_package_on_agent = package_installer(agent)
   dependencies = {
     'apt-get' => ['gcc', 'make', 'libsqlite3-dev'],
     'yum' => ['gcc', 'sqlite-devel'],
     'zypper' => ['gcc', 'sqlite3-devel'],
     'opt/csw/bin/pkgutil' => ['sqlite3', 'libsqlite3_dev'],
     'rpm' => [
-      'http://pl-build-tools.delivery.puppetlabs.net/aix/5.3/ppc/pl-gcc-5.2.0-1.aix5.3.ppc.rpm',
+      'http://pl-build-tools.delivery.puppetlabs.net/aix/5.3/ppc/pl-gcc-5.2.0-11.aix5.3.ppc.rpm',
       'http://osmirror.delivery.puppetlabs.net/AIX_MIRROR/pkg-config-0.19-6.aix5.2.ppc.rpm',
       'http://osmirror.delivery.puppetlabs.net/AIX_MIRROR/info-4.6-1.aix5.1.ppc.rpm',
       'http://www.oss4aix.org/download/RPMS/readline/readline-7.0-3.aix5.1.ppc.rpm',
@@ -116,7 +116,7 @@ def install_dependencies(agent)
     # does not exist
     agent['platform'] =~ /solaris/ ?
        result.stdout.chomp !~ /no #{_provider}/
-     : result.exit_code.zero? 
+     : result.exit_code.zero?
   end
   providers = dependencies.keys.join(', ')
   assert(provider, "The agent does not have one of #{providers} as its package provider")
@@ -134,7 +134,7 @@ test_name 'PA-1319: Validate that the vendored ruby can load gems and is configu
     gem_re = /[\w-]+ \(\d+\.\d+\.\d+(?:, \d+\.\d+\.\d+)*\)/
 
     agents.each do |agent|
-      gem = gem_command(agent) 
+      gem = gem_command(agent)
       listed_gems = on(agent, "#{gem} list").stdout.chomp.scan(gem_re)
       assert(listed_gems.size >= minimum_number_of_gems, "'gem list' fails to list the available gems (i.e., the rubygems environment is not sane)")
     end
