@@ -2,7 +2,7 @@ component "ruby-augeas" do |pkg, settings, platform|
   pkg.version "0.5.0"
   pkg.md5sum "a132eace43ce13ccd059e22c0b1188ac"
   pkg.url "http://download.augeas.net/ruby/ruby-augeas-#{pkg.get_version}.tgz"
-  pkg.mirror "http://buildsources.delivery.puppetlabs.net/ruby-augeas-#{pkg.get_version}.tar.gz"
+  pkg.mirror "#{settings[:buildsources_url]}/ruby-augeas-#{pkg.get_version}.tar.gz"
 
   pkg.replaces 'pe-ruby-augeas'
 
