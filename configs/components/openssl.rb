@@ -109,7 +109,7 @@ component "openssl" do |pkg, settings, platform|
     # --libdir ensures that we avoid the multilib (lib/ vs. lib64/) problem,
     # since configure uses the existence of a lib64 directory to determine
     # if it should install its own libs into a multilib dir. Yay OpenSSL!
-    # Below will disable: bf, camellia, des, 3des, gost, idea, md2/4, rc2/4/5, seed, srp
+    # Below will disable: bf, camellia, gost, idea, md2/4, rc2/5, seed, srp
     "./Configure \
       --prefix=#{settings[:prefix]} \
       --libdir=lib \
@@ -126,8 +126,6 @@ component "openssl" do |pkg, settings, platform|
       no-weak-ssl-ciphers \
       no-dtls \
       no-dtls1 \
-      no-rc4 \
-      -DOPENSSL_NO_RC4 \
       no-idea \
       no-seed \
       no-ec2m \
