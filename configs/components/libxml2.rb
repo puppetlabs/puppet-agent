@@ -2,7 +2,7 @@ component "libxml2" do |pkg, settings, platform|
   pkg.version "2.9.4"
   pkg.md5sum "ae249165c173b1ff386ee8ad676815f5"
   pkg.url "http://xmlsoft.org/sources/#{pkg.get_name}-#{pkg.get_version}.tar.gz"
-  pkg.mirror "http://buildsources.delivery.puppetlabs.net/libxml2-#{pkg.get_version}.tar.gz"
+  pkg.mirror "#{settings[:buildsources_url]}/libxml2-#{pkg.get_version}.tar.gz"
   # CVE-related patches needed until libxml 2.9.5 is released:
   pkg.apply_patch 'resources/patches/libxml2/fix_XPointer_paths_beginning_with_range-to_CVE-2016-5131.patch'
   pkg.apply_patch 'resources/patches/libxml2/fix_comparison_with_root_node_in_xmlXPathCmpNodes.patch'
