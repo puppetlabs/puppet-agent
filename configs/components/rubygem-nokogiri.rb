@@ -15,7 +15,7 @@ component "rubygem-nokogiri" do |pkg, settings, platform|
     end
   else
     pkg.url "https://rubygems.org/downloads/nokogiri-#{pkg.get_version}.gem"
-    pkg.mirror "http://buildsources.delivery.puppetlabs.net/nokogiri-#{pkg.get_version}.gem"
+    pkg.mirror "#{settings[:buildsources_url]}/nokogiri-#{pkg.get_version}.gem"
     pkg.md5sum "51402a536f389bfcef0ff1600b8acff5"
   end
 
