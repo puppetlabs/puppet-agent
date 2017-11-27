@@ -1,6 +1,6 @@
 ---
 project: 'puppet-agent'
-packaging_url: 'git://github.com/puppetlabs/packaging.git --branch=master'
+packaging_url: 'git://github.com/puppetlabs/packaging.git --branch=1.0.x'
 packaging_repo: 'packaging'
 # foss_platforms will be shipped to the nightly repos
 foss_platforms:
@@ -139,4 +139,8 @@ osx_signing_server: 'osx-signer.delivery.puppetlabs.net'
 vanagon_project: TRUE
 apt_repo_name: 'PC1'
 yum_repo_name: 'PC1'
+repo_name: 'puppet5'
+nonfinal_repo_name: 'puppet5-nightly'
+repo_link_target: 'puppet'
+nonfinal_repo_link_target: 'puppet-nightly'
 build_tar: FALSE
