@@ -14,6 +14,7 @@ component "leatherman" do |pkg, settings, platform|
     pkg.build_requires "pl-boost-#{platform.architecture}"
     pkg.build_requires "pl-cmake"
   elsif platform.is_aix?
+    pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-gcc-5.2.0-11.aix#{platform.os_version}.ppc.rpm"
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-cmake-3.2.3-2.aix#{platform.os_version}.ppc.rpm"
     if platform.name =~ /aix-7.1/
       pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-boost-1.58.0-7.aix#{platform.os_version}.ppc.rpm"
