@@ -144,6 +144,7 @@ component "ruby-2.4.2" do |pkg, settings, platform|
   if platform.is_deb?
     pkg.build_requires "zlib1g-dev"
   elsif platform.is_aix?
+    pkg.build_requires "http://osmirror.delivery.puppetlabs.net/AIX_MIRROR/zlib-1.2.3-4.aix5.2.ppc.rpm"
     pkg.build_requires "http://osmirror.delivery.puppetlabs.net/AIX_MIRROR/zlib-devel-1.2.3-4.aix5.2.ppc.rpm"
   elsif platform.is_rpm?
     pkg.build_requires "zlib-devel"
