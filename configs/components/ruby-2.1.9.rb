@@ -103,6 +103,7 @@ component "ruby-2.1.9" do |pkg, settings, platform|
     pkg.apply_patch "#{base}/aix_ruby_2.1_libpath_with_opt_dir.patch"
     pkg.apply_patch "#{base}/aix_ruby_2.1_fix_proctitle.patch"
     pkg.apply_patch "#{base}/aix_ruby_2.1_fix_make_test_failure.patch"
+    pkg.apply_patch "#{base}/Remove-O_CLOEXEC-check-for-AIX-builds.patch"
     pkg.environment "CC" => "/opt/pl-build-tools/bin/gcc"
     pkg.environment "LDFLAGS" => settings[:ldflags]
     pkg.build_requires "libedit"

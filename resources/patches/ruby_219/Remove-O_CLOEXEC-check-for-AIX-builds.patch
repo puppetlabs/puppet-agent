@@ -1,0 +1,28 @@
+From 5ee0b6fa8d66c538d38954a3b07b9c788ab72ca9 Mon Sep 17 00:00:00 2001
+From: "Sean P. McDonald" <sean.mcdonald@puppetlabs.com>
+Date: Tue, 5 Dec 2017 09:16:14 -0800
+Subject: [PATCH] Remove O_CLOEXEC check for AIX builds
+
+---
+ io.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
+
+diff --git a/io.c b/io.c
+index 08775f111c..af4c0cb743 100644
+--- a/io.c
++++ b/io.c
+@@ -228,10 +228,7 @@ int
+ rb_cloexec_open(const char *pathname, int flags, mode_t mode)
+ {
+     int ret;
+-#ifdef O_CLOEXEC
+-    /* O_CLOEXEC is available since Linux 2.6.23.  Linux 2.6.18 silently ignore it. */
+-    flags |= O_CLOEXEC;
+-#elif defined O_NOINHERIT
++#ifdef defined O_NOINHERIT
+     flags |= O_NOINHERIT;
+ #endif
+     ret = open(pathname, flags, mode);
+-- 
+2.14.2.windows.1
+
