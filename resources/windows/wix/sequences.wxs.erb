@@ -33,9 +33,6 @@
       <Custom Action='SetFromCmdLinePuppetAgentEnvironment' After='FileCost'>
         CMDLINE_PUPPET_AGENT_ENVIRONMENT
       </Custom>
-      <Custom Action='SetDefaultPuppetAgentEnvironment' Before='CostFinalize'>
-        PUPPET_AGENT_ENVIRONMENT=""
-      </Custom>
       <!-- PUPPET_AGENT_CERTNAME -->
       <Custom Action='SetFromIniPuppetAgentCertname' Before='FileCost'>
         INI_PUPPET_AGENT_CERTNAME
@@ -92,9 +89,6 @@
       <Custom Action='SaveCmdLinePuppetAgentEnvironment' Before='AppSearch' />
       <Custom Action='SetFromCmdLinePuppetAgentEnvironment' After='FileCost'>
         CMDLINE_PUPPET_AGENT_ENVIRONMENT
-      </Custom>
-      <Custom Action='SetDefaultPuppetAgentEnvironment' Before='CostFinalize'>
-        PUPPET_AGENT_ENVIRONMENT=""
       </Custom>
       <!-- PUPPET_AGENT_CERTNAME -->
       <Custom Action='SetFromIniPuppetAgentCertname' Before='FileCost'>
