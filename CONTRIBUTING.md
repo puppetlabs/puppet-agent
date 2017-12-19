@@ -1,5 +1,7 @@
 # How to contribute
 
+foooooo
+
 This document is liberally copied/based on the same in
 [Puppet](https://github.com/puppetlabs/puppet).
 
