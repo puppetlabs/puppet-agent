@@ -14,8 +14,7 @@ component "facter" do |pkg, settings, platform|
 
   pkg.replaces 'pe-facter'
 
-  pkg.build_requires "ruby-#{settings[:ruby_version]}"
-  pkg.build_requires 'openssl'
+  pkg.build_requires 'puppet-runtime' # Provides openssl, ruby, augeas, curl
   pkg.build_requires 'leatherman'
   pkg.build_requires 'runtime'
   pkg.build_requires 'cpp-hocon'
@@ -25,10 +24,6 @@ component "facter" do |pkg, settings, platform|
     # Running facter (as part of testing) expects virt-what is available
     pkg.build_requires 'virt-what'
   end
-
-  # Running facter (as part of testing) expects augtool are available
-  pkg.build_requires 'augeas' unless platform.is_windows?
-  pkg.build_requires "openssl"
 
   if platform.is_windows?
     pkg.environment "PATH", "$(shell cygpath -u #{settings[:gcc_bindir]}):$(shell cygpath -u #{settings[:ruby_bindir]}):$(shell cygpath -u #{settings[:bindir]}):/cygdrive/c/Windows/system32:/cygdrive/c/Windows:/cygdrive/c/Windows/System32/WindowsPowerShell/v1.0"
@@ -110,7 +105,6 @@ component "facter" do |pkg, settings, platform|
   # curl is only used for compute clusters (GCE, EC2); so rpm, deb, and Windows
   skip_curl = 'ON'
   if (platform.is_linux? && !platform.is_huaweios? && !platform.is_cisco_wrlinux?) || platform.is_windows?
-    pkg.build_requires "curl"
     skip_curl = 'OFF'
   end
 
@@ -224,6 +218,15 @@ component "facter" do |pkg, settings, platform|
 
   pkg.install_file ".gemspec", "#{settings[:gem_home]}/specifications/#{pkg.get_name}.gemspec"
   if platform.is_windows?
+    # Elevate.exe is simply used when one of the run_facter.bat or
+    # run_puppet.bat files are called. These set up the required environment
+    # for the program, and elevate.exe gives the program the elevated
+    # privileges it needs to run
+    pkg.add_source "#{settings[:buildsources_url]}/windows/elevate/elevate.exe", sum: "bd81807a5c13da32dd2a7157f66fa55d"
+    pkg.add_source "file://resources/files/windows/elevate.exe.config", sum: "a5aecf3f7335fa1250a0f691d754d561"
+    pkg.install_file "../elevate.exe", "#{settings[:windows_tools]}/elevate.exe"
+    pkg.install_file "../elevate.exe.config", "#{settings[:windows_tools]}/elevate.exe.config"
+
     pkg.add_source("file://resources/files/windows/facter.bat", sum: "185b8645feecac4acadc55c64abb3755")
     pkg.add_source("file://resources/files/windows/facter_interactive.bat", sum: "20a1c0bc5368ffb24980f42432f1b372")
     pkg.add_source("file://resources/files/windows/run_facter_interactive.bat", sum: "c5e0c0a80e5c400a680a06a4bac8abd4")
