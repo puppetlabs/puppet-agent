@@ -14,8 +14,7 @@ component "facter" do |pkg, settings, platform|
 
   pkg.replaces 'pe-facter'
 
-  pkg.build_requires "ruby-#{settings[:ruby_version]}"
-  pkg.build_requires 'openssl'
+  pkg.build_requires 'puppet-runtime' # Provides openssl, ruby, augeas, curl
   pkg.build_requires 'leatherman'
   pkg.build_requires 'runtime'
   pkg.build_requires 'cpp-hocon'
@@ -24,10 +23,6 @@ component "facter" do |pkg, settings, platform|
     # Running facter (as part of testing) expects virt-what is available
     pkg.build_requires 'virt-what'
   end
-
-  # Running facter (as part of testing) expects augtool are available
-  pkg.build_requires 'augeas' unless platform.is_windows?
-  pkg.build_requires "openssl"
 
   if platform.is_windows?
     pkg.environment "PATH" => "$$(cygpath -u #{settings[:gcc_bindir]}):$$(cygpath -u #{settings[:ruby_bindir]}):$$(cygpath -u #{settings[:bindir]}):/cygdrive/c/Windows/system32:/cygdrive/c/Windows:/cygdrive/c/Windows/System32/WindowsPowerShell/v1.0"
@@ -126,7 +121,6 @@ component "facter" do |pkg, settings, platform|
   # curl is only used for compute clusters (GCE, EC2); so rpm, deb, and Windows
   skip_curl = 'ON'
   if (platform.is_linux? && !platform.is_huaweios? && !platform.is_cisco_wrlinux?) || platform.is_windows?
-    pkg.build_requires "curl"
     skip_curl = 'OFF'
   end
 

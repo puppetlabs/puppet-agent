@@ -10,7 +10,7 @@ component "pxp-agent" do |pkg, settings, platform|
     pkg.environment "PATH" => "#{settings[:bindir]}:/opt/pl-build-tools/bin:$$PATH"
   end
 
-  pkg.build_requires "openssl"
+  pkg.build_requires "puppet-runtime" # Provides openssl
   pkg.build_requires "leatherman"
   pkg.build_requires "cpp-pcp-client"
 
