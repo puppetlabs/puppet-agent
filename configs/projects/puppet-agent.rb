@@ -224,38 +224,9 @@ project "puppet-agent" do |proj|
   proj.component "pxp-agent"
 
   # Then the dependencies
-  proj.component "augeas" unless platform.is_windows?
-  # Curl is only needed for compute clusters (GCE, EC2); so rpm, deb, and Windows
-  proj.component "curl" if (platform.is_linux? && !platform.is_cisco_wrlinux?) || platform.is_windows?
-  proj.component "ruby-#{proj.ruby_version}"
+  # Provides augeas, curl, libedit, libxml2, libxslt, openssl, puppet-ca-bundle, ruby and rubygem-*
+  proj.component "puppet-runtime"
   proj.component "nssm" if platform.is_windows?
-  proj.component "ruby-stomp"
-  proj.component "rubygem-deep-merge"
-  proj.component "rubygem-net-ssh"
-  proj.component "rubygem-hocon"
-  proj.component "rubygem-semantic_puppet"
-  proj.component "rubygem-text"
-  proj.component "rubygem-locale"
-  proj.component "rubygem-gettext"
-  proj.component "rubygem-fast_gettext"
-  proj.component "rubygem-gettext-setup"
-  if platform.is_windows?
-    proj.component "rubygem-ffi"
-    proj.component "rubygem-win32-dir"
-    proj.component "rubygem-win32-eventlog"
-    proj.component "rubygem-win32-process"
-    proj.component "rubygem-win32-security"
-    proj.component "rubygem-win32-service"
-  end
-  if platform.is_windows? || platform.is_solaris?
-    proj.component "rubygem-minitar"
-  end
-  proj.component "ruby-shadow" unless platform.is_aix? || platform.is_windows?
-  proj.component "ruby-augeas" unless platform.is_windows?
-  proj.component "openssl"
-  proj.component "puppet-ca-bundle"
-  proj.component "libxml2" unless platform.is_windows?
-  proj.component "libxslt" unless platform.is_windows?
 
   # These utilites don't really work on unix
   if platform.is_linux?
@@ -266,19 +237,9 @@ project "puppet-agent" do |proj|
 
   proj.component "runtime"
 
-  # Needed to avoid using readline on solaris and aix
-  if platform.is_solaris? || platform.is_aix?
-    proj.component "libedit"
-  end
-
   # Components only applicable on OSX
   if platform.is_osx?
     proj.component "cfpropertylist"
-  end
-
-  # We only build ruby-selinux for EL 5-7
-  if platform.name =~ /^el-(5|6|7)-.*/ || platform.is_fedora?
-    proj.component "ruby-selinux"
   end
 
   proj.directory proj.install_root
@@ -287,6 +248,9 @@ project "puppet-agent" do |proj|
   proj.directory proj.link_bindir
   proj.directory proj.logdir unless platform.is_windows?
   proj.directory proj.piddir unless platform.is_windows?
+  if platform.is_windows? || platform.is_macos?
+    proj.directory proj.bindir
+  end
 
   proj.timeout 7200 if platform.is_windows?
 
