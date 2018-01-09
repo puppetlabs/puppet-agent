@@ -6,11 +6,7 @@ component "rubygem-nokogiri" do |pkg, settings, platform|
     # installing the nokogiri gem using our gem command. The added files from
     # :gem_home were then tar'ed up and packed into this container tarball.
     pkg.url "#{settings[:buildsources_url]}/nokogiri-precompiled-huaweios-#{pkg.get_version}-patch1-for-ruby-#{settings[:ruby_version]}.tar.gz"
-    if settings[:ruby_version] == "2.1.9"
-      pkg.md5sum "016db16f78d9e6d0c3ead89093e610a2"
-    elsif settings[:ruby_version] == "2.3.1"
-      pkg.md5sum "f58c591200f9393e3ceb81d8c5d1d40c"
-    end
+    pkg.md5sum "016db16f78d9e6d0c3ead89093e610a2"
   else
     pkg.url "https://rubygems.org/downloads/nokogiri-#{pkg.get_version}.gem"
     pkg.md5sum "51402a536f389bfcef0ff1600b8acff5"
