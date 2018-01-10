@@ -1,6 +1,6 @@
 component "rubygem-fast_gettext" do |pkg, settings, platform|
-  pkg.version "1.1.0"
-  pkg.md5sum "fc0597bd4d84b749c579cc39c7ceda0f"
+  pkg.version "1.1.1"
+  pkg.md5sum "ceb03a1a979f288009d50d894beb0e22"
   pkg.url "https://rubygems.org/downloads/fast_gettext-#{pkg.get_version}.gem"
   pkg.mirror "#{settings[:buildsources_url]}/fast_gettext-#{pkg.get_version}.gem"
 
