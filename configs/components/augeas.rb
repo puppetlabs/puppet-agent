@@ -42,14 +42,6 @@ component 'augeas' do |pkg, settings, platform|
       pkg.environment "CFLAGS" => settings[:cflags]
       pkg.environment "LDFLAGS" => settings[:ldflags]
     end
-  elsif platform.is_huaweios?
-    pkg.build_requires 'runtime'
-    pkg.build_requires 'pl-pkg-config'
-
-    pkg.environment "PATH" => "/opt/pl-build-tools/bin:$$PATH:#{settings[:bindir]}"
-    pkg.environment "CFLAGS" => settings[:cflags]
-    pkg.environment "LDFLAGS" => settings[:ldflags]
-    pkg.environment "PKG_CONFIG" => "/opt/pl-build-tools/bin/pkg-config"
   elsif platform.is_deb?
     pkg.build_requires 'libreadline-dev'
     if platform.name =~ /debian-9/

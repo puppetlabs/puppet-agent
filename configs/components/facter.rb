@@ -20,7 +20,7 @@ component "facter" do |pkg, settings, platform|
   pkg.build_requires 'runtime'
   pkg.build_requires 'cpp-hocon'
 
-  if platform.is_linux? && !platform.is_huaweios?
+  if platform.is_linux?
     # Running facter (as part of testing) expects virt-what is available
     pkg.build_requires 'virt-what'
   end
@@ -119,13 +119,10 @@ component "facter" do |pkg, settings, platform|
       skip_blkid = 'OFF'
     end
   end
-  if platform.is_huaweios?
-    skip_blkid = 'ON'
-  end
 
   # curl is only used for compute clusters (GCE, EC2); so rpm, deb, and Windows
   skip_curl = 'ON'
-  if (platform.is_linux? && !platform.is_huaweios? && !platform.is_cisco_wrlinux?) || platform.is_windows?
+  if (platform.is_linux? && !platform.is_cisco_wrlinux?) || platform.is_windows?
     pkg.build_requires "curl"
     skip_curl = 'OFF'
   end

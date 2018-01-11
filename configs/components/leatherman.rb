@@ -31,7 +31,7 @@ component "leatherman" do |pkg, settings, platform|
 
   # curl is only used for compute clusters (GCE, EC2); so rpm, deb, and Windows
   use_curl = 'FALSE'
-  if (platform.is_linux? && !platform.is_huaweios? && !platform.is_cisco_wrlinux?) || platform.is_windows?
+  if (platform.is_linux? && !platform.is_cisco_wrlinux?) || platform.is_windows?
     pkg.build_requires "curl"
     use_curl = 'TRUE'
   end
