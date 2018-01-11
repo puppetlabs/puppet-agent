@@ -73,7 +73,7 @@ component "facter" do |pkg, settings, platform|
   java_home = ''
   java_includedir = ''
   case platform.name
-  when /(el-(6|7)|fedora-f24)/
+  when /el-(6|7)/
     pkg.build_requires 'java-1.8.0-openjdk-devel'
   when /(debian-(7|8)|ubuntu-14)/
     pkg.build_requires 'openjdk-7-jdk'
