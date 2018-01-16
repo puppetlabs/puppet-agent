@@ -26,6 +26,7 @@ component "ruby-2.1.9" do |pkg, settings, platform|
   pkg.apply_patch "#{base}/cve-2017-10784.patch"
   pkg.apply_patch "#{base}/cve-2017-14033.patch"
   pkg.apply_patch "#{base}/cve-2017-14064.patch"
+  pkg.apply_patch "#{base}/cve-2017-17405.patch"
 
   # These are a pretty smelly hack, and they run the risk of letting tests
   # based on the generated data (that should otherwise fail) pass
