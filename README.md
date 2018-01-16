@@ -42,25 +42,6 @@ and vm hostname is the hostname of a vm of the desired platform. The current
 user must be able to ssh into that vm as root (vanagon has facilities to provide
 an ssh key beyond what is listed in .ssh/config).
 
-#### Building different ruby versions
-There are multiple ruby versions available to use in puppet-agent. To switch between ruby versions, update the `ruby_version` and `gem_home` settings in the [puppet-agent project config](https://github.com/puppetlabs/puppet-agent/blob/master/configs/projects/puppet-agent.rb)
-
-To switch to ruby 2.3.5:
-
-  ```
-  proj.setting(:ruby_version, "2.3.5")`
-  proj.setting(:gem_home, File.join(proj.libdir, "ruby", "gems", "2.3.0"))
-  ```
-
-To switch to ruby 2.1.9:
-
-  ```
-  proj.setting(:ruby_version, "2.1.9")`
-  proj.setting(:gem_home, File.join(proj.libdir, "ruby", "gems", "2.1.0"))
-  ```
-
-
-
 Requirements for building
 ---
 To build puppet-agent, you'll need the following:
