@@ -1,32 +1,41 @@
-
-# This file was created by PuppetAgent for Solaris 10 i386.  Any
-# changes made to this file will be lost the next time ruby is built.
+# encoding: ascii-8bit
+# frozen-string-literal: false
+#
+# The module storing Ruby interpreter configurations on building.
+#
+# This file was created by mkconfig.rb when ruby was built.  It contains
+# build information for ruby which is used e.g. by mkmf to build
+# compatible native extensions.  Any changes made to this file will be
+# lost the next time ruby is built.
 
 module RbConfig
-  RUBY_VERSION == "2.4.2" or
-    raise "ruby lib version (2.4.2) doesn't match executable version (#{RUBY_VERSION})"
+  RUBY_VERSION.start_with?("2.4.") or
+    raise "ruby lib version (2.4.3) doesn't match executable version (#{RUBY_VERSION})"
 
-  TOPDIR = File.dirname(__FILE__).chomp!("/lib/ruby/2.4.0/i386-solaris2.10")
+  # Ruby installed directory.
+  TOPDIR = File.dirname(__FILE__).chomp!("/lib/ruby/2.4.0/aarch64-linux")
+  # DESTDIR on make install.
   DESTDIR = '' unless defined? DESTDIR
+  # The hash configurations stored.
   CONFIG = {}
   CONFIG["DESTDIR"] = DESTDIR
   CONFIG["MAJOR"] = "2"
   CONFIG["MINOR"] = "4"
-  CONFIG["TEENY"] = "2"
-  CONFIG["PATCHLEVEL"] = "111"
-  CONFIG["INSTALL"] = '/opt/csw/bin/ginstall -c'
+  CONFIG["TEENY"] = "3"
+  CONFIG["PATCHLEVEL"] = "198"
+  CONFIG["INSTALL"] = '/bin/install -c'
   CONFIG["EXEEXT"] = ""
   CONFIG["prefix"] = (TOPDIR || DESTDIR + "/opt/puppetlabs/puppet")
-  CONFIG["ruby_install_name"] = "ruby"
-  CONFIG["RUBY_INSTALL_NAME"] = "ruby"
-  CONFIG["RUBY_SO_NAME"] = "ruby"
+  CONFIG["ruby_install_name"] = "$(RUBY_BASE_NAME)"
+  CONFIG["RUBY_INSTALL_NAME"] = "$(RUBY_BASE_NAME)"
+  CONFIG["RUBY_SO_NAME"] = "$(RUBY_BASE_NAME)"
   CONFIG["exec"] = "exec"
   CONFIG["ruby_pc"] = "ruby-2.4.pc"
   CONFIG["PACKAGE"] = "ruby"
-  CONFIG["BUILTIN_TRANSSRCS"] = " newline.c"
+  CONFIG["BUILTIN_TRANSSRCS"] = " enc/trans/newline.c"
   CONFIG["USE_RUBYGEMS"] = "YES"
-  CONFIG["MANTYPE"] = "man"
-  CONFIG["NROFF"] = "/bin/false"
+  CONFIG["MANTYPE"] = "doc"
+  CONFIG["NROFF"] = "/usr/bin/nroff"
   CONFIG["vendorarchhdrdir"] = "$(vendorhdrdir)/$(sitearch)"
   CONFIG["sitearchhdrdir"] = "$(sitehdrdir)/$(sitearch)"
   CONFIG["rubyarchhdrdir"] = "$(rubyhdrdir)/$(arch)"
@@ -36,7 +45,7 @@ module RbConfig
   CONFIG["RUBY_SEARCH_PATH"] = ""
   CONFIG["UNIVERSAL_INTS"] = ""
   CONFIG["UNIVERSAL_ARCHNAMES"] = ""
-  CONFIG["configure_args"] = " '--prefix=/opt/puppetlabs/puppet' '--with-opt-dir=/opt/puppetlabs/puppet' '--enable-shared' '--enable-bundled-libyaml' '--disable-install-doc' '--disable-install-rdoc' 'LDFLAGS=-Wl,-rpath=/opt/puppetlabs/puppet/lib'"
+  CONFIG["configure_args"] = " '--prefix=/opt/puppetlabs/puppet' '--with-opt-dir=/opt/puppetlabs/puppet' '--enable-shared' '--enable-bundled-libyaml' '--disable-install-doc' '--disable-install-rdoc'"
   CONFIG["CONFIGURE"] = "configure"
   CONFIG["vendorarchdir"] = "$(vendorlibdir)/$(sitearch)"
   CONFIG["vendorlibdir"] = "$(vendordir)/$(ruby_version)"
@@ -48,7 +57,7 @@ module RbConfig
   CONFIG["rubylibdir"] = "$(rubylibprefix)/$(ruby_version)"
   CONFIG["ruby_version"] = "2.4.0"
   CONFIG["sitearch"] = "$(arch)"
-  CONFIG["arch"] = "i386-solaris2.10"
+  CONFIG["arch"] = "aarch64-linux"
   CONFIG["sitearchincludedir"] = "$(includedir)/$(sitearch)"
   CONFIG["archincludedir"] = "$(includedir)/$(arch)"
   CONFIG["sitearchlibdir"] = "$(libdir)/$(sitearch)"
@@ -61,7 +70,7 @@ module RbConfig
   CONFIG["ridir"] = "$(datarootdir)/$(RI_BASE_NAME)"
   CONFIG["rubysitearchprefix"] = "$(rubylibprefix)/$(sitearch)"
   CONFIG["rubyarchprefix"] = "$(rubylibprefix)/$(arch)"
-  CONFIG["MAKEFILES"] = "Makefile"
+  CONFIG["MAKEFILES"] = "Makefile GNUmakefile"
   CONFIG["PLATFORM_DIR"] = ""
   CONFIG["THREAD_MODEL"] = "pthread"
   CONFIG["SYMBOL_PREFIX"] = ""
@@ -73,50 +82,40 @@ module RbConfig
   CONFIG["ENABLE_SHARED"] = "yes"
   CONFIG["DLDLIBS"] = " -lc"
   CONFIG["SOLIBS"] = "$(LIBS)"
-  CONFIG["LIBRUBYARG_SHARED"] = "-Wl,-R -Wl,$(libdir) -L$(libdir) -l$(RUBY_SO_NAME)"
-  CONFIG["LIBRUBYARG_STATIC"] = "-Wl,-R -Wl,$(libdir) -L$(libdir) -l$(RUBY_SO_NAME)-static"
+  CONFIG["LIBRUBYARG_SHARED"] = "-Wl,-rpath,$(libdir) -L$(libdir) -l$(RUBY_SO_NAME)"
+  CONFIG["LIBRUBYARG_STATIC"] = "-Wl,-rpath,$(libdir) -L$(libdir) -l$(RUBY_SO_NAME)-static"
   CONFIG["LIBRUBYARG"] = "$(LIBRUBYARG_SHARED)"
   CONFIG["LIBRUBY"] = "$(LIBRUBY_SO)"
-  CONFIG["LIBRUBY_ALIASES"] = "lib$(RUBY_SO_NAME).so.$(MAJOR).$(MINOR).$(TEENY) lib$(RUBY_SO_NAME).so"
-  CONFIG["LIBRUBY_SO"] = "lib$(RUBY_SO_NAME).so.$(MAJOR)"
+  CONFIG["LIBRUBY_ALIASES"] = "lib$(RUBY_SO_NAME).so.$(MAJOR).$(MINOR) lib$(RUBY_SO_NAME).so"
+  CONFIG["LIBRUBY_SO"] = "lib$(RUBY_SO_NAME).so.$(RUBY_PROGRAM_VERSION)"
   CONFIG["LIBRUBY_A"] = "lib$(RUBY_SO_NAME)-static.a"
   CONFIG["RUBYW_INSTALL_NAME"] = ""
   CONFIG["rubyw_install_name"] = ""
   CONFIG["EXTDLDFLAGS"] = ""
   CONFIG["EXTLDFLAGS"] = ""
-  CONFIG["strict_warnflags"] = "-std=iso9899:1999"
-  CONFIG["warnflags"] = "-Wall -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wunused-variable -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wimplicit-function-declaration"
+  CONFIG["strict_warnflags"] = "-std=gnu99"
+  CONFIG["warnflags"] = "-Wall -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wno-tautological-compare -Wno-parentheses-equality -Wno-constant-logical-operand -Wno-self-assign -Wunused-variable -Wimplicit-int -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wimplicit-function-declaration -Wdeprecated-declarations -Wno-packed-bitfield-compat -Wsuggest-attribute=noreturn -Wsuggest-attribute=format"
   CONFIG["debugflags"] = "-ggdb3"
   CONFIG["optflags"] = "-O3 -fno-fast-math"
-  CONFIG["cxxflags"] = " $(optflags) $(debugflags) $(warnflags)"
-  CONFIG["cflags"] = " $(optflags) $(debugflags) $(warnflags)"
-  CONFIG["cppflags"] = ""
-  CONFIG["NULLCMD"] = "true"
+  CONFIG["NULLCMD"] = ":"
   CONFIG["DLNOBJ"] = "dln.o"
-  CONFIG["INSTALLDOC"] = "nodoc"
-  CONFIG["CAPITARGET"] = "nodoc"
-  CONFIG["RDOCTARGET"] = "nodoc"
-  CONFIG["DTRACE_GLOMMED_OBJ"] = "ruby-glommed.$(OBJEXT)"
-  CONFIG["DTRACE_OBJ"] = "probes.$(OBJEXT)"
-  CONFIG["DTRACE_EXT"] = "d"
+  CONFIG["INSTALL_STATIC_LIBRARY"] = "no"
   CONFIG["EXECUTABLE_EXTS"] = ""
   CONFIG["ARCHFILE"] = ""
   CONFIG["LIBRUBY_RELATIVE"] = "no"
   CONFIG["EXTOUT"] = ".ext"
-  CONFIG["RUNRUBY_COMMAND"] = "$(MINIRUBY) $(srcdir)/tool/runruby.rb --extout=$(EXTOUT) $(RUNRUBYOPT)"
   CONFIG["PREP"] = "miniruby$(EXEEXT)"
-  CONFIG["BTESTRUBY"] = "$(MINIRUBY)"
   CONFIG["CROSS_COMPILING"] = "no"
   CONFIG["TEST_RUNNABLE"] = "yes"
   CONFIG["rubylibprefix"] = "$(libdir)/$(RUBY_BASE_NAME)"
   CONFIG["setup"] = "Setup"
   CONFIG["ENCSTATIC"] = ""
   CONFIG["EXTSTATIC"] = ""
-  CONFIG["STRIP"] = "strip"
+  CONFIG["STRIP"] = "strip -S -x"
   CONFIG["TRY_LINK"] = ""
   CONFIG["PRELOADENV"] = "LD_PRELOAD"
   CONFIG["LIBPATHENV"] = "LD_LIBRARY_PATH"
-  CONFIG["RPATHFLAG"] = " -Wl,-R%1$-s"
+  CONFIG["RPATHFLAG"] = " -Wl,-rpath,%1$-s"
   CONFIG["LIBPATHFLAG"] = " -L%1$-s"
   CONFIG["LINK_SO"] = ""
   CONFIG["ASMEXT"] = "S"
@@ -128,24 +127,23 @@ module RbConfig
   CONFIG["CCDLFLAGS"] = "-fPIC"
   CONFIG["STATIC"] = ""
   CONFIG["ARCH_FLAG"] = ""
-  CONFIG["DLDFLAGS"] = "-L/opt/puppetlabs/puppet/lib  -Wl,-R/opt/puppetlabs/puppet/lib "
+  CONFIG["DLDFLAGS"] = "-Wl,--compress-debug-sections=zlib -L/opt/puppetlabs/puppet/lib  -Wl,-rpath,/opt/puppetlabs/puppet/lib"
   CONFIG["ALLOCA"] = ""
   CONFIG["codesign"] = ""
   CONFIG["POSTLINK"] = ":"
   CONFIG["WERRORFLAG"] = "-Werror"
-  CONFIG["CHDIR"] = "PWD= cd"
+  CONFIG["CHDIR"] = "cd -P"
   CONFIG["RMALL"] = "rm -fr"
-  CONFIG["RMDIRS"] = "rmdir -p"
-  CONFIG["RMDIR"] = "rmdir"
+  CONFIG["RMDIRS"] = "rmdir --ignore-fail-on-non-empty -p"
+  CONFIG["RMDIR"] = "rmdir --ignore-fail-on-non-empty"
   CONFIG["CP"] = "cp"
   CONFIG["RM"] = "rm -f"
   CONFIG["PKG_CONFIG"] = "pkg-config"
   CONFIG["PYTHON"] = ""
   CONFIG["DOXYGEN"] = ""
   CONFIG["DOT"] = ""
-  CONFIG["DTRACE"] = "dtrace"
-  CONFIG["MAKEDIRS"] = "/opt/csw/bin/gmkdir -p"
-  CONFIG["MKDIR_P"] = "/opt/csw/bin/gmkdir -p"
+  CONFIG["MAKEDIRS"] = "/bin/mkdir -p"
+  CONFIG["MKDIR_P"] = "/bin/mkdir -p"
   CONFIG["INSTALL_DATA"] = "$(INSTALL) -m 644"
   CONFIG["INSTALL_SCRIPT"] = "$(INSTALL)"
   CONFIG["INSTALL_PROGRAM"] = "$(INSTALL)"
@@ -154,59 +152,64 @@ module RbConfig
   CONFIG["NM"] = "nm"
   CONFIG["DLLWRAP"] = ""
   CONFIG["WINDRES"] = ""
-  CONFIG["DTRACE"] = "dtrace"
-  CONFIG["OBJCOPY"] = "gobjcopy"
-  CONFIG["OBJDUMP"] = "gobjdump"
+  CONFIG["OBJCOPY"] = ":"
+  CONFIG["OBJDUMP"] = "objdump"
   CONFIG["ASFLAGS"] = ""
   CONFIG["AS"] = "as"
+  CONFIG["ARFLAGS"] = "rcD "
   CONFIG["AR"] = "ar"
   CONFIG["RANLIB"] = "ranlib"
   CONFIG["try_header"] = ""
-  CONFIG["CC_VERSION"] = "$(CC) -v"
+  CONFIG["CC_VERSION_MESSAGE"] = "gcc (GCC) 4.8.5 20150623 (Red Hat 4.8.5-16)\nCopyright (C) 2015 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."
+  CONFIG["CC_VERSION"] = "$(CC) --version"
+  CONFIG["CSRCFLAG"] = ""
   CONFIG["COUTFLAG"] = "-o "
   CONFIG["OUTFLAG"] = "-o "
   CONFIG["CPPOUTFILE"] = "-o conftest.i"
-  CONFIG["GNU_LD"] = "no"
-  CONFIG["LD"] = "/usr/ccs/bin/ld"
+  CONFIG["GNU_LD"] = "yes"
+  CONFIG["LD"] = "ld"
   CONFIG["GCC"] = "yes"
-  CONFIG["EGREP"] = "/opt/csw/bin/ggrep -E"
-  CONFIG["GREP"] = "/opt/csw/bin/ggrep"
+  CONFIG["EGREP"] = "/bin/grep -E"
+  CONFIG["GREP"] = "/bin/grep"
   CONFIG["CPP"] = "$(CC) -E"
   CONFIG["CXXFLAGS"] = "$(cxxflags)"
-  CONFIG["CXX"] = "g++"
   CONFIG["OBJEXT"] = "o"
   CONFIG["CPPFLAGS"] = " -I/opt/puppetlabs/puppet/include $(DEFS) $(cppflags)"
-  CONFIG["LDFLAGS"] = "-L. -Wl,-rpath=/opt/puppetlabs/puppet/lib -L/opt/puppetlabs/puppet/lib  -Wl,-R/opt/puppetlabs/puppet/lib "
+  CONFIG["LDFLAGS"] = "-L. -fstack-protector -rdynamic -Wl,-export-dynamic -L/opt/puppetlabs/puppet/lib  -Wl,-rpath,/opt/puppetlabs/puppet/lib"
   CONFIG["CFLAGS"] = "$(cflags)  -fPIC"
+  CONFIG["CXX"] = "g++"
   CONFIG["CC"] = "gcc"
+  CONFIG["NACL_LIB_PATH"] = ""
   CONFIG["NACL_SDK_VARIANT"] = ""
   CONFIG["NACL_SDK_ROOT"] = ""
   CONFIG["NACL_TOOLCHAIN"] = ""
-  CONFIG["target_os"] = "solaris2.10"
-  CONFIG["target_vendor"] = "pc"
-  CONFIG["target_cpu"] = "i386"
-  CONFIG["target"] = "i386-pc-solaris2.10"
-  CONFIG["host_os"] = "solaris2.10"
-  CONFIG["host_vendor"] = "pc"
-  CONFIG["host_cpu"] = "i386"
-  CONFIG["host"] = "i386-pc-solaris2.10"
+  CONFIG["target_os"] = "linux"
+  CONFIG["target_vendor"] = "redhat"
+  CONFIG["target_cpu"] = "aarch64"
+  CONFIG["target"] = "aarch64-redhat-linux-gnu"
+  CONFIG["host_os"] = "linux-gnu"
+  CONFIG["host_vendor"] = "redhat"
+  CONFIG["host_cpu"] = "aarch64"
+  CONFIG["host"] = "aarch64-redhat-linux-gnu"
   CONFIG["RUBY_VERSION_NAME"] = "$(RUBY_BASE_NAME)-$(ruby_version)"
   CONFIG["RUBYW_BASE_NAME"] = "rubyw"
   CONFIG["RUBY_BASE_NAME"] = "ruby"
-  CONFIG["build_os"] = "solaris2.10"
-  CONFIG["build_vendor"] = "pc"
-  CONFIG["build_cpu"] = "i386"
-  CONFIG["build"] = "i386-pc-solaris2.10"
-  CONFIG["RUBY_RELEASE_DATE"] = "2017-03-22"
-  CONFIG["RUBY_PROGRAM_VERSION"] = "2.4.2"
+  CONFIG["build_os"] = "linux-gnu"
+  CONFIG["build_vendor"] = "redhat"
+  CONFIG["build_cpu"] = "aarch64"
+  CONFIG["build"] = "aarch64-redhat-linux-gnu"
+  CONFIG["RUBY_PROGRAM_VERSION"] = "2.4.3"
+  CONFIG["cxxflags"] = "$(optflags) $(debugflags) $(warnflags)"
+  CONFIG["cppflags"] = ""
+  CONFIG["cflags"] = "$(optflags) $(debugflags) $(warnflags)"
   CONFIG["target_alias"] = ""
   CONFIG["host_alias"] = ""
   CONFIG["build_alias"] = ""
-  CONFIG["LIBS"] = "-lpthread -lrt -lsocket -ldl -lcrypt -lm "
+  CONFIG["LIBS"] = "-lpthread -ldl -lcrypt -lm "
   CONFIG["ECHO_T"] = ""
   CONFIG["ECHO_N"] = "-n"
   CONFIG["ECHO_C"] = ""
-  CONFIG["DEFS"] = "-D_FILE_OFFSET_BITS=64"
+  CONFIG["DEFS"] = ""
   CONFIG["mandir"] = "$(datarootdir)/man"
   CONFIG["localedir"] = "$(datarootdir)/locale"
   CONFIG["libdir"] = "$(exec_prefix)/lib"
@@ -234,11 +237,45 @@ module RbConfig
   CONFIG["PACKAGE_TARNAME"] = ""
   CONFIG["PACKAGE_NAME"] = ""
   CONFIG["PATH_SEPARATOR"] = ":"
-  CONFIG["SHELL"] = "/bin/bash"
+  CONFIG["SHELL"] = "/bin/sh"
+  CONFIG["UNICODE_VERSION"] = "9.0.0"
   CONFIG["archdir"] = "$(rubyarchdir)"
   CONFIG["topdir"] = File.dirname(__FILE__)
+  # Almost same with CONFIG. MAKEFILE_CONFIG has other variable
+  # reference like below.
+  #
+  #   MAKEFILE_CONFIG["bindir"] = "$(exec_prefix)/bin"
+  #
+  # The values of this constant is used for creating Makefile.
+  #
+  #   require 'rbconfig'
+  #
+  #   print <<-END_OF_MAKEFILE
+  #   prefix = #{Config::MAKEFILE_CONFIG['prefix']}
+  #   exec_prefix = #{Config::MAKEFILE_CONFIG['exec_prefix']}
+  #   bindir = #{Config::MAKEFILE_CONFIG['bindir']}
+  #   END_OF_MAKEFILE
+  #
+  #   => prefix = /usr/local
+  #      exec_prefix = $(prefix)
+  #      bindir = $(exec_prefix)/bin  MAKEFILE_CONFIG = {}
+  #
+  # RbConfig.expand is used for resolving references like above in rbconfig.
+  #
+  #   require 'rbconfig'
+  #   p Config.expand(Config::MAKEFILE_CONFIG["bindir"])
+  #   # => "/usr/local/bin"
   MAKEFILE_CONFIG = {}
   CONFIG.each{|k,v| MAKEFILE_CONFIG[k] = v.dup}
+
+  # call-seq:
+  #
+  #   RbConfig.expand(val)         -> string
+  #   RbConfig.expand(val, config) -> string
+  #
+  # expands variable with given +val+ value.
+  #
+  #   RbConfig.expand("$(bindir)") # => /home/foobar/all-ruby/ruby19x/bin
   def RbConfig::expand(val, config = CONFIG)
     newval = val.gsub(/\$\$|\$\(([^()]+)\)|\$\{([^{}]+)\}/) {
       var = $&
@@ -261,6 +298,10 @@ module RbConfig
     RbConfig::expand(val)
   end
 
+  # call-seq:
+  #
+  #   RbConfig.ruby -> path
+  #
   # returns the absolute pathname of the ruby command.
   def RbConfig.ruby
     File.join(
@@ -269,5 +310,4 @@ module RbConfig
     )
   end
 end
-autoload :Config, "rbconfig/obsolete.rb" # compatibility for ruby-1.8.4 and older.
 CROSS_COMPILING = nil unless defined? CROSS_COMPILING
