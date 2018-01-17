@@ -1,7 +1,8 @@
 component "openssl" do |pkg, settings, platform|
-  pkg.version "1.0.2k"
-  pkg.md5sum "f965fc0bf01bf882b31314b61391ae65"
+  pkg.version "1.0.2n"
+  pkg.md5sum "13bdc1b1d1ff39b6fd42a255e74676a4"
   pkg.url "https://openssl.org/source/openssl-#{pkg.get_version}.tar.gz"
+  pkg.mirror "#{settings[:buildsources_url]}/openssl-#{pkg.get_version}.tar.gz"
 
   pkg.replaces 'pe-openssl'
 
@@ -28,7 +29,6 @@ component "openssl" do |pkg, settings, platform|
     if platform.os_version == "10"
       pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/solaris/10/pl-gcc-4.8.2-1.#{platform.architecture}.pkg.gz"
       pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/solaris/10/pl-binutils-2.25.#{platform.architecture}.pkg.gz"
-      pkg.apply_patch 'resources/patches/openssl/solaris-10-domd-shell-compatability-fix.patch'
     elsif platform.os_version == "11"
       pkg.build_requires "pl-gcc-#{platform.architecture}"
     end
