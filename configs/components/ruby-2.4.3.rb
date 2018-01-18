@@ -1,13 +1,13 @@
-component "ruby-2.4.2" do |pkg, settings, platform|
-  pkg.version "2.4.2"
-  pkg.md5sum "fe106eed9738c4e03813ab904f8d891c"
+component "ruby-2.4.3" do |pkg, settings, platform|
+  pkg.version "2.4.3"
+  pkg.md5sum "a00e0d49b454f4c0e528e7852d642925"
   pkg.url "https://cache.ruby-lang.org/pub/ruby/2.4/ruby-#{pkg.get_version}.tar.gz"
   pkg.mirror "#{settings[:buildsources_url]}/ruby-#{pkg.get_version}.tar.gz"
 
   if platform.is_windows?
     pkg.add_source "#{settings[:buildsources_url]}/windows/elevate/elevate.exe", sum: "bd81807a5c13da32dd2a7157f66fa55d"
     pkg.add_source "file://resources/files/windows/elevate.exe.config", sum: "a5aecf3f7335fa1250a0f691d754d561"
-    pkg.add_source "file://resources/files/ruby_242/windows_ruby_gem_wrapper.bat"
+    pkg.add_source "file://resources/files/ruby_243/windows_ruby_gem_wrapper.bat"
   end
 
   pkg.replaces 'pe-ruby'
@@ -18,7 +18,7 @@ component "ruby-2.4.2" do |pkg, settings, platform|
   pkg.replaces 'pe-ruby-ldap'
   pkg.replaces 'pe-rubygem-gem2rpm'
 
-  base = 'resources/patches/ruby_242'
+  base = 'resources/patches/ruby_243'
 
   pkg.apply_patch "#{base}/ostruct_remove_safe_nav_operator.patch"
 
@@ -136,7 +136,7 @@ component "ruby-2.4.2" do |pkg, settings, platform|
 
   # Cross-compiles require a hand-built rbconfig from the target system as does Solaris, AIX and Windies
   if platform.is_cross_compiled_linux? || platform.is_solaris? || platform.is_aix? || platform.is_windows?
-    pkg.add_source "file://resources/files/ruby_242/rbconfig/rbconfig-#{settings[:platform_triple]}.rb"
+    pkg.add_source "file://resources/files/ruby_243/rbconfig/rbconfig-#{settings[:platform_triple]}.rb"
     pkg.build_requires 'runtime' if platform.is_cross_compiled_linux?
   end
 
