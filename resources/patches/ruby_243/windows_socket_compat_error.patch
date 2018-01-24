@@ -1,0 +1,62 @@
+commit a41005eb6a99376ea940888bcf97140643d18f61
+Author: nobu <nobu@b2dd03c8-39d4-4d8f-98ff-823fe69b080e>
+Date:   Tue Jan 23 15:31:22 2018 +0000
+
+    init.c: encode socket error message
+    
+    * ext/socket/init.c (rsock_raise_socket_error): on Windows, encode
+      error messages from wide characters to the default encodings.
+      [ruby-core:84972] [Bug #14384]
+    
+    git-svn-id: svn+ssh://ci.ruby-lang.org/ruby/trunk@62017 b2dd03c8-39d4-4d8f-98ff-823fe69b080e
+
+diff --git a/ext/socket/init.c b/ext/socket/init.c
+index 189977dcba..3b22c1308b 100644
+--- a/ext/socket/init.c
++++ b/ext/socket/init.c
+@@ -10,6 +10,10 @@
+ 
+ #include "rubysocket.h"
+ 
++#ifdef _WIN32
++VALUE rb_w32_conv_from_wchar(const WCHAR *wstr, rb_encoding *enc);
++#endif
++
+ VALUE rb_cBasicSocket;
+ VALUE rb_cIPSocket;
+ VALUE rb_cTCPSocket;
+@@ -39,7 +43,15 @@ rsock_raise_socket_error(const char *reason, int error)
+     if (error == EAI_SYSTEM && (e = errno) != 0)
+ 	rb_syserr_fail(e, reason);
+ #endif
++#ifdef _WIN32
++    rb_encoding *enc = rb_default_internal_encoding();
++    VALUE msg = rb_sprintf("%s: ", reason);
++    if (!enc) enc = rb_default_internal_encoding();
++    rb_str_concat(msg, rb_w32_conv_from_wchar(gai_strerrorW(error), enc));
++    rb_exc_raise(rb_exc_new_str(rb_eSocket, msg));
++#else
+     rb_raise(rb_eSocket, "%s: %s", reason, gai_strerror(error));
++#endif
+ }
+ 
+ #ifdef _WIN32
+diff --git a/test/socket/test_addrinfo.rb b/test/socket/test_addrinfo.rb
+index 132d172380..a06f3eb451 100644
+--- a/test/socket/test_addrinfo.rb
++++ b/test/socket/test_addrinfo.rb
+@@ -102,6 +102,14 @@ def test_addrinfo_predicates
+     assert(!ipv4_ai.unix?)
+   end
+ 
++  def test_error_message
++    e = assert_raise_with_message(SocketError, /getaddrinfo:/) do
++      Addrinfo.ip("...")
++    end
++    m = e.message
++    assert_not_equal([false, Encoding::ASCII_8BIT], [m.ascii_only?, m.encoding], proc {m.inspect})
++  end
++
+   def test_ipv4_address_predicates
+     list = [
+       [:ipv4_private?, "10.0.0.0", "10.255.255.255",
