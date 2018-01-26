@@ -41,6 +41,7 @@ pe_platforms:
   - aix-7.1-power
   - el-6-s390x
   - el-7-s390x
+  - redhat-fips-7-x86_64
   - sles-11-s390x
   - sles-12-s390x
   - solaris-10-i386
