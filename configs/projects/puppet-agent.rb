@@ -253,7 +253,15 @@ project "puppet-agent" do |proj|
   end
   proj.component "ruby-shadow" unless platform.is_aix? || platform.is_windows?
   proj.component "ruby-augeas" unless platform.is_windows?
-  proj.component "openssl"
+
+  if platform.name =~ /^redhat-fips-7-.*/
+    # Link against system openssl and not package openssl
+    proj.setting(:vendor_openssl, "no")
+  else
+    proj.setting(:vendor_openssl, "yes")
+    proj.component "openssl"
+  end
+
   proj.component "puppet-ca-bundle"
   proj.component "libxml2" unless platform.is_windows?
   proj.component "libxslt" unless platform.is_windows?
