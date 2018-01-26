@@ -19,8 +19,8 @@ component 'dmidecode' do |pkg, settings, platform|
   pkg.url "http://download.savannah.gnu.org/releases/dmidecode/dmidecode-#{pkg.get_version}.tar.gz"
   pkg.mirror "#{settings[:buildsources_url]}/dmidecode-#{pkg.get_version}.tar.gz"
 
-  pkg.environment "LDFLAGS" => settings[:ldflags]
-  pkg.environment "CFLAGS" => settings[:cflags]
+  pkg.environment "LDFLAGS", settings[:ldflags]
+  pkg.environment "CFLAGS", settings[:cflags]
 
   if platform.is_cross_compiled?
     # The Makefile doesn't honor environment overrides, so we need to

@@ -3,7 +3,7 @@ component "leatherman" do |pkg, settings, platform|
 
   make = platform[:make]
 
-  if platform.is_osx?
+  if platform.is_macos?
     pkg.build_requires "cmake"
     pkg.build_requires "boost"
   elsif platform.name =~ /solaris-10/
@@ -36,7 +36,7 @@ component "leatherman" do |pkg, settings, platform|
 
   # cmake on OSX is provided by brew
   # a toolchain is not currently required for OSX since we're building with clang.
-  if platform.is_osx?
+  if platform.is_macos?
     toolchain = ""
     cmake = "/usr/local/bin/cmake"
     special_flags = "-DCMAKE_CXX_FLAGS='#{settings[:cflags]}'"
@@ -56,8 +56,8 @@ component "leatherman" do |pkg, settings, platform|
     special_flags = "-DCMAKE_CXX_FLAGS_RELEASE='-O2 -DNDEBUG'"
   elsif platform.is_windows?
     make = "#{settings[:gcc_bindir]}/mingw32-make"
-    pkg.environment "PATH" => "$$(cygpath -u #{settings[:gcc_bindir]}):$$(cygpath -u #{settings[:ruby_bindir]}):/cygdrive/c/Windows/system32:/cygdrive/c/Windows:/cygdrive/c/Windows/System32/WindowsPowerShell/v1.0"
-    pkg.environment "CYGWIN" => settings[:cygwin]
+    pkg.environment 'PATH', "$(shell cygpath -u #{settings[:gcc_bindir]}):$(shell cygpath -u #{settings[:ruby_bindir]}):/cygdrive/c/Windows/system32:/cygdrive/c/Windows:/cygdrive/c/Windows/System32/WindowsPowerShell/v1.0"
+    pkg.environment 'CYGWIN', settings[:cygwin]
 
     cmake = "C:/ProgramData/chocolatey/bin/cmake.exe -G \"MinGW Makefiles\""
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=#{settings[:tools_root]}/pl-build-toolchain.cmake"
