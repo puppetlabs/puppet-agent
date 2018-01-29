@@ -19,9 +19,9 @@ foss_platforms:
   - el-7-ppc64le
   - el-7-aarch64
   - eos-4-i386
-  - fedora-f25-i386
-  - fedora-f25-x86_64
-  - fedora-f26-x86_64
+  - fedora-25-i386
+  - fedora-25-x86_64
+  - fedora-26-x86_64
   - osx-10.10-x86_64
   - osx-10.11-x86_64
   - osx-10.12-x86_64
@@ -88,11 +88,11 @@ platform_repos:
   - name: sles-12-ppc64le
     repo_location: repos/sles/12/**/ppc64le
   - name: fedora-25-i386
-    repo_location: repos/fedora/f25/**/i386
+    repo_location: repos/fedora/25/**/i386
   - name: fedora-25-x86_64
-    repo_location: repos/fedora/f25/**/x86_64
+    repo_location: repos/fedora/25/**/x86_64
   - name: fedora-26-x86_64
-    repo_location: repos/fedora/f26/**/x86_64
+    repo_location: repos/fedora/26/**/x86_64
   - name: debian-7-i386
     repo_location: repos/apt/wheezy
   - name: debian-7-amd64
