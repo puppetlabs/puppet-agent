@@ -1,14 +1,14 @@
 component 'augeas' do |pkg, settings, platform|
-  pkg.version '1.8.1'
-  pkg.md5sum '623ff89d71a42fab9263365145efdbfa'
+  pkg.version '1.10.1'
+  pkg.md5sum '6c0b2ea6eec45e8bc374b283aedf27ce'
   pkg.url "#{settings[:buildsources_url]}/augeas-#{pkg.get_version}.tar.gz"
 
   pkg.replaces 'pe-augeas'
-  if platform.is_sles? && platform.os_version == '10'
-    pkg.apply_patch 'resources/patches/augeas/augeas-1.2.0-fix-services-sles10.patch'
-  end
-
   pkg.build_requires "libxml2"
+  if platform.name =~ /^el-(5|6|7)-.*/ || platform.is_fedora?
+    # Augeas needs a libselinux pkgconfig file on these platforms
+    pkg.build_requires 'ruby-selinux'
+  end
 
   # Ensure we're building against our own libraries when present
   pkg.environment "PKG_CONFIG_PATH", "/opt/puppetlabs/puppet/lib/pkgconfig"
@@ -84,6 +84,17 @@ component 'augeas' do |pkg, settings, platform|
 
   pkg.configure do
     ["./configure --prefix=#{settings[:prefix]} #{settings[:host]}"]
+  end
+
+  if platform.name =~ /solaris-10-sparc/
+    # This patch to gnulib fixes a linking error around symbol versioning in pthread.
+    pkg.add_source 'file://resources/patches/augeas/augeas-1.10.1-gnulib-pthread-in-use.patch'
+
+    pkg.configure do
+      # gnulib is a submodule, and its files don't exist until after configure,
+      # so we apply the patch manually here instead of using pkg.apply_patch.
+      ["/usr/bin/gpatch -p0 < ../augeas-1.10.1-gnulib-pthread-in-use.patch"]
+    end
   end
 
   pkg.build do

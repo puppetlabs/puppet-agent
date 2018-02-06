@@ -6,6 +6,12 @@ component "ruby-selinux" do |pkg, settings, platform|
     pkg.apply_patch "resources/patches/ruby-selinux/libselinux-rhat.patch"
     pkg.url "http://pkgs.fedoraproject.org/repo/pkgs/libselinux/libselinux-1.33.4.tgz/08762379de2242926854080dad649b67/libselinux-1.33.4.tgz"
     pkg.mirror "#{settings[:buildsources_url]}/libselinux-#{pkg.get_version}.tgz"
+
+    # This version of libselinux does not supply a file for pkg-config; Augeas 1.10.1 expects one, though:
+    pkg.add_source "file://resources/files/ruby-selinux/libselinux-1.33.4.pc"
+    pkg.install do
+      ["cp ../libselinux-1.33.4.pc #{settings[:libdir]}/pkgconfig/libselinux.pc"]
+    end
   else
     pkg.version "2.0.94"
     pkg.md5sum "544f75aab11c2af352facc51af12029f"
