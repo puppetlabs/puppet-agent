@@ -1,13 +1,9 @@
 component "puppet" do |pkg, settings, platform|
   pkg.load_from_json("configs/components/puppet.json")
 
-  pkg.build_requires "ruby-#{settings[:ruby_version]}"
+  pkg.build_requires "puppet-runtime" # Provides ruby and rubygem-win32-dir
   pkg.build_requires "facter"
   pkg.build_requires "hiera"
-  # Used to specify default directories when installing puppet
-  if platform.is_windows?
-    pkg.build_requires "rubygem-win32-dir"
-  end
 
   pkg.replaces 'puppet', '4.0.0'
   pkg.provides 'puppet', '4.0.0'
@@ -101,15 +97,15 @@ component "puppet" do |pkg, settings, platform|
     pkg.requires 'tar' unless platform.is_aix?
   end
 
-  if platform.is_osx?
+  if platform.is_macos?
     pkg.add_source("file://resources/files/osx_paths.txt", sum: "077ceb5e2f71cf733190a61d2fd221fb")
     pkg.install_file("../osx_paths.txt", "/etc/paths.d/puppet-agent")
   end
 
   if platform.is_windows?
-    pkg.environment "FACTERDIR" => settings[:facter_root]
-    pkg.environment "PATH" => "$$(cygpath -u #{settings[:gcc_bindir]}):$$(cygpath -u #{settings[:ruby_bindir]}):$$(cygpath -u #{settings[:bindir]}):/cygdrive/c/Windows/system32:/cygdrive/c/Windows:/cygdrive/c/Windows/System32/WindowsPowerShell/v1.0"
-    pkg.environment "RUBYLIB" => "#{settings[:hiera_libdir]};#{settings[:facter_root]}/lib"
+    pkg.environment "FACTERDIR", settings[:facter_root]
+    pkg.environment "PATH", "$(shell cygpath -u #{settings[:gcc_bindir]}):$(shell cygpath -u #{settings[:ruby_bindir]}):$(shell cygpath -u #{settings[:bindir]}):/cygdrive/c/Windows/system32:/cygdrive/c/Windows:/cygdrive/c/Windows/System32/WindowsPowerShell/v1.0"
+    pkg.environment "RUBYLIB", "#{settings[:hiera_libdir]};#{settings[:facter_root]}/lib"
   end
 
   if platform.is_windows?

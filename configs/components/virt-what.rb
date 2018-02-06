@@ -2,6 +2,7 @@ component "virt-what" do |pkg, settings, platform|
   pkg.version "1.14"
   pkg.md5sum "4d9bb5afc81de31f66443d8674bb3672"
   pkg.url "https://people.redhat.com/~rjones/virt-what/files/virt-what-#{pkg.get_version}.tar.gz"
+  pkg.mirror "#{settings[:buildsources_url]}/virt-what-#{pkg.get_version}.tar.gz"
 
   pkg.replaces 'pe-virt-what'
 
@@ -28,9 +29,9 @@ component "virt-what" do |pkg, settings, platform|
   if platform.is_cross_compiled_linux?
     host_opt = "--host #{settings[:platform_triple]}"
 
-    pkg.environment "PATH" => "/opt/pl-build-tools/bin:$$PATH:#{settings[:bindir]}"
-    pkg.environment "CFLAGS" => settings[:cflags]
-    pkg.environment "LDFLAGS" => settings[:ldflags]
+    pkg.environment "PATH", "/opt/pl-build-tools/bin:$$PATH:#{settings[:bindir]}"
+    pkg.environment "CFLAGS", settings[:cflags]
+    pkg.environment "LDFLAGS", settings[:ldflags]
   end
 
   pkg.configure do
