@@ -1,0 +1,13 @@
+--- gnulib/lib/glthread/lock.h  Mon Feb  5 16:38:27 2018
++++ lock.h      Mon Feb  5 16:37:45 2018
+@@ -148,10 +148,7 @@
+ #   pragma weak pthread_self
+ #  endif
+
+-#  if !PTHREAD_IN_USE_DETECTION_HARD
+-#   pragma weak pthread_cancel
+-#   define pthread_in_use() (pthread_cancel != NULL)
+-#  endif
++# define pthread_in_use() 1
+
+ # else
