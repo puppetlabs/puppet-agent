@@ -36,10 +36,6 @@ component "ruby-2.4.3" do |pkg, settings, platform|
   #   - d09ed06f: (RE-5290) Update ruby to replace rbconfig for all solaris
   #   - bba35c1e: (RE-5290) Update ruby for a cross-compile on solaris 10
   rbconfig_info = {
-    'powerpc-ibm-aix5.3.0.0' => {
-      :sum => "7a53afc1c192517c4d6ab1864c8b4a39",
-      :target_double => "powerpc-aix5.3.0.0",
-    },
     'powerpc-ibm-aix6.1.0.0' => {
       :sum => "dd3232f385602b45bdbf5e60128d8a19",
       :target_double => "powerpc-aix6.1.0.0",
@@ -51,10 +47,6 @@ component "ruby-2.4.3" do |pkg, settings, platform|
     'aarch64-redhat-linux' => {
       :sum => "30b729a8397b0ce82a1d45cd00e4bd86",
       :target_double => "aarch64-linux",
-    },
-    'powerpc-linux-gnu' => {
-      :sum => "2f942f5500de901e2c42fc8a9b23d30d",
-      :target_double => "powerpc-linux",
     },
     'ppc64le-redhat-linux' => {
       :sum => "75f856df15c48c50514c803947f60bf9",
