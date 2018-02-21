@@ -64,10 +64,7 @@ component "openssl" do |pkg, settings, platform|
     cflags = "#{settings[:cflags]} -fPIC"
     ldflags = "-Wl,-rpath=/opt/pl-build-tools/#{settings[:platform_triple]}/lib -Wl,-rpath=#{settings[:libdir]} -L/opt/pl-build-tools/#{settings[:platform_triple]}/lib"
 
-    if platform.is_huaweios?
-      ldflags = "-R/opt/pl-build-tools/#{settings[:platform_triple]}/lib -Wl,-rpath=#{settings[:libdir]} -L/opt/pl-build-tools/#{settings[:platform_triple]}/lib"
-      target = 'linux-ppc'
-    elsif platform.architecture == "aarch64"
+    if platform.architecture == "aarch64"
       target = 'linux-aarch64'
     elsif platform.name =~ /debian-8-arm/
       target = 'linux-armv4'

@@ -99,7 +99,6 @@ project "puppet-agent" do |proj|
   proj.setting(:ruby_vendordir, File.join(proj.libdir, "ruby", "vendor_ruby"))
 
   # Cross-compiled Linux platforms
-  platform_triple = "powerpc-linux-gnu" if platform.is_huaweios?
   platform_triple = "ppc64le-redhat-linux" if platform.architecture == "ppc64le"
   platform_triple = "powerpc64le-suse-linux" if platform.architecture == "ppc64le" && platform.name =~ /^sles-/
   platform_triple = "powerpc64le-linux-gnu" if platform.architecture == "ppc64el"
@@ -227,7 +226,7 @@ project "puppet-agent" do |proj|
   # Then the dependencies
   proj.component "augeas" unless platform.is_windows?
   # Curl is only needed for compute clusters (GCE, EC2); so rpm, deb, and Windows
-  proj.component "curl" if (platform.is_linux? && !platform.is_huaweios? && !platform.is_cisco_wrlinux?) || platform.is_windows?
+  proj.component "curl" if (platform.is_linux? && !platform.is_cisco_wrlinux?) || platform.is_windows?
   proj.component "ruby-#{proj.ruby_version}"
   proj.component "nssm" if platform.is_windows?
   proj.component "ruby-stomp"
@@ -270,16 +269,6 @@ project "puppet-agent" do |proj|
   # Needed to avoid using readline on solaris and aix
   if platform.is_solaris? || platform.is_aix?
     proj.component "libedit"
-  end
-
-  # Components only applicable on HuaweiOS
-  if platform.is_huaweios?
-    proj.component "rubygem-net-ssh-telnet2"
-    proj.component "rubygem-net-scp"
-    proj.component "rubygem-mini_portile2"
-    proj.component "rubygem-pkg-config"
-    proj.component "rubygem-net-netconf"
-    proj.component "rubygem-nokogiri"
   end
 
   # Components only applicable on OSX
