@@ -2,6 +2,7 @@ component 'augeas' do |pkg, settings, platform|
   pkg.version '1.8.1'
   pkg.md5sum '623ff89d71a42fab9263365145efdbfa'
   pkg.url "#{settings[:buildsources_url]}/augeas-#{pkg.get_version}.tar.gz"
+  pkg.mirror "#{settings[:buildsources_url]}/augeas-#{pkg.get_version}.tar.gz"
 
   pkg.replaces 'pe-augeas'
   if platform.is_sles? && platform.os_version == '10'
@@ -39,14 +40,6 @@ component 'augeas' do |pkg, settings, platform|
       pkg.environment "CFLAGS", settings[:cflags]
       pkg.environment "LDFLAGS", settings[:ldflags]
     end
-  elsif platform.is_huaweios?
-    pkg.build_requires 'runtime'
-    pkg.build_requires 'pl-pkg-config'
-
-    pkg.environment "PATH", "/opt/pl-build-tools/bin:$(PATH):#{settings[:bindir]}"
-    pkg.environment "CFLAGS", settings[:cflags]
-    pkg.environment "LDFLAGS", settings[:ldflags]
-    pkg.environment "PKG_CONFIG", "/opt/pl-build-tools/bin/pkg-config"
   elsif platform.is_deb?
     pkg.build_requires 'libreadline-dev'
     if platform.name =~ /debian-9/
