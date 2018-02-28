@@ -57,7 +57,7 @@ component "marionette-collective" do |pkg, settings, platform|
       [<<-HERE.undent
         mkdir -p  #{rpm_statedir} && chown root #{rpm_statedir} && chmod 0700 #{rpm_statedir} || :
         if [ -x #{puppet_bin} ] ; then
-          #{puppet_bin} resource service mcollective > #{service_statefile} || :
+          #{puppet_bin} resource service mcollective | awk -F "'" '/ensure =>/ { print $2 }' > #{service_statefile} || :
         fi
         HERE
       ]
@@ -65,7 +65,7 @@ component "marionette-collective" do |pkg, settings, platform|
     pkg.add_postinstall_action ["upgrade"],
       [<<-HERE.undent
         if [ -f #{service_statefile} ] ; then
-          #{puppet_bin} apply #{service_statefile} > /dev/null 2>&1 || :
+          #{puppet_bin} resource service mcollective ensure=$(#{service_statefile}) > /dev/null 2>&1 || :
           rm -rf #{rpm_statedir} || :
         fi
         HERE
