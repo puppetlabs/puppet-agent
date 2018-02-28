@@ -4,8 +4,7 @@ platform "debian-9-armhf" do |plat|
   plat.servicetype "systemd"
   plat.codename "stretch"
 
-  plat.add_build_repository "http://pl-build-tools.delivery.puppetlabs.net/debian/pl-build-tools-release-#{plat.get_codename}.deb"
-  plat.provision_with "export DEBIAN_FRONTEND=noninteractive; apt-get update ; apt-get install -qq -y --no-install-recommends build-essential devscripts make quilt pkg-config debhelper rsync fakeroot binutils-arm-linux-gnueabihf"
+  plat.provision_with "export DEBIAN_FRONTEND=noninteractive; apt-get update ; apt-get install -qq -y --no-install-recommends build-essential devscripts make quilt pkg-config debhelper rsync fakeroot binutils-arm-linux-gnueabihf g++-6-arm-linux-gnueabihf"
   plat.install_build_dependencies_with "DEBIAN_FRONTEND=noninteractive; apt-get install -qq -qy --no-install-recommends "
   plat.vmpooler_template "debian-9-x86_64"
   plat.cross_compiled "true"
