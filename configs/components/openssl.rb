@@ -5,7 +5,9 @@ component "openssl" do |pkg, settings, platform|
   pkg.mirror "#{settings[:buildsources_url]}/openssl-#{pkg.get_version}.tar.gz"
 
   pkg.replaces 'pe-openssl'
-  pkg.build_requires 'runtime'
+  unless platform.name =~ /debian-9-armhf/
+    pkg.build_requires 'runtime'
+  end
 
   # Use our toolchain on linux systems (it's not available on osx)
   if platform.is_cross_compiled_linux?
@@ -14,12 +16,14 @@ component "openssl" do |pkg, settings, platform|
     pkg.build_requires 'xorg-x11-util-devel' if platform.name =~ /^sles/
     pkg.build_requires 'xutils-dev' if platform.is_deb?
   elsif platform.is_linux?
-    unless platform.is_fedora? && platform.os_version.delete('f').to_i >= 26
+    unless (platform.is_fedora? && platform.os_version.delete('f').to_i >= 26) or platform !~ /debian-9-armhf/
       pkg.build_requires 'pl-binutils'
     end
-    pkg.build_requires 'pl-gcc'
+    unless platform.name =~ /debian-9-armhf/
+      pkg.build_requires 'pl-gcc'
+    end
 
-    if platform.name =~ /debian-8-arm/
+    if platform.name =~ /debian-[8|9]-arm/
       pkg.build_requires "xutils-dev"
       pkg.apply_patch 'resources/patches/openssl/openssl-1.0.0l-use-gcc-instead-of-makedepend.patch'
     end
@@ -53,9 +57,17 @@ component "openssl" do |pkg, settings, platform|
     cflags = "#{settings[:cflags]} -fPIC"
     ldflags = "-Wl,-rpath=/opt/pl-build-tools/#{settings[:platform_triple]}/lib -Wl,-rpath=#{settings[:libdir]} -L/opt/pl-build-tools/#{settings[:platform_triple]}/lib"
 
-    if platform.architecture == "aarch64"
+    if platform.name =~ /debian-9-armhf/
+      pkg.environment "CC", "/usr/bin/arm-linux-gnueabihf-gcc-6"
+      ldflags = ""
+    end
+
+    if platform.is_huaweios?
+      ldflags = "-R/opt/pl-build-tools/#{settings[:platform_triple]}/lib -Wl,-rpath=#{settings[:libdir]} -L/opt/pl-build-tools/#{settings[:platform_triple]}/lib"
+      target = 'linux-ppc'
+    elsif platform.architecture == "aarch64"
       target = 'linux-aarch64'
-    elsif platform.name =~ /debian-8-arm/
+    elsif platform.name =~ /debian-[8|9]-arm/
       target = 'linux-armv4'
     elsif platform.architecture =~ /ppc64/
       target = 'linux-ppc64le'
@@ -146,7 +158,7 @@ component "openssl" do |pkg, settings, platform|
   install_prefix = "INSTALL_PREFIX=/" unless platform.is_windows?
 
   pkg.install do
-    ["#{platform[:make]} #{install_prefix} install"]
+    ["#{platform[:make]} #{install_prefix} install_sw"]
   end
 
   pkg.install_file "LICENSE", "#{settings[:prefix]}/share/doc/openssl-#{pkg.get_version}/LICENSE"
