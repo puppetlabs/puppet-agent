@@ -110,7 +110,7 @@ project "puppet-agent" do |proj|
   if platform.is_cross_compiled_linux?
     host = "--host #{platform_triple}"
 
-    if platform.name =~ /debian-9-arm/
+    if platform.use_native_tools?
       proj.setting(:host_ruby, "/usr/bin/ruby")
       proj.setting(:host_gem, "/usr/bin/gem")
     else
@@ -182,9 +182,9 @@ project "puppet-agent" do |proj|
   # Define default CFLAGS and LDFLAGS for most platforms, and then
   # tweak or adjust them as needed.
   if platform.name =~ /debian-9-armhf/
-    #proj.setting(:cppflags, "-I#{proj.includedir} -I/opt/pl-build-tools/include")
-    #proj.setting(:cflags, "#{proj.cppflags}")
-    proj.setting(:ldflags, "-L/lib/arm-linux-gnueabihf/ -L/usr/lib/arm-linux-gnueabihf")
+    proj.setting(:cppflags, "-I#{proj.includedir}")
+    proj.setting(:cflags, "#{proj.cppflags}")
+    proj.setting(:ldflags, "-L/opt/puppetlabs/puppet/lib -L/lib/arm-linux-gnueabihf/ -L/usr/lib/arm-linux-gnueabihf ")
   else
     proj.setting(:cppflags, "-I#{proj.includedir} -I/opt/pl-build-tools/include")
     proj.setting(:cflags, "#{proj.cppflags}")
@@ -239,8 +239,8 @@ project "puppet-agent" do |proj|
   # Then the dependencies
   proj.component "augeas" unless platform.is_windows?
   # Curl is only needed for compute clusters (GCE, EC2); so rpm, deb, and Windows
-#  proj.component "curl"
-#  proj.component "ruby-#{proj.ruby_version}"
+  proj.component "curl"
+  proj.component "ruby-#{proj.ruby_version}"
 #  proj.component "nssm" if platform.is_windows?
 #  proj.component "ruby-stomp"
 #  proj.component "rubygem-deep-merge"
@@ -262,8 +262,8 @@ project "puppet-agent" do |proj|
   if platform.is_windows? || platform.is_solaris?
     proj.component "rubygem-minitar"
   end
-#  proj.component "ruby-shadow" unless platform.is_aix? || platform.is_windows?
-#  proj.component "ruby-augeas" unless platform.is_windows?
+  proj.component "ruby-shadow" unless platform.is_aix? || platform.is_windows?
+  proj.component "ruby-augeas" unless platform.is_windows?
 
   if platform.name =~ /^redhat-fips-7-.*/
     # Link against system openssl and not package openssl
@@ -273,8 +273,8 @@ project "puppet-agent" do |proj|
     proj.component "openssl"
   end
 
-#  proj.component "puppet-ca-bundle"
-#  proj.component "libxml2" unless platform.is_windows?
+  proj.component "puppet-ca-bundle"
+  proj.component "libxml2" unless platform.is_windows?
 #  proj.component "libxslt" unless platform.is_windows?
 
   # These utilites don't really work on unix
@@ -284,13 +284,11 @@ project "puppet-agent" do |proj|
 #    proj.component "shellpath"
   end
 
-  unless platform.name =~ /debian-9-armhf/
-    proj.component "runtime"
-  end
+  proj.component "runtime" unless platform.use_native_tools?
 
   # Windows doesn't need these wrappers, only unix platforms
   unless platform.is_windows? or platform.name =~ /debian-9-armhf/
-    proj.component "wrapper-script"
+#    proj.component "wrapper-script"
   end
 
   # Needed to avoid using readline on solaris and aix
