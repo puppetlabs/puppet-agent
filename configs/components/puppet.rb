@@ -84,6 +84,10 @@ component "puppet" do |pkg, settings, platform|
       ]
   end
 
+  # For Debian platforms generate a package trigger to ensure puppetserver
+  # restarts itself when the agent package is upgraded (PA-1130)
+  pkg.add_debian_activate_triggers "puppetserver-restart" if platform.is_deb?
+
   # To create a tmpfs directory for the piddir, it seems like it's either this
   # or a PR against Puppet until that sort of support can be rolled into the
   # Vanagon tooling directly. It's totally a hack, and I'm not proud of this
