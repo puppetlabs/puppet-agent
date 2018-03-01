@@ -103,16 +103,22 @@ project "puppet-agent" do |proj|
   platform_triple = "powerpc64le-suse-linux" if platform.architecture == "ppc64le" && platform.name =~ /^sles-/
   platform_triple = "powerpc64le-linux-gnu" if platform.architecture == "ppc64el"
   platform_triple = "s390x-linux-gnu" if platform.architecture == "s390x"
-  platform_triple = "arm-linux-gnueabihf" if platform.name == 'debian-8-armhf'
   platform_triple = "arm-linux-gnueabi" if platform.name == 'debian-8-armel'
+  platform_triple = "arm-linux-gnueabihf" if platform.name =~ /debian-[\d]{1}-armhf/
   platform_triple = "aarch64-redhat-linux" if platform.name == 'el-7-aarch64'
 
   if platform.is_cross_compiled_linux?
     host = "--host #{platform_triple}"
 
-    # Use a standalone ruby for cross-compilation
-    proj.setting(:host_ruby, "/opt/pl-build-tools/bin/ruby")
-    proj.setting(:host_gem, "/opt/pl-build-tools/bin/gem")
+    if platform.name =~ /debian-9-arm/
+      proj.setting(:host_ruby, "/usr/bin/ruby")
+      proj.setting(:host_gem, "/usr/bin/gem")
+    else
+      # Use a standalone ruby for cross-compilation
+      proj.setting(:host_ruby, "/opt/pl-build-tools/bin/ruby")
+      proj.setting(:host_gem, "/opt/pl-build-tools/bin/gem")
+    end
+
   end
 
   # For solaris, we build cross-compilers
@@ -175,9 +181,15 @@ project "puppet-agent" do |proj|
 
   # Define default CFLAGS and LDFLAGS for most platforms, and then
   # tweak or adjust them as needed.
-  proj.setting(:cppflags, "-I#{proj.includedir} -I/opt/pl-build-tools/include")
-  proj.setting(:cflags, "#{proj.cppflags}")
-  proj.setting(:ldflags, "-L#{proj.libdir} -L/opt/pl-build-tools/lib -Wl,-rpath=#{proj.libdir}")
+  if platform.name =~ /debian-9-armhf/
+    #proj.setting(:cppflags, "-I#{proj.includedir} -I/opt/pl-build-tools/include")
+    #proj.setting(:cflags, "#{proj.cppflags}")
+    proj.setting(:ldflags, "-L/lib/arm-linux-gnueabihf/ -L/usr/lib/arm-linux-gnueabihf")
+  else
+    proj.setting(:cppflags, "-I#{proj.includedir} -I/opt/pl-build-tools/include")
+    proj.setting(:cflags, "#{proj.cppflags}")
+    proj.setting(:ldflags, "-L#{proj.libdir} -L/opt/pl-build-tools/lib -Wl,-rpath=#{proj.libdir}")
+  end
 
   # Platform specific overrides or settings, which may override the defaults
   if platform.is_windows?
@@ -214,32 +226,32 @@ project "puppet-agent" do |proj|
   end
 
   # First our stuff
-  proj.component "puppet"
-  proj.component "facter"
-  proj.component "hiera"
-  proj.component "leatherman"
-  proj.component "cpp-hocon"
-  proj.component "marionette-collective"
-  proj.component "cpp-pcp-client"
-  proj.component "pxp-agent"
-  proj.component "libwhereami"
+#  proj.component "puppet"
+#  proj.component "facter"
+#  proj.component "hiera"
+#  proj.component "leatherman"
+#  proj.component "cpp-hocon"
+#  proj.component "marionette-collective"
+#  proj.component "cpp-pcp-client"
+#  proj.component "pxp-agent"
+#  proj.component "libwhereami"
 
   # Then the dependencies
   proj.component "augeas" unless platform.is_windows?
   # Curl is only needed for compute clusters (GCE, EC2); so rpm, deb, and Windows
-  proj.component "curl"
-  proj.component "ruby-#{proj.ruby_version}"
-  proj.component "nssm" if platform.is_windows?
-  proj.component "ruby-stomp"
-  proj.component "rubygem-deep-merge"
-  proj.component "rubygem-net-ssh"
-  proj.component "rubygem-hocon"
-  proj.component "rubygem-semantic_puppet"
-  proj.component "rubygem-text"
-  proj.component "rubygem-locale"
-  proj.component "rubygem-gettext"
-  proj.component "rubygem-fast_gettext"
-  proj.component "rubygem-gettext-setup"
+#  proj.component "curl"
+#  proj.component "ruby-#{proj.ruby_version}"
+#  proj.component "nssm" if platform.is_windows?
+#  proj.component "ruby-stomp"
+#  proj.component "rubygem-deep-merge"
+#  proj.component "rubygem-net-ssh"
+#  proj.component "rubygem-hocon"
+#  proj.component "rubygem-semantic_puppet"
+#  proj.component "rubygem-text"
+#  proj.component "rubygem-locale"
+#  proj.component "rubygem-gettext"
+#  proj.component "rubygem-fast_gettext"
+#  proj.component "rubygem-gettext-setup"
   if platform.is_windows?
     proj.component "rubygem-ffi"
     proj.component "rubygem-win32-dir"
@@ -250,8 +262,8 @@ project "puppet-agent" do |proj|
   if platform.is_windows? || platform.is_solaris?
     proj.component "rubygem-minitar"
   end
-  proj.component "ruby-shadow" unless platform.is_aix? || platform.is_windows?
-  proj.component "ruby-augeas" unless platform.is_windows?
+#  proj.component "ruby-shadow" unless platform.is_aix? || platform.is_windows?
+#  proj.component "ruby-augeas" unless platform.is_windows?
 
   if platform.name =~ /^redhat-fips-7-.*/
     # Link against system openssl and not package openssl
@@ -261,21 +273,23 @@ project "puppet-agent" do |proj|
     proj.component "openssl"
   end
 
-  proj.component "puppet-ca-bundle"
-  proj.component "libxml2" unless platform.is_windows?
-  proj.component "libxslt" unless platform.is_windows?
+#  proj.component "puppet-ca-bundle"
+#  proj.component "libxml2" unless platform.is_windows?
+#  proj.component "libxslt" unless platform.is_windows?
 
   # These utilites don't really work on unix
   if platform.is_linux?
-    proj.component "virt-what"
-    proj.component "dmidecode" unless platform.architecture =~ /ppc64(?:le|el)/
-    proj.component "shellpath"
+#    proj.component "virt-what"
+#    proj.component "dmidecode" unless platform.architecture =~ /ppc64(?:le|el)/
+#    proj.component "shellpath"
   end
 
-  proj.component "runtime"
+  unless platform.name =~ /debian-9-armhf/
+    proj.component "runtime"
+  end
 
   # Windows doesn't need these wrappers, only unix platforms
-  unless platform.is_windows?
+  unless platform.is_windows? or platform.name =~ /debian-9-armhf/
     proj.component "wrapper-script"
   end
 

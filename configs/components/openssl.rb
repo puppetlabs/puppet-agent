@@ -5,9 +5,7 @@ component "openssl" do |pkg, settings, platform|
   pkg.mirror "#{settings[:buildsources_url]}/openssl-#{pkg.get_version}.tar.gz"
 
   pkg.replaces 'pe-openssl'
-  unless platform.name =~ /debian-9-armhf/
-    pkg.build_requires 'runtime'
-  end
+  pkg.build_requires 'runtime' unless platform.name =~ /debian-9-armhf/
 
   # Use our toolchain on linux systems (it's not available on osx)
   if platform.is_cross_compiled_linux?
@@ -19,11 +17,9 @@ component "openssl" do |pkg, settings, platform|
     unless (platform.is_fedora? && platform.os_version.delete('f').to_i >= 26) or platform !~ /debian-9-armhf/
       pkg.build_requires 'pl-binutils'
     end
-    unless platform.name =~ /debian-9-armhf/
-      pkg.build_requires 'pl-gcc'
-    end
+    pkg.build_requires 'pl-gcc' unless platform.name =~ /debian-9-armhf/
 
-    if platform.name =~ /debian-[8|9]-arm/
+    if platform.name =~ /debian-[\d]-arm/
       pkg.build_requires "xutils-dev"
       pkg.apply_patch 'resources/patches/openssl/openssl-1.0.0l-use-gcc-instead-of-makedepend.patch'
     end
@@ -51,15 +47,15 @@ component "openssl" do |pkg, settings, platform|
     cflags = settings[:cflags]
     ldflags = ''
   elsif platform.is_cross_compiled_linux?
-    pkg.environment "PATH", "/opt/pl-build-tools/bin:$$PATH"
-    pkg.environment "CC", "/opt/pl-build-tools/bin/#{settings[:platform_triple]}-gcc"
 
     cflags = "#{settings[:cflags]} -fPIC"
-    ldflags = "-Wl,-rpath=/opt/pl-build-tools/#{settings[:platform_triple]}/lib -Wl,-rpath=#{settings[:libdir]} -L/opt/pl-build-tools/#{settings[:platform_triple]}/lib"
-
     if platform.name =~ /debian-9-armhf/
-      pkg.environment "CC", "/usr/bin/arm-linux-gnueabihf-gcc-6"
-      ldflags = ""
+      pkg.environment "CC", "/usr/bin/arm-linux-gnueabihf-gcc"
+      ldflags = "-Wl,-rpath=#{settings[:libdir]}"
+    else
+      pkg.environment "PATH", "/opt/pl-build-tools/bin:$$PATH"
+      pkg.environment "CC", "/opt/pl-build-tools/bin/#{settings[:platform_triple]}-gcc"
+      ldflags = "-Wl,-rpath=/opt/pl-build-tools/#{settings[:platform_triple]}/lib -Wl,-rpath=#{settings[:libdir]} -L/opt/pl-build-tools/#{settings[:platform_triple]}/lib"
     end
 
     if platform.is_huaweios?

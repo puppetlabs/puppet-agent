@@ -1,18 +1,28 @@
 component 'augeas' do |pkg, settings, platform|
   pkg.version '1.10.1'
   pkg.md5sum '6c0b2ea6eec45e8bc374b283aedf27ce'
-  pkg.url "#{settings[:buildsources_url]}/augeas-#{pkg.get_version}.tar.gz"
   pkg.mirror "#{settings[:buildsources_url]}/augeas-#{pkg.get_version}.tar.gz"
+  pkg.url "http://download.augeas.net/augeas-#{pkg.get_version}.tar.gz"
 
   pkg.replaces 'pe-augeas'
-  pkg.build_requires "libxml2"
+  if platform.name =~ /debian-9-armhf/
+    pkg.build_requires "libxml2-dev:armhf"
+    pkg.build_requires "libreadline-dev:armhf"
+    pkg.build_requires "pkg-config"
+    pkg.environment "CFLAGS", settings[:cflags]
+    pkg.environment "LDFLAGS", settings[:ldflags]
+  else
+    pkg.build_requires "libxml2"
+  end
   if platform.name =~ /^el-(5|6|7)-.*/ || platform.is_fedora?
     # Augeas needs a libselinux pkgconfig file on these platforms
     pkg.build_requires 'ruby-selinux'
   end
 
   # Ensure we're building against our own libraries when present
-  pkg.environment "PKG_CONFIG_PATH", "/opt/puppetlabs/puppet/lib/pkgconfig"
+  unless platform.name =~ /debian-9-armhf/
+    pkg.environment "PKG_CONFIG_PATH", "/opt/puppetlabs/puppet/lib/pkgconfig"
+  end
 
   if platform.is_aix?
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-gcc-5.2.0-11.aix#{platform.os_version}.ppc.rpm"
