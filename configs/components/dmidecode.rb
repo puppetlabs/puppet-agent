@@ -1,5 +1,5 @@
 component 'dmidecode' do |pkg, settings, platform|
-  if platform.name == 'el-7-aarch64'
+  if platform.name == 'el-7-aarch64' or platform.use_native_tools?
     pkg.version '3.1'
     pkg.md5sum '7798f68a02b82358c44af913da3b6b42'
   else
@@ -26,7 +26,7 @@ component 'dmidecode' do |pkg, settings, platform|
     # The Makefile doesn't honor environment overrides, so we need to
     # edit it directly for cross-compiling
     pkg.configure do
-      ["sed -i \"s|gcc|/opt/pl-build-tools/bin/#{settings[:platform_triple]}-gcc|g\" Makefile"]
+      ["sed -i \"s|gcc|#{settings[:platform_triple]}-gcc|g\" Makefile"]
     end
   end
 
