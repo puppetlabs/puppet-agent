@@ -1,6 +1,6 @@
 component "rubygem-gettext-setup" do |pkg, settings, platform|
-  pkg.version "0.28"
-  pkg.md5sum "65c8e2bb3fe8e07b91f8ea9f0b4c2196"
+  pkg.version "0.30"
+  pkg.md5sum "b7de0e7af0f56ddc55c88435ee95fd47"
   pkg.url "https://rubygems.org/downloads/gettext-setup-#{pkg.get_version}.gem"
   pkg.mirror "#{settings[:buildsources_url]}/gettext-setup-#{pkg.get_version}.gem"
 
