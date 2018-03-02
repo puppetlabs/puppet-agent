@@ -7,6 +7,30 @@ component "leatherman" do |pkg, settings, platform|
     pkg.build_requires "cmake"
     pkg.build_requires "boost"
     pkg.build_requires "gettext"
+  elsif platform.use_native_tools?
+    pkg.build_requires "libboost-regex-dev:armhf"
+    pkg.build_requires "libboost-atomic-dev:armhf"
+    pkg.build_requires "libboost-chrono-dev:armhf"
+    pkg.build_requires "libboost-date-time-dev:armhf"
+    pkg.build_requires "libboost-exception-dev:armhf"
+    pkg.build_requires "libboost-filesystem-dev:armhf"
+    pkg.build_requires "libboost-graph-dev:armhf"
+    pkg.build_requires "libboost-graph-parallel-dev:armhf"
+    pkg.build_requires "libboost-iostreams-dev:armhf"
+    pkg.build_requires "libboost-locale-dev:armhf"
+    pkg.build_requires "libboost-log-dev:armhf"
+    pkg.build_requires "libboost-math-dev:armhf"
+    pkg.build_requires "libboost-program-options-dev:armhf"
+    pkg.build_requires "libboost-random-dev:armhf"
+    pkg.build_requires "libboost-serialization-dev:armhf"
+    pkg.build_requires "libboost-signals-dev:armhf"
+    pkg.build_requires "libboost-test-dev:armhf"
+    pkg.build_requires "libboost-system-dev:armhf"
+    pkg.build_requires "libboost-thread-dev:armhf"
+    pkg.build_requires "libboost-timer-dev:armhf"
+    pkg.build_requires "libboost-wave-dev:armhf"
+    pkg.build_requires "cmake"
+    pkg.build_requires "gettext"
   elsif platform.name =~ /solaris-10/
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/solaris/10/pl-boost-1.58.0-7.#{platform.architecture}.pkg.gz"
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/solaris/10/pl-cmake-3.2.3-2.i386.pkg.gz"
@@ -34,7 +58,7 @@ component "leatherman" do |pkg, settings, platform|
   end
 
   pkg.build_requires "curl"
-  pkg.build_requires "runtime"
+  pkg.build_requires "runtime" unless platform.use_native_tools?
   pkg.build_requires "ruby-#{settings[:ruby_version]}"
 
   ruby = "#{settings[:host_ruby]} -rrbconfig"
@@ -49,8 +73,13 @@ component "leatherman" do |pkg, settings, platform|
     special_flags = "-DCMAKE_CXX_FLAGS='#{settings[:cflags]}' -DLEATHERMAN_MOCK_CURL=FALSE"
   elsif platform.is_cross_compiled_linux?
     ruby = "#{settings[:host_ruby]} -r#{settings[:datadir]}/doc/rbconfig.rb"
-    toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/#{settings[:platform_triple]}/pl-build-toolchain.cmake"
-    cmake = "/opt/pl-build-tools/bin/cmake"
+    if platform.use_native_tools?
+      toolchain = "-DCMAKE_TOOLCHAIN_FILE=/toolchain"
+      cmake = "/usr/bin/cmake"
+    else
+      toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/#{settings[:platform_triple]}/pl-build-toolchain.cmake"
+      cmake = "/opt/pl-build-tools/bin/cmake"
+    end
   elsif platform.is_solaris?
     if platform.architecture == 'sparc'
       ruby = "#{settings[:host_ruby]} -r#{settings[:datadir]}/doc/rbconfig.rb"
@@ -85,9 +114,19 @@ component "leatherman" do |pkg, settings, platform|
     pkg.environment "PATH", "/opt/pl-build-tools/bin:$(PATH)"
   end
 
+
+  if platform.name =~ /debian-9-armhf/
+     booststring= "-DBOOST_LIBRARYDIR=/usr/lib/arm-linux-gnueabihf/lib"
+     booststatic="OFF"
+  else
+     booststring = ""
+     booststatic="ON"
+  end
+
   pkg.configure do
     ["#{cmake} \
         #{toolchain} \
+        #{booststring} \
         -DLEATHERMAN_GETTEXT=ON \
         -DCMAKE_VERBOSE_MAKEFILE=ON \
         -DCMAKE_PREFIX_PATH=#{settings[:prefix]} \
@@ -96,7 +135,7 @@ component "leatherman" do |pkg, settings, platform|
         #{leatherman_locale_var} \
         -DLEATHERMAN_SHARED=TRUE \
         #{special_flags} \
-        -DBOOST_STATIC=ON \
+        -DBOOST_STATIC=#{booststatic} \
         ."]
   end
 
