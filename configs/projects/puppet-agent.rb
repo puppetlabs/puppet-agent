@@ -184,7 +184,7 @@ project "puppet-agent" do |proj|
   if platform.name =~ /debian-9-armhf/
     proj.setting(:cppflags, "-I#{proj.includedir}")
     proj.setting(:cflags, "#{proj.cppflags}")
-    proj.setting(:ldflags, "-L/opt/puppetlabs/puppet/lib -L/lib/arm-linux-gnueabihf/ -L/usr/lib/arm-linux-gnueabihf ")
+    proj.setting(:ldflags, "-L/opt/puppetlabs/puppet/lib -L/lib/arm-linux-gnueabihf/ -L/usr/lib/arm-linux-gnueabihf -Wl,-rpath=#{proj.libdir}")
   else
     proj.setting(:cppflags, "-I#{proj.includedir} -I/opt/pl-build-tools/include")
     proj.setting(:cflags, "#{proj.cppflags}")
@@ -229,7 +229,7 @@ project "puppet-agent" do |proj|
 #  proj.component "puppet"
 #  proj.component "facter"
 #  proj.component "hiera"
-#  proj.component "leatherman"
+  proj.component "leatherman"
 #  proj.component "cpp-hocon"
 #  proj.component "marionette-collective"
 #  proj.component "cpp-pcp-client"
@@ -275,20 +275,20 @@ project "puppet-agent" do |proj|
 
   proj.component "puppet-ca-bundle"
   proj.component "libxml2" unless platform.is_windows?
-#  proj.component "libxslt" unless platform.is_windows?
+  proj.component "libxslt" unless platform.is_windows?
 
   # These utilites don't really work on unix
   if platform.is_linux?
-#    proj.component "virt-what"
-#    proj.component "dmidecode" unless platform.architecture =~ /ppc64(?:le|el)/
-#    proj.component "shellpath"
+    proj.component "virt-what"
+    proj.component "dmidecode" unless platform.architecture =~ /ppc64(?:le|el)/
+    proj.component "shellpath"
   end
 
   proj.component "runtime" unless platform.use_native_tools?
 
   # Windows doesn't need these wrappers, only unix platforms
   unless platform.is_windows? or platform.name =~ /debian-9-armhf/
-#    proj.component "wrapper-script"
+    proj.component "wrapper-script"
   end
 
   # Needed to avoid using readline on solaris and aix
