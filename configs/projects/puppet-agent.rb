@@ -227,21 +227,21 @@ project "puppet-agent" do |proj|
 
   # First our stuff
 #  proj.component "puppet"
-#  proj.component "facter"
+  proj.component "facter"
 #  proj.component "hiera"
   proj.component "leatherman"
-#  proj.component "cpp-hocon"
+  proj.component "cpp-hocon"
 #  proj.component "marionette-collective"
-#  proj.component "cpp-pcp-client"
-#  proj.component "pxp-agent"
-#  proj.component "libwhereami"
+  proj.component "cpp-pcp-client"
+  proj.component "pxp-agent"
+  proj.component "libwhereami"
 
   # Then the dependencies
   proj.component "augeas" unless platform.is_windows?
   # Curl is only needed for compute clusters (GCE, EC2); so rpm, deb, and Windows
   proj.component "curl"
   proj.component "ruby-#{proj.ruby_version}"
-#  proj.component "nssm" if platform.is_windows?
+  proj.component "nssm" if platform.is_windows?
 #  proj.component "ruby-stomp"
 #  proj.component "rubygem-deep-merge"
 #  proj.component "rubygem-net-ssh"
@@ -287,7 +287,7 @@ project "puppet-agent" do |proj|
   proj.component "runtime" unless platform.use_native_tools?
 
   # Windows doesn't need these wrappers, only unix platforms
-  unless platform.is_windows? or platform.name =~ /debian-9-armhf/
+  unless platform.is_windows?
     proj.component "wrapper-script"
   end
 
