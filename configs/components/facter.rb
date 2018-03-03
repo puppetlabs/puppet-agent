@@ -47,6 +47,13 @@ component "facter" do |pkg, settings, platform|
   elsif platform.is_cross_compiled_linux? || platform.name =~ /solaris-11/
     if platform.use_native_tools?
       pkg.build_requires "libyaml-cpp-dev:armhf"
+      pkg.requires "libyaml-cpp0.5v5"
+      pkg.requires "libboost-date-time1.62.0"
+      pkg.requires "libboost-thread1.62.0"
+      pkg.requires "libboost-chrono1.62.0"
+      pkg.requires "libboost-atomic1.62.0"
+      pkg.requires "libboost-log1.62.0"
+      pkg.requires "libboost-locale1.62.0"
     else
       pkg.build_requires "pl-yaml-cpp-#{platform.architecture}"
     end
