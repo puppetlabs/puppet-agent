@@ -8,6 +8,7 @@ component "leatherman" do |pkg, settings, platform|
     pkg.build_requires "boost"
     pkg.build_requires "gettext"
   elsif platform.use_native_tools?
+    pkg.build_requires "libboost-dev:armhf"
     pkg.build_requires "libboost-regex-dev:armhf"
     pkg.build_requires "libboost-atomic-dev:armhf"
     pkg.build_requires "libboost-chrono-dev:armhf"
@@ -116,26 +117,27 @@ component "leatherman" do |pkg, settings, platform|
 
 
   if platform.name =~ /debian-9-armhf/
-     booststring= "-DBOOST_LIBRARYDIR=/usr/lib/arm-linux-gnueabihf/lib"
-     booststatic="OFF"
+     boost_libs= "-DBOOST_LIBRARYDIR=/usr/lib/arm-linux-gnueabihf/lib"
+     boost_static="OFF"
   else
-     booststring = ""
-     booststatic="ON"
+     boost_libs = ""
+     boost_static="ON"
   end
 
   pkg.configure do
     ["#{cmake} \
         #{toolchain} \
-        #{booststring} \
+        #{boost_libs} \
         -DLEATHERMAN_GETTEXT=ON \
         -DCMAKE_VERBOSE_MAKEFILE=ON \
         -DCMAKE_PREFIX_PATH=#{settings[:prefix]} \
         -DCMAKE_INSTALL_PREFIX=#{settings[:prefix]} \
         -DCMAKE_INSTALL_RPATH=#{settings[:libdir]} \
+        -DLEATHERMAN_USE_ICU=TRUE \
         #{leatherman_locale_var} \
         -DLEATHERMAN_SHARED=TRUE \
         #{special_flags} \
-        -DBOOST_STATIC=#{booststatic} \
+        -DBOOST_STATIC=#{boost_static} \
         ."]
   end
 

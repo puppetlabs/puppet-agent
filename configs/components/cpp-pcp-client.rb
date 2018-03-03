@@ -32,6 +32,10 @@ component "cpp-pcp-client" do |pkg, settings, platform|
   elsif platform.is_cross_compiled_linux?
     cmake = "/opt/pl-build-tools/bin/cmake"
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/#{settings[:platform_triple]}/pl-build-toolchain.cmake"
+    if platform.use_native_tools?
+      cmake ="/usr/bin/cmake"
+      toolchain = "-DCMAKE_TOOLCHAIN_FILE=/toolchain"
+    end
   elsif platform.is_solaris?
     cmake = "/opt/pl-build-tools/i386-pc-solaris2.#{platform.os_version}/bin/cmake"
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/#{settings[:platform_triple]}/pl-build-toolchain.cmake"
@@ -45,10 +49,19 @@ component "cpp-pcp-client" do |pkg, settings, platform|
     platform_flags = "-DLEATHERMAN_USE_LOCALES=OFF"
   end
 
+  if platform.use_native_tools?
+    boost_libs = "-DBOOST_LIBRARYDIR=/usr/lib/arm-linux-gnueabihf/lib -DLEATHERMAN_USE_LOCALES=OFF"
+    boost_static= "OFF"
+  else
+    boost_libs = ""
+    boost_static= "ON"
+  end
+
   pkg.configure do
     [
       "#{cmake} \
       #{toolchain} \
+      #{boost_libs} \
       #{platform_flags} \
           -DLEATHERMAN_GETTEXT=ON \
           -DCMAKE_VERBOSE_MAKEFILE=ON \
@@ -56,7 +69,7 @@ component "cpp-pcp-client" do |pkg, settings, platform|
           -DCMAKE_INSTALL_PREFIX=#{settings[:prefix]} \
           -DCMAKE_INSTALL_RPATH=#{settings[:libdir]} \
           -DCMAKE_SYSTEM_PREFIX_PATH=#{settings[:prefix]} \
-          -DBOOST_STATIC=ON \
+          -DBOOST_STATIC=#{boost_static} \
           ."
     ]
   end
