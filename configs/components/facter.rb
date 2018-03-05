@@ -146,7 +146,7 @@ component "facter" do |pkg, settings, platform|
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/#{settings[:platform_triple]}/pl-build-toolchain.cmake"
     cmake = "/opt/pl-build-tools/bin/cmake"
     if platform.use_native_tools?
-      cmake = "/usr/bin/cmake" 
+      cmake = "/usr/bin/cmake"
       toolchain = "-DCMAKE_TOOLCHAIN_FILE=/toolchain"
     end
   elsif platform.is_solaris?
