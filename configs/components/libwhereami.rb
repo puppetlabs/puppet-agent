@@ -15,7 +15,7 @@ component "libwhereami" do |pkg, settings, platform|
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/#{settings[:platform_triple]}/pl-build-toolchain.cmake"
     cmake = "/opt/pl-build-tools/bin/cmake"
     if platform.use_native_tools?
-      toolchain = "-DCMAKE_TOOLCHAIN_FILE=/toolchain"
+      toolchain = "-DCMAKE_TOOLCHAIN_FILE=#{settings[:datadir]}/doc/debian-armhf-toolchain"
       cmake = "/usr/bin/cmake"
     end
   elsif platform.is_solaris?

@@ -147,7 +147,7 @@ component "facter" do |pkg, settings, platform|
     cmake = "/opt/pl-build-tools/bin/cmake"
     if platform.use_native_tools?
       cmake = "/usr/bin/cmake"
-      toolchain = "-DCMAKE_TOOLCHAIN_FILE=/toolchain"
+      toolchain = "-DCMAKE_TOOLCHAIN_FILE=#{settings[:datadir]}/doc/debian-armhf-toolchain"
     end
   elsif platform.is_solaris?
     if platform.architecture == 'sparc'

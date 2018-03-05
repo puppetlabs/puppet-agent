@@ -34,7 +34,7 @@ component "cpp-pcp-client" do |pkg, settings, platform|
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/#{settings[:platform_triple]}/pl-build-toolchain.cmake"
     if platform.use_native_tools?
       cmake ="/usr/bin/cmake"
-      toolchain = "-DCMAKE_TOOLCHAIN_FILE=/toolchain"
+      toolchain = "-DCMAKE_TOOLCHAIN_FILE=#{settings[:datadir]}/doc/debian-armhf-toolchain"
     end
   elsif platform.is_solaris?
     cmake = "/opt/pl-build-tools/i386-pc-solaris2.#{platform.os_version}/bin/cmake"

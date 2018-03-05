@@ -8,6 +8,8 @@ component "leatherman" do |pkg, settings, platform|
     pkg.build_requires "boost"
     pkg.build_requires "gettext"
   elsif platform.use_native_tools?
+    pkg.add_source "file://resources/files/arm/debian-armhf-toolchain"
+    pkg.install_file "debian-armhf-toolchain", "#{settings[:datadir]}/doc"
     pkg.build_requires "libboost-dev:armhf"
     pkg.build_requires "libboost-regex-dev:armhf"
     pkg.build_requires "libboost-atomic-dev:armhf"
@@ -75,7 +77,7 @@ component "leatherman" do |pkg, settings, platform|
   elsif platform.is_cross_compiled_linux?
     ruby = "#{settings[:host_ruby]} -r#{settings[:datadir]}/doc/rbconfig.rb"
     if platform.use_native_tools?
-      toolchain = "-DCMAKE_TOOLCHAIN_FILE=/toolchain"
+      toolchain = "-DCMAKE_TOOLCHAIN_FILE=#{settings[:datadir]}/doc/debian-armhf-toolchain"
       cmake = "/usr/bin/cmake"
     else
       toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/#{settings[:platform_triple]}/pl-build-toolchain.cmake"

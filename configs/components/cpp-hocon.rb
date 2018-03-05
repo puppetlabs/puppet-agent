@@ -13,7 +13,7 @@ component "cpp-hocon" do |pkg, settings, platform|
     special_flags = "-DCMAKE_CXX_FLAGS='#{settings[:cflags]}'"
   elsif platform.is_cross_compiled_linux?
     if platform.use_native_tools?
-      toolchain = "-DCMAKE_TOOLCHAIN_FILE=/toolchain"
+      toolchain = "-DCMAKE_TOOLCHAIN_FILE=#{settings[:datadir]}/doc/debian-armhf-toolchain"
       cmake = "/usr/bin/cmake"
     else
       toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/#{settings[:platform_triple]}/pl-build-toolchain.cmake"
