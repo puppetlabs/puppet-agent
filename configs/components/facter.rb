@@ -189,9 +189,11 @@ component "facter" do |pkg, settings, platform|
  if platform.name =~ /debian-9-armhf/
      boost_libs= "-DBOOST_LIBRARYDIR=/usr/lib/arm-linux-gnueabihf/lib -DLEATHERMAN_USE_LOCALES=OFF"
      boost_static="OFF"
+     yamlcpp_static = "OFF"
   else
      boost_libs = ""
      boost_static="ON"
+     yamlcpp_static="ON"
   end
 
   # FACTER_RUBY Needs bindir
@@ -205,7 +207,7 @@ component "facter" do |pkg, settings, platform|
         -DCMAKE_INSTALL_RPATH=#{settings[:libdir]} \
         #{special_flags} \
         -DBOOST_STATIC=#{boost_static} \
-        -DYAMLCPP_STATIC=OFF \
+        -DYAMLCPP_STATIC=#{yamlcpp_static} \
         -DWITHOUT_CURL=#{skip_curl} \
         -DWITHOUT_BLKID=#{skip_blkid} \
         -DWITHOUT_JRUBY=#{skip_jruby} \
