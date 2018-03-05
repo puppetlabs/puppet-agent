@@ -82,6 +82,49 @@ component "pxp-agent" do |pkg, settings, platform|
     ["#{make} -j$(shell expr $(shell #{platform[:num_cores]}) + 1) install"]
   end
 
+  if platform.is_windows?
+    # In PA-1850, it was found that when there is a system version of openssl
+    # installed on Windows, then the pxp-agent will fail to start properly if
+    # the user tries to restart it. Specifically, Puppet shows the service as
+    # being in the "paused" state. The reason this happened is because when Windows
+    # executes the pxp-agent.exe file, it searches for its required .dll files first
+    # in the .exe file's directory, then in the system library directory
+    # (e.g. C:\Windows:\System32), and then the custom PATH last (as a rough approximation,
+    # it actually searches some other locations, but the relative ordering of ".exe directory"
+    # => "system library directory" => PATH is still there). See https://msdn.microsoft.com/en-us/library/7d83bc18.aspx
+    # for more details. Since we do not have any .dll files in pxp-agent/bin, the system
+    # openssl is detected as pxp-agent's openssl library instead of Puppet's openssl, which
+    # is installed in [INSTALLDIR]\Puppet\puppet\bin. Of course, pxp-agent is not built to work
+    # with the system openssl, so it fails to start properly.
+    #
+    # By copying the dependent .dll files in the puppet/bin directory to pxp-agent/bin,
+    # we ensure that Windows uses our in-house .dll files to start up pxp-agent.
+    #
+    # See https://tickets.puppetlabs.com/browse/PA-1850 for all the details.
+    pkg.install do
+      dependent_dlls = [
+        "leatherman_curl.dll",
+        "leatherman_execution.dll",
+        "leatherman_file_util.dll",
+        "leatherman_json_container.dll",
+        "leatherman_locale.dll",
+        "leatherman_logging.dll",
+        "leatherman_nowide.dll",
+        "leatherman_util.dll",
+        "leatherman_windows.dll",
+        "libcpp-pcp-client.dll",
+        "libeay32.dll",
+        "ssleay32.dll",
+        platform.architecture == "x64" ? "libgcc_s_seh-1.dll" : "libgcc_s_sjlj-1.dll",
+        "libstdc++-6.dll"
+      ]
+
+      dependent_dlls.map do |dll|
+        "C:/cygwin64/bin/cp.exe #{settings[:prefix]}/bin/#{dll} #{settings[:pxp_root]}/bin"
+      end
+    end
+  end
+
   pkg.directory File.join(settings[:sysconfdir], 'pxp-agent')
   if platform.is_windows?
     pkg.directory File.join(settings[:sysconfdir], 'pxp-agent', 'etc', 'modules')
