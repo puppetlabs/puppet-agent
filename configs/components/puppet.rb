@@ -17,7 +17,7 @@ component "puppet" do |pkg, settings, platform|
   elsif platform.is_aix?
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-gettext-0.19.8-2.aix#{platform.os_version}.ppc.rpm"
   elsif !platform.is_solaris?
-    pkg.build_requires "pl-gettext"
+    pkg.build_requires "pl-gettext" unless platform.use_native_tools?
   end
 
   pkg.replaces 'puppet', '4.0.0'
@@ -108,7 +108,11 @@ component "puppet" do |pkg, settings, platform|
     elsif platform.is_macos?
       msgfmt = "/usr/local/opt/gettext/bin/msgfmt"
     else
-      msgfmt = "/opt/pl-build-tools/bin/msgfmt"
+      if platform.use_native_tools?
+        msgfmt = "msgfmt"
+      else
+        msgfmt = "/opt/pl-build-tools/bin/msgfmt"
+      end
     end
     pkg.configure do
       ["for dir in ./locales/*/ ; do [ -d \"$${dir}\" ] || continue ; [ -d \"$${dir}/LC_MESSAGES\" ] || /bin/mkdir \"$${dir}/LC_MESSAGES\" ; #{msgfmt} \"$${dir}/puppet.po\" -o \"$${dir}/LC_MESSAGES/puppet.mo\" ; done ;",]

@@ -131,7 +131,7 @@ component "ruby-2.4.3" do |pkg, settings, platform|
   # Cross-compiles require a hand-built rbconfig from the target system as does Solaris, AIX and Windies
   if platform.is_cross_compiled_linux? || platform.is_solaris? || platform.is_aix? || platform.is_windows?
     pkg.add_source "file://resources/files/ruby_243/rbconfig/rbconfig-#{settings[:platform_triple]}.rb"
-    pkg.build_requires 'runtime' if platform.is_cross_compiled_linux?
+    pkg.build_requires 'runtime' if platform.is_cross_compiled_linux? and ! platform.use_native_tools?
   end
 
   if settings[:vendor_openssl] == "no"
@@ -142,7 +142,11 @@ component "ruby-2.4.3" do |pkg, settings, platform|
 
 
   if platform.is_deb?
-    pkg.build_requires "zlib1g-dev"
+    if platform.is_cross_compiled?
+      pkg.build_requires "zlib1g-dev:#{platform.architecture}"
+    else
+      pkg.build_requires "zlib1g-dev"
+    end
   elsif platform.is_aix?
     pkg.build_requires "http://osmirror.delivery.puppetlabs.net/AIX_MIRROR/zlib-1.2.3-4.aix5.2.ppc.rpm"
     pkg.build_requires "http://osmirror.delivery.puppetlabs.net/AIX_MIRROR/zlib-devel-1.2.3-4.aix5.2.ppc.rpm"
@@ -153,10 +157,14 @@ component "ruby-2.4.3" do |pkg, settings, platform|
   end
 
   if platform.is_cross_compiled_linux?
-    pkg.build_requires 'pl-ruby'
+    pkg.build_requires 'pl-ruby' unless platform.use_native_tools?
     special_flags += " --with-baseruby=#{settings[:host_ruby]} "
     pkg.environment "PATH", "#{settings[:bindir]}:$(PATH)"
-    pkg.environment "CC", "/opt/pl-build-tools/bin/#{settings[:platform_triple]}-gcc"
+    if platform.use_native_tools?
+      pkg.environment "CC", "#{settings[:platform_triple]}-gcc"
+    else
+      pkg.environment "CC", "/opt/pl-build-tools/bin/#{settings[:platform_triple]}-gcc"
+    end
     pkg.environment "LDFLAGS", "-Wl,-rpath=/opt/puppetlabs/puppet/lib"
   end
 
@@ -196,7 +204,7 @@ component "ruby-2.4.3" do |pkg, settings, platform|
       special_flags += " --with-baseruby=#{settings[:host_ruby]} --enable-close-fds-by-recvmsg-with-peek "
     end
     pkg.build_requires 'libedit'
-    pkg.build_requires 'runtime'
+    pkg.build_requires 'runtime' 
     pkg.environment "PATH", "#{settings[:bindir]}:/usr/ccs/bin:/usr/sfw/bin:$(PATH):/opt/csw/bin"
     pkg.environment "CC", "/opt/pl-build-tools/bin/#{settings[:platform_triple]}-gcc"
     pkg.environment "LDFLAGS", "-Wl,-rpath=/opt/puppetlabs/puppet/lib"
@@ -295,13 +303,23 @@ component "ruby-2.4.3" do |pkg, settings, platform|
     sed = "sed"
     sed = "gsed" if platform.is_solaris?
     sed = "/opt/freeware/bin/sed" if platform.is_aix?
+    if platform.use_native_tools?
     pkg.install do
-      [
-        "#{sed} -i 's|raise|warn|g' #{target_dir}/rbconfig.rb",
-        "mkdir -p #{settings[:datadir]}/doc",
-        "cp #{target_dir}/rbconfig.rb #{settings[:datadir]}/doc",
-        "cp ../rbconfig-#{settings[:platform_triple]}.rb #{target_dir}/rbconfig.rb",
-      ]
+        [
+          "#{sed} -i 's|raise|warn|g' #{target_dir}/rbconfig.rb",
+          "mkdir -p #{settings[:datadir]}/doc",
+          "cp #{target_dir}/rbconfig.rb #{settings[:datadir]}/doc",
+        ]
+      end
+    else
+      pkg.install do
+        [
+          "#{sed} -i 's|raise|warn|g' #{target_dir}/rbconfig.rb",
+          "mkdir -p #{settings[:datadir]}/doc",
+          "cp #{target_dir}/rbconfig.rb #{settings[:datadir]}/doc",
+          "cp ../rbconfig-#{settings[:platform_triple]}.rb #{target_dir}/rbconfig.rb",
+        ]
+      end
     end
   end
 end

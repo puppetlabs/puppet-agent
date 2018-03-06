@@ -103,16 +103,22 @@ project "puppet-agent" do |proj|
   platform_triple = "powerpc64le-suse-linux" if platform.architecture == "ppc64le" && platform.name =~ /^sles-/
   platform_triple = "powerpc64le-linux-gnu" if platform.architecture == "ppc64el"
   platform_triple = "s390x-linux-gnu" if platform.architecture == "s390x"
-  platform_triple = "arm-linux-gnueabihf" if platform.name == 'debian-8-armhf'
   platform_triple = "arm-linux-gnueabi" if platform.name == 'debian-8-armel'
+  platform_triple = "arm-linux-gnueabihf" if platform.name =~ /debian-[\d]{1}-armhf/
   platform_triple = "aarch64-redhat-linux" if platform.name == 'el-7-aarch64'
 
   if platform.is_cross_compiled_linux?
     host = "--host #{platform_triple}"
 
-    # Use a standalone ruby for cross-compilation
-    proj.setting(:host_ruby, "/opt/pl-build-tools/bin/ruby")
-    proj.setting(:host_gem, "/opt/pl-build-tools/bin/gem")
+    if platform.use_native_tools?
+      proj.setting(:host_ruby, "/usr/bin/ruby")
+      proj.setting(:host_gem, "/usr/bin/gem")
+    else
+      # Use a standalone ruby for cross-compilation
+      proj.setting(:host_ruby, "/opt/pl-build-tools/bin/ruby")
+      proj.setting(:host_gem, "/opt/pl-build-tools/bin/gem")
+    end
+
   end
 
   # For solaris, we build cross-compilers
@@ -175,9 +181,15 @@ project "puppet-agent" do |proj|
 
   # Define default CFLAGS and LDFLAGS for most platforms, and then
   # tweak or adjust them as needed.
-  proj.setting(:cppflags, "-I#{proj.includedir} -I/opt/pl-build-tools/include")
-  proj.setting(:cflags, "#{proj.cppflags}")
-  proj.setting(:ldflags, "-L#{proj.libdir} -L/opt/pl-build-tools/lib -Wl,-rpath=#{proj.libdir}")
+  if platform.name =~ /debian-9-armhf/
+    proj.setting(:cppflags, "-I#{proj.includedir}")
+    proj.setting(:cflags, "#{proj.cppflags}")
+    proj.setting(:ldflags, "-L/opt/puppetlabs/puppet/lib -L/lib/arm-linux-gnueabihf/ -L/usr/lib/arm-linux-gnueabihf -Wl,-rpath=#{proj.libdir}")
+  else
+    proj.setting(:cppflags, "-I#{proj.includedir} -I/opt/pl-build-tools/include")
+    proj.setting(:cflags, "#{proj.cppflags}")
+    proj.setting(:ldflags, "-L#{proj.libdir} -L/opt/pl-build-tools/lib -Wl,-rpath=#{proj.libdir}")
+  end
 
   # Platform specific overrides or settings, which may override the defaults
   if platform.is_windows?
@@ -272,7 +284,11 @@ project "puppet-agent" do |proj|
     proj.component "shellpath"
   end
 
-  proj.component "runtime"
+  if platform.use_native_tools?
+    proj.component "toolchain"
+  else
+    proj.component "runtime"
+  end
 
   # Windows doesn't need these wrappers, only unix platforms
   unless platform.is_windows?
