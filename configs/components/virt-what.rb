@@ -3,6 +3,7 @@ component "virt-what" do |pkg, settings, platform|
   pkg.md5sum "28661e619e36eadb17af70cb9bca9551"
 
   pkg.url "https://people.redhat.com/~rjones/virt-what/files/virt-what-#{pkg.get_version}.tar.gz"
+  pkg.mirror "#{settings[:buildsources_url]}/virt-what-#{pkg.get_version}.tar.gz"
 
   pkg.replaces 'pe-virt-what'
 
