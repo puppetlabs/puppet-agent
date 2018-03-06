@@ -1,6 +1,7 @@
 component "virt-what" do |pkg, settings, platform|
-  pkg.version "1.14"
-  pkg.md5sum "4d9bb5afc81de31f66443d8674bb3672"
+  pkg.version "1.18"
+  pkg.md5sum "28661e619e36eadb17af70cb9bca9551"
+
   pkg.url "https://people.redhat.com/~rjones/virt-what/files/virt-what-#{pkg.get_version}.tar.gz"
 
   pkg.replaces 'pe-virt-what'
