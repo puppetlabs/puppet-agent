@@ -8,8 +8,7 @@ component "leatherman" do |pkg, settings, platform|
     pkg.build_requires "boost"
     pkg.build_requires "gettext"
   elsif platform.use_native_tools?
-    pkg.add_source "file://resources/files/arm/debian-armhf-toolchain"
-    pkg.install_file "debian-armhf-toolchain", "#{settings[:datadir]}/doc"
+    pkg.build_requires "toolchain"
     pkg.build_requires "libboost-dev:armhf"
     pkg.build_requires "libboost-regex-dev:armhf"
     pkg.build_requires "libboost-atomic-dev:armhf"

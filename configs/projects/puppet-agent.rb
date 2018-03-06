@@ -284,7 +284,11 @@ project "puppet-agent" do |proj|
     proj.component "shellpath"
   end
 
-  proj.component "runtime" unless platform.use_native_tools?
+  if platform.use_native_tools?
+    proj.component "toolchain"
+  else
+    proj.component "runtime"
+  end
 
   # Windows doesn't need these wrappers, only unix platforms
   unless platform.is_windows?
