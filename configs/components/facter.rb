@@ -22,7 +22,7 @@ component "facter" do |pkg, settings, platform|
   end
 
   pkg.build_requires 'leatherman'
-  pkg.build_requires 'runtime'
+  pkg.build_requires 'runtime' unless platform.name =~ /debian-9-armhf/
   pkg.build_requires 'cpp-hocon'
   pkg.build_requires 'libwhereami'
 
@@ -45,13 +45,26 @@ component "facter" do |pkg, settings, platform|
   elsif platform.name =~ /solaris-10/
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/solaris/10/pl-yaml-cpp-0.5.1.#{platform.architecture}.pkg.gz"
   elsif platform.is_cross_compiled_linux? || platform.name =~ /solaris-11/
-    pkg.build_requires "pl-yaml-cpp-#{platform.architecture}"
+    if platform.name =~ /debian-9-armhf/
+      pkg.build_requires "libyaml-cpp-dev:#{platform.architecture}"
+      pkg.requires "libyaml-cpp0.5v5"
+      pkg.requires "libboost-date-time1.62.0"
+      pkg.requires "libboost-thread1.62.0"
+      pkg.requires "libboost-chrono1.62.0"
+      pkg.requires "libboost-atomic1.62.0"
+      pkg.requires "libboost-log1.62.0"
+      pkg.requires "libboost-locale1.62.0"
+    else
+      pkg.build_requires "pl-yaml-cpp-#{platform.architecture}"
+    end
   elsif platform.is_aix?
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-gcc-5.2.0-11.aix#{platform.os_version}.ppc.rpm"
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-cmake-3.2.3-2.aix#{platform.os_version}.ppc.rpm"
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-yaml-cpp-0.5.1-1.aix#{platform.os_version}.ppc.rpm"
   elsif platform.is_windows?
     pkg.build_requires "pl-yaml-cpp-#{platform.architecture}"
+  elsif platform.name =~ /debian-9-armhf/
+    pkg.build_requires "cmake"
   else
     pkg.build_requires "pl-yaml-cpp"
   end
@@ -132,6 +145,10 @@ component "facter" do |pkg, settings, platform|
     ruby = "#{settings[:host_ruby]} -r#{settings[:datadir]}/doc/rbconfig.rb"
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/#{settings[:platform_triple]}/pl-build-toolchain.cmake"
     cmake = "/opt/pl-build-tools/bin/cmake"
+    if platform.name =~ /debian-9-armhf/
+      cmake = "/usr/bin/cmake"
+      toolchain = "-DCMAKE_TOOLCHAIN_FILE=#{settings[:datadir]}/doc/debian-#{platform.architecture}-toolchain"
+    end
   elsif platform.is_solaris?
     if platform.architecture == 'sparc'
       ruby = "#{settings[:host_ruby]} -r#{settings[:datadir]}/doc/rbconfig.rb"
@@ -169,17 +186,28 @@ component "facter" do |pkg, settings, platform|
                        -DRUBY_LIB_INSTALL=#{settings[:ruby_vendordir]}"
   end
 
+  if platform.name =~ /debian-9-armhf/
+    boost_args = "-DBOOST_LIBRARYDIR=/usr/lib/#{settings[:platform_triple]}/lib"
+    boost_static = "OFF"
+    yamlcpp_static = "OFF"
+  else
+    boost_args = ""
+    boost_static = "ON"
+    yamlcpp_static = "ON"
+  end
+
   # FACTER_RUBY Needs bindir
   pkg.configure do
     ["#{cmake} \
         #{toolchain} \
+        #{boost_args} \
         -DLEATHERMAN_GETTEXT=ON \
         -DCMAKE_VERBOSE_MAKEFILE=ON \
         -DCMAKE_PREFIX_PATH=#{settings[:prefix]} \
         -DCMAKE_INSTALL_RPATH=#{settings[:libdir]} \
         #{special_flags} \
-        -DBOOST_STATIC=ON \
-        -DYAMLCPP_STATIC=ON \
+        -DBOOST_STATIC=#{boost_static} \
+        -DYAMLCPP_STATIC=#{yamlcpp_static} \
         -DWITHOUT_CURL=#{skip_curl} \
         -DWITHOUT_BLKID=#{skip_blkid} \
         -DWITHOUT_JRUBY=#{skip_jruby} \

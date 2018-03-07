@@ -34,6 +34,10 @@ component "pxp-agent" do |pkg, settings, platform|
   elsif platform.is_cross_compiled_linux?
     cmake = "/opt/pl-build-tools/bin/cmake"
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/#{settings[:platform_triple]}/pl-build-toolchain.cmake"
+    if platform.name =~ /debian-9-armhf/
+      toolchain = "-DCMAKE_TOOLCHAIN_FILE=#{settings[:datadir]}/doc/debian-#{platform.architecture}-toolchain"
+      cmake = "/usr/bin/cmake"
+    end
   elsif platform.is_solaris?
     cmake = "/opt/pl-build-tools/i386-pc-solaris2.#{platform.os_version}/bin/cmake"
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/#{settings[:platform_triple]}/pl-build-toolchain.cmake"
@@ -51,10 +55,19 @@ component "pxp-agent" do |pkg, settings, platform|
     special_flags += " -DLEATHERMAN_USE_LOCALES=OFF "
   end
 
+  if platform.name =~ /debian-9-armhf/
+    boost_args = "-DBOOST_LIBRARYDIR=/usr/lib/#{settings[:platform_triple]}/lib"
+    boost_static = "OFF"
+  else
+    boost_args = ""
+    boost_static = "ON"
+  end
+
   pkg.configure do
     [
       "#{cmake}\
       #{toolchain} \
+      #{boost_args} \
           -DLEATHERMAN_GETTEXT=ON \
           -DCMAKE_VERBOSE_MAKEFILE=ON \
           -DCMAKE_PREFIX_PATH=#{settings[:prefix]} \
@@ -62,7 +75,7 @@ component "pxp-agent" do |pkg, settings, platform|
           -DCMAKE_SYSTEM_PREFIX_PATH=#{settings[:prefix]} \
           -DMODULES_INSTALL_PATH=#{File.join(settings[:install_root], 'pxp-agent', 'modules')} \
           #{special_flags} \
-          -DBOOST_STATIC=ON \
+          -DBOOST_STATIC=#{boost_static} \
           ."
     ]
   end

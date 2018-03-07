@@ -14,6 +14,10 @@ component "libwhereami" do |pkg, settings, platform|
   elsif platform.is_cross_compiled_linux?
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/#{settings[:platform_triple]}/pl-build-toolchain.cmake"
     cmake = "/opt/pl-build-tools/bin/cmake"
+    if platform.name =~ /debian-9-armhf/
+      toolchain = "-DCMAKE_TOOLCHAIN_FILE=#{settings[:datadir]}/doc/debian-#{platform.architecture}-toolchain"
+      cmake = "/usr/bin/cmake"
+    end
   elsif platform.is_solaris?
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/#{settings[:platform_triple]}/pl-build-toolchain.cmake"
     cmake = "/opt/pl-build-tools/i386-pc-solaris2.#{platform.os_version}/bin/cmake"
@@ -36,16 +40,25 @@ component "libwhereami" do |pkg, settings, platform|
     end
   end
 
+  if platform.name =~ /debian-9-armhf/
+    boost_args = "-DBOOST_LIBRARYDIR=/usr/lib/#{settings[:platform_triple]}/lib"
+    boost_static = "OFF"
+  else
+    boost_args = ""
+    boost_static = "ON"
+  end
+
   # Until we build our own gettext packages, disable using locales.
   # gettext 0.17 is required to compile .mo files with msgctxt.
   pkg.configure do
     ["#{cmake} \
         #{toolchain} \
+        #{boost_args} \
         -DCMAKE_VERBOSE_MAKEFILE=ON \
         -DCMAKE_PREFIX_PATH=#{settings[:prefix]} \
         -DCMAKE_INSTALL_PREFIX=#{settings[:prefix]} \
         #{special_flags} \
-        -DBOOST_STATIC=ON \
+        -DBOOST_STATIC=#{boost_static} \
         ."]
   end
 

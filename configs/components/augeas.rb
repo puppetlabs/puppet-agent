@@ -6,6 +6,14 @@ component 'augeas' do |pkg, settings, platform|
 
   pkg.replaces 'pe-augeas'
   pkg.build_requires "libxml2"
+
+  if platform.name =~ /debian-9-armhf/
+    pkg.build_requires "libreadline-dev:#{platform.architecture}"
+    pkg.build_requires "pkg-config"
+    pkg.environment "CFLAGS", settings[:cflags]
+    pkg.environment "LDFLAGS", settings[:ldflags]
+  end
+
   if platform.name =~ /^el-(5|6|7)-.*/ || platform.is_fedora?
     # Augeas needs a libselinux pkgconfig file on these platforms
     pkg.build_requires 'ruby-selinux'
