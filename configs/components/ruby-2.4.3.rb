@@ -23,6 +23,10 @@ component "ruby-2.4.3" do |pkg, settings, platform|
   pkg.apply_patch "#{base}/ostruct_remove_safe_nav_operator.patch"
   pkg.apply_patch "#{base}/thread_wakeup_ownership_check.patch"
 
+  # This patch creates our server/client shared Gem path, used for all
+  # gems that are dependencies of the shared Ruby code.
+  pkg.apply_patch "#{base}/rubygems_add_puppet_vendor_dir.patch"
+
   # These are a pretty smelly hack, and they run the risk of letting tests
   # based on the generated data (that should otherwise fail) pass
   # erroneously. We should probably fix the "not shipping our compiler"

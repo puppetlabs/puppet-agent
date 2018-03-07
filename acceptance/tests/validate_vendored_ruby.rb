@@ -16,7 +16,10 @@ def package_installer(agent)
 end
 
 def setup_build_environment(agent)
-  gem_install_sqlite3 = gem_command(agent) + " install sqlite3"
+  # We set the gem path for install here to our internal shared vendor
+  # path. This allows us to verify that our Ruby is able to read from
+  # this path when listing / loading gems in the test below.
+  gem_install_sqlite3 = "env GEM_HOME=/opt/puppetlabs/puppet/lib/ruby/vendor_gems " + gem_command(agent) + " install sqlite3"
   install_package_on_agent = package_installer(agent)
 
   case agent['platform']
