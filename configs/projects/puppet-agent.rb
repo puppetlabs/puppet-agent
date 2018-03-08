@@ -96,6 +96,8 @@ project "puppet-agent" do |proj|
 
   proj.setting(:ruby_version, "2.4.3")
   proj.setting(:gem_home, File.join(proj.libdir, "ruby", "gems", "2.4.0"))
+  # Directory for gems shared by puppet and puppetserver
+  proj.setting(:puppet_gem_vendor_dir, File.join(proj.libdir, "ruby", "vendor_gems"))
   proj.setting(:ruby_vendordir, File.join(proj.libdir, "ruby", "vendor_ruby"))
 
   # Cross-compiled Linux platforms
@@ -240,6 +242,7 @@ project "puppet-agent" do |proj|
   proj.component "rubygem-gettext"
   proj.component "rubygem-fast_gettext"
   proj.component "rubygem-gettext-setup"
+  proj.component "rubygem-multi_json"
   if platform.is_windows?
     proj.component "rubygem-ffi"
     proj.component "rubygem-win32-dir"
