@@ -64,7 +64,7 @@ component "puppet" do |pkg, settings, platform|
   if (platform.servicetype == "sysv" && platform.is_rpm?) || platform.is_aix?
     puppet_bin = "/opt/puppetlabs/bin/puppet"
     rpm_statedir = "%{_localstatedir}/lib/rpm-state/#{pkg.get_name}"
-    service_statefile = "#{rpm_statedir}/service.pp"
+    service_statefile = "#{rpm_statedir}/service_state"
     pkg.add_preinstall_action ["upgrade"],
       [<<-HERE.undent
         mkdir -p  #{rpm_statedir} && chown root #{rpm_statedir} && chmod 0700 #{rpm_statedir} || :
@@ -83,6 +83,10 @@ component "puppet" do |pkg, settings, platform|
         HERE
       ]
   end
+
+  # For Debian platforms generate a package trigger to ensure puppetserver
+  # restarts itself when the agent package is upgraded (PA-1130)
+  pkg.add_debian_activate_triggers "puppetserver-restart" if platform.is_deb?
 
   # To create a tmpfs directory for the piddir, it seems like it's either this
   # or a PR against Puppet until that sort of support can be rolled into the
@@ -247,28 +251,44 @@ component "puppet" do |pkg, settings, platform|
     env_hiera = File.join(settings[:puppet_codedir], 'environments', 'production', 'hiera.yaml')
     rmv_hiera = File.join(configdir, 'remove_hiera5_files.rm')
 
-    # Pre-Install script to save copies of existing hiera configuration files.
-    # This also creates "marker files to indicate that the files pre-existed."
+    # Pre-Install script saves copies of existing hiera configuration files,
+    # and also creates "marker" files to indicate that the files pre-existed.
+    # We want to ensure that our copy preserves the metadata (e.g. permissions,
+    # timestamps, extended attributes) of the existing hiera config. files. The
+    # necessary flags that do this are platform dependent.
+    if platform.is_solaris?
+      # The @ option preserves extended attributes
+      cp_cmd = "cp -p@"
+    elsif platform.is_aix?
+      # The U option preserves extended attributes.
+      # On AIX 7.2, the S option preserves file
+      # sparseness.
+      cp_cmd = "cp -pU"
+      cp_cmd += "S" if platform.name =~ /7.2/
+    else
+      cp_cmd = "cp -a"
+    end
+
     preinstall = <<-PREINST
 # Backup the old hiera configs if present, so that we
 # can drop them back in place if the package manager
 # tries to remove it.
 if [ -e #{old_hiera} ]; then
-  mv #{old_hiera}{,.pkg-old}
+  #{cp_cmd} #{old_hiera}{,.pkg-old}
   touch #{rmv_hiera}
 fi
 if [ -e #{cnf_hiera} ]; then
-  mv #{cnf_hiera}{,.pkg-old}
+  #{cp_cmd} #{cnf_hiera}{,.pkg-old}
   touch #{rmv_hiera}
 fi
 if [ -e #{env_hiera} ]; then
-  mv #{env_hiera}{,.pkg-old}
+  #{cp_cmd} #{env_hiera}{,.pkg-old}
   touch #{rmv_hiera}
 fi
 PREINST
 
-    # Post-install script to restore old hiera config files if the have been saved.
-    # and remove any extre hiera configuration files that we laid down
+    # Post-install script restores any old hiera config files that have been saved.
+    # It also remove any extra hiera configuration files that we laid down.
     postinstall = <<-POSTINST
 # Remove any extra hiera config files we laid down if prev config present
 if [ -e #{rmv_hiera} ]; then
