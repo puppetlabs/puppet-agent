@@ -7,7 +7,7 @@ component "leatherman" do |pkg, settings, platform|
     pkg.build_requires "cmake"
     pkg.build_requires "boost"
     pkg.build_requires "gettext"
-  elsif platform.name =~ /debian-9-armhf/
+  elsif platform.name =~ /debian-9/
     pkg.build_requires "toolchain"
     pkg.build_requires "libboost-dev:#{platform.architecture}"
     pkg.build_requires "libboost-regex-dev:#{platform.architecture}"
@@ -60,7 +60,7 @@ component "leatherman" do |pkg, settings, platform|
   end
 
   pkg.build_requires "curl"
-  pkg.build_requires "runtime" unless platform.name =~ /debian-9-armhf/
+  pkg.build_requires "runtime" unless platform.name =~ /debian-9/
   pkg.build_requires "ruby-#{settings[:ruby_version]}"
 
   ruby = "#{settings[:host_ruby]} -rrbconfig"
@@ -73,15 +73,14 @@ component "leatherman" do |pkg, settings, platform|
     toolchain = ""
     cmake = "/usr/local/bin/cmake"
     special_flags = "-DCMAKE_CXX_FLAGS='#{settings[:cflags]}' -DLEATHERMAN_MOCK_CURL=FALSE"
+  elsif platform.name =~ /debian-9/
+    ruby = "#{settings[:host_ruby]} -r#{settings[:datadir]}/doc/rbconfig.rb" if platform.is_cross_compiled?
+    toolchain = "-DCMAKE_TOOLCHAIN_FILE=#{settings[:datadir]}/doc/debian-#{platform.architecture}-toolchain"
+    cmake = "/usr/bin/cmake"
   elsif platform.is_cross_compiled_linux?
     ruby = "#{settings[:host_ruby]} -r#{settings[:datadir]}/doc/rbconfig.rb"
-    if platform.name =~ /debian-9-armhf/
-      toolchain = "-DCMAKE_TOOLCHAIN_FILE=#{settings[:datadir]}/doc/debian-#{platform.architecture}-toolchain"
-      cmake = "/usr/bin/cmake"
-    else
-      toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/#{settings[:platform_triple]}/pl-build-toolchain.cmake"
-      cmake = "/opt/pl-build-tools/bin/cmake"
-    end
+    toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/#{settings[:platform_triple]}/pl-build-toolchain.cmake"
+    cmake = "/opt/pl-build-tools/bin/cmake"
   elsif platform.is_solaris?
     if platform.architecture == 'sparc'
       ruby = "#{settings[:host_ruby]} -r#{settings[:datadir]}/doc/rbconfig.rb"
@@ -117,8 +116,8 @@ component "leatherman" do |pkg, settings, platform|
   end
 
 
-  if platform.name =~ /debian-9-armhf/
-    boost_args = "-DBOOST_LIBRARYDIR=/usr/lib/#{settings[:platform_triple]}/lib"
+  if platform.name =~ /debian-9/
+    boost_args = "-DBOOST_LIBRARYDIR=/usr/lib/#{settings[:platform_triple]}"
     boost_static = "OFF"
   else
     boost_args = ""

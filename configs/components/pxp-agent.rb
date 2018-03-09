@@ -34,7 +34,7 @@ component "pxp-agent" do |pkg, settings, platform|
   elsif platform.is_cross_compiled_linux?
     cmake = "/opt/pl-build-tools/bin/cmake"
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/#{settings[:platform_triple]}/pl-build-toolchain.cmake"
-    if platform.name =~ /debian-9-armhf/
+    if platform.name =~ /debian-9/
       toolchain = "-DCMAKE_TOOLCHAIN_FILE=#{settings[:datadir]}/doc/debian-#{platform.architecture}-toolchain"
       cmake = "/usr/bin/cmake"
     end
@@ -55,7 +55,10 @@ component "pxp-agent" do |pkg, settings, platform|
     special_flags += " -DLEATHERMAN_USE_LOCALES=OFF "
   end
 
-  if platform.name =~ /debian-9-armhf/
+  if platform.name =~ /debian-9/
+    cmake = "cmake"
+    toolchain = "-DCMAKE_TOOLCHAIN_FILE=#{settings[:datadir]}/doc/debian-#{platform.architecture}-toolchain"
+
     boost_args = "-DBOOST_LIBRARYDIR=/usr/lib/#{settings[:platform_triple]}/lib"
     boost_static = "OFF"
   else

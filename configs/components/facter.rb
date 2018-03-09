@@ -22,7 +22,7 @@ component "facter" do |pkg, settings, platform|
   end
 
   pkg.build_requires 'leatherman'
-  pkg.build_requires 'runtime' unless platform.name =~ /debian-9-armhf/
+  pkg.build_requires 'runtime' unless platform.name =~ /debian-9/
   pkg.build_requires 'cpp-hocon'
   pkg.build_requires 'libwhereami'
 
@@ -44,26 +44,24 @@ component "facter" do |pkg, settings, platform|
     pkg.build_requires "yaml-cpp"
   elsif platform.name =~ /solaris-10/
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/solaris/10/pl-yaml-cpp-0.5.1.#{platform.architecture}.pkg.gz"
+  elsif platform.name =~ /debian-9/
+    pkg.build_requires "libyaml-cpp-dev:#{platform.architecture}"
+    pkg.requires "libyaml-cpp0.5v5"
+    pkg.requires "libboost-date-time1.62.0"
+    pkg.requires "libboost-thread1.62.0"
+    pkg.requires "libboost-chrono1.62.0"
+    pkg.requires "libboost-atomic1.62.0"
+    pkg.requires "libboost-log1.62.0"
+    pkg.requires "libboost-locale1.62.0"
   elsif platform.is_cross_compiled_linux? || platform.name =~ /solaris-11/
-    if platform.name =~ /debian-9-armhf/
-      pkg.build_requires "libyaml-cpp-dev:#{platform.architecture}"
-      pkg.requires "libyaml-cpp0.5v5"
-      pkg.requires "libboost-date-time1.62.0"
-      pkg.requires "libboost-thread1.62.0"
-      pkg.requires "libboost-chrono1.62.0"
-      pkg.requires "libboost-atomic1.62.0"
-      pkg.requires "libboost-log1.62.0"
-      pkg.requires "libboost-locale1.62.0"
-    else
-      pkg.build_requires "pl-yaml-cpp-#{platform.architecture}"
-    end
+    pkg.build_requires "pl-yaml-cpp-#{platform.architecture}"
   elsif platform.is_aix?
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-gcc-5.2.0-11.aix#{platform.os_version}.ppc.rpm"
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-cmake-3.2.3-2.aix#{platform.os_version}.ppc.rpm"
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-yaml-cpp-0.5.1-1.aix#{platform.os_version}.ppc.rpm"
   elsif platform.is_windows?
     pkg.build_requires "pl-yaml-cpp-#{platform.architecture}"
-  elsif platform.name =~ /debian-9-armhf/
+  elsif platform.name =~ /debian-9/
     pkg.build_requires "cmake"
   else
     pkg.build_requires "pl-yaml-cpp"
@@ -145,7 +143,7 @@ component "facter" do |pkg, settings, platform|
     ruby = "#{settings[:host_ruby]} -r#{settings[:datadir]}/doc/rbconfig.rb"
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/#{settings[:platform_triple]}/pl-build-toolchain.cmake"
     cmake = "/opt/pl-build-tools/bin/cmake"
-    if platform.name =~ /debian-9-armhf/
+    if platform.name =~ /debian-9-arm/
       cmake = "/usr/bin/cmake"
       toolchain = "-DCMAKE_TOOLCHAIN_FILE=#{settings[:datadir]}/doc/debian-#{platform.architecture}-toolchain"
     end
@@ -167,6 +165,10 @@ component "facter" do |pkg, settings, platform|
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=#{settings[:tools_root]}/pl-build-toolchain.cmake"
     special_flags = "-DCMAKE_INSTALL_PREFIX=#{settings[:facter_root]} \
                      -DRUBY_LIB_INSTALL=#{settings[:facter_root]}/lib "
+  elsif platform.name =~ /debian-9/
+    cmake = "cmake"
+    toolchain = "-DCMAKE_TOOLCHAIN_FILE=#{settings[:datadir]}/doc/debian-#{platform.architecture}-toolchain"
+
   else
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/pl-build-toolchain.cmake"
     cmake = "/opt/pl-build-tools/bin/cmake"
@@ -186,7 +188,7 @@ component "facter" do |pkg, settings, platform|
                        -DRUBY_LIB_INSTALL=#{settings[:ruby_vendordir]}"
   end
 
-  if platform.name =~ /debian-9-armhf/
+  if platform.name =~ /debian-9/
     boost_args = "-DBOOST_LIBRARYDIR=/usr/lib/#{settings[:platform_triple]}/lib"
     boost_static = "OFF"
     yamlcpp_static = "OFF"
@@ -232,7 +234,7 @@ component "facter" do |pkg, settings, platform|
   end
 
   tests = []
-  unless platform.is_windows? || platform.is_cross_compiled_linux? || platform.architecture == 'sparc'
+  unless platform.is_windows? || platform.is_cross_compiled_linux? || platform.architecture == 'sparc' || platform.name =~ /debian-9/
     # Check that we're not linking against system libstdc++ and libgcc_s
     tests = [
       "#{ldd} lib/libfacter.so",

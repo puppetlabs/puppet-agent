@@ -11,13 +11,12 @@ component "libwhereami" do |pkg, settings, platform|
     toolchain = ""
     cmake = "/usr/local/bin/cmake"
     special_flags = "-DCMAKE_CXX_FLAGS='#{settings[:cflags]}'"
+  elsif platform.name =~ /debian-9/
+    toolchain = "-DCMAKE_TOOLCHAIN_FILE=#{settings[:datadir]}/doc/debian-#{platform.architecture}-toolchain"
+    cmake = "/usr/bin/cmake"
   elsif platform.is_cross_compiled_linux?
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/#{settings[:platform_triple]}/pl-build-toolchain.cmake"
     cmake = "/opt/pl-build-tools/bin/cmake"
-    if platform.name =~ /debian-9-armhf/
-      toolchain = "-DCMAKE_TOOLCHAIN_FILE=#{settings[:datadir]}/doc/debian-#{platform.architecture}-toolchain"
-      cmake = "/usr/bin/cmake"
-    end
   elsif platform.is_solaris?
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/#{settings[:platform_triple]}/pl-build-toolchain.cmake"
     cmake = "/opt/pl-build-tools/i386-pc-solaris2.#{platform.os_version}/bin/cmake"
@@ -40,9 +39,10 @@ component "libwhereami" do |pkg, settings, platform|
     end
   end
 
-  if platform.name =~ /debian-9-armhf/
+  if platform.name =~ /debian-9/
     boost_args = "-DBOOST_LIBRARYDIR=/usr/lib/#{settings[:platform_triple]}/lib"
     boost_static = "OFF"
+    cmake = "cmake"
   else
     boost_args = ""
     boost_static = "ON"

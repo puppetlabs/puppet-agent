@@ -106,11 +106,13 @@ project "puppet-agent" do |proj|
   platform_triple = "arm-linux-gnueabi" if platform.name == 'debian-8-armel'
   platform_triple = "arm-linux-gnueabihf" if platform.name =~ /debian-[\d]-armhf/
   platform_triple = "aarch64-redhat-linux" if platform.name == 'el-7-aarch64'
+  platform_triple = "x86_64-linux-gnu" if platform.name == "debian-9-amd64"
+  platform_triple = "i686-linux-gnu" if platform.name == "debian-9-i386"
 
   if platform.is_cross_compiled_linux?
     host = "--host #{platform_triple}"
 
-    if platform.name =~ /debian-9-armhf/
+    if platform.name =~ /debian-9/
       proj.setting(:host_ruby, "/usr/bin/ruby")
       proj.setting(:host_gem, "/usr/bin/gem")
     else
@@ -181,7 +183,7 @@ project "puppet-agent" do |proj|
 
   # Define default CFLAGS and LDFLAGS for most platforms, and then
   # tweak or adjust them as needed.
-  if platform.name =~ /debian-9-armhf/
+  if platform.name =~ /debian-9/
     proj.setting(:cppflags, "-I#{proj.includedir}")
     proj.setting(:cflags, "#{proj.cppflags}")
     proj.setting(:ldflags, "-L/opt/puppetlabs/puppet/lib -L/lib/#{settings[:platform_triple]} -L/usr/lib/#{settings[:platform_triple]} -Wl,-rpath=#{proj.libdir}")
@@ -284,7 +286,7 @@ project "puppet-agent" do |proj|
     proj.component "shellpath"
   end
 
-  if platform.name =~ /debian-9-armhf/
+  if platform.name =~ /debian-9/
     proj.component "toolchain"
   else
     proj.component "runtime"

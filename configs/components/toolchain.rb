@@ -5,5 +5,5 @@
 #
 component "toolchain" do |pkg, settings, platform|
   pkg.add_source "file://resources/files/toolchain/debian-#{platform.architecture}-toolchain"
-  pkg.install_file "debian-#{platform.architecture}-toolchain", "#{settings[:datadir]}/doc"
+  pkg.install_file "debian-#{platform.architecture}-toolchain", "#{settings[:datadir]}/doc/debian-#{platform.architecture}-toolchain"
 end

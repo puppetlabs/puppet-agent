@@ -17,7 +17,7 @@ component "puppet" do |pkg, settings, platform|
   elsif platform.is_aix?
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-gettext-0.19.8-2.aix#{platform.os_version}.ppc.rpm"
   elsif !platform.is_solaris?
-    pkg.build_requires "pl-gettext" unless platform.name =~ /debian-9-armhf/
+    pkg.build_requires "pl-gettext" unless platform.name =~ /debian-9/
   end
 
   pkg.replaces 'puppet', '4.0.0'
@@ -108,7 +108,7 @@ component "puppet" do |pkg, settings, platform|
     elsif platform.is_macos?
       msgfmt = "/usr/local/opt/gettext/bin/msgfmt"
     else
-      if platform.name =~ /debian-9-armhf/
+      if platform.name =~ /debian-9/
         msgfmt = "msgfmt"
       else
         msgfmt = "/opt/pl-build-tools/bin/msgfmt"

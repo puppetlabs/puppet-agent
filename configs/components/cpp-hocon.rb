@@ -12,8 +12,8 @@ component "cpp-hocon" do |pkg, settings, platform|
     cmake = "/usr/local/bin/cmake"
     special_flags = "-DCMAKE_CXX_FLAGS='#{settings[:cflags]}'"
   elsif platform.is_cross_compiled_linux?
-    # Debian 9 (armhf currently) is not using pl-build-tools
-    if platform.name =~ /debian-9-armhf/
+    # Debian 9 is not using pl-build-tools
+    if platform.name =~ /debian-9/
       toolchain = "-DCMAKE_TOOLCHAIN_FILE=#{settings[:datadir]}/doc/debian-#{platform.architecture}-toolchain"
       cmake = "/usr/bin/cmake"
     else
@@ -34,15 +34,20 @@ component "cpp-hocon" do |pkg, settings, platform|
     cmake = "C:/ProgramData/chocolatey/bin/cmake.exe -G \"MinGW Makefiles\""
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=#{settings[:tools_root]}/pl-build-toolchain.cmake"
   else
-    toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/pl-build-toolchain.cmake"
-    cmake = "/opt/pl-build-tools/bin/cmake"
+    if platform.name =~ /debian-9/
+      toolchain = "-DCMAKE_TOOLCHAIN_FILE=#{settings[:datadir]}/doc/debian-#{platform.architecture}-toolchain"
+      cmake = "cmake"
+    else
+      toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/pl-build-toolchain.cmake"
+      cmake = "/opt/pl-build-tools/bin/cmake"
+    end
 
     if platform.is_cisco_wrlinux?
       special_flags = "-DLEATHERMAN_USE_LOCALES=OFF"
     end
   end
 
-  if platform.name =~ /debian-9-armhf/
+  if platform.name =~ /debian-9/
     boost_args = "-DBOOST_LIBRARYDIR=/usr/lib/#{settings[:platform_triple]}/lib"
     boost_static = "OFF"
   else

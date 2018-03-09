@@ -7,7 +7,7 @@ component 'augeas' do |pkg, settings, platform|
   pkg.replaces 'pe-augeas'
   pkg.build_requires "libxml2"
 
-  if platform.name =~ /debian-9-armhf/
+  if platform.name =~ /debian-9/
     pkg.build_requires "libreadline-dev:#{platform.architecture}"
     pkg.build_requires "pkg-config"
     pkg.environment "CFLAGS", settings[:cflags]

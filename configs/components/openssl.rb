@@ -5,7 +5,7 @@ component "openssl" do |pkg, settings, platform|
   pkg.mirror "#{settings[:buildsources_url]}/openssl-#{pkg.get_version}.tar.gz"
 
   pkg.replaces 'pe-openssl'
-  pkg.build_requires 'runtime' unless platform.name =~ /debian-9-armhf/
+  pkg.build_requires 'runtime' unless platform.name =~ /debian-9/
 
   # Use our toolchain on linux systems (it's not available on osx)
   if platform.is_cross_compiled_linux?
@@ -14,12 +14,12 @@ component "openssl" do |pkg, settings, platform|
     pkg.build_requires 'xorg-x11-util-devel' if platform.name =~ /^sles/
     pkg.build_requires 'xutils-dev' if platform.is_deb?
   elsif platform.is_linux?
-    unless (platform.is_fedora? && platform.os_version.delete('f').to_i >= 26) or platform !~ /debian-9-armhf/
+    unless (platform.is_fedora? && platform.os_version.delete('f').to_i >= 26) or platform !~ /debian-9/
       pkg.build_requires 'pl-binutils'
     end
-    pkg.build_requires 'pl-gcc' unless platform.name =~ /debian-9-armhf/
+    pkg.build_requires 'pl-gcc' unless platform.name =~ /debian-9/
 
-    if platform.name =~ /debian-[\d]-arm/
+    if platform.name =~ /debian-[\d]/
       pkg.build_requires "xutils-dev"
       pkg.apply_patch 'resources/patches/openssl/openssl-1.0.0l-use-gcc-instead-of-makedepend.patch'
     end
@@ -49,7 +49,7 @@ component "openssl" do |pkg, settings, platform|
   elsif platform.is_cross_compiled_linux?
 
     cflags = "#{settings[:cflags]} -fPIC"
-    if platform.name =~ /debian-9-armhf/
+    if platform.name =~ /debian-9/
       pkg.environment "CC", "/usr/bin/#{settings[:platform_triple]}-gcc"
       ldflags = "-Wl,-rpath=#{settings[:libdir]}"
     else
