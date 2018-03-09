@@ -1,6 +1,6 @@
 source ENV['GEM_SOURCE'] || "https://rubygems.org"
 
-def vanagon_location_for(place)
+def location_for(place)
   if place =~ /^(git[:@][^#]*)#(.*)/
     [{ :git => $1, :branch => $2, :require => false }]
   elsif place =~ /^file:\/\/(.*)/
@@ -10,9 +10,8 @@ def vanagon_location_for(place)
   end
 end
 
-gem 'vanagon', *vanagon_location_for(ENV['VANAGON_LOCATION'] || '~> 0.14.1')
-gem 'packaging', :github => 'puppetlabs/packaging', :branch => '1.0.x'
-gem 'artifactory'
+gem 'vanagon', *location_for(ENV['VANAGON_LOCATION'] || '~> 0.14.1')
+gem 'packaging', *location_for(ENV['PACKAGING_LOCATION'] || '~> 0.99')
 gem 'rake'
 gem 'json'
 gem 'rubocop', "~> 0.34.2"
