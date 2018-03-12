@@ -1,7 +1,7 @@
 component 'augeas' do |pkg, settings, platform|
   pkg.version '1.10.1'
   pkg.md5sum '6c0b2ea6eec45e8bc374b283aedf27ce'
-  pkg.url "#{settings[:buildsources_url]}/augeas-#{pkg.get_version}.tar.gz"
+  pkg.url "http://download.augeas.net/augeas-#{pkg.get_version}.tar.gz"
   pkg.mirror "#{settings[:buildsources_url]}/augeas-#{pkg.get_version}.tar.gz"
 
   pkg.replaces 'pe-augeas'
