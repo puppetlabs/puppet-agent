@@ -41,6 +41,7 @@ component "cfacter-precompiled-gem" do |pkg, settings, platform|
   pkg.install do
     [
       "pushd #{settings[:gemdir]}",
+      "rm cfacter*.gem",
       "pushd ext/facter",
       "#{settings[:ruby_binary]} extconf.rb",
       "#{make} install",
