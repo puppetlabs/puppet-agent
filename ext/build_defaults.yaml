@@ -146,3 +146,4 @@ vanagon_project: TRUE
 apt_repo_name: 'PC1'
 yum_repo_name: 'PC1'
 build_tar: FALSE
+build_gem: TRUE

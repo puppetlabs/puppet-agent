@@ -1,0 +1,13 @@
+Gem::Specification.new 'cfacter', '<%= settings[:project_version] %>' do |s|
+  s.summary     = 'Facter gem wrapper'
+  s.authors     = %w[Puppet Inc.]
+  s.email       = "info@puppet.com"
+  s.license     = 'Apache-2.0'
+
+  # this tells RubyGems to build an extension upon install
+  s.extensions  = %w[ext/facter/extconf.rb]
+
+  # naturally you must include the extension source in the gem
+  s.files       = Dir.glob('ext/**/*')
+end
+
