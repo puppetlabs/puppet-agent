@@ -240,6 +240,7 @@ project "puppet-agent" do |proj|
   proj.component "rubygem-gettext"
   proj.component "rubygem-fast_gettext"
   proj.component "rubygem-gettext-setup"
+  proj.component "rubygem-nats-pure"
   if platform.is_windows?
     proj.component "rubygem-ffi"
     proj.component "rubygem-win32-dir"
