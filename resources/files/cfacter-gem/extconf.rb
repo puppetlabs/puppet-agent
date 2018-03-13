@@ -8,7 +8,7 @@ cmake_opts = ENV['FACTER_CMAKE_OPTS']
 if RbConfig::CONFIG['arch'].include?('mingw')
   windows_native_source = source_root.gsub('/', '\\')
   # xcopy will make the libdir for us, so there's no mkdir for windows
-  install_command = "xcopy \"prefix\\bin\\*facter*\" \"#{windows_native_source}\\..\\..\\lib\" /i"
+  install_command = "xcopy \"prefix\\bin\\*facter*\" \"#{windows_native_source}\\..\\..\\bin\" /i && xcopy \"prefix\\lib\\*facter*\" \"#{windows_native_source}\\..\\..\\lib\" /i"
   touch_command = 'type nul >'
   mkdir_command = 'mkdir'
 else

@@ -5,6 +5,6 @@ Gem::Specification.new 'cfacter', '<%= settings[:project_version] %>' do |s|
   s.license               = 'Apache-2.0'
   s.platform              = Gem::Platform::CURRENT
   s.required_ruby_version = '>= 0'
-  s.files                 = Dir.glob('lib/**/*')
+  s.files                 = <%= settings[:precompiled_spec_glob] %>
 end
 
