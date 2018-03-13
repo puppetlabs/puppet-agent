@@ -8,6 +8,7 @@ AllCops:
     - 'ext/**/*'
     - 'vendor/**/*'
     - 'bundle/**/*'
+    - 'gems/**/*'
 
 
 # MAYBE useful - errors when rescue {} happens.
