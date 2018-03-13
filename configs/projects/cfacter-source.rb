@@ -46,7 +46,6 @@ project "cfacter" do |proj|
   proj.component "leatherman-source"
   proj.component "cpp-hocon-source"
   proj.component "cfacter-source-gem"
-  proj.component "cfacter-precompiled-gem"
   proj.component "puppet-runtime"
   proj.fetch_artifact "#{settings[:gemdir]}/cfacter*.gem"
   proj.no_packaging true
