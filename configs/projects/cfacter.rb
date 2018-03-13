@@ -29,15 +29,21 @@ project "cfacter" do |proj|
   proj.setting(:project_version, gem_version)
   proj.setting(:gemdir, '/var/tmp/facter_gem')
   if platform.is_windows?
+    if platform.architecture == "x64"
+      proj.setting(:ruby_dir, '/cygdrive/c/ProgramFiles64Folder/PuppetLabs/Puppet/sys/ruby')
+      proj.setting(:gem_binary, 'cmd /c "C:\ProgramFiles64Folder\PuppetLabs\Puppet\sys\ruby\bin\gem.bat"')
+      proj.setting(:ruby_binary, 'cmd /c "C:\ProgramFiles64Folder\PuppetLabs\Puppet\sys\ruby\bin\ruby.exe"')
+      proj.setting(:gcc_bindir, "C:/tools/mingw64/bin")
+    else
+      proj.setting(:ruby_dir, '/cygdrive/c/ProgramFilesFolder/PuppetLabs/Puppet/sys/ruby')
+      proj.setting(:gem_binary, 'cmd /c "C:\ProgramFilesFolder\PuppetLabs\Puppet\sys\ruby\bin\gem.bat"')
+      proj.setting(:ruby_binary, 'cmd /c "C:\ProgramFilesFolder\PuppetLabs\Puppet\sys\ruby\bin\ruby.exe"')
+      proj.setting(:gcc_bindir, "C:/tools/mingw32/bin")
+    end
     proj.setting(:artifactory_url, "https://artifactory.delivery.puppetlabs.net/artifactory")
     proj.setting(:buildsources_url, "#{proj.artifactory_url}/generic/buildsources")
-    proj.setting(:ruby_dir, '/cygdrive/c/ProgramFiles64Folder/PuppetLabs/Puppet/sys/ruby')
-    proj.setting(:ruby_bindir, File.join(proj.ruby_dir, 'bin'))
-    proj.setting(:gem_binary, 'cmd /c "C:\ProgramFiles64Folder\PuppetLabs\Puppet\sys\ruby\bin\gem.bat"')
-    proj.setting(:ruby_binary, 'cmd /c "C:\ProgramFiles64Folder\PuppetLabs\Puppet\sys\ruby\bin\ruby.exe"')
     proj.setting(:build_tools_dir, '/cygdrive/c/tools/pl-build-tools/bin')
-    arch = platform.architecture == "x64" ? "64" : "32"
-    proj.setting(:gcc_bindir, "C:/tools/mingw#{arch}/bin")
+    proj.setting(:ruby_bindir, File.join(proj.ruby_dir, 'bin'))
     proj.setting(:precompiled_spec_glob, "Dir.glob(['lib/**/*', 'bin/**/*'])")
   else
     proj.setting(:ruby_dir, '/opt/puppetlabs/puppet/bin')
