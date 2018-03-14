@@ -25,7 +25,6 @@ component "marionette-collective" do |pkg, settings, platform|
   case platform.servicetype
   when "systemd"
     pkg.install_service "ext/aio/redhat/mcollective.service", "ext/aio/redhat/mcollective.sysconfig", "mcollective"
-    pkg.install_file "ext/aio/redhat/mcollective-systemd.logrotate", "/etc/logrotate.d/mcollective"
   when "sysv"
     if platform.is_deb?
       pkg.install_service "ext/aio/debian/mcollective.init", "ext/aio/debian/mcollective.default", "mcollective"
@@ -34,7 +33,6 @@ component "marionette-collective" do |pkg, settings, platform|
     elsif platform.is_rpm?
       pkg.install_service "ext/aio/redhat/mcollective.init", "ext/aio/redhat/mcollective.sysconfig", "mcollective"
     end
-    pkg.install_file "ext/aio/redhat/mcollective-sysv.logrotate", "/etc/logrotate.d/mcollective"
   when "launchd"
     pkg.install_service "ext/aio/osx/mcollective.plist", nil, "com.puppetlabs.mcollective"
   when "smf"
@@ -118,7 +116,6 @@ component "marionette-collective" do |pkg, settings, platform|
   pkg.configfile File.join(configdir, 'client.cfg')
   pkg.configfile File.join(configdir, 'server.cfg')
   pkg.configfile File.join(configdir, 'facts.yaml')
-  pkg.configfile "/etc/logrotate.d/mcollective" if platform.is_linux?
 
   pkg.link "#{settings[:bindir]}/mco", "#{settings[:link_bindir]}/mco" unless platform.is_windows?
 end
