@@ -149,6 +149,6 @@ yum_repo_name: 'PC1'
 repo_name: 'puppet5'
 nonfinal_repo_name: 'puppet5-nightly'
 repo_link_target: 'puppet'
-nonfinal_repo_link_target: 'puppet-nightly'
+nonfinal_repo_link_target: ''
 build_tar: FALSE
 build_gem: TRUE
