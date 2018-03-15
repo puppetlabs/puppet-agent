@@ -63,7 +63,7 @@ component "marionette-collective" do |pkg, settings, platform|
     pkg.add_postinstall_action ["upgrade"],
       [<<-HERE.undent
         if [ -f #{service_statefile} ] ; then
-          #{puppet_bin} resource service mcollective ensure=$(#{service_statefile}) > /dev/null 2>&1 || :
+          #{puppet_bin} resource service mcollective ensure=$(cat #{service_statefile}) > /dev/null 2>&1 || :
           rm -rf #{rpm_statedir} || :
         fi
         HERE
