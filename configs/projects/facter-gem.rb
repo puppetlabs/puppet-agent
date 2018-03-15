@@ -1,7 +1,7 @@
 require 'json'
 require 'octokit'
 
-project "cfacter" do |proj|
+project "facter-gem" do |proj|
   platform = proj.get_platform
   # We don't generate the version for the facter gem in the same way we do
   # for other vanagon projects. We read from the facter project to find facter's
@@ -19,9 +19,9 @@ project "cfacter" do |proj|
   # if it was 0
   proj.release_from_git
   if proj._project.release.to_s == '0'
-    gem_version += '.'
+    gem_version += '.cfacter.'
   else
-    gem_version += ".rc."
+    gem_version += ".cfacter.rc."
   end
   gem_version += Time.now.strftime("%Y%m%d")
   proj.version gem_version
@@ -56,9 +56,9 @@ project "cfacter" do |proj|
   proj.component "facter-source"
   proj.component "leatherman-source"
   proj.component "cpp-hocon-source"
-  proj.component "cfacter-source-gem"
-  proj.component "cfacter-precompiled-gem"
+  proj.component "facter-source-gem"
+  proj.component "facter-precompiled-gem"
   proj.component "puppet-runtime"
-  proj.fetch_artifact "#{settings[:gemdir]}/cfacter*.gem"
+  proj.fetch_artifact "#{settings[:gemdir]}/facter*.gem"
   proj.no_packaging true
 end
