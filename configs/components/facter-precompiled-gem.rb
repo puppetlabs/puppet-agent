@@ -1,8 +1,8 @@
-component "cfacter-precompiled-gem" do |pkg, settings, platform|
-  pkg.build_requires 'cfacter-source-gem'
+component "facter-precompiled-gem" do |pkg, settings, platform|
+  pkg.build_requires 'facter-source-gem'
 
-  pkg.add_source("file://resources/files/cfacter-gem/cfacter-precompiled.gemspec.erb", erb: 'true')
-  pkg.install_file('cfacter-precompiled.gemspec', "#{settings[:gemdir]}")
+  pkg.add_source("file://resources/files/facter-gem/facter-precompiled.gemspec.erb", erb: 'true')
+  pkg.install_file('facter-precompiled.gemspec', "#{settings[:gemdir]}")
 
   if platform.is_osx?
     pkg.build_requires "cmake"
@@ -20,7 +20,7 @@ component "cfacter-precompiled-gem" do |pkg, settings, platform|
     pkg.build_requires "pl-yaml-cpp"
   end
 
-  pkg.add_source("file://resources/files/cfacter-gem/make.bat")
+  pkg.add_source("file://resources/files/facter-gem/make.bat")
   pkg.install_file('make.bat', "#{settings[:build_tools_dir]}")
 
   if platform.is_osx?
@@ -44,12 +44,12 @@ component "cfacter-precompiled-gem" do |pkg, settings, platform|
   pkg.install do
     [
       "pushd #{settings[:gemdir]}",
-      "#{rm} cfacter*.gem",
+      "#{rm} facter*.gem",
       "pushd ext/facter",
       "#{settings[:ruby_binary]} extconf.rb",
       "#{make} install",
       "popd",
-      "#{settings[:gem_binary]} build cfacter-precompiled.gemspec",
+      "#{settings[:gem_binary]} build facter-precompiled.gemspec",
       "popd"
     ]
   end
