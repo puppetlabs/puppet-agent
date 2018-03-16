@@ -77,6 +77,8 @@ platform_repos:
     repo_location: repos/el/7/**/ppc64le
   - name: el-7-aarch64
     repo_location: repos/el/7/**/aarch64
+  - name: redhatfips-7-x86_64
+    repo_location: repos/redhat-fips/7/**/x86_64
   - name: sles-11-s390x
     repo_location: repos/sles/11/**/s390x
   - name: sles-11-i386
