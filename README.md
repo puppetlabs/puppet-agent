@@ -12,17 +12,32 @@ The Puppet Agent
 Overview
 ---
 The puppet agent is a collection of software that is required for puppet and
-its dependencies to run. The full list of software and projects included in the
-puppet agent can be found in the [project
-definition](configs/projects/puppet-agent.rb). This repo is where the
-puppet-agent [vanagon](http://github.com/puppetlabs/vanagon) configuration
-lives. It is used to drive the building of puppet-agent packages for releases.
+its dependencies to run. This includes
+[puppet](https://github.com/puppetlabs/puppet),
+[facter](https://github.com/puppetlabs/facter), and other Puppet software, but
+also vendored dependencies like ruby, curl, openssl, and more.
+
+This repository contains configuration to build puppet-agent and the facter gem
+for all of Puppet's supported platforms using
+[vanagon](https://github.com/puppetlabs/vanagon), a packaging utiltiy.
+
+The full list of software components built into the puppet agent and the
+facter gem can be found in their [project definitions](configs/projects/), and
+each of the components has its own configuration in the [components
+directory](configs/components/).
+
+Components that are not developed by Puppet (like ruby, curl, or openssl) are
+built separately into a tarball and consumed here in the
+[puppet-runtime](configs/components/puppet-runtime.rb) component. See the
+[puppet-runtime](https://github.com/puppetlabs/puppet-runtime) project for more
+information and a full list of the vendored dependencies it provides.
 
 Runtime Requirements
 ---
-The [Gemfile](Gemfile) specifies all of the needed ruby libraries to build a puppet-agent
-package. Additionally, puppet-agent requires a VM to build within for each
-desired package.
+Ruby and [bundler](http://bundler.io/) are required to build puppet-agent. The
+[Gemfile](Gemfile) specifies all of the necessary ruby libraries to build a
+puppet-agent package.  Additionally, puppet-agent requires a VM to build within
+for each desired package.
 
 ## Environment variables
 #### VANAGON\_LOCATION
@@ -33,47 +48,54 @@ The location of Vanagon in the Gemfile can be overridden with the environment va
 * `file:///workspace/vanagon` - Absolute file path
 * `file://../vanagon` - File path relative to the project directory
 
-Building puppet-agent
+Building puppet-agent or the facter gem
 ---
-If you wish to build puppet-agent yourself, it should be relatively easy. First
-`bundle install`, followed by `bundle exec build puppet-agent <desired
-platform> <vm hostname>`, where the platform is a platform supported by vanagon
-and vm hostname is the hostname of a vm of the desired platform. The current
-user must be able to ssh into that vm as root (vanagon has facilities to provide
-an ssh key beyond what is listed in .ssh/config).
 
-#### Building different ruby versions
-There are multiple ruby versions available to use in puppet-agent. To switch between ruby versions, update the `ruby_version` and `gem_home` settings in the [puppet-agent project config](https://github.com/puppetlabs/puppet-agent/blob/master/configs/projects/puppet-agent.rb)
+If you wish to build puppet-agent or the facter gem yourself:
 
-To switch to ruby 2.3.1:
+1. First, build the
+   [puppet-runtime](https://github.com/puppetlabs/puppet-runtime) for your
+   target platform, and take note of the path of the finished tarball.
+2. Run `bundle install` to install required ruby dependencies.
+3. When building puppet-agent or the cfacter gem on infrastructure outside of
+   Puppet, you will need to make a few edits in the component and project
+   files. The build process depends on the following packages:
+     - GCC (>=4.8.0)
+     - Boost (>=1.57)
+     - CMake (>= 3.2.3)
+     - yaml-cpp (>= 0.5.0)
 
-  ```
-  proj.setting(:ruby_version, "2.3.1")`
-  proj.setting(:gem_home, File.join(proj.libdir, "ruby", "gems", "2.3.0"))
-  ```
+     Any references to pl-gcc, pl-cmake, pl-boost, pl-yaml-cpp, etc. in the
+     [configs directory](configs/) will need to be changed to refer to
+     equivalent installable packages on your target operating system. In many
+     cases, you can drop the `pl-` prefix and ensure that CXX or CC envrionment
+     variables are what they should be.
+4. Update the `pkg.url` and `pkg.sha1sum` in the [puppet-runtime
+   component](configs/components/puppet-runtime.rb) so that they refer to the
+   output of your puppet-runtime build. You can use a `file://` url with a full
+   path in place of the default url.
+  - You also may need to change the source URIs for some other components. We
+    recognize this is less than ideal at this point, but we wanted to err on
+    the side of getting this work out in public rather than having everything
+    perfect. If you have your own mirror of the components of puppet-agent, you
+    can also use a rewrite rule. See the [Vanagon
+    README](https://github.com/puppetlabs/vanagon/blob/master/examples/projects/project.rb#L26)
+    for an example.
+5. Now use vanagon to build the puppet-agent. Run the following:
 
-To switch to ruby 2.1.9:
+   ```sh
+   bundle exec build <project-name> <platform> <vm-hostname>
+   ```
 
-  ```
-  proj.setting(:ruby_version, "2.1.9")`
-  proj.setting(:gem_home, File.join(proj.libdir, "ruby", "gems", "2.1.0"))
-  ```
-
-
-
-Requirements for building
----
-To build puppet-agent, you'll need the following:
- * GCC (>=4.8.0)
- * Boost (>=1.57)
- * CMake (>= 3.2.3)
- * yaml-cpp (>= 0.5.0)
-
-To build puppet-agent on infrastructure outside of Puppet Labs, you'll need to make a few edits in the component and project files. Any references to pl-gcc, pl-cmake, pl-boost, pl-yaml-cpp, etc need to be changed. In many cases, just drop the pl- prefix and ensure that CXX or CC envrionment variables are what they should be.
-
-You also may need to change the source URIs for components. We recognize this is less than ideal at this point, but we wanted to error on the side of getting this work out in public rather than having everything perfect.
-
-If you have your own mirror of the components of puppet-agent, you can also use a rewrite rule. See the [Vanagon README](https://github.com/puppetlabs/vanagon/blob/master/examples/projects/project.rb#L26) for an example.
+   Where:
+   - project name is a project from [configs/projects](configs/projects) (this
+     can be `puppet-agent`, `facter-gem`, or `facter-source-gem`),
+   - platform is a platform supported by vanagon and defined in the
+     [configs/platforms](configs/platforms/) directory (for example,
+     `el-7-x86_64`), and
+   - the vm hostname is the hostname of a vm matching the desired platform. The
+     current user must be able to ssh into that vm as root (vanagon has facilities
+     to provide an ssh key beyond what is listed in .ssh/config).
 
 Branches in puppet-agent
 ---

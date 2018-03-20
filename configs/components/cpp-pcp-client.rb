@@ -11,7 +11,11 @@ component "cpp-pcp-client" do |pkg, settings, platform|
     pkg.environment "PATH" => "#{settings[:bindir]}:/opt/pl-build-tools/bin:$$PATH"
   end
 
-  pkg.build_requires "openssl"
+  if settings[:system_openssl]
+    pkg.build_requires "openssl-devel"
+  else
+    pkg.build_requires "puppet-runtime" # Provides openssl
+  end
   pkg.build_requires "leatherman"
 
   if platform.is_aix?

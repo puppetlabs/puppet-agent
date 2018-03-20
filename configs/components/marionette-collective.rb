@@ -1,8 +1,7 @@
 component "marionette-collective" do |pkg, settings, platform|
   pkg.load_from_json("configs/components/marionette-collective.json")
 
-  pkg.build_requires "ruby-#{settings[:ruby_version]}"
-  pkg.build_requires "ruby-stomp"
+  pkg.build_requires "puppet-runtime" # Provides ruby and ruby-stomp
 
   # Here we replace and provide mcollective 3 to ensure that even as we continue
   # to release 2.x versions of mcollective upgrades to puppet-agent will be clean

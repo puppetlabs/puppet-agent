@@ -1,7 +1,4 @@
 component 'puppet-runtime' do |pkg, settings, platform|
-  # This component is a placeholder for the future migration of several vendor
-  # dependencies into a separate project, puppet-runtime. It is not included in
-  # the agent project yet.
   runtime_details = JSON.parse(File.read('configs/components/puppet-runtime.json'))
   runtime_tag = runtime_details['ref'][/refs\/tags\/(.*)/, 1]
   raise "Unable to determine a tag for puppet-runtime (given #{runtime_details['ref']})" unless runtime_tag
@@ -81,4 +78,3 @@ component 'puppet-runtime' do |pkg, settings, platform|
     install_command
   end
 end
-
