@@ -1,7 +1,7 @@
 # This component exists to link in the gcc and stdc++ runtime libraries as well as libssp.
 component "runtime" do |pkg, settings, platform|
-
   pkg.add_source "file://resources/files/runtime/runtime.sh"
+
   if platform.name =~ /solaris-10/
     if platform.architecture == 'sparc'
       pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/solaris/10/pl-gcc-4.8.2-9.#{platform.architecture}.pkg.gz"
@@ -13,10 +13,15 @@ component "runtime" do |pkg, settings, platform|
   elsif platform.is_cross_compiled_linux? || platform.name =~ /solaris-11/
     pkg.build_requires "pl-binutils-#{platform.architecture}"
     pkg.build_requires "pl-gcc-#{platform.architecture}"
+    pkg.build_requires "pl-binutils-#{platform.architecture}"
   elsif platform.is_aix?
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-gcc-5.2.0-11.aix#{platform.os_version}.ppc.rpm"
     libdir = "/opt/pl-build-tools/lib/gcc/powerpc-ibm-aix#{platform.os_version}.0.0/5.2.0/"
   elsif platform.is_windows?
+    pkg.build_requires "pl-gdbm-#{platform.architecture}"
+    pkg.build_requires "pl-iconv-#{platform.architecture}"
+    pkg.build_requires "pl-libffi-#{platform.architecture}"
+    pkg.build_requires "pl-pdcurses-#{platform.architecture}"
     # We only need zlib because curl is dynamically linking against zlib
     pkg.build_requires "pl-zlib-#{platform.architecture}"
   else

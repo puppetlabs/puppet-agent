@@ -33,9 +33,8 @@ component "leatherman" do |pkg, settings, platform|
     pkg.build_requires "pl-gettext"
   end
 
-  pkg.build_requires "curl"
+  pkg.build_requires "puppet-runtime" # Provides curl and ruby
   pkg.build_requires "runtime"
-  pkg.build_requires "ruby-#{settings[:ruby_version]}"
 
   ruby = "#{settings[:host_ruby]} -rrbconfig"
 
