@@ -1,13 +1,9 @@
 component "puppet" do |pkg, settings, platform|
   pkg.load_from_json("configs/components/puppet.json")
 
-  pkg.build_requires "ruby-#{settings[:ruby_version]}"
+  pkg.build_requires "puppet-runtime" # Provides ruby and rubygem-win32-dir
   pkg.build_requires "facter"
   pkg.build_requires "hiera"
-  # Used to specify default directories when installing puppet
-  if platform.is_windows?
-    pkg.build_requires "rubygem-win32-dir"
-  end
   # Used to compile binary translation files
   # i18n is not supported on Solaris
   if platform.is_macos?
