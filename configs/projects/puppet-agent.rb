@@ -241,7 +241,6 @@ project "puppet-agent" do |proj|
   proj.component "rubygem-locale"
   proj.component "rubygem-gettext"
   proj.component "rubygem-fast_gettext"
-  proj.component "rubygem-gettext-setup"
   proj.component "rubygem-multi_json"
   if platform.is_windows?
     proj.component "rubygem-ffi"
