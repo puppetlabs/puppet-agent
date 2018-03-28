@@ -4,7 +4,7 @@ component 'puppet-runtime' do |pkg, settings, platform|
   raise "Unable to determine a tag for puppet-runtime (given #{runtime_details['ref']})" unless runtime_tag
   pkg.version runtime_tag
 
-  tarball_name = "agent-runtime-5.5.x-#{pkg.get_version}.#{platform.name}.tar.gz"
+  tarball_name = "agent-runtime-master-#{pkg.get_version}.#{platform.name}.tar.gz"
 
   pkg.sha1sum "http://builds.puppetlabs.lan/puppet-runtime/#{pkg.get_version}/artifacts/#{tarball_name}.sha1"
   pkg.url "http://builds.puppetlabs.lan/puppet-runtime/#{pkg.get_version}/artifacts/#{tarball_name}"
