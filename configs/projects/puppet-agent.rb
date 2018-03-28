@@ -5,7 +5,7 @@ project "puppet-agent" do |proj|
   runtime_details = JSON.parse(File.read(File.join(File.dirname(__FILE__), '..', 'components/puppet-runtime.json')))
   runtime_tag = runtime_details['ref'][/refs\/tags\/(.*)/, 1]
   raise "Unable to determine a tag for puppet-runtime (given #{runtime_details['ref']})" unless runtime_tag
-  proj.inherit_settings 'agent-runtime-5.5.x', 'git://github.com/puppetlabs/puppet-runtime', runtime_tag
+  proj.inherit_settings 'agent-runtime-master', 'git://github.com/puppetlabs/puppet-runtime', runtime_tag
 
   platform = proj.get_platform
 
