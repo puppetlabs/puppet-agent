@@ -1,4 +1,4 @@
-platform "redhat-fips-7-x86_64" do |plat|
+platform "redhatfips-7-x86_64" do |plat|
   plat.servicedir "/usr/lib/systemd/system"
   plat.defaultdir "/etc/sysconfig"
   plat.servicetype "systemd"
