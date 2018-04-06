@@ -32,32 +32,34 @@ component "puppet" do |pkg, settings, platform|
     pkg.provides 'puppet-common', '4.0.0'
   end
 
-  case platform.servicetype
-  when "systemd"
-    pkg.install_service "ext/systemd/puppet.service", "ext/redhat/client.sysconfig"
-  when "sysv"
-    if platform.is_deb?
-      pkg.install_service "ext/debian/puppet.init", "ext/debian/puppet.default"
-    elsif platform.is_sles?
-      pkg.install_service "ext/suse/client.init", "ext/redhat/client.sysconfig"
-    elsif platform.is_rpm?
-      pkg.install_service "ext/redhat/client.init", "ext/redhat/client.sysconfig"
+  platform.get_service_types.each do |servicetype|
+    case servicetype
+    when "systemd"
+      pkg.install_service "ext/systemd/puppet.service", "ext/redhat/client.sysconfig", init_system: servicetype
+    when "sysv"
+      if platform.is_deb?
+        pkg.install_service "ext/debian/puppet.init", "ext/debian/puppet.default", init_system: servicetype
+      elsif platform.is_sles?
+        pkg.install_service "ext/suse/client.init", "ext/redhat/client.sysconfig", init_system: servicetype
+      elsif platform.is_rpm?
+        pkg.install_service "ext/redhat/client.init", "ext/redhat/client.sysconfig", init_system: servicetype
+      end
+    when "launchd"
+      pkg.install_service "ext/osx/puppet.plist", nil, "com.puppetlabs.puppet", init_system: servicetype
+    when "smf"
+      pkg.install_service "ext/solaris/smf/puppet.xml", "ext/solaris/smf/puppet", service_type: "network", init_system: servicetype
+    when "aix"
+      pkg.install_service "resources/aix/puppet.service", nil, "puppet", init_system: servicetype
+    when "windows"
+      # Note - this definition indicates that the file should be filtered out from the Wix
+      # harvest. A corresponding service definition file is also required in resources/windows/wix
+      pkg.install_service "SourceDir\\#{settings[:base_dir]}\\#{settings[:company_id]}\\#{settings[:product_id]}\\sys\\ruby\\bin\\ruby.exe", init_system: servicetype
+    else
+      fail "need to know where to put service files"
     end
-  when "launchd"
-    pkg.install_service "ext/osx/puppet.plist", nil, "com.puppetlabs.puppet"
-  when "smf"
-    pkg.install_service "ext/solaris/smf/puppet.xml", "ext/solaris/smf/puppet", service_type: "network"
-  when "aix"
-    pkg.install_service "resources/aix/puppet.service", nil, "puppet"
-  when "windows"
-    # Note - this definition indicates that the file should be filtered out from the Wix
-    # harvest. A corresponding service definition file is also required in resources/windows/wix
-    pkg.install_service "SourceDir\\#{settings[:base_dir]}\\#{settings[:company_id]}\\#{settings[:product_id]}\\sys\\ruby\\bin\\ruby.exe"
-  else
-    fail "need to know where to put service files"
   end
 
-  if (platform.servicetype == "sysv" && platform.is_rpm?) || platform.is_aix?
+  if (platform.get_service_types.include?("sysv") && platform.is_rpm?) || platform.is_aix?
     puppet_bin = "/opt/puppetlabs/bin/puppet"
     rpm_statedir = "%{_localstatedir}/lib/rpm-state/#{pkg.get_name}"
     service_statefile = "#{rpm_statedir}/service_state"
@@ -90,7 +92,7 @@ component "puppet" do |pkg, settings, platform|
   # in any meaningful way.
   # - Ryan "I'm sorry. I'm so sorry." McKern, June 8 2015
   # - Jira # RE-3954
-  if platform.servicetype == 'systemd'
+  if platform.get_service_types.include?('systemd')
     pkg.build do
       "echo 'd #{settings[:piddir]} 0755 root root -' > puppet-agent.conf"
     end
