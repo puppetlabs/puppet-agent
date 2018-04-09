@@ -21,32 +21,34 @@ component "marionette-collective" do |pkg, settings, platform|
     pkg.replaces 'mcollective-doc'
   end
 
-  case platform.servicetype
-  when "systemd"
-    pkg.install_service "ext/aio/redhat/mcollective.service", "ext/aio/redhat/mcollective.sysconfig", "mcollective"
-  when "sysv"
-    if platform.is_deb?
-      pkg.install_service "ext/aio/debian/mcollective.init", "ext/aio/debian/mcollective.default", "mcollective"
-    elsif platform.is_sles?
-      pkg.install_service "ext/aio/suse/mcollective.init", "ext/aio/redhat/mcollective.sysconfig", "mcollective"
-    elsif platform.is_rpm?
-      pkg.install_service "ext/aio/redhat/mcollective.init", "ext/aio/redhat/mcollective.sysconfig", "mcollective"
+  platform.get_service_types.each do |servicetype|
+    case servicetype
+    when "systemd"
+      pkg.install_service "ext/aio/redhat/mcollective.service", "ext/aio/redhat/mcollective.sysconfig", "mcollective", init_system: servicetype
+    when "sysv"
+      if platform.is_deb?
+        pkg.install_service "ext/aio/debian/mcollective.init", "ext/aio/debian/mcollective.default", "mcollective", init_system: servicetype
+      elsif platform.is_sles?
+        pkg.install_service "ext/aio/suse/mcollective.init", "ext/aio/redhat/mcollective.sysconfig", "mcollective", init_system: servicetype
+      elsif platform.is_rpm?
+        pkg.install_service "ext/aio/redhat/mcollective.init", "ext/aio/redhat/mcollective.sysconfig", "mcollective", init_system: servicetype
+      end
+    when "launchd"
+      pkg.install_service "ext/aio/osx/mcollective.plist", nil, "com.puppetlabs.mcollective", init_system: servicetype
+    when "smf"
+      pkg.install_service "ext/aio/solaris/smf/mcollective.xml", nil, "mcollective", service_type: "network", init_system: servicetype
+    when "aix"
+      pkg.install_service "resources/aix/mcollective.service", nil, "mcollective", init_system: servicetype
+    when "windows"
+      # Note - this definition indicates that the file should be filtered out from the Wix
+      # harvest. A corresponding service definition file is also required in resources/windows/wix
+      pkg.install_service "SourceDir\\#{settings[:base_dir]}\\#{settings[:company_id]}\\#{settings[:product_id]}\\sys\\ruby\\bin\\rubyw.exe", init_system: servicetype
+    else
+      fail "need to know where to put service files"
     end
-  when "launchd"
-    pkg.install_service "ext/aio/osx/mcollective.plist", nil, "com.puppetlabs.mcollective"
-  when "smf"
-    pkg.install_service "ext/aio/solaris/smf/mcollective.xml", nil, "mcollective", service_type: "network"
-  when "aix"
-    pkg.install_service "resources/aix/mcollective.service", nil, "mcollective"
-  when "windows"
-    # Note - this definition indicates that the file should be filtered out from the Wix
-    # harvest. A corresponding service definition file is also required in resources/windows/wix
-    pkg.install_service "SourceDir\\#{settings[:base_dir]}\\#{settings[:company_id]}\\#{settings[:product_id]}\\sys\\ruby\\bin\\rubyw.exe"
-  else
-    fail "need to know where to put service files"
   end
 
-  if (platform.servicetype == "sysv" && platform.is_rpm?) || platform.is_aix?
+  if (platform.get_service_types.include?("sysv") && platform.is_rpm?) || platform.is_aix?
     puppet_bin = "/opt/puppetlabs/bin/puppet"
     rpm_statedir = "%{_localstatedir}/lib/rpm-state/#{pkg.get_name}"
     service_statefile = "#{rpm_statedir}/service_state"
