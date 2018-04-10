@@ -49,9 +49,6 @@ project "puppet-agent" do |proj|
     proj.setting(:hiera_root, File.join(proj.install_root, "hiera"))
     proj.setting(:hiera_bindir, File.join(proj.hiera_root, "bin"))
     proj.setting(:hiera_libdir, File.join(proj.hiera_root, "lib"))
-    proj.setting(:mco_root, File.join(proj.install_root, "mcollective"))
-    proj.setting(:mco_bindir, File.join(proj.mco_root, "bin"))
-    proj.setting(:mco_libdir, File.join(proj.mco_root, "lib"))
     proj.setting(:pxp_root, File.join(proj.install_root, "pxp-agent"))
     proj.setting(:service_dir, File.join(proj.install_root, "service"))
     proj.setting(:ruby_dir, File.join(proj.install_root, "sys/ruby"))
@@ -61,7 +58,7 @@ project "puppet-agent" do |proj|
   proj.setting(:puppet_configdir, File.join(proj.sysconfdir, 'puppet'))
   proj.setting(:puppet_codedir, File.join(proj.sysconfdir, 'code'))
 
-  proj.description "The Puppet Agent package contains all of the elements needed to run puppet, including ruby, facter, hiera and mcollective."
+  proj.description "The Puppet Agent package contains all of the elements needed to run puppet, including ruby, facter, and hiera."
   proj.version_from_git
   proj.write_version_file File.join(proj.prefix, 'VERSION')
   proj.license "See components"
@@ -89,7 +86,6 @@ project "puppet-agent" do |proj|
   proj.component "hiera"
   proj.component "leatherman"
   proj.component "cpp-hocon"
-  proj.component "marionette-collective"
   proj.component "cpp-pcp-client"
   proj.component "pxp-agent"
   proj.component "libwhereami"

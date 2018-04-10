@@ -28,12 +28,6 @@
             <Directory Id="PuppetConfDir" Name="etc"/>
             <Directory Id="PuppetVarDir" Name="var"/>
           </Directory>
-          <Directory Id="MCOAppData" Name="mcollective">
-            <Directory Id="MCOConfDir" Name="etc"/>
-            <Directory Id="MCOVarDir" Name="var">
-              <Directory Id="MCOLogDir" Name="log"/>
-            </Directory>
-          </Directory>
           <Directory Id="FacterAppData" Name="facter">
             <Directory Id="FactsDotD" Name="facts.d"/>
           </Directory>
@@ -186,20 +180,6 @@
         Permanent="yes"
         Guid="B95A17F3-CF5E-4EC7-859E-F10C0965645F"
         Directory="PuppetVarDir">
-        <CreateFolder />
-      </Component>
-      <Component
-        Id="MCOConfDir"
-        Permanent="yes"
-        Guid="3E904914-17C7-138C-F5DF-280F680E067C"
-        Directory="MCOConfDir">
-        <CreateFolder />
-      </Component>
-      <Component
-        Id="MCOLogDir"
-        Permanent="yes"
-        Guid="F9357673-2AF2-90FA-8707-14EE37FA0657"
-        Directory="MCOLogDir">
         <CreateFolder />
       </Component>
       <Component

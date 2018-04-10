@@ -1,1 +1,0 @@
-/opt/puppetlabs/puppet/bin/ruby -s mcollective -u root -a '/opt/puppetlabs/puppet/bin/mcollectived --config=/etc/puppetlabs/mcollective/server.cfg --no-daemonize'
