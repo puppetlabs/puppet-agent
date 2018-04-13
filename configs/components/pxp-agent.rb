@@ -96,16 +96,6 @@ component "pxp-agent" do |pkg, settings, platform|
     # See https://tickets.puppetlabs.com/browse/PA-1850 for all the details.
     pkg.install do
       dependent_dlls = [
-        "leatherman_curl.dll",
-        "leatherman_execution.dll",
-        "leatherman_file_util.dll",
-        "leatherman_json_container.dll",
-        "leatherman_locale.dll",
-        "leatherman_logging.dll",
-        "leatherman_nowide.dll",
-        "leatherman_util.dll",
-        "leatherman_windows.dll",
-        "libcpp-pcp-client.dll",
         "libeay32.dll",
         "ssleay32.dll",
         platform.architecture == "x64" ? "libgcc_s_seh-1.dll" : "libgcc_s_sjlj-1.dll",
