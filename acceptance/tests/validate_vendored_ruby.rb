@@ -146,7 +146,7 @@ test_name 'PA-1319: Validate that the vendored ruby can load gems and is configu
   step "'irb' successfully loads gems" do
     agents.each do |agent|
       irb = irb_command(agent)
-      ['hocon', 'deep_merge'].each do |gem|
+      ['hocon', 'deep_merge', 'puppet/resource_api'].each do |gem|
         stdout = on(agent, "echo \"require '#{gem}'\" | #{irb}").stdout.chomp
         assert_match(/true/, stdout, "'irb' failed to require the #{gem} gem")
       end
@@ -168,4 +168,3 @@ test_name 'PA-1319: Validate that the vendored ruby can load gems and is configu
     end
   end
 end
-
