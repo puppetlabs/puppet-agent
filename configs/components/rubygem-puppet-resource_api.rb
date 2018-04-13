@@ -13,7 +13,7 @@ component "rubygem-puppet-resource_api" do |pkg, settings, platform|
   pkg.environment "RUBYLIB", "#{settings[:ruby_vendordir]}:$(RUBYLIB)"
 
   pkg.build do
-    ["gem build puppet-resource_api.gemspec"]
+    ["#{settings[:host_gem]} build puppet-resource_api.gemspec"]
   end
 
   pkg.install do
