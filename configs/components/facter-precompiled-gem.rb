@@ -1,8 +1,7 @@
 component "facter-precompiled-gem" do |pkg, settings, platform|
   pkg.build_requires 'facter-source-gem'
 
-  pkg.add_source("file://resources/files/facter-gem/facter-precompiled.gemspec.erb", erb: 'true')
-  pkg.install_file('facter-precompiled.gemspec', "#{settings[:gemdir]}")
+  pkg.add_source("file://resources/files/facter-gem/facter-precompiled.gemspec.erb")
 
   if platform.is_osx?
     pkg.build_requires "cmake"
@@ -40,6 +39,11 @@ component "facter-precompiled-gem" do |pkg, settings, platform|
     pkg.environment('FACTER_CMAKE_OPTS', "-DBOOST_STATIC=ON -DYAMLCPP_STATIC=ON -DLEATHERMAN_USE_CURL=FALSE -DWITHOUT_CURL=TRUE -DWITHOUT_OPENSSL=TRUE -DWITHOUT_BLKID=TRUE -DFACTER_SKIP_TESTS=TRUE -DWITHOUT_JRUBY=ON")
   end
 
+  pkg.configure do
+    [
+      "#{settings[:ruby_binary]} generate-gemspec.rb facter-precompiled.gemspec.erb '#{settings[:gemdir]}' '#{settings[:project_version]}'"
+    ]
+  end
 
   pkg.install do
     [
