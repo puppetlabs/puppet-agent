@@ -11,9 +11,15 @@ component "facter-source-gem" do |pkg, settings, platform|
   pkg.install_file('extconf.rb', "#{settings[:gemdir]}/ext/facter")
   pkg.install_file('Makefile.erb', "#{settings[:gemdir]}/ext/facter")
 
+  if platform.is_windows?
+    gemdir = "$(shell cygpath -m #{settings[:gemdir]})"
+  else
+    gemdir = settings[:gemdir]
+  end
+
   pkg.configure do
     [
-      "#{settings[:ruby_binary]} generate-gemspec.rb facter-source.gemspec.erb '#{settings[:gemdir]}' '#{settings[:project_version]}'"
+      "#{settings[:ruby_binary]} generate-gemspec.rb facter-source.gemspec.erb \"#{gemdir}\" '#{settings[:project_version]}'"
     ]
   end
 
