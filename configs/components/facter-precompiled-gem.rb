@@ -39,9 +39,15 @@ component "facter-precompiled-gem" do |pkg, settings, platform|
     pkg.environment('FACTER_CMAKE_OPTS', "-DBOOST_STATIC=ON -DYAMLCPP_STATIC=ON -DLEATHERMAN_USE_CURL=FALSE -DWITHOUT_CURL=TRUE -DWITHOUT_OPENSSL=TRUE -DWITHOUT_BLKID=TRUE -DFACTER_SKIP_TESTS=TRUE -DWITHOUT_JRUBY=ON")
   end
 
+  if platform.is_windows?
+    gemdir = "$(shell cygpath -m #{settings[:gemdir]})"
+  else
+    gemdir = settings[:gemdir]
+  end
+
   pkg.configure do
     [
-      "#{settings[:ruby_binary]} generate-gemspec.rb facter-precompiled.gemspec.erb '#{settings[:gemdir]}' '#{settings[:project_version]}'"
+      "#{settings[:ruby_binary]} generate-gemspec.rb facter-precompiled.gemspec.erb \"#{gemdir}\" '#{settings[:project_version]}'"
     ]
   end
 
