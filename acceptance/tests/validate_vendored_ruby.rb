@@ -9,7 +9,7 @@ def package_installer(agent)
   when /aix/
     lambda { |package| on(agent, "rpm -Uvh #{package}") }
   when /solaris-10/
-    lambda { |package| on(agent, "opt/csw/bin/pkgutil -y -i #{package}") }
+    lambda { |package| on(agent, "opt/csw/bin/pkgutil --config=/var/tmp/vanagon-pkgutil.conf  -y -i #{package}") }
   else
     lambda { |package| agent.install_package(package) }
   end
@@ -58,7 +58,10 @@ def setup_build_environment(agent)
     vanagon_noask_path = "/var/tmp/vanagon-noask"
     on(agent, "echo \"#{vanagon_noask_contents}\" > #{vanagon_noask_path}")
 
-    on(agent, "pkgadd -n -a #{vanagon_noask_path} -G -d http://get.opencsw.org/now all")
+    vanagon_pkgutil_contents = "mirror=http://www.gtlib.gatech.edu/pub/OpenCSW/testing"
+    vanagon_pkgutil_path = "/var/tmp/vanagon-pkgutil.conf"
+    on(agent, "echo \"#{vanagon_pkgutil_contents}\" > #{vanagon_pkgutil_path}")
+
     ["rsync", "gmake", "pkgconfig", "ggrep", "gcc4core"].each { |pkg| install_package_on_agent.call(pkg) }
     install_package_on_agent.call("coreutils") if agent['platform'] =~ /sparc/
     on(agent, "ln -sf /opt/csw/bin/rsync /usr/bin/rsync")
