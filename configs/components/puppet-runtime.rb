@@ -34,11 +34,7 @@ component 'puppet-runtime' do |pkg, settings, platform|
   # Even though puppet's ruby comes from puppet-runtime, we still need a ruby
   # to build with on these platforms:
   if platform.architecture == "sparc"
-    if platform.os_version == "10"
-      # ruby1.8 is not new enough to successfully cross-compile ruby 2.1.x (it
-      # doesn't understand the --disable-gems flag)
-      pkg.build_requires 'ruby20'
-    elsif platform.os_version == "11"
+    if platform.os_version == "11"
       pkg.build_requires 'pl-ruby'
     end
   elsif platform.is_cross_compiled_linux?
