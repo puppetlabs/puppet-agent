@@ -1,11 +1,42 @@
 project "puppet-agent" do |proj|
-  # puppet-agent inherits most build settings from puppetlabs/puppet-runtime:
-  # - Modifications to global settings like flags and target directories should be made in puppet-runtime.
-  # - Settings included in this file should apply only to local components in this repository.
-  runtime_details = JSON.parse(File.read(File.join(File.dirname(__FILE__), '..', 'components/puppet-runtime.json')))
-  runtime_tag = runtime_details['ref'][/refs\/tags\/(.*)/, 1]
-  raise "Unable to determine a tag for puppet-runtime (given #{runtime_details['ref']})" unless runtime_tag
-  proj.inherit_settings 'agent-runtime-5.5.x', runtime_details['url'], runtime_tag
+  # puppet-agent inherits most build settings from puppet-runtime
+  # (https://github.com/puppetlabs/puppet-runtime).
+  # - Modifications to global settings like flags and target directories should
+  #   be made in puppet-runtime.
+  # - Settings included in this file should apply only to local components in
+  #   this repository.
+
+  # puppet-runtime is maintained as a separate vanagon project. When building
+  # puppet-agent outside of puppetlabs infrastructure, you will need to do the
+  # following in order to build successfully:
+  #
+  # 1. Clone the puppet-runtime project locally
+  # 2. Check out the puppet-runtime reference specified in this repository in
+  #    configs/component/puppet-agent.json
+  # 3. Build puppet-runtime for the same platform(s) you intend to build
+  #    puppet-agent for. This process is very similar to the puppet-agent build
+  #    process; See puppet-runtime's README.
+  # 4. Set the `PUPPET_RUNTIME_PROJECT_PATH` environment variable to point to
+  #    your local puppet-runtime directory before building puppet-agent. The
+  #    puppet-runtime component will fetch an appropriate puppet-runtime tarball
+  #    from the `output/` directory of that project (all finished builds are
+  #    placed there by default).
+
+  proj.setting(:puppet_runtime_project, 'agent-runtime-5.5.x')
+
+  if ENV['PUPPET_RUNTIME_PROJECT_PATH']
+    # Load settings from a local project directory:
+    project_path = File.expand_path(ENV['PUPPET_RUNTIME_PROJECT_PATH'])
+    raise "Unable to find a puppet-runtime project directory at #{project_path}" unless Dir.exist?(project_path)
+    proj.inherit_local_settings(proj.settings[:puppet_runtime_project], project_path)
+  else
+    # Assume this build is taking place on puppetlabs infrastructure -
+    # Load settings based on a tagged and shipped build of puppet-runtime:
+    runtime_details = JSON.parse(File.read(File.join(File.dirname(__FILE__), '..', 'components/puppet-runtime.json')))
+    runtime_tag = runtime_details['ref'][/refs\/tags\/(.*)/, 1]
+    raise "Unable to determine a tag for puppet-runtime (given #{runtime_details['ref']})" unless runtime_tag
+    proj.inherit_settings(proj.settings[:puppet_runtime_project], runtime_details['url'], runtime_tag)
+  end
 
   platform = proj.get_platform
 
@@ -98,6 +129,7 @@ project "puppet-agent" do |proj|
   # Provides augeas, curl, libedit, libxml2, libxslt, openssl, puppet-ca-bundle, ruby and rubygem-*
   proj.component "puppet-runtime"
   proj.component "nssm" if platform.is_windows?
+  proj.component "rubygem-puppet-resource_api"
 
   # These utilites don't really work on unix
   if platform.is_linux?

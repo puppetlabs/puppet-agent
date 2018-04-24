@@ -1,13 +1,53 @@
 component 'puppet-runtime' do |pkg, settings, platform|
-  runtime_details = JSON.parse(File.read('configs/components/puppet-runtime.json'))
-  runtime_tag = runtime_details['ref'][/refs\/tags\/(.*)/, 1]
-  raise "Unable to determine a tag for puppet-runtime (given #{runtime_details['ref']})" unless runtime_tag
-  pkg.version runtime_tag
+  # puppet-runtime (https://github.com/puppetlabs/puppet-runtime) is maintained
+  # as a separate vanagon project. You must set $PUPPET_RUNTIME_PROJECT_PATH to
+  # build puppet-agent outisde of puppetlabs infrastructure. See
+  # configs/projects/puppet-agent.rb for build instructions.
+  if ENV['PUPPET_RUNTIME_PROJECT_PATH']
+    # Attempt to find a tarball in the `output/` directory of a local puppet-runtime clone
+    project_path = File.expand_path(ENV['PUPPET_RUNTIME_PROJECT_PATH'])
 
-  tarball_name = "agent-runtime-5.5.x-#{pkg.get_version}.#{platform.name}.tar.gz"
+    raise "Unable to find a puppet-runtime project directory at #{project_path}" unless Dir.exist?(project_path)
 
-  pkg.sha1sum "http://builds.puppetlabs.lan/puppet-runtime/#{pkg.get_version}/artifacts/#{tarball_name}.sha1"
-  pkg.url "http://builds.puppetlabs.lan/puppet-runtime/#{pkg.get_version}/artifacts/#{tarball_name}"
+    output_path = File.join(project_path, 'output')
+    raise "Unable to find an output/ directory in #{project_path}"\
+          " -- Have you built puppet-runtime yet?"\
+          unless Dir.exist?(output_path)
+
+    # Set the component version based on `git describe` output
+    git_describe = Dir.chdir(project_path) { %x(git describe) }.chomp
+    raise "Unable to `git describe` the project at #{project_path}." if git_describe.empty?
+
+    # Packages use the git-describe output as the version, but `-` is replaced with `.`
+    pkg.version git_describe.tr('-', '.')
+
+    # Construct the tarball name from the output path and component name and version
+    tarball_name = "#{settings[:puppet_runtime_project]}-#{pkg.get_version}.#{platform.name}.tar.gz"
+    tarball_path = File.join(output_path, tarball_name)
+    sha1sum_path = File.join(output_path, "#{tarball_name}.sha1")
+
+    raise "Unable to find a puppet-runtime tarball at '#{tarball_path}'"\
+          " -- Have you built puppet-runtime for the '#{git_describe}' revision and the '#{platform.name}' platform yet?"\
+          unless File.exist?(tarball_path)
+
+    raise "Unable to find a sha1sum file for the puppet-runtime tarball at '#{sha1sum_path}'"\
+          " -- Either rebuild puppet-runtime or ensure this file contains a sha1sum of #{tarball_path}"\
+          unless File.exist?(sha1sum_path)
+
+    pkg.url "file://#{tarball_path}"
+    pkg.sha1sum sha1sum_path
+  else
+    # Assume this build is taking place on puppetlabs infrastructure
+    runtime_details = JSON.parse(File.read('configs/components/puppet-runtime.json'))
+    runtime_tag = runtime_details['ref'][/refs\/tags\/(.*)/, 1]
+    raise "Unable to determine a tag for puppet-runtime (given #{runtime_details['ref']})" unless runtime_tag
+    pkg.version runtime_tag
+
+    tarball_name = "#{settings[:puppet_runtime_project]}-#{pkg.get_version}.#{platform.name}.tar.gz"
+
+    pkg.sha1sum "http://builds.puppetlabs.lan/puppet-runtime/#{pkg.get_version}/artifacts/#{tarball_name}.sha1"
+    pkg.url "http://builds.puppetlabs.lan/puppet-runtime/#{pkg.get_version}/artifacts/#{tarball_name}"
+  end
 
   # The contents of the runtime replace the following:
   pkg.replaces 'pe-augeas'
