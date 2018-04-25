@@ -146,12 +146,26 @@ test_name 'PA-1319: Validate that the vendored ruby can load gems and is configu
     end
   end
 
-  step "'irb' successfully loads gems" do
+  step "vendored ruby successfully loads gems" do
     agents.each do |agent|
       irb = irb_command(agent)
+
       ['hocon', 'deep_merge', 'puppet/resource_api'].each do |gem|
-        stdout = on(agent, "echo \"require '#{gem}'\" | #{irb}").stdout.chomp
-        assert_match(/true/, stdout, "'irb' failed to require the #{gem} gem")
+        if agent['platform'] =~ /windows*/
+          # Although beaker can set a PATH for puppet-agent on Windows, it isn't
+          # able to set up the environment for the purpose of loading gems this
+          # way; See BKR-1445 and BKR-986. As a workaround, run the environment
+          # script before requiring the gem. We're using `ruby -r` instead of
+          # irb here because `cmd /c` will only run one argument command before
+          # returning to cygwin (additional arguments will be treated as bash)
+          # and using irb introduces too many quotes.
+          cmd = "env PATH=\"#{agent['privatebindir']}:${PATH}\" cmd /c \"environment.bat && ruby -r#{gem} -e 'puts true'\""
+          stdout = on(agent, cmd).stdout.chomp
+          assert_match(/true/, stdout, "ruby failed to require the #{gem} gem")
+        else
+          stdout = on(agent, "echo \"require '#{gem}'\" | #{irb}").stdout.chomp
+          assert_match(/true/, stdout, "'irb' failed to require the #{gem} gem")
+        end
       end
     end
   end
