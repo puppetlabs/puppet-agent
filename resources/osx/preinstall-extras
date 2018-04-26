@@ -7,7 +7,7 @@
 ## vanagon will do the right thing
 
 if [ -n "$foundpkg" ]; then
-  for service in "puppet" "mcollective" "pxp-agent" ; do
+  for service in "puppet" "pxp-agent" ; do
     if /bin/launchctl list "${service}" &> /dev/null; then
       touch "/tmp/.puppet-agent.upgrade/${service}"
       /bin/launchctl unload "/Library/LaunchDaemons/com.puppetlabs.${service}.plist"

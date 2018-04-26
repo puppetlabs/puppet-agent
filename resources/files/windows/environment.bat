@@ -11,13 +11,12 @@ SET PUPPET_DIR=%PL_BASEDIR%\puppet
 REM Facter will load FACTER_ env vars as facts, so don't use FACTER_DIR
 SET FACTERDIR=%PL_BASEDIR%\facter
 SET HIERA_DIR=%PL_BASEDIR%\hiera
-SET MCOLLECTIVE_DIR=%PL_BASEDIR%\mcollective
 SET RUBY_DIR=%PL_BASEDIR%\sys\ruby
 
-SET PATH=%PUPPET_DIR%\bin;%FACTERDIR%\bin;%HIERA_DIR%\bin;%MCOLLECTIVE_DIR%\bin;%PL_BASEDIR%\bin;%RUBY_DIR%\bin;%PL_BASEDIR%\sys\tools\bin;%PATH%
+SET PATH=%PUPPET_DIR%\bin;%FACTERDIR%\bin;%HIERA_DIR%\bin;%PL_BASEDIR%\bin;%RUBY_DIR%\bin;%PL_BASEDIR%\sys\tools\bin;%PATH%
 
 REM Set the RUBY LOAD_PATH using the RUBYLIB environment variable
-SET RUBYLIB=%PUPPET_DIR%\lib;%FACTERDIR%\lib;%HIERA_DIR%\lib;%MCOLLECTIVE_DIR%\lib;%RUBYLIB%
+SET RUBYLIB=%PUPPET_DIR%\lib;%FACTERDIR%\lib;%HIERA_DIR%\lib;%RUBYLIB%
 
 REM Translate all slashes to / style to avoid issue #11930
 SET RUBYLIB=%RUBYLIB:\=/%

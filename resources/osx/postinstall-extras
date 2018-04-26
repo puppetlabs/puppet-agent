@@ -39,7 +39,7 @@ function setup_puppet(){
 }
 
 function reload_services(){
-  for service in "puppet" "mcollective" "pxp-agent" ; do
+  for service in "puppet" "pxp-agent" ; do
     if [ -f "/tmp/.puppet-agent.upgrade/${service}" ] ; then
       /bin/launchctl load -F "/Library/LaunchDaemons/com.puppetlabs.${service}.plist"
     fi
