@@ -5,8 +5,6 @@ packaging_repo: 'packaging'
 # foss_platforms will be shipped to the nightly repos
 foss_platforms:
   - cumulus-2.2-amd64
-  - debian-7-amd64
-  - debian-7-i386
   - debian-8-amd64
   - debian-8-i386
   - debian-9-amd64
@@ -99,10 +97,6 @@ platform_repos:
     repo_location: repos/fedora/f26/**/x86_64
   - name: fedora-27-x86_64
     repo_location: repos/fedora/f27/**/x86_64
-  - name: debian-7-i386
-    repo_location: repos/apt/wheezy
-  - name: debian-7-amd64
-    repo_location: repos/apt/wheezy
   - name: debian-8-i386
     repo_location: repos/apt/jessie
   - name: debian-8-amd64
