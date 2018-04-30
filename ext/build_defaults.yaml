@@ -5,8 +5,6 @@ packaging_repo: 'packaging'
 # foss_platforms will be shipped to the nightly repos
 foss_platforms:
   - cumulus-2.2-amd64
-  - debian-7-amd64
-  - debian-7-i386
   - debian-8-amd64
   - debian-8-i386
   - debian-9-amd64
@@ -23,8 +21,6 @@ foss_platforms:
   - fedora-f25-x86_64
   - fedora-f26-x86_64
   - fedora-f27-x86_64
-  - osx-10.10-x86_64
-  - osx-10.11-x86_64
   - osx-10.12-x86_64
   - osx-10.13-x86_64
   - sles-11-i386
@@ -99,10 +95,6 @@ platform_repos:
     repo_location: repos/fedora/f26/**/x86_64
   - name: fedora-27-x86_64
     repo_location: repos/fedora/f27/**/x86_64
-  - name: debian-7-i386
-    repo_location: repos/apt/wheezy
-  - name: debian-7-amd64
-    repo_location: repos/apt/wheezy
   - name: debian-8-i386
     repo_location: repos/apt/jessie
   - name: debian-8-amd64
@@ -121,10 +113,6 @@ platform_repos:
     repo_location: repos/apt/xenial
   - name: ubuntu-16.04-ppc64el
     repo_location: repos/apt/xenial
-  - name: osx-10.10
-    repo_location: repos/apple/10.10/**/x86_64/*.dmg
-  - name: osx-10.11
-    repo_location: repos/apple/10.11/**/x86_64/*.dmg
   - name: osx-10.12
     repo_location: repos/apple/10.12/**/x86_64/*.dmg
   - name: osx-10.13
