@@ -44,8 +44,8 @@ component "libwhereami" do |pkg, settings, platform|
         -DCMAKE_VERBOSE_MAKEFILE=ON \
         -DCMAKE_PREFIX_PATH=#{settings[:prefix]} \
         -DCMAKE_INSTALL_PREFIX=#{settings[:prefix]} \
+        -DCMAKE_INSTALL_RPATH=#{settings[:libdir]} \
         #{special_flags} \
-        -DBOOST_STATIC=ON \
         ."]
   end
 

@@ -35,22 +35,6 @@ component "facter" do |pkg, settings, platform|
     pkg.environment "PATH", "#{settings[:bindir]}:$(PATH)"
   end
 
-  if platform.is_macos?
-    pkg.build_requires "yaml-cpp"
-  elsif platform.name =~ /solaris-10/
-    pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/solaris/10/pl-yaml-cpp-0.5.1.#{platform.architecture}.pkg.gz"
-  elsif platform.is_cross_compiled_linux? || platform.name =~ /solaris-11/
-    pkg.build_requires "pl-yaml-cpp-#{platform.architecture}"
-  elsif platform.is_aix?
-    pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-gcc-5.2.0-11.aix#{platform.os_version}.ppc.rpm"
-    pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-cmake-3.2.3-2.aix#{platform.os_version}.ppc.rpm"
-    pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-yaml-cpp-0.5.1-1.aix#{platform.os_version}.ppc.rpm"
-  elsif platform.is_windows?
-    pkg.build_requires "pl-yaml-cpp-#{platform.architecture}"
-  else
-    pkg.build_requires "pl-yaml-cpp"
-  end
-
   # Explicitly skip jruby if not installing a jdk.
   skip_jruby = 'OFF'
   java_home = ''
@@ -172,8 +156,6 @@ component "facter" do |pkg, settings, platform|
         -DCMAKE_PREFIX_PATH=#{settings[:prefix]} \
         -DCMAKE_INSTALL_RPATH=#{settings[:libdir]} \
         #{special_flags} \
-        -DBOOST_STATIC=ON \
-        -DYAMLCPP_STATIC=ON \
         -DWITHOUT_CURL=#{skip_curl} \
         -DWITHOUT_BLKID=#{skip_blkid} \
         -DWITHOUT_JRUBY=#{skip_jruby} \
