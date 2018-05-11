@@ -17,8 +17,6 @@ foss_platforms:
   - el-7-ppc64le
   - el-7-aarch64
   - eos-4-i386
-  - fedora-f25-i386
-  - fedora-f25-x86_64
   - fedora-f26-x86_64
   - fedora-f27-x86_64
   - osx-10.12-x86_64
@@ -88,10 +86,6 @@ platform_repos:
     repo_location: repos/sles/12/**/x86_64
   - name: sles-12-ppc64le
     repo_location: repos/sles/12/**/ppc64le
-  - name: fedora-25-i386
-    repo_location: repos/fedora/f25/**/i386
-  - name: fedora-25-x86_64
-    repo_location: repos/fedora/f25/**/x86_64
   - name: fedora-26-x86_64
     repo_location: repos/fedora/f26/**/x86_64
   - name: fedora-27-x86_64
