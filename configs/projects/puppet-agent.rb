@@ -1,13 +1,14 @@
 project "puppet-agent" do |proj|
+  platform = proj.get_platform
+
   # puppet-agent inherits most build settings from puppetlabs/puppet-runtime:
   # - Modifications to global settings like flags and target directories should be made in puppet-runtime.
   # - Settings included in this file should apply only to local components in this repository.
-  runtime_details = JSON.parse(File.read(File.join(File.dirname(__FILE__), '..', 'components/puppet-runtime.json')))
-  runtime_tag = runtime_details['ref'][/refs\/tags\/(.*)/, 1]
-  raise "Unable to determine a tag for puppet-runtime (given #{runtime_details['ref']})" unless runtime_tag
-  proj.inherit_settings 'agent-runtime-5.5.x', runtime_details['url'], runtime_tag
-
-  platform = proj.get_platform
+  runtime_details = JSON.parse(File.read('configs/components/puppet-runtime.json'))
+  settings_filename = "agent-runtime-5.5.x-#{runtime_details['version']}.#{platform.name}.settings.yaml"
+  settings_filepath = File.join(runtime_details['location'], settings_filename)
+  sha1_filepath = File.join(runtime_details['location'], "#{settings_filename}.sha1")
+  proj.inherit_yaml_settings(settings_filepath, sha1_filepath)
 
   # (PA-678) pe-r10k versions prior to 2.5.0.0 ship gettext gems.
   # Since we also ship those gems as part of puppet-agent
