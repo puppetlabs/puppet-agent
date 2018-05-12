@@ -17,8 +17,6 @@ foss_platforms:
   - el-7-ppc64le
   - el-7-aarch64
   - eos-4-i386
-  - fedora-f25-i386
-  - fedora-f25-x86_64
   - fedora-f26-x86_64
   - fedora-f27-x86_64
   - osx-10.12-x86_64
@@ -32,6 +30,7 @@ foss_platforms:
   - ubuntu-16.04-amd64
   - ubuntu-16.04-i386
   - ubuntu-16.04-ppc64el
+  - ubuntu-18.04-amd64
   - windows-2012-x86
   - windows-2012-x64
 pe_platforms:
@@ -87,10 +86,6 @@ platform_repos:
     repo_location: repos/sles/12/**/x86_64
   - name: sles-12-ppc64le
     repo_location: repos/sles/12/**/ppc64le
-  - name: fedora-25-i386
-    repo_location: repos/fedora/f25/**/i386
-  - name: fedora-25-x86_64
-    repo_location: repos/fedora/f25/**/x86_64
   - name: fedora-26-x86_64
     repo_location: repos/fedora/f26/**/x86_64
   - name: fedora-27-x86_64
@@ -113,6 +108,8 @@ platform_repos:
     repo_location: repos/apt/xenial
   - name: ubuntu-16.04-ppc64el
     repo_location: repos/apt/xenial
+  - name: ubuntu-18.04-amd64
+    repo_location: repos/apt/bionic
   - name: osx-10.12
     repo_location: repos/apple/10.12/**/x86_64/*.dmg
   - name: osx-10.13
@@ -127,7 +124,7 @@ platform_repos:
     repo_location: repos/solaris/11/**/*.sparc.p5p
 gpg_name: 'info@puppetlabs.com'
 gpg_key: '7F438280EF8D349F'
-deb_targets: 'trusty-amd64 xenial-amd64'
+deb_targets: 'trusty-amd64 xenial-amd64 bionic-amd64'
 rpm_targets: 'el-6-x86_64 el-7-x86_64 sles-11-x86_64 sles-12-x86_64'
 sign_tar: FALSE
 osx_signing_cert: "Developer ID Installer: PUPPET LABS, INC. (VKGLGN2B6Y)"
