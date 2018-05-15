@@ -117,6 +117,12 @@
       <Custom Action='SetDomainToNtAuthority' After='SetDomainToLocalComputer'>
         (PUPPET_AGENT_ACCOUNT_USER ~= "LocalService") OR (PUPPET_AGENT_ACCOUNT_USER ~= "NetworkService")
       </Custom>
+      <Custom Action='ResetCodePermissions' After='InstallFiles'/>
+      <Custom Action='ResetFacterPermissions' After='InstallFiles'/>
+      <Custom Action='ResetPxpAgentPermissions' After='InstallFiles'/>
+      <Custom Action='ResetPuppetPermissions' After='InstallFiles'/>
+      <Custom Action='ResetMcoPermissions' After='InstallFiles'/>
+
       <%- if @platform.architecture == "x86" -%>
       <Custom Action='Remove64BitPath_SetProp' After='CostFinalize' />
       <Custom Action='Remove64BitProgramFiles_SetProp' After='CostFinalize' />
@@ -127,11 +133,6 @@
         <![CDATA[VersionNT64 >= 100 AND <%= settings[:win64] %> = no AND NOT (&<%= settings[:product_id] %>Runtime = 2)]]>
       </Custom>
       <%-end-%>
-
-      <Custom Action='ResetCodePermissions' After='InstallFiles' />
-      <Custom Action='ResetPxpAgentPermissions' After='InstallFiles' />
-      <Custom Action='ResetPuppetPermissions' After='InstallFiles' />
-      <Custom Action='ResetMcoPermissions' After='InstallFiles' />
     </InstallExecuteSequence>
 
     <SetProperty Id="ARPINSTALLLOCATION" Value="[INSTALLDIR]" After="CostFinalize" />

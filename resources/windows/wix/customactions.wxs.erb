@@ -195,30 +195,70 @@ End If
       Return="ignore" />
     <%-end-%>
 
-    <!-- Don't reset facter or the root APPDATADIR -->
+    <!-- Leave root APPDATADIR as-is -->
+    <SetProperty
+        Id="ResetCodePermissions"
+        Value="&quot;[%WINDIR]\System32\icacls.exe&quot; &quot;[CodeDir]\*&quot; /reset /T /Q"
+        Before="ResetCodePermissions"
+        Sequence="execute"/>
     <CustomAction
         Id="ResetCodePermissions"
-        Directory="CodeDir"
-        ExeCommand="&quot;[%WINDIR]\System32\icacls.exe&quot; &quot;[CodeDir]\*&quot; /reset /T /Q"
-        Execute="immediate"
-        Return="check" />
+        BinaryKey="WixCA"
+        DllEntry="WixQuietExec"
+        Execute="deferred"
+        Return="check"
+        Impersonate="no"/>
+
+    <SetProperty
+        Id="ResetFacterPermissions"
+        Value="&quot;[%WINDIR]\System32\icacls.exe&quot; &quot;[FacterAppDir]\*&quot; /reset /T /Q"
+        Before="ResetFacterPermissions"
+        Sequence="execute"/>
+    <CustomAction
+        Id="ResetFacterPermissions"
+        BinaryKey="WixCA"
+        DllEntry="WixQuietExec"
+        Execute="deferred"
+        Return="check"
+        Impersonate="no"/>
+
+    <SetProperty
+        Id="ResetPxpAgentPermissions"
+        Value="&quot;[%WINDIR]\System32\icacls.exe&quot; &quot;[pxpAgentDataFolder]\*&quot; /reset /T /Q"
+        Before="ResetPxpAgentPermissions"
+        Sequence="execute"/>
     <CustomAction
         Id="ResetPxpAgentPermissions"
-        Directory="pxpAgentDataFolder"
-        ExeCommand="&quot;[%WINDIR]\System32\icacls.exe&quot; &quot;[pxpAgentDataFolder]\*&quot; /reset /T /Q"
-        Execute="immediate"
-        Return="check" />
+        BinaryKey="WixCA"
+        DllEntry="WixQuietExec"
+        Execute="deferred"
+        Return="check"
+        Impersonate="no"/>
+
+    <SetProperty
+        Id="ResetPuppetPermissions"
+        Value="&quot;[%WINDIR]\System32\icacls.exe&quot; &quot;[PuppetAppData]\*&quot; /reset /T /Q"
+        Before="ResetPuppetPermissions"
+        Sequence="execute"/>
     <CustomAction
         Id="ResetPuppetPermissions"
-        Directory="PuppetAppData"
-        ExeCommand="&quot;[%WINDIR]\System32\icacls.exe&quot; &quot;[PuppetAppData]\*&quot; /reset /T /Q"
-        Execute="immediate"
-        Return="check" />
+        BinaryKey="WixCA"
+        DllEntry="WixQuietExec"
+        Execute="deferred"
+        Return="check"
+        Impersonate="no"/>
+
+    <SetProperty
+        Id="ResetMcoPermissions"
+        Value="&quot;[%WINDIR]\System32\icacls.exe&quot; &quot;[MCOAppData]\*&quot; /reset /T /Q"
+        Before="ResetMcoPermissions"
+        Sequence="execute"/>
     <CustomAction
         Id="ResetMcoPermissions"
-        Directory="MCOAppData"
-        ExeCommand="&quot;[%WINDIR]\System32\icacls.exe&quot; &quot;[MCOAppData]\*&quot; /reset /T /Q"
-        Execute="immediate"
-        Return="check" />
+        BinaryKey="WixCA"
+        DllEntry="WixQuietExec"
+        Execute="deferred"
+        Return="check"
+        Impersonate="no"/>
   </Fragment>
 </Wix>
