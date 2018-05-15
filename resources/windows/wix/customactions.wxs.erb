@@ -194,5 +194,31 @@ End If
       Execute="deferred"
       Return="ignore" />
     <%-end-%>
+
+    <!-- Don't reset facter or the root APPDATADIR -->
+    <CustomAction
+        Id="ResetCodePermissions"
+        Directory="CodeDir"
+        ExeCommand="&quot;[%WINDIR]\System32\icacls.exe&quot; &quot;[CodeDir]\*&quot; /reset /T /Q"
+        Execute="immediate"
+        Return="check" />
+    <CustomAction
+        Id="ResetPxpAgentPermissions"
+        Directory="pxpAgentDataFolder"
+        ExeCommand="&quot;[%WINDIR]\System32\icacls.exe&quot; &quot;[pxpAgentDataFolder]\*&quot; /reset /T /Q"
+        Execute="immediate"
+        Return="check" />
+    <CustomAction
+        Id="ResetPuppetPermissions"
+        Directory="PuppetAppData"
+        ExeCommand="&quot;[%WINDIR]\System32\icacls.exe&quot; &quot;[PuppetAppData]\*&quot; /reset /T /Q"
+        Execute="immediate"
+        Return="check" />
+    <CustomAction
+        Id="ResetMcoPermissions"
+        Directory="MCOAppData"
+        ExeCommand="&quot;[%WINDIR]\System32\icacls.exe&quot; &quot;[MCOAppData]\*&quot; /reset /T /Q"
+        Execute="immediate"
+        Return="check" />
   </Fragment>
 </Wix>

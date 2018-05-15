@@ -127,6 +127,11 @@
         <![CDATA[VersionNT64 >= 100 AND <%= settings[:win64] %> = no AND NOT (&<%= settings[:product_id] %>Runtime = 2)]]>
       </Custom>
       <%-end-%>
+
+      <Custom Action='ResetCodePermissions' After='InstallFiles' />
+      <Custom Action='ResetPxpAgentPermissions' After='InstallFiles' />
+      <Custom Action='ResetPuppetPermissions' After='InstallFiles' />
+      <Custom Action='ResetMcoPermissions' After='InstallFiles' />
     </InstallExecuteSequence>
 
     <SetProperty Id="ARPINSTALLLOCATION" Value="[INSTALLDIR]" After="CostFinalize" />
