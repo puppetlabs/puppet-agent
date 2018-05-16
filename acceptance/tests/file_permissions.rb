@@ -68,10 +68,12 @@ Compare-Sddl -Path C:\ProgramData\PuppetLabs\pxp-agent -Expected $SDDL_DIR_ADMIN
 Compare-Sddl -Path C:\ProgramData\PuppetLabs\code\environments\production -Expected $SDDL_DIR_INHERITED_ADMIN_ONLY
 Compare-Sddl -Path C:\ProgramData\PuppetLabs\code\environments\production\environment.conf -Expected $SDDL_FILE_ADMIN_ONLY
 
-# Ensure we didn't miss anything
-$child = Get-ChildItem -Path C:\ProgramData\PuppetLabs -Exclude facter,code,mcollective,puppet,pxp-agent
-if ($child.Count -ne 0) {
-   $files = $child -Join ","
+# Ensure we didn't miss anything, Exclude doesn't work right on 2008r2
+$expected=@("facter","code","mcollective","puppet","pxp-agent");
+$children = Get-ChildItem -Path C:\ProgramData\PuppetLabs
+if ($children.Length -ne $expected.Length) {
+   $unexpected = Compare-Object -ReferenceObject $children -DifferenceObject $expected
+   $files = $unexpected -Join ","
    Write-Host "Unexpected files: $($files)"
    exit(1)
 }
