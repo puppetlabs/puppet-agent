@@ -117,11 +117,16 @@
       <Custom Action='SetDomainToNtAuthority' After='SetDomainToLocalComputer'>
         (PUPPET_AGENT_ACCOUNT_USER ~= "LocalService") OR (PUPPET_AGENT_ACCOUNT_USER ~= "NetworkService")
       </Custom>
-      <Custom Action='ResetCodePermissions' After='InstallFiles'/>
-      <Custom Action='ResetFacterPermissions' After='InstallFiles'/>
-      <Custom Action='ResetPxpAgentPermissions' After='InstallFiles'/>
-      <Custom Action='ResetPuppetPermissions' After='InstallFiles'/>
-      <Custom Action='ResetMcoPermissions' After='InstallFiles'/>
+
+      <!-- Due to PUP-6729, make sure admins and system have permision to reset permissions -->
+      <Custom Action='TakeownPuppetPermissions' After='InstallFiles'/>
+      <Custom Action='GrantPuppetPermissions' After='TakeownPuppetPermissions'/>
+
+      <Custom Action='ResetCodePermissions' After='GrantPuppetPermissions'/>
+      <Custom Action='ResetFacterPermissions' After='ResetCodePermissions'/>
+      <Custom Action='ResetPxpAgentPermissions' After='ResetFacterPermissions'/>
+      <Custom Action='ResetPuppetPermissions' After='ResetPxpAgentPermissions'/>
+      <Custom Action='ResetMcoPermissions' After='ResetPuppetPermissions'/>
 
       <%- if @platform.architecture == "x86" -%>
       <Custom Action='Remove64BitPath_SetProp' After='CostFinalize' />

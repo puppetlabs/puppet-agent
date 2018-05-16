@@ -195,6 +195,34 @@ End If
       Return="ignore" />
     <%-end-%>
 
+    <!-- Due to PUP-6729, system may not have permission to modify DACL, so first take ownership -->
+    <SetProperty
+        Id="TakeownPuppetPermissions"
+        Value="&quot;[%WINDIR]\System32\takeown.exe&quot; /F &quot;[$PuppetAppDir]\*&quot; /R /D Y"
+        Before="TakeownPuppetPermissions"
+        Sequence="execute"/>
+    <CustomAction
+        Id="TakeownPuppetPermissions"
+        BinaryKey="WixCA"
+        DllEntry="<%= @platform.architecture == "x64" ? "WixQuietExec64" : "WixQuietExec" %>"
+        Execute="deferred"
+        Return="check"
+        Impersonate="no"/>
+
+    <!-- Due to PUP-6729, now that we can modify the DACL, ensure admins and system have full control -->
+    <SetProperty
+        Id="GrantPuppetPermissions"
+        Value="&quot;[%WINDIR]\System32\icacls.exe&quot; &quot;[$PuppetAppDir]\*&quot; /grant *S-1-5-32-544:(F) *S-1-5-18:(F) /T /Q"
+        Before="GrantPuppetPermissions"
+        Sequence="execute"/>
+    <CustomAction
+        Id="GrantPuppetPermissions"
+        BinaryKey="WixCA"
+        DllEntry="<%= @platform.architecture == "x64" ? "WixQuietExec64" : "WixQuietExec" %>"
+        Execute="deferred"
+        Return="check"
+        Impersonate="no"/>
+
     <!-- Leave root APPDATADIR as-is -->
     <SetProperty
         Id="ResetCodePermissions"
