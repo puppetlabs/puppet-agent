@@ -198,7 +198,7 @@ End If
     <!-- Due to PUP-6729, system may not have permission to modify DACL, so first take ownership -->
     <SetProperty
         Id="TakeownPuppetPermissions"
-        Value="&quot;[%WINDIR]\System32\takeown.exe&quot; /F &quot;[$PuppetAppDir]\*&quot; /R /D Y"
+        Value="&quot;[%WINDIR]\System32\takeown.exe&quot; /F &quot;[$PuppetAppDir]\*&quot; /R /A /D Y"
         Before="TakeownPuppetPermissions"
         Sequence="execute"/>
     <CustomAction
