@@ -2,8 +2,11 @@
 #
 # O:SY => owner system
 # G:SY => group system
-# D:P => DACL protected
-# ACES (...)(...)
+# D:   => DACL
+#   Flags
+#     P  => protected
+#     AI => automatic inheritance has been computed
+# ACES (ace1)(ace2)...
 #   Type
 #     A => allow
 #   Inheritance Flags
@@ -11,7 +14,7 @@
 #     CI => container inherit (affects child directories)
 #     ID => inherited from a parent
 #   Access Right
-#     FA => file all 0x1f01ff
+#     FA       => file all 0x1f01ff
 #     0x1200a9 => file read (0x00120089) | file execute (0x001200A0)
 #   Trustee SID
 #     SY => system
@@ -20,7 +23,7 @@
 #
 script = <<-'SCRIPT'
 $SDDL_DIR_ADMIN_ONLY = "O:SYG:SYD:P(A;OICI;FA;;;SY)(A;OICI;FA;;;BA)"
-$SDDL_FILE_ADMIN_ONLY = "O:SYG:SYD:(A;ID;FA;;;SY)(A;ID;FA;;;BA)"
+$SDDL_FILE_ADMIN_ONLY = "O:SYG:SYD:AI(A;ID;FA;;;SY)(A;ID;FA;;;BA)"
 $SDDL_DIR_INHERITED_ADMIN_ONLY = "O:SYG:SYD:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)"
 $SDDL_DIR_EVERYONE = "O:SYG:SYD:P(A;OICI;0x1200a9;;;WD)(A;OICI;FA;;;SY)(A;OICI;FA;;;BA)"
 
