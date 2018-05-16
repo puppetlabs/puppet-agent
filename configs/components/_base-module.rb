@@ -26,10 +26,6 @@ unless match_data
 end
 module_author, module_name = match_data.captures
 
-unless pkg.get_version
-  raise "You must set a version for the #{module_author}-#{module_name} module."
-end
-
 # Modules must have puppet
 pkg.build_requires 'puppet'
 
@@ -43,14 +39,8 @@ else
   pkg.directory(settings[:module_vendordir], mode: '0755', owner: 'root', group: 'root')
 end
 
-# Determine the download URL
-module_slug = "#{module_author}-#{module_name}-#{pkg.get_version}"
-tarball_name = "#{module_slug}.tar.gz"
-pkg.url("#{settings[:forge_download_baseurl]}/#{tarball_name}")
-
 pkg.install do
   [
-    "gunzip -c #{tarball_name} | #{platform.tar} -C #{settings[:module_vendordir]} -xf -",
-    "mv #{File.join(settings[:module_vendordir], module_slug)} #{File.join(settings[:module_vendordir], module_name)}"
+    "mv #{module_author}-#{module_name} #{File.join(settings[:module_vendordir], module_name)}"
   ]
 end
