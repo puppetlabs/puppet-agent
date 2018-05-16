@@ -204,7 +204,7 @@ End If
     <CustomAction
         Id="ResetCodePermissions"
         BinaryKey="WixCA"
-        DllEntry="WixQuietExec"
+        DllEntry="<%= @platform.architecture == "x64" ? "WixQuietExec64" : "WixQuietExec" %>"
         Execute="deferred"
         Return="check"
         Impersonate="no"/>
@@ -217,7 +217,7 @@ End If
     <CustomAction
         Id="ResetFacterPermissions"
         BinaryKey="WixCA"
-        DllEntry="WixQuietExec"
+        DllEntry="<%= @platform.architecture == "x64" ? "WixQuietExec64" : "WixQuietExec" %>"
         Execute="deferred"
         Return="check"
         Impersonate="no"/>
@@ -230,7 +230,7 @@ End If
     <CustomAction
         Id="ResetPxpAgentPermissions"
         BinaryKey="WixCA"
-        DllEntry="WixQuietExec"
+        DllEntry="<%= @platform.architecture == "x64" ? "WixQuietExec64" : "WixQuietExec" %>"
         Execute="deferred"
         Return="check"
         Impersonate="no"/>
@@ -243,7 +243,7 @@ End If
     <CustomAction
         Id="ResetPuppetPermissions"
         BinaryKey="WixCA"
-        DllEntry="WixQuietExec"
+        DllEntry="<%= @platform.architecture == "x64" ? "WixQuietExec64" : "WixQuietExec" %>"
         Execute="deferred"
         Return="check"
         Impersonate="no"/>
@@ -256,7 +256,7 @@ End If
     <CustomAction
         Id="ResetMcoPermissions"
         BinaryKey="WixCA"
-        DllEntry="WixQuietExec"
+        DllEntry="<%= @platform.architecture == "x64" ? "WixQuietExec64" : "WixQuietExec" %>"
         Execute="deferred"
         Return="check"
         Impersonate="no"/>
