@@ -117,6 +117,32 @@
       <Custom Action='SetDomainToNtAuthority' After='SetDomainToLocalComputer'>
         (PUPPET_AGENT_ACCOUNT_USER ~= "LocalService") OR (PUPPET_AGENT_ACCOUNT_USER ~= "NetworkService")
       </Custom>
+
+      <!-- Due to PUP-6729, make sure admins and system have permision to reset permissions -->
+      <Custom Action='TakeownPuppetPermissions' After='InstallFiles'>
+        NOT (REMOVE~="ALL")
+      </Custom>
+      <Custom Action='GrantPuppetPermissions' After='TakeownPuppetPermissions'>
+        NOT (REMOVE~="ALL")
+      </Custom>
+
+      <!-- Reset permissions for children beneath each appdir -->
+      <Custom Action='ResetCodePermissions' After='GrantPuppetPermissions'>
+        NOT (REMOVE~="ALL")
+      </Custom>
+      <Custom Action='ResetFacterPermissions' After='ResetCodePermissions'>
+        NOT (REMOVE~="ALL")
+      </Custom>
+      <Custom Action='ResetPxpAgentPermissions' After='ResetFacterPermissions'>
+        NOT (REMOVE~="ALL")
+      </Custom>
+      <Custom Action='ResetPuppetPermissions' After='ResetPxpAgentPermissions'>
+        NOT (REMOVE~="ALL")
+      </Custom>
+      <Custom Action='ResetMcoPermissions' After='ResetPuppetPermissions'>
+        NOT (REMOVE~="ALL")
+      </Custom>
+
       <%- if @platform.architecture == "x86" -%>
       <Custom Action='Remove64BitPath_SetProp' After='CostFinalize' />
       <Custom Action='Remove64BitProgramFiles_SetProp' After='CostFinalize' />
