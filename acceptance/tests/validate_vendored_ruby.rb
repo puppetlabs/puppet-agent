@@ -55,7 +55,7 @@ def setup_build_environment(agent)
     vanagon_noask_path = "/var/tmp/vanagon-noask"
     on(agent, "echo \"#{vanagon_noask_contents}\" > #{vanagon_noask_path}")
 
-    vanagon_pkgutil_contents = "mirror=http://mirror.opencsw.org/opencsw/testing"
+    vanagon_pkgutil_contents = "mirror=http://www.gtlib.gatech.edu/pub/OpenCSW/testing"
     vanagon_pkgutil_path = "/var/tmp/vanagon-pkgutil.conf"
     on(agent, "echo \"#{vanagon_pkgutil_contents}\" > #{vanagon_pkgutil_path}")
 
