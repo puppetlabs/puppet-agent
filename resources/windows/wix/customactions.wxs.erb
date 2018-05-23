@@ -198,7 +198,7 @@ End If
     <!-- Due to PUP-6729, system may not have permission to modify DACL, so first take ownership -->
     <SetProperty
         Id="TakeownPuppetPermissions"
-        Value="&quot;[%WINDIR]\System32\takeown.exe&quot; /F &quot;[$PuppetAppDir]\*&quot; /R /A /D Y"
+        Value="&quot;[%WINDIR]\System32\takeown.exe&quot; /F &quot;[$PuppetAppDir]\*&quot; /R /A /D N"
         Before="TakeownPuppetPermissions"
         Sequence="execute">
         NOT (REMOVE~="ALL")
@@ -214,7 +214,7 @@ End If
     <!-- Due to PUP-6729, now that we can modify the DACL, ensure admins and system have full control -->
     <SetProperty
         Id="GrantPuppetPermissions"
-        Value="&quot;[%WINDIR]\System32\icacls.exe&quot; &quot;[$PuppetAppDir]\*&quot; /grant *S-1-5-32-544:(F) *S-1-5-18:(F) /T /Q"
+        Value="&quot;[%WINDIR]\System32\icacls.exe&quot; &quot;[$PuppetAppDir]\*&quot; /grant &quot;*S-1-5-32-544:(F)&quot; &quot;*S-1-5-18:(F)&quot; /T /C"
         Before="GrantPuppetPermissions"
         Sequence="execute">
         NOT (REMOVE~="ALL")
@@ -230,7 +230,7 @@ End If
     <!-- Leave root APPDATADIR as-is -->
     <SetProperty
         Id="ResetCodePermissions"
-        Value="&quot;[%WINDIR]\System32\icacls.exe&quot; &quot;[$CodeDir]\*&quot; /reset /T /Q"
+        Value="&quot;[%WINDIR]\System32\icacls.exe&quot; &quot;[$CodeDir]\*&quot; /reset /T /C"
         Before="ResetCodePermissions"
         Sequence="execute">
         NOT (REMOVE~="ALL")
@@ -245,7 +245,7 @@ End If
 
     <SetProperty
         Id="ResetFacterPermissions"
-        Value="&quot;[%WINDIR]\System32\icacls.exe&quot; &quot;[$FacterAppDir]\*&quot; /reset /T /Q"
+        Value="&quot;[%WINDIR]\System32\icacls.exe&quot; &quot;[$FacterAppDir]\*&quot; /reset /T /C"
         Before="ResetFacterPermissions"
         Sequence="execute">
         NOT (REMOVE~="ALL")
@@ -260,7 +260,7 @@ End If
 
     <SetProperty
         Id="ResetPxpAgentPermissions"
-        Value="&quot;[%WINDIR]\System32\icacls.exe&quot; &quot;[$PXPAgentDataDir]\*&quot; /reset /T /Q"
+        Value="&quot;[%WINDIR]\System32\icacls.exe&quot; &quot;[$PXPAgentDataDir]\*&quot; /reset /T /C"
         Before="ResetPxpAgentPermissions"
         Sequence="execute">
         NOT (REMOVE~="ALL")
@@ -275,7 +275,7 @@ End If
 
     <SetProperty
         Id="ResetPuppetPermissions"
-        Value="&quot;[%WINDIR]\System32\icacls.exe&quot; &quot;[$PuppetAppDir]\*&quot; /reset /T /Q"
+        Value="&quot;[%WINDIR]\System32\icacls.exe&quot; &quot;[$PuppetAppDir]\*&quot; /reset /T /C"
         Before="ResetPuppetPermissions"
         Sequence="execute">
         NOT (REMOVE~="ALL")
@@ -290,7 +290,7 @@ End If
 
     <SetProperty
         Id="ResetMcoPermissions"
-        Value="&quot;[%WINDIR]\System32\icacls.exe&quot; &quot;[$MCOAppDir]\*&quot; /reset /T /Q"
+        Value="&quot;[%WINDIR]\System32\icacls.exe&quot; &quot;[$MCOAppDir]\*&quot; /reset /T /C"
         Before="ResetMcoPermissions"
         Sequence="execute">
         NOT (REMOVE~="ALL")
