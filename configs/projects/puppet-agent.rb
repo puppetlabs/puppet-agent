@@ -124,6 +124,7 @@ project "puppet-agent" do |proj|
   # Vendored modules
   proj.component "module-puppetlabs-maillist_core"
   proj.component "module-puppetlabs-mailalias_core"
+  proj.component "module-puppetlabs-nagios_core"
 
   proj.directory proj.install_root
   proj.directory proj.prefix
