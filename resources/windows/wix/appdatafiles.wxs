@@ -132,6 +132,12 @@
           Section="main"
           Key="autoflush" Value="true"
           Directory="PuppetConfDir" />
+        <IniFile
+          Id="PuppetManageInternalFilePermissions" Name="puppet.conf"
+          Action="addLine"
+          Section="main"
+          Key="manage_internal_file_permissions" Value="false"
+          Directory="PuppetConfDir" />
       </Component>
       <Component
         Id="PuppetConfWithAgentEnvironment"
