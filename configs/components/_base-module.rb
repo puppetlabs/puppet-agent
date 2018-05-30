@@ -39,8 +39,13 @@ else
   pkg.directory(settings[:module_vendordir], mode: '0755', owner: 'root', group: 'root')
 end
 
+target_directory = File.join(settings[:module_vendordir], module_name)
+
 pkg.install do
   [
-    "mv #{module_author}-#{module_name} #{File.join(settings[:module_vendordir], module_name)}"
+    # Rename appropriately for use with puppet
+    "mv #{module_author}-#{module_name} #{target_directory}",
+    # Remove git and CI-related files
+    "rm -r #{File.join(target_directory, '.[!.]*')} 2>/dev/null",
   ]
 end
