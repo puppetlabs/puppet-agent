@@ -243,6 +243,37 @@ component "facter" do |pkg, settings, platform|
     pkg.install_file "../facter.bat", "#{settings[:link_bindir]}/facter.bat"
     pkg.install_file "../facter_interactive.bat", "#{settings[:link_bindir]}/facter_interactive.bat"
     pkg.install_file "../run_facter_interactive.bat", "#{settings[:link_bindir]}/run_facter_interactive.bat"
+
+    # Copy these into facter's bindir, they've already been copied into ruby's
+    # in the runtime component
+    pkg.install_file "#{settings[:tools_root]}/bin/zlib1.dll", "#{settings[:facter_root]}/bin/zlib1.dll"
+    [
+      "libeay32.dll",
+      platform.architecture == "x64" ? "libgcc_s_seh-1.dll" : "libgcc_s_sjlj-1.dll",
+      "ssleay32.dll"
+    ].each do |dll|
+      pkg.install_file "#{settings[:prefix]}/bin/#{dll}", "#{settings[:facter_root]}/bin/#{dll}"
+    end
+
+    # Copy these into both facter and ruby's bindirs
+    [
+      "leatherman_curl.dll",
+      "leatherman_dynamic_library.dll",
+      "leatherman_execution.dll",
+      "leatherman_file_util.dll",
+      "leatherman_locale.dll",
+      "leatherman_logging.dll",
+      "leatherman_nowide.dll",
+      "leatherman_ruby.dll",
+      "leatherman_util.dll",
+      "leatherman_windows.dll",
+      "libcurl-4.dll",
+      "libstdc++-6.dll",
+      "libwinpthread-1.dll",
+    ].each do |dll|
+      pkg.install_file "#{settings[:prefix]}/bin/#{dll}", "#{settings[:ruby_bindir]}/#{dll}"
+      pkg.install_file "#{settings[:prefix]}/bin/#{dll}", "#{settings[:facter_root]}/bin/#{dll}"
+    end
   end
   pkg.link "#{settings[:bindir]}/facter", "#{settings[:link_bindir]}/facter" unless platform.is_windows?
   if platform.is_windows?
