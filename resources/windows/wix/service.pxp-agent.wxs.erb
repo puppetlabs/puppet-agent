@@ -33,10 +33,10 @@
           <RegistryValue Name="AppParameters"
                          Value=""
                          Type="expandable" />
-          <RegistryValue Name="AppEnvironmentExtra"
-                         Value="PATH=[INSTALLDIR]pxp-agent\bin;[INSTALLDIR]puppet\bin;[INSTALLDIR]sys\ruby\bin;%PATH%"
-                         Type="multiString"
-                         Action="append" />
+          <RegistryValue Name="AppEnvironmentExtra" Type="multiString">
+                         <MultiStringValue>PATH=[INSTALLDIR]pxp-agent\bin;[INSTALLDIR]puppet\bin;[INSTALLDIR]facter\bin;[INSTALLDIR]sys\ruby\bin;%PATH%</MultiStringValue>
+                         <MultiStringValue>OPENSSL_CONF=[INSTALLDIR]puppet\ssl\openssl.cnf</MultiStringValue>
+          </RegistryValue>
           <!-- Skip responding to WM_QUIT and WM_CLOSE; don't use TerminateProcess to prevent killing the entire process tree (PCP-276) -->
           <RegistryValue Name="AppStopMethodSkip"
                          Value="14"
