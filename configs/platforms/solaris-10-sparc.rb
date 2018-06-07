@@ -39,14 +39,14 @@ conflict=nocheck
 action=nocheck
 # Install to the default base directory.
 basedir=default" > /var/tmp/vanagon-noask;
-  pkgadd -n -a /var/tmp/vanagon-noask -G -d http://get.opencsw.org/now all;
-  /opt/csw/bin/pkgutil -y -i rsync gmake pkgconfig ggrep;
+  echo "mirror=http://www.gtlib.gatech.edu/pub/OpenCSW/testing" > /var/tmp/vanagon-pkgutil.conf;
+  /opt/csw/bin/pkgutil --config=/var/tmp/vanagon-pkgutil.conf -y -i rsync gmake pkgconfig ggrep ruby20;
   # RE-6121 openssl 1.0.2e requires functionality not in sytem grep
   ln -sf /opt/csw/bin/ggrep /usr/bin/grep;
   ln -sf /opt/csw/bin/rsync /usr/bin/rsync;
   # RE-5250 - Solaris 10 templates are awful
   /opt/csw/bin/pkgutil -l gcc | xargs -I{} pkgrm -n -a /var/tmp/vanagon-noask {};
-  /opt/csw/bin/pkgutil -l ruby | xargs -I{} pkgrm -n -a /var/tmp/vanagon-noask {};
+  /opt/csw/bin/pkgutil -l ruby18 | xargs -I{} pkgrm -n -a /var/tmp/vanagon-noask {};
   /opt/csw/bin/pkgutil -l readline | xargs -I{} pkgrm -n -a /var/tmp/vanagon-noask {};
 
   # Install base build dependencies

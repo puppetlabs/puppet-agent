@@ -1,8 +1,7 @@
 component "marionette-collective" do |pkg, settings, platform|
   pkg.load_from_json("configs/components/marionette-collective.json")
 
-  pkg.build_requires "ruby-#{settings[:ruby_version]}"
-  pkg.build_requires "ruby-stomp"
+  pkg.build_requires "puppet-runtime" # Provides ruby and ruby-stomp
 
   # Here we replace and provide mcollective 3 to ensure that even as we continue
   # to release 2.x versions of mcollective upgrades to puppet-agent will be clean
@@ -25,7 +24,6 @@ component "marionette-collective" do |pkg, settings, platform|
   case platform.servicetype
   when "systemd"
     pkg.install_service "ext/aio/redhat/mcollective.service", "ext/aio/redhat/mcollective.sysconfig", "mcollective"
-    pkg.install_file "ext/aio/redhat/mcollective-systemd.logrotate", "/etc/logrotate.d/mcollective"
   when "sysv"
     if platform.is_deb?
       pkg.install_service "ext/aio/debian/mcollective.init", "ext/aio/debian/mcollective.default", "mcollective"
@@ -34,7 +32,6 @@ component "marionette-collective" do |pkg, settings, platform|
     elsif platform.is_rpm?
       pkg.install_service "ext/aio/redhat/mcollective.init", "ext/aio/redhat/mcollective.sysconfig", "mcollective"
     end
-    pkg.install_file "ext/aio/redhat/mcollective-sysv.logrotate", "/etc/logrotate.d/mcollective"
   when "launchd"
     pkg.install_service "ext/aio/osx/mcollective.plist", nil, "com.puppetlabs.mcollective"
   when "smf"
@@ -52,12 +49,12 @@ component "marionette-collective" do |pkg, settings, platform|
   if (platform.servicetype == "sysv" && platform.is_rpm?) || platform.is_aix?
     puppet_bin = "/opt/puppetlabs/bin/puppet"
     rpm_statedir = "%{_localstatedir}/lib/rpm-state/#{pkg.get_name}"
-    service_statefile = "#{rpm_statedir}/service.pp"
+    service_statefile = "#{rpm_statedir}/service_state"
     pkg.add_preinstall_action ["upgrade"],
       [<<-HERE.undent
         mkdir -p  #{rpm_statedir} && chown root #{rpm_statedir} && chmod 0700 #{rpm_statedir} || :
         if [ -x #{puppet_bin} ] ; then
-          #{puppet_bin} resource service mcollective > #{service_statefile} || :
+          #{puppet_bin} resource service mcollective | awk -F "'" '/ensure =>/ { print $2 }' > #{service_statefile} || :
         fi
         HERE
       ]
@@ -65,7 +62,7 @@ component "marionette-collective" do |pkg, settings, platform|
     pkg.add_postinstall_action ["upgrade"],
       [<<-HERE.undent
         if [ -f #{service_statefile} ] ; then
-          #{puppet_bin} apply #{service_statefile} > /dev/null 2>&1 || :
+          #{puppet_bin} resource service mcollective ensure=$(cat #{service_statefile}) > /dev/null 2>&1 || :
           rm -rf #{rpm_statedir} || :
         fi
         HERE
@@ -118,7 +115,6 @@ component "marionette-collective" do |pkg, settings, platform|
   pkg.configfile File.join(configdir, 'client.cfg')
   pkg.configfile File.join(configdir, 'server.cfg')
   pkg.configfile File.join(configdir, 'facts.yaml')
-  pkg.configfile "/etc/logrotate.d/mcollective" if platform.is_linux?
 
   pkg.link "#{settings[:bindir]}/mco", "#{settings[:link_bindir]}/mco" unless platform.is_windows?
 end

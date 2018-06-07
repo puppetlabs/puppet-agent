@@ -29,15 +29,8 @@ component "leatherman" do |pkg, settings, platform|
     pkg.build_requires "pl-boost"
   end
 
-  # curl is only used for compute clusters (GCE, EC2); so rpm, deb, and Windows
-  use_curl = 'FALSE'
-  if (platform.is_linux? && !platform.is_huaweios? && !platform.is_cisco_wrlinux?) || platform.is_windows?
-    pkg.build_requires "curl"
-    use_curl = 'TRUE'
-  end
-
+  pkg.build_requires "puppet-runtime" # Provides curl and ruby
   pkg.build_requires "runtime"
-  pkg.build_requires "ruby-#{settings[:ruby_version]}"
 
   ruby = "#{settings[:host_ruby]} -rrbconfig"
 
@@ -48,12 +41,12 @@ component "leatherman" do |pkg, settings, platform|
     cmake = "/usr/local/bin/cmake"
     special_flags = "-DCMAKE_CXX_FLAGS='#{settings[:cflags]}'"
   elsif platform.is_cross_compiled_linux?
-    ruby = "#{settings[:host_ruby]} -r#{settings[:datadir]}/doc/rbconfig.rb"
+    ruby = "#{settings[:host_ruby]} -r#{settings[:datadir]}/doc/rbconfig-#{settings[:ruby_version]}-orig.rb"
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/#{settings[:platform_triple]}/pl-build-toolchain.cmake"
     cmake = "/opt/pl-build-tools/bin/cmake"
   elsif platform.is_solaris?
     if platform.architecture == 'sparc'
-      ruby = "#{settings[:host_ruby]} -r#{settings[:datadir]}/doc/rbconfig.rb"
+      ruby = "#{settings[:host_ruby]} -r#{settings[:datadir]}/doc/rbconfig-#{settings[:ruby_version]}-orig.rb"
     end
 
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/#{settings[:platform_triple]}/pl-build-toolchain.cmake"
@@ -75,6 +68,12 @@ component "leatherman" do |pkg, settings, platform|
     if platform.is_cisco_wrlinux?
       special_flags = "-DLEATHERMAN_USE_LOCALES=OFF"
     end
+  end
+
+  # curl (provided by puppet-runtime) is only used for compute clusters (GCE, EC2); so rpm, deb, and Windows
+  use_curl = 'FALSE'
+  if (platform.is_linux? && !platform.is_cisco_wrlinux?) || platform.is_windows?
+    use_curl = 'TRUE'
   end
 
   # Until we build our own gettext packages, disable using locales.

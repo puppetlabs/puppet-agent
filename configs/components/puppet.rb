@@ -1,13 +1,9 @@
 component "puppet" do |pkg, settings, platform|
   pkg.load_from_json("configs/components/puppet.json")
 
-  pkg.build_requires "ruby-#{settings[:ruby_version]}"
+  pkg.build_requires "puppet-runtime" # Provides ruby and rubygem-win32-dir
   pkg.build_requires "facter"
   pkg.build_requires "hiera"
-  # Used to specify default directories when installing puppet
-  if platform.is_windows?
-    pkg.build_requires "rubygem-win32-dir"
-  end
 
   pkg.replaces 'puppet', '4.0.0'
   pkg.provides 'puppet', '4.0.0'
@@ -53,12 +49,12 @@ component "puppet" do |pkg, settings, platform|
   if (platform.servicetype == "sysv" && platform.is_rpm?) || platform.is_aix?
     puppet_bin = "/opt/puppetlabs/bin/puppet"
     rpm_statedir = "%{_localstatedir}/lib/rpm-state/#{pkg.get_name}"
-    service_statefile = "#{rpm_statedir}/service.pp"
+    service_statefile = "#{rpm_statedir}/service_state"
     pkg.add_preinstall_action ["upgrade"],
       [<<-HERE.undent
         mkdir -p  #{rpm_statedir} && chown root #{rpm_statedir} && chmod 0700 #{rpm_statedir} || :
         if [ -x #{puppet_bin} ] ; then
-          #{puppet_bin} resource service puppet > #{service_statefile} || :
+          #{puppet_bin} resource service puppet | awk -F "'" '/ensure =>/ { print $2 }' > #{service_statefile} || :
         fi
         HERE
       ]
@@ -66,12 +62,16 @@ component "puppet" do |pkg, settings, platform|
     pkg.add_postinstall_action ["upgrade"],
       [<<-HERE.undent
         if [ -f #{service_statefile} ] ; then
-          #{puppet_bin} apply #{service_statefile} > /dev/null 2>&1 || :
+          #{puppet_bin} resource service puppet ensure=$(cat #{service_statefile}) > /dev/null 2>&1 || :
           rm -rf #{rpm_statedir} || :
         fi
         HERE
       ]
   end
+
+  # For Debian platforms generate a package trigger to ensure puppetserver
+  # restarts itself when the agent package is upgraded (PA-1130)
+  pkg.add_debian_activate_triggers "puppetserver-restart" if platform.is_deb?
 
   # To create a tmpfs directory for the piddir, it seems like it's either this
   # or a PR against Puppet until that sort of support can be rolled into the

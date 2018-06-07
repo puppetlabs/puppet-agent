@@ -14,20 +14,19 @@ component "facter" do |pkg, settings, platform|
 
   pkg.replaces 'pe-facter'
 
-  pkg.build_requires "ruby-#{settings[:ruby_version]}"
-  pkg.build_requires 'openssl'
+  if settings[:system_openssl]
+    pkg.build_requires 'openssl-devel'
+  end
+
+  pkg.build_requires 'puppet-runtime' # Provides openssl, ruby, augeas, curl
   pkg.build_requires 'leatherman'
   pkg.build_requires 'runtime'
   pkg.build_requires 'cpp-hocon'
 
-  if platform.is_linux? && !platform.is_huaweios?
+  if platform.is_linux?
     # Running facter (as part of testing) expects virt-what is available
     pkg.build_requires 'virt-what'
   end
-
-  # Running facter (as part of testing) expects augtool are available
-  pkg.build_requires 'augeas' unless platform.is_windows?
-  pkg.build_requires "openssl"
 
   if platform.is_windows?
     pkg.environment "PATH" => "$$(cygpath -u #{settings[:gcc_bindir]}):$$(cygpath -u #{settings[:ruby_bindir]}):$$(cygpath -u #{settings[:bindir]}):/cygdrive/c/Windows/system32:/cygdrive/c/Windows:/cygdrive/c/Windows/System32/WindowsPowerShell/v1.0"
@@ -73,7 +72,7 @@ component "facter" do |pkg, settings, platform|
   java_home = ''
   java_includedir = ''
   case platform.name
-  when /(el-(6|7)|fedora-f24)/
+  when /el-(6|7)/
     pkg.build_requires 'java-1.8.0-openjdk-devel'
   when /(debian-(7|8)|ubuntu-14)/
     pkg.build_requires 'openjdk-7-jdk'
@@ -119,14 +118,10 @@ component "facter" do |pkg, settings, platform|
       skip_blkid = 'OFF'
     end
   end
-  if platform.is_huaweios?
-    skip_blkid = 'ON'
-  end
 
   # curl is only used for compute clusters (GCE, EC2); so rpm, deb, and Windows
   skip_curl = 'ON'
-  if (platform.is_linux? && !platform.is_huaweios? && !platform.is_cisco_wrlinux?) || platform.is_windows?
-    pkg.build_requires "curl"
+  if (platform.is_linux? && !platform.is_cisco_wrlinux?) || platform.is_windows?
     skip_curl = 'OFF'
   end
 
@@ -144,12 +139,12 @@ component "facter" do |pkg, settings, platform|
     cmake = "/usr/local/bin/cmake"
     special_flags += "-DCMAKE_CXX_FLAGS='#{settings[:cflags]}'"
   elsif platform.is_cross_compiled_linux?
-    ruby = "#{settings[:host_ruby]} -r#{settings[:datadir]}/doc/rbconfig.rb"
+    ruby = "#{settings[:host_ruby]} -r#{settings[:datadir]}/doc/rbconfig-#{settings[:ruby_version]}-orig.rb"
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/#{settings[:platform_triple]}/pl-build-toolchain.cmake"
     cmake = "/opt/pl-build-tools/bin/cmake"
   elsif platform.is_solaris?
     if platform.architecture == 'sparc'
-      ruby = "#{settings[:host_ruby]} -r#{settings[:datadir]}/doc/rbconfig.rb"
+      ruby = "#{settings[:host_ruby]} -r#{settings[:datadir]}/doc/rbconfig-#{settings[:ruby_version]}-orig.rb"
     end
 
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/#{settings[:platform_triple]}/pl-build-toolchain.cmake"
