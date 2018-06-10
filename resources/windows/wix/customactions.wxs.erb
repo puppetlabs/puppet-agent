@@ -201,7 +201,7 @@ End If
         Value="&quot;[%WINDIR]\System32\takeown.exe&quot; /F &quot;[%PROGRAMDATA]\PuppetLabs\puppet\*&quot; /R /A /D N"
         Before="TakeownPuppetPermissions"
         Sequence="execute">
-        NOT (REMOVE~="ALL")
+        NOT REMOVE
     </SetProperty>
     <CustomAction
         Id="TakeownPuppetPermissions"
@@ -217,7 +217,7 @@ End If
         Value="&quot;[%WINDIR]\System32\icacls.exe&quot; &quot;[%PROGRAMDATA]\PuppetLabs\puppet\*&quot; /grant &quot;*S-1-5-32-544:(F)&quot; &quot;*S-1-5-18:(F)&quot; /T /C"
         Before="GrantPuppetPermissions"
         Sequence="execute">
-        NOT (REMOVE~="ALL")
+        NOT REMOVE
     </SetProperty>
     <CustomAction
         Id="GrantPuppetPermissions"
@@ -233,7 +233,7 @@ End If
         Value="&quot;[%WINDIR]\System32\icacls.exe&quot; &quot;[%PROGRAMDATA]\PuppetLabs\code\*&quot; /reset /T /C"
         Before="ResetCodePermissions"
         Sequence="execute">
-        NOT (REMOVE~="ALL")
+        NOT REMOVE
     </SetProperty>
     <CustomAction
         Id="ResetCodePermissions"
@@ -248,7 +248,7 @@ End If
         Value="&quot;[%WINDIR]\System32\icacls.exe&quot; &quot;[%PROGRAMDATA]\PuppetLabs\facter\*&quot; /reset /T /C"
         Before="ResetFacterPermissions"
         Sequence="execute">
-        NOT (REMOVE~="ALL")
+        NOT REMOVE
     </SetProperty>
     <CustomAction
         Id="ResetFacterPermissions"
@@ -263,7 +263,7 @@ End If
         Value="&quot;[%WINDIR]\System32\icacls.exe&quot; &quot;[%PROGRAMDATA]\PuppetLabs\pxp-agent\*&quot; /reset /T /C"
         Before="ResetPxpAgentPermissions"
         Sequence="execute">
-        NOT (REMOVE~="ALL")
+        NOT REMOVE
     </SetProperty>
     <CustomAction
         Id="ResetPxpAgentPermissions"
@@ -278,7 +278,7 @@ End If
         Value="&quot;[%WINDIR]\System32\icacls.exe&quot; &quot;[%PROGRAMDATA]\PuppetLabs\puppet\*&quot; /reset /T /C"
         Before="ResetPuppetPermissions"
         Sequence="execute">
-        NOT (REMOVE~="ALL")
+        NOT REMOVE
     </SetProperty>
     <CustomAction
         Id="ResetPuppetPermissions"
@@ -293,7 +293,7 @@ End If
         Value="&quot;[%WINDIR]\System32\icacls.exe&quot; &quot;[%PROGRAMDATA]\PuppetLabs\mcollective\*&quot; /reset /T /C"
         Before="ResetMcoPermissions"
         Sequence="execute">
-        NOT (REMOVE~="ALL")
+        NOT REMOVE
     </SetProperty>
     <CustomAction
         Id="ResetMcoPermissions"
