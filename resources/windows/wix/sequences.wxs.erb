@@ -120,28 +120,49 @@
       </Custom>
 
       <!-- Due to PUP-6729, make sure admins and system have permision to reset permissions -->
-      <Custom Action='TakeownPuppetPermissions' After='InstallFiles'>
-        NOT (REMOVE~="ALL")
+      <Custom Action='SetTakeownPuppetPermissions' After='InstallFiles'>
+          NOT REMOVE
       </Custom>
-      <Custom Action='GrantPuppetPermissions' After='TakeownPuppetPermissions'>
-        NOT (REMOVE~="ALL")
+      <Custom Action='TakeownPuppetPermissions' After='SetTakeownPuppetPermissions'>
+          NOT REMOVE
+      </Custom>
+      <Custom Action='SetGrantPuppetPermissions' After='TakeownPuppetPermissions'>
+          NOT REMOVE
+      </Custom>
+      <Custom Action='GrantPuppetPermissions' After='SetGrantPuppetPermissions'>
+          NOT REMOVE
       </Custom>
 
       <!-- Reset permissions for children beneath each appdir -->
-      <Custom Action='ResetCodePermissions' After='GrantPuppetPermissions'>
-        NOT (REMOVE~="ALL")
+      <Custom Action='SetResetCodePermissions' After='GrantPuppetPermissions'>
+          NOT REMOVE
       </Custom>
-      <Custom Action='ResetFacterPermissions' After='ResetCodePermissions'>
-        NOT (REMOVE~="ALL")
+      <Custom Action='ResetCodePermissions' After='SetResetCodePermissions'>
+          NOT REMOVE
       </Custom>
-      <Custom Action='ResetPxpAgentPermissions' After='ResetFacterPermissions'>
-        NOT (REMOVE~="ALL")
+      <Custom Action='SetResetFacterPermissions' After='ResetCodePermissions'>
+          NOT REMOVE
       </Custom>
-      <Custom Action='ResetPuppetPermissions' After='ResetPxpAgentPermissions'>
-        NOT (REMOVE~="ALL")
+      <Custom Action='ResetFacterPermissions' After='SetResetFacterPermissions'>
+          NOT REMOVE
       </Custom>
-      <Custom Action='ResetMcoPermissions' After='ResetPuppetPermissions'>
-        NOT (REMOVE~="ALL")
+      <Custom Action='SetResetPxpAgentPermissions' After='ResetFacterPermissions'>
+          NOT REMOVE
+      </Custom>
+      <Custom Action='ResetPxpAgentPermissions' After='SetResetPxpAgentPermissions'>
+          NOT REMOVE
+      </Custom>
+      <Custom Action='SetResetPuppetPermissions' After='ResetPxpAgentPermissions'>
+          NOT REMOVE
+      </Custom>
+      <Custom Action='ResetPuppetPermissions' After='SetResetPuppetPermissions'>
+          NOT REMOVE
+      </Custom>
+      <Custom Action='SetResetMcoPermissions' After='ResetPuppetPermissions'>
+          NOT REMOVE
+      </Custom>
+      <Custom Action='ResetMcoPermissions' After='SetResetMcoPermissions'>
+          NOT REMOVE
       </Custom>
 
       <%- if @platform.architecture == "x86" -%>
