@@ -219,13 +219,11 @@ End If
     <%-end-%>
 
     <!-- Due to PUP-6729, system may not have permission to modify DACL, so first take ownership -->
-    <SetProperty
-        Id="TakeownPuppetPermissions"
-        Value="&quot;[%WINDIR]\System32\takeown.exe&quot; /F &quot;[$PuppetAppDir]\*&quot; /R /A /D N"
-        Before="TakeownPuppetPermissions"
-        Sequence="execute">
-        NOT (REMOVE~="ALL")
-    </SetProperty>
+    <CustomAction
+        Id="SetTakeownPuppetPermissions"
+        Property="TakeownPuppetPermissions"
+        Value="&quot;[%WINDIR]\System32\cmd.exe&quot; /c IF EXIST &quot;[%ProgramData]\PuppetLabs\puppet&quot; &quot;[%WINDIR]\System32\takeown.exe&quot; /F &quot;[%ProgramData]\PuppetLabs\puppet\*&quot; /R /A /D N"
+        Execute="immediate"/>
     <CustomAction
         Id="TakeownPuppetPermissions"
         BinaryKey="WixCA"
@@ -235,13 +233,11 @@ End If
         Impersonate="no"/>
 
     <!-- Due to PUP-6729, now that we can modify the DACL, ensure admins and system have full control -->
-    <SetProperty
-        Id="GrantPuppetPermissions"
-        Value="&quot;[%WINDIR]\System32\icacls.exe&quot; &quot;[$PuppetAppDir]\*&quot; /grant &quot;*S-1-5-32-544:(F)&quot; &quot;*S-1-5-18:(F)&quot; /T /C"
-        Before="GrantPuppetPermissions"
-        Sequence="execute">
-        NOT (REMOVE~="ALL")
-    </SetProperty>
+    <CustomAction
+        Id="SetGrantPuppetPermissions"
+        Property="GrantPuppetPermissions"
+        Value="&quot;[%WINDIR]\System32\cmd.exe&quot; /c IF EXIST &quot;[%ProgramData]\PuppetLabs\puppet&quot; &quot;[%WINDIR]\System32\icacls.exe&quot; &quot;[%ProgramData]\PuppetLabs\puppet\*&quot; /grant &quot;*S-1-5-32-544:(F)&quot; &quot;*S-1-5-18:(F)&quot; /T /C"
+        Execute="immediate"/>
     <CustomAction
         Id="GrantPuppetPermissions"
         BinaryKey="WixCA"
@@ -251,13 +247,11 @@ End If
         Impersonate="no"/>
 
     <!-- Leave root APPDATADIR as-is -->
-    <SetProperty
-        Id="ResetCodePermissions"
-        Value="&quot;[%WINDIR]\System32\icacls.exe&quot; &quot;[$CodeDir]\*&quot; /reset /T /C"
-        Before="ResetCodePermissions"
-        Sequence="execute">
-        NOT (REMOVE~="ALL")
-    </SetProperty>
+    <CustomAction
+        Id="SetResetCodePermissions"
+        Property="ResetCodePermissions"
+        Value="&quot;[%WINDIR]\System32\cmd.exe&quot; /c IF EXIST &quot;[%ProgramData]\PuppetLabs\code&quot; &quot;[%WINDIR]\System32\icacls.exe&quot; &quot;[%ProgramData]\PuppetLabs\code\*&quot; /reset /T /C"
+        Execute="immediate"/>
     <CustomAction
         Id="ResetCodePermissions"
         BinaryKey="WixCA"
@@ -266,13 +260,11 @@ End If
         Return="check"
         Impersonate="no"/>
 
-    <SetProperty
-        Id="ResetFacterPermissions"
-        Value="&quot;[%WINDIR]\System32\icacls.exe&quot; &quot;[$FacterAppDir]\*&quot; /reset /T /C"
-        Before="ResetFacterPermissions"
-        Sequence="execute">
-        NOT (REMOVE~="ALL")
-    </SetProperty>
+    <CustomAction
+        Id="SetResetFacterPermissions"
+        Property="ResetFacterPermissions"
+        Value="&quot;[%WINDIR]\System32\cmd.exe&quot; /c IF EXIST &quot;[%ProgramData]\PuppetLabs\facter&quot; &quot;[%WINDIR]\System32\icacls.exe&quot; &quot;[%ProgramData]\PuppetLabs\facter\*&quot; /reset /T /C"
+        Execute="immediate"/>
     <CustomAction
         Id="ResetFacterPermissions"
         BinaryKey="WixCA"
@@ -281,13 +273,11 @@ End If
         Return="check"
         Impersonate="no"/>
 
-    <SetProperty
-        Id="ResetPxpAgentPermissions"
-        Value="&quot;[%WINDIR]\System32\icacls.exe&quot; &quot;[$PXPAgentDataDir]\*&quot; /reset /T /C"
-        Before="ResetPxpAgentPermissions"
-        Sequence="execute">
-        NOT (REMOVE~="ALL")
-    </SetProperty>
+    <CustomAction
+        Id="SetResetPxpAgentPermissions"
+        Property="ResetPxpAgentPermissions"
+        Value="&quot;[%WINDIR]\System32\cmd.exe&quot; /c IF EXIST &quot;[%ProgramData]\PuppetLabs\pxp-agent&quot; &quot;[%WINDIR]\System32\icacls.exe&quot; &quot;[%ProgramData]\PuppetLabs\pxp-agent\*&quot; /reset /T /C"
+        Execute="immediate"/>
     <CustomAction
         Id="ResetPxpAgentPermissions"
         BinaryKey="WixCA"
@@ -296,13 +286,11 @@ End If
         Return="check"
         Impersonate="no"/>
 
-    <SetProperty
-        Id="ResetPuppetPermissions"
-        Value="&quot;[%WINDIR]\System32\icacls.exe&quot; &quot;[$PuppetAppDir]\*&quot; /reset /T /C"
-        Before="ResetPuppetPermissions"
-        Sequence="execute">
-        NOT (REMOVE~="ALL")
-    </SetProperty>
+    <CustomAction
+        Id="SetResetPuppetPermissions"
+        Property="ResetPuppetPermissions"
+        Value="&quot;[%WINDIR]\System32\cmd.exe&quot; /c IF EXIST &quot;[%ProgramData]\PuppetLabs\puppet&quot; &quot;[%WINDIR]\System32\icacls.exe&quot; &quot;[%ProgramData]\PuppetLabs\puppet\*&quot; /reset /T /C"
+        Execute="immediate"/>
     <CustomAction
         Id="ResetPuppetPermissions"
         BinaryKey="WixCA"
@@ -311,13 +299,11 @@ End If
         Return="check"
         Impersonate="no"/>
 
-    <SetProperty
-        Id="ResetMcoPermissions"
-        Value="&quot;[%WINDIR]\System32\icacls.exe&quot; &quot;[$MCOAppDir]\*&quot; /reset /T /C"
-        Before="ResetMcoPermissions"
-        Sequence="execute">
-        NOT (REMOVE~="ALL")
-    </SetProperty>
+    <CustomAction
+        Id="SetResetMcoPermissions"
+        Property="ResetMcoPermissions"
+        Value="&quot;[%WINDIR]\System32\cmd.exe&quot; /c IF EXIST &quot;[%ProgramData]\PuppetLabs\mcollective&quot; &quot;[%WINDIR]\System32\icacls.exe&quot; &quot;[%ProgramData]\PuppetLabs\mcollective\*&quot; /reset /T /C"
+        Execute="immediate"/>
     <CustomAction
         Id="ResetMcoPermissions"
         BinaryKey="WixCA"
