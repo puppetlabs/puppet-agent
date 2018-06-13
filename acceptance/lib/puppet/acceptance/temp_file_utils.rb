@@ -124,7 +124,7 @@ module Puppet
       # S_IFDIR 0040000
       def stat(host, path)
         require File.join(File.dirname(__FILE__),'common_utils.rb')
-        ruby = Puppet::Acceptance::CommandUtils.ruby_command(host)
+        ruby = ruby_command(host)
         owner = on(host, "#{ruby} -e 'require \"etc\"; puts (Etc.getpwuid(File.stat(\"#{path}\").uid).name)'").stdout.chomp
         group = on(host, "#{ruby} -e 'require \"etc\"; puts (Etc.getgrgid(File.stat(\"#{path}\").gid).name)'").stdout.chomp
         mode  = on(host, "#{ruby} -e 'puts (File.stat(\"#{path}\").mode & 07777)'").stdout.chomp.to_i
