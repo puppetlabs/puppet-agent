@@ -217,5 +217,86 @@ End If
       Execute="deferred"
       Return="ignore" />
     <%-end-%>
+
+    <!-- Due to PUP-6729, system may not have permission to modify DACL, so first take ownership -->
+    <CustomAction
+        Id="SetTakeownPuppetPermissions"
+        Property="TakeownPuppetPermissions"
+        Value="&quot;[%WINDIR]\System32\cmd.exe&quot; /c IF EXIST &quot;[%ProgramData]\PuppetLabs\puppet&quot; &quot;[%WINDIR]\System32\takeown.exe&quot; /F &quot;[%ProgramData]\PuppetLabs\puppet\*&quot; /R /A /D N"
+        Execute="immediate"/>
+    <CustomAction
+        Id="TakeownPuppetPermissions"
+        BinaryKey="WixCA"
+        DllEntry="<%= @platform.architecture == "x64" ? "WixQuietExec64" : "WixQuietExec" %>"
+        Execute="deferred"
+        Return="check"
+        Impersonate="no"/>
+
+    <!-- Due to PUP-6729, now that we can modify the DACL, ensure admins and system have full control -->
+    <CustomAction
+        Id="SetGrantPuppetPermissions"
+        Property="GrantPuppetPermissions"
+        Value="&quot;[%WINDIR]\System32\cmd.exe&quot; /c IF EXIST &quot;[%ProgramData]\PuppetLabs\puppet&quot; &quot;[%WINDIR]\System32\icacls.exe&quot; &quot;[%ProgramData]\PuppetLabs\puppet\*&quot; /grant &quot;*S-1-5-32-544:(F)&quot; &quot;*S-1-5-18:(F)&quot; /T /C"
+        Execute="immediate"/>
+    <CustomAction
+        Id="GrantPuppetPermissions"
+        BinaryKey="WixCA"
+        DllEntry="<%= @platform.architecture == "x64" ? "WixQuietExec64" : "WixQuietExec" %>"
+        Execute="deferred"
+        Return="check"
+        Impersonate="no"/>
+
+    <!-- Leave root APPDATADIR as-is -->
+    <CustomAction
+        Id="SetResetCodePermissions"
+        Property="ResetCodePermissions"
+        Value="&quot;[%WINDIR]\System32\cmd.exe&quot; /c IF EXIST &quot;[%ProgramData]\PuppetLabs\code&quot; &quot;[%WINDIR]\System32\icacls.exe&quot; &quot;[%ProgramData]\PuppetLabs\code\*&quot; /reset /T /C"
+        Execute="immediate"/>
+    <CustomAction
+        Id="ResetCodePermissions"
+        BinaryKey="WixCA"
+        DllEntry="<%= @platform.architecture == "x64" ? "WixQuietExec64" : "WixQuietExec" %>"
+        Execute="deferred"
+        Return="check"
+        Impersonate="no"/>
+
+    <CustomAction
+        Id="SetResetFacterPermissions"
+        Property="ResetFacterPermissions"
+        Value="&quot;[%WINDIR]\System32\cmd.exe&quot; /c IF EXIST &quot;[%ProgramData]\PuppetLabs\facter&quot; &quot;[%WINDIR]\System32\icacls.exe&quot; &quot;[%ProgramData]\PuppetLabs\facter\*&quot; /reset /T /C"
+        Execute="immediate"/>
+    <CustomAction
+        Id="ResetFacterPermissions"
+        BinaryKey="WixCA"
+        DllEntry="<%= @platform.architecture == "x64" ? "WixQuietExec64" : "WixQuietExec" %>"
+        Execute="deferred"
+        Return="check"
+        Impersonate="no"/>
+
+    <CustomAction
+        Id="SetResetPxpAgentPermissions"
+        Property="ResetPxpAgentPermissions"
+        Value="&quot;[%WINDIR]\System32\cmd.exe&quot; /c IF EXIST &quot;[%ProgramData]\PuppetLabs\pxp-agent&quot; &quot;[%WINDIR]\System32\icacls.exe&quot; &quot;[%ProgramData]\PuppetLabs\pxp-agent\*&quot; /reset /T /C"
+        Execute="immediate"/>
+    <CustomAction
+        Id="ResetPxpAgentPermissions"
+        BinaryKey="WixCA"
+        DllEntry="<%= @platform.architecture == "x64" ? "WixQuietExec64" : "WixQuietExec" %>"
+        Execute="deferred"
+        Return="check"
+        Impersonate="no"/>
+
+    <CustomAction
+        Id="SetResetPuppetPermissions"
+        Property="ResetPuppetPermissions"
+        Value="&quot;[%WINDIR]\System32\cmd.exe&quot; /c IF EXIST &quot;[%ProgramData]\PuppetLabs\puppet&quot; &quot;[%WINDIR]\System32\icacls.exe&quot; &quot;[%ProgramData]\PuppetLabs\puppet\*&quot; /reset /T /C"
+        Execute="immediate"/>
+    <CustomAction
+        Id="ResetPuppetPermissions"
+        BinaryKey="WixCA"
+        DllEntry="<%= @platform.architecture == "x64" ? "WixQuietExec64" : "WixQuietExec" %>"
+        Execute="deferred"
+        Return="check"
+        Impersonate="no"/>
   </Fragment>
 </Wix>

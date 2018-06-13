@@ -1,3 +1,4 @@
+require 'puppet/acceptance/common_utils.rb'
 require 'puppet/acceptance/temp_file_utils'
 extend Puppet::Acceptance::CommandUtils
 
