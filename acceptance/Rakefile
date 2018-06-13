@@ -1,162 +1,9 @@
-require 'rake/clean'
-require 'pp'
-require 'yaml'
-require 'securerandom'
-require 'fileutils'
-require 'beaker-hostgenerator'
-require 'beaker/dsl/install_utils'
-extend Beaker::DSL::InstallUtils
-
-REPO="puppet-agent"
-REPO_CONFIGS_DIR = "repo-configs"
-CLEAN.include('tmp', 'log', 'junit')
-
-DEFAULT_TEST_TARGETS = 'redhat7-64a-windows2012r2-64a'
+require 'beaker-puppet'
+Beaker::DSL::Helpers::RakeHelpers.load_tasks
 
 DEFAULT_INTERNAL_DOWNLOAD_URL = "http://builds.delivery.puppetlabs.net"
 DEFAULT_NIGHTLIES_DOWNLOAD_URL = "http://nightlies.puppet.com"
-SSH_KEYFILE = ENV['KEYFILE'] || "~/.ssh/id_rsa-acceptance"
 
-module HarnessOptions
-
-  DEFAULTS = {
-    :type => 'aio',
-    :helper => ['lib/helper.rb'],
-    :tests  => ['tests'],
-    :log_level => 'debug',
-    :color => false,
-    :root_keys => true,
-    :ssh => {
-      :keys => [SSH_KEYFILE],
-    },
-    :xml => true,
-    :timesync => false,
-    :repo_proxy => true,
-    :add_el_extras => false,
-    :preserve_hosts => 'onfail',
-  }
-
-  class Aggregator
-    attr_reader :mode
-
-    def initialize(mode)
-      @mode = mode
-    end
-
-    def get_options(file_path)
-      puts file_path
-      if File.exists? file_path
-        options = eval(File.read(file_path), binding)
-      else
-        puts "No options file found at #{File.expand_path(file_path)}"
-      end
-      options || {}
-    end
-
-    def get_mode_options
-      get_options("./config/#{mode}/options.rb")
-    end
-
-    def get_local_options
-      get_options("./local_options.rb")
-    end
-
-    def final_options(intermediary_options = {})
-      mode_options = get_mode_options
-      local_overrides = get_local_options
-      final_options = DEFAULTS.merge(mode_options)
-      final_options.merge!(intermediary_options)
-      final_options.merge!(local_overrides)
-      return final_options
-    end
-  end
-
-  def self.options(mode, options)
-    final_options = Aggregator.new(mode).final_options(options)
-    final_options
-  end
-end
-
-
-def beaker_test(mode = :aio, options = {})
-  set_environment_variables_for_install(options[:install_released_packages])
-  final_options = HarnessOptions.options(mode, options)
-
-  options_file = 'merged_options.rb'
-  File.open(options_file, 'w') do |merged|
-    merged.puts <<-EOS
-# Copy this file to local_options.rb and adjust as needed if you wish to run
-# with some local overrides.
-EOS
-    merged.puts(final_options.pretty_inspect)
-  end
-
-  tests = ENV['TESTS'] || ENV['TEST']
-  tests_opt = "--tests=#{tests}" if tests
-
-  if config and File.exists?(config)
-    config_opt = "--hosts=#{config}"
-  else
-    targets = ENV['TEST_TARGET'] || DEFAULT_TEST_TARGETS
-
-    cli = BeakerHostGenerator::CLI.new([targets, '--disable-default-role', '--osinfo-version', '1'])
-    ENV['BEAKER_HOSTS'] = "tmp/#{targets}-#{SecureRandom.uuid}.yaml"
-    FileUtils.mkdir_p('tmp')
-    File.open(config, 'w') do |fh|
-      fh.print(cli.execute)
-    end
-    config_opt = "--hosts=#{config}"
-  end
-
-  overriding_options = ENV['OPTIONS']
-
-  args = ["--options-file", options_file, config_opt, tests_opt, overriding_options].compact
-
-  begin
-    sh("beaker", *args)
-  ensure
-    if (hosts_file = config || final_options[:hosts_file]) && hosts_file !~ /preserved_config/
-      cp(hosts_file, "log/latest/config.yml")
-      generate_config_for_latest_hosts if final_options[:preserve_hosts] || overriding_options =~ /--preserve-hosts/
-    end
-    mv(options_file, "log/latest")
-    puts "\n\n"
-  end
-end
-
-def generate_config_for_latest_hosts
-  preserved_config_hash = { 'HOSTS' => {} }
-
-  config_hash = YAML.load_file('log/latest/config.yml').to_hash
-  nodes = config_hash['HOSTS'].map do |node_label,hash|
-    { :node_label => node_label, :platform => hash['platform'] }
-  end
-
-  pre_suite_log = File.read('log/latest/pre_suite-run.log')
-  nodes.each do |node_info|
-    possible_hostname_match = /^(\w+) \(#{node_info[:node_label]}\)/.match(pre_suite_log)
-    hostname = (possible_hostname_match || Array.new)[1]
-    fqdn = hostname ? "#{hostname}.delivery.puppetlabs.net" : "unknown"
-    preserved_config_hash['HOSTS'][fqdn] = {
-      'roles' => [ 'agent'],
-      'platform' => node_info[:platform],
-    }
-  end
-
-  puts "\n\n"
-  pp preserved_config_hash
-  puts "\n\n"
-
-  File.open('log/latest/preserved_config.yaml', 'w') do |config_file|
-    YAML.dump(preserved_config_hash, config_file)
-  end
-rescue Errno::ENOENT => e
-  puts "Couldn't generate log #{e}"
-end
-
-def config
-  ENV['BEAKER_HOSTS']
-end
 
 def set_environment_variables_for_install(install_released_packages)
   if ENV['SHA'].nil?
@@ -181,7 +28,7 @@ rake acceptance
 USAGE
   Required Settings or Environment Variables
     SHA='sha'
-       Supply git ref (sha or tag) of packages of #{REPO} to be put under test.
+       Supply git ref (sha or tag) of packages of puppet-agent to be put under test.
        Also supports the literal string 'latest' which references the latest
        build on #{DEFAULT_NIGHTLIES_DOWNLOAD_URL}.
        If setting SHA to 'latest', you must also set ENV['AGENT_DOWNLOAD_URL'] to
@@ -197,7 +44,7 @@ USAGE
       ubuntu1504-64a. Defaults to #{DEFAULT_TEST_TARGETS}.
 
     AGENT_DOWNLOAD_URL='http://example.com'
-      Supply the url of the host serving packages of #{REPO} to test matching
+      Supply the url of the host serving packages of puppet-agent to test matching
       `SHA`. Ignored by `rake acceptance:released` which always downloads from
       public production Puppet repositories.
       Valid values are:
@@ -226,34 +73,13 @@ namespace :acceptance do
   #{USAGE}
   EOS
   task :released do
-    beaker_test(:aio, :install_released_packages => true)
+    set_environment_variables_for_install(true)
+    Rake.invoke_task('ci:test:aio')
   end
 
   desc <<-EOS
   Run acceptance tests against development unreleased packages from testing repos with Beaker
   #{USAGE}
   EOS
-  task :development do
-    beaker_test(:aio) 
-  end
-
-  desc <<-EOS
-  Run an acceptance test for a given node configuration and preserve the hosts.
-  #{USAGE}
-  EOS
-  task :test_and_preserve_hosts do
-    beaker_test('aio', :preserve_hosts => 'always', :__preserve_config__ => true)
-  end
+  task :development => 'ci:test:aio'
 end
-
-desc <<-EOS
-Show environment variable usage help output for running acceptance tests.
-EOS
-task :help do
-  puts "#{USAGE}"
-end
-
-task :default do
-  sh('rake -T')
-end
-
