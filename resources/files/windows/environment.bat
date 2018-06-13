@@ -29,3 +29,4 @@ REM Now return to the caller.
 REM Set SSL variables to ensure trusted locations are used
 SET SSL_CERT_FILE=%PUPPET_DIR%\ssl\cert.pem
 SET SSL_CERT_DIR=%PUPPET_DIR%\ssl\certs
+SET OPENSSL_CONF=%PUPPET_DIR%\ssl\openssl.cnf

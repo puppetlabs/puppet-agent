@@ -36,6 +36,7 @@
           <RegistryValue Name="AppEnvironmentExtra" Type="multiString">
                          <MultiStringValue>PATH=[INSTALLDIR]pxp-agent\bin;[INSTALLDIR]puppet\bin;[INSTALLDIR]facter\bin;[INSTALLDIR]sys\ruby\bin;%PATH%</MultiStringValue>
                          <MultiStringValue>RUBYLIB=[INSTALLDIR]puppet\lib;[INSTALLDIR]hiera\lib;[INSTALLDIR]facter\lib;%RUBYLIB%</MultiStringValue>
+                         <MultiStringValue>OPENSSL_CONF=[INSTALLDIR]puppet\ssl\openssl.cnf</MultiStringValue>
           </RegistryValue>
           <!-- Write stdout/stderr to the same log file to catch startup errors -->
           <RegistryValue Name="AppStdout"
