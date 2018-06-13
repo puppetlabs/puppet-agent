@@ -12,3 +12,4 @@ acceptance/junit/*
 acceptance/log/*
 acceptance/tmp/*
 acceptance/merged_options.rb
+acceptance/.beaker/*
