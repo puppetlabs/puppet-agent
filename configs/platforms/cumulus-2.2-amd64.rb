@@ -23,5 +23,5 @@ apt-get install -qy --no-install-recommends build-essential make quilt pkg-confi
 
   plat.install_build_dependencies_with "DEBIAN_FRONTEND=noninteractive; apt-get install -qy --no-install-recommends "
   plat.vmpooler_template "debian-7-x86_64"
-  plat.output_dir File.join("deb", plat.get_codename, "PC1")
+  plat.output_dir File.join("deb", plat.get_codename, "puppet5")
 end

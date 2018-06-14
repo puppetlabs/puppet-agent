@@ -9,5 +9,5 @@ platform "debian-8-armhf" do |plat|
   plat.install_build_dependencies_with "DEBIAN_FRONTEND=noninteractive; apt-get install -qq -qy --no-install-recommends "
   plat.vmpooler_template "debian-8-x86_64"
   plat.cross_compiled "true"
-  plat.output_dir File.join("deb", plat.get_codename, "PC1")
+  plat.output_dir File.join("deb", plat.get_codename, "puppet5")
 end
