@@ -9,4 +9,5 @@ platform "eos-4-i386" do |plat|
 
   plat.install_build_dependencies_with "yum install -y --nogpgcheck"
   plat.vmpooler_template "fedora-14-i386"
+  plat.output_dir File.join("eos", "puppet5", "4", "i386")
 end
