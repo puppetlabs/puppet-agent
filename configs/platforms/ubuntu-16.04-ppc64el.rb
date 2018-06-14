@@ -9,5 +9,4 @@ platform "ubuntu-16.04-ppc64el" do |plat|
   plat.install_build_dependencies_with "DEBIAN_FRONTEND=noninteractive; apt-get install -qy --no-install-recommends "
   plat.cross_compiled true
   plat.vmpooler_template "ubuntu-1604-x86_64"
-  plat.output_dir File.join("deb", plat.get_codename, "puppet5")
 end
