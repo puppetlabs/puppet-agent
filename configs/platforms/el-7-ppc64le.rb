@@ -9,4 +9,5 @@ platform "el-7-ppc64le" do |plat|
   plat.install_build_dependencies_with "yum install --assumeyes"
   plat.cross_compiled true
   plat.vmpooler_template "redhat-7-x86_64"
+  plat.output_dir File.join("puppet5", "el", "7", "ppc64le")
 end

@@ -51,5 +51,5 @@ basedir=default" > /var/tmp/vanagon-noask;
   done
   ntpdate pool.ntp.org]
 
-  plat.output_dir File.join("solaris", "10", "PC1")
+  plat.output_dir File.join("solaris", "10", "puppet5")
 end

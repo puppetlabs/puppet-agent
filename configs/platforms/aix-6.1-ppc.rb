@@ -17,4 +17,5 @@ platform "aix-6.1-ppc" do |plat|
   #                                         Sean P. McD.
   plat.install_build_dependencies_with "rpm -Uvh --replacepkgs --force "
   plat.vmpooler_template "aix-6.1-power"
+  plat.output_dir File.join("puppet5", "aix", "6.1", "ppc")
 end

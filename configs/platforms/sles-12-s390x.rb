@@ -9,4 +9,5 @@ platform "sles-12-s390x" do |plat|
   plat.install_build_dependencies_with "zypper -n --no-gpg-checks install -y"
   plat.cross_compiled true
   plat.vmpooler_template "sles-12-x86_64"
+  plat.output_dir File.join("puppet5", "sles", "12", "s390x")
 end
