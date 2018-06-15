@@ -1,13 +1,9 @@
 component 'puppet-runtime' do |pkg, settings, platform|
-  runtime_details = JSON.parse(File.read('configs/components/puppet-runtime.json'))
-  runtime_tag = runtime_details['ref'][/refs\/tags\/(.*)/, 1]
-  raise "Unable to determine a tag for puppet-runtime (given #{runtime_details['ref']})" unless runtime_tag
-  pkg.version runtime_tag
+  pkg.version settings[:puppet_runtime_version]
 
-  tarball_name = "agent-runtime-1.10.x-#{pkg.get_version}.#{platform.name}.tar.gz"
-
-  pkg.sha1sum "http://builds.puppetlabs.lan/puppet-runtime/#{pkg.get_version}/artifacts/#{tarball_name}.sha1"
-  pkg.url "http://builds.puppetlabs.lan/puppet-runtime/#{pkg.get_version}/artifacts/#{tarball_name}"
+  tarball_name = "#{settings[:puppet_runtime_basename]}.tar.gz"
+  pkg.url File.join(settings[:puppet_runtime_location], tarball_name)
+  pkg.sha1sum File.join(settings[:puppet_runtime_location], "#{tarball_name}.sha1")
 
   # The contents of the runtime replace the following:
   pkg.replaces 'pe-augeas'
