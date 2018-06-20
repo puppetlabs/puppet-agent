@@ -1,4 +1,8 @@
 component 'puppet-runtime' do |pkg, settings, platform|
+  unless settings[:puppet_runtime_version] && settings[:puppet_runtime_location] && settings[:puppet_runtime_basename]
+    raise "Expected to find :puppet_runtime_version, :puppet_runtime_location, and :puppet_runtime_basename settings; Please set these in your project file before including puppet-runtime as a component."
+  end
+
   pkg.version settings[:puppet_runtime_version]
 
   tarball_name = "#{settings[:puppet_runtime_basename]}.tar.gz"
