@@ -2,6 +2,12 @@ require 'json'
 require 'octokit'
 
 project "facter-gem" do |proj|
+  runtime_details = JSON.parse(File.read('configs/components/puppet-runtime.json'))
+
+  settings[:puppet_runtime_version] = runtime_details['version']
+  settings[:puppet_runtime_location] = runtime_details['location']
+  settings[:puppet_runtime_basename] = "agent-runtime-5.5.x-#{runtime_details['version']}.#{platform.name}"
+
   platform = proj.get_platform
   # identify if we are at a tag. Git sets the release to '0' when we are on a tag
   # note that we ignore the actual value of release_from_git other than to check
