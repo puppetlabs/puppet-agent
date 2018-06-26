@@ -87,9 +87,9 @@ platform_repos:
   - name: sles-12-ppc64le
     repo_location: repos/sles/12/**/ppc64le
   - name: fedora-26-x86_64
-    repo_location: repos/fedora/26/**/x86_64
+    repo_location: repos/fedora/f26/**/x86_64
   - name: fedora-27-x86_64
-    repo_location: repos/fedora/27/**/x86_64
+    repo_location: repos/fedora/f27/**/x86_64
   - name: debian-8-i386
     repo_location: repos/apt/jessie
   - name: debian-8-amd64
