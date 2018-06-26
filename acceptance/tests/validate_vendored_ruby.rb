@@ -103,7 +103,7 @@ def install_dependencies(agent)
   install_package_on_agent = package_installer(agent)
   dependencies = {
     'apt-get' => ['gcc', 'make', 'libsqlite3-dev'],
-    'yum' => ['gcc', 'sqlite-devel'],
+    'yum' => ['gcc', 'make', 'sqlite-devel'],
     'zypper' => ['gcc', 'sqlite3-devel'],
     'opt/csw/bin/pkgutil' => ['sqlite3', 'libsqlite3_dev'],
     'rpm' => [
