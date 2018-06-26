@@ -7,5 +7,4 @@ platform "el-5-i386" do |plat|
   plat.provision_with "yum install -y --nogpgcheck autoconf automake createrepo rsync gcc make rpmdevtools rpm-libs yum-utils rpm-sign rpm-build; echo '[build-tools]\nname=build-tools\nbaseurl=http://enterprise.delivery.puppetlabs.net/build-tools/el/5/$basearch' > /etc/yum.repos.d/build-tools.repo"
   plat.install_build_dependencies_with "yum install -y --nogpgcheck "
   plat.vmpooler_template "centos-5-i386"
-  plat.output_dir File.join("puppet5", "el", "5", "i386")
 end

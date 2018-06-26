@@ -7,5 +7,5 @@ platform "cisco-wrlinux-5-x86_64" do |plat|
   plat.add_build_repository "http://pl-build-tools.delivery.puppetlabs.net/yum/cisco-wrlinux/5/pl-build-tools-cisco-wrlinux-5.repo"
   plat.install_build_dependencies_with "yum install -y"
   plat.vmpooler_template "cisco-wrlinux-5-x86_64"
-  plat.output_dir File.join("puppet5", "cisco-wrlinux", "5", "x86_64")
+
 end
