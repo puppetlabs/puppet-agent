@@ -132,6 +132,8 @@ osx_signing_keychain: "/Users/jenkins/Library/Keychains/signing.keychain"
 osx_signing_server: 'osx-signer.delivery.puppetlabs.net'
 vanagon_project: TRUE
 repo_name: 'puppet5'
+apt_repo_name: 'puppet5'
+yum_repo_name: 'puppet5'
 nonfinal_repo_name: 'puppet5-nightly'
 repo_link_target: 'puppet'
 build_tar: FALSE
