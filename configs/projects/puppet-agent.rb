@@ -124,6 +124,7 @@ project "puppet-agent" do |proj|
   # Vendored modules
   proj.component "module-puppetlabs-maillist_core"
   proj.component "module-puppetlabs-mailalias_core"
+  proj.component "module-puppetlabs-selinux_core"
   proj.component "module-puppetlabs-zfs_core"
   proj.component "module-puppetlabs-zone_core"
 
