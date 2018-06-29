@@ -55,7 +55,7 @@ If you wish to build puppet-agent or the facter gem yourself:
 
 1. First, build the
    [puppet-runtime](https://github.com/puppetlabs/puppet-runtime) for your
-   target platform, and take note of the path of the finished tarball.
+   target platform and agent version.
 2. Run `bundle install` to install required ruby dependencies.
 3. When building puppet-agent or the cfacter gem on infrastructure outside of
    Puppet, you will need to make a few edits in the component and project
@@ -70,10 +70,13 @@ If you wish to build puppet-agent or the facter gem yourself:
      equivalent installable packages on your target operating system. In many
      cases, you can drop the `pl-` prefix and ensure that CXX or CC envrionment
      variables are what they should be.
-4. Update the `pkg.url` and `pkg.sha1sum` in the [puppet-runtime
-   component](configs/components/puppet-runtime.rb) so that they refer to the
-   output of your puppet-runtime build. You can use a `file://` url with a full
-   path in place of the default url.
+4. Update the `location` and `version` in the [puppet-runtime
+   component json file](configs/components/puppet-runtime.json) as follows:
+   - `location` should be a file URL to your local puppet-runtime output
+     directory, for example: `file:///home/you/puppet-runtime/output`
+   - `version` should be the version of puppet-runtime that you built; You
+     can find this value at the top level of the json metadata file produced by
+     the build in your puppet-runtime output directory.
   - You also may need to change the source URIs for some other components. We
     recognize this is less than ideal at this point, but we wanted to err on
     the side of getting this work out in public rather than having everything
