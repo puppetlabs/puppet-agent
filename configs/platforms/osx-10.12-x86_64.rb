@@ -15,5 +15,5 @@ platform "osx-10.12-x86_64" do |plat|
   plat.provision_with '/usr/local/bin/osx-deps pkg-config'
   plat.install_build_dependencies_with "/usr/local/bin/osx-deps "
   plat.vmpooler_template "osx-1012-x86_64"
-  plat.output_dir File.join("mac", "10.12", "puppet6", "x86_64")
+  plat.output_dir File.join("apple", "10.12", "puppet6", "x86_64")
 end
