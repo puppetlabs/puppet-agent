@@ -17,8 +17,8 @@ foss_platforms:
   - el-7-ppc64le
   - el-7-aarch64
   - eos-4-i386
-  - fedora-f26-x86_64
-  - fedora-f27-x86_64
+  - fedora-26-x86_64
+  - fedora-27-x86_64
   - osx-10.12-x86_64
   - osx-10.13-x86_64
   - sles-11-i386
