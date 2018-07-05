@@ -22,7 +22,6 @@ test_name "PA-1998: Validate that vendored modules are installed" do
   step "`describe --list` lists vendored module types" do
     agents.each do |agent|
       on(agent, puppet("describe --modulepath=#{vendor_modules_path(agent)} --list")) do |result|
-        assert_match(/mailalias/, result.stdout, "Vendored module type `mailalias` didn't appear in the list of known types")
       end
     end
   end
