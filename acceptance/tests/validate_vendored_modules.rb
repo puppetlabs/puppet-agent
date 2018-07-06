@@ -20,9 +20,12 @@ test_name "PA-1998: Validate that vendored modules are installed" do
   end
 
   step "`describe --list` lists vendored module types" do
+    vendored_types = %w[augeas selboolean selmodule zfs zone zpool]
     agents.each do |agent|
       on(agent, puppet("describe --modulepath=#{vendor_modules_path(agent)} --list")) do |result|
-        assert_match(/mailalias/, result.stdout, "Vendored module type `mailalias` didn't appear in the list of known types")
+        vendored_types.each do |type|
+          assert_match(/#{type}/, result.stdout, "Vendored module type `#{type}` didn't appear in the list of known types")
+        end
       end
     end
   end
