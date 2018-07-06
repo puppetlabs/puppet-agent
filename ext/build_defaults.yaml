@@ -1,7 +1,5 @@
 ---
 project: 'puppet-agent'
-packaging_url: 'git://github.com/puppetlabs/packaging.git --branch=1.0.x'
-packaging_repo: 'packaging'
 # foss_platforms will be shipped to the nightly repos
 foss_platforms:
   - cumulus-2.2-amd64
@@ -19,6 +17,7 @@ foss_platforms:
   - eos-4-i386
   - fedora-26-x86_64
   - fedora-27-x86_64
+  - fedora-28-x86_64
   - osx-10.12-x86_64
   - osx-10.13-x86_64
   - sles-11-i386
@@ -90,6 +89,8 @@ platform_repos:
     repo_location: repos/fedora/26/**/x86_64
   - name: fedora-27-x86_64
     repo_location: repos/fedora/27/**/x86_64
+  - name: fedora-28-x86_64
+    repo_location: repos/fedora/28/**/x86_64
   - name: debian-8-i386
     repo_location: repos/apt/jessie
   - name: debian-8-amd64
