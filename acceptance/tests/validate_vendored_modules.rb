@@ -20,7 +20,7 @@ test_name "PA-1998: Validate that vendored modules are installed" do
   end
 
   step "`describe --list` lists vendored module types" do
-    vendored_types = %w[augeas selboolean selmodule yumrepo zfs zone zpool]
+    vendored_types = %w[augeas host selboolean selmodule yumrepo zfs zone zpool]
     agents.each do |agent|
       on(agent, puppet("describe --modulepath=#{vendor_modules_path(agent)} --list")) do |result|
         vendored_types.each do |type|
