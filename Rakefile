@@ -1,5 +1,7 @@
 require 'packaging'
 
+load './ext/release-lead.rake'
+
 Pkg::Util::RakeUtils.load_packaging_tasks
 
 namespace :package do
