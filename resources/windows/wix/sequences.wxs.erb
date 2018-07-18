@@ -119,10 +119,7 @@
       </Custom>
 
       <!-- Due to PUP-6729, make sure admins and system have permision to reset permissions -->
-      <Custom Action='SetTakeownPuppetPermissions' After='InstallFiles'>
-          NOT REMOVE
-      </Custom>
-      <Custom Action='TakeownPuppetPermissions' After='SetTakeownPuppetPermissions'>
+      <Custom Action='TakeownPuppetPermissions' After='InstallFiles'>
           NOT REMOVE
       </Custom>
       <Custom Action='SetGrantPuppetPermissions' After='TakeownPuppetPermissions'>

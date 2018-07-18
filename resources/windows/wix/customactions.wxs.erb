@@ -197,17 +197,92 @@ End If
 
     <!-- Due to PUP-6729, system may not have permission to modify DACL, so first take ownership -->
     <CustomAction
-        Id="SetTakeownPuppetPermissions"
-        Property="TakeownPuppetPermissions"
-        Value="&quot;[%WINDIR]\System32\cmd.exe&quot; /c IF EXIST &quot;[%ProgramData]\PuppetLabs\puppet&quot; &quot;[%WINDIR]\System32\takeown.exe&quot; /F &quot;[%ProgramData]\PuppetLabs\puppet\*&quot; /R /A /D N"
-        Execute="immediate"/>
-    <CustomAction
-        Id="TakeownPuppetPermissions"
-        BinaryKey="WixCA"
-        DllEntry="<%= @platform.architecture == "x64" ? "WixQuietExec64" : "WixQuietExec" %>"
-        Execute="deferred"
-        Return="check"
-        Impersonate="no"/>
+      Id="TakeownPuppetPermissions"
+      Script="vbscript"
+      Execute="deferred"
+      Return="check"
+      Impersonate="no">
+      <![CDATA[
+On Error Resume Next
+
+' Globals
+' https://docs.microsoft.com/en-us/previous-versions/windows/internet-explorer/ie-developer/windows-scripting/aew9yb99%28v%3dvs.84%29
+Dim wshShell : Set wshShell = CreateObject("WScript.Shell")
+' https://docs.microsoft.com/en-us/windows/desktop/msi/session-message
+Const msiMessageTypeError   = &H01000000
+Const msiMessageTypeWarning = &H02000000
+Const msiMessageTypeInfo    = &H04000000
+
+Sub Log (Message, IsError)
+
+  ' Logs through cscript
+  If IsObject(WScript) Then
+    If IsObject(WScript.StdErr) And IsError = True Then
+      WScript.StdErr.WriteLine(Message)
+    ElseIf IsObject(WScript.StdOut) Then
+      WScript.StdOut.WriteLine(Message)
+    End If
+  End If
+
+  ' Logs through MSI
+  If IsObject(Session) Then
+    ' https://docs.microsoft.com/en-us/windows/desktop/msi/installer-createrecord
+    Dim logRecord : Set logRecord = Installer.CreateRecord(1) ' 1 entry
+    logRecord.StringData(1) = Message ' Set Index 1
+    Dim kind : kind = msiMessageTypeInfo
+    If IsError = True Then kind = msiMessageTypeError
+    Session.Message kind, logRecord
+  End If
+End Sub
+
+' Executes command, sending its stdout / stderr to the WScript host
+Sub ExecuteCommand (Command)
+
+  Log "Executing Command : " & Command, False
+
+  ' https://docs.microsoft.com/en-us/previous-versions/windows/internet-explorer/ie-developer/windows-scripting/2f38xsxe%28v%3dvs.84%29
+  ' Exec rather than Run to be able to capture stdout
+  Dim wshScriptExec : Set wshScriptExec = wshShell.Exec(Command)
+
+  Do While Not wshScriptExec.StdOut.AtEndOfStream
+    Log wshScriptExec.StdOut.ReadLine(), False
+  Loop
+
+  Log wshScriptExec.StdOut.ReadAll(), False
+
+  If wshScriptExec.ExitCode <> 0 Then
+    Log "Execution Failed With Code: " & wshScriptExec.ExitCode, True
+  End If
+End Sub
+
+
+' Main Code Starts Here
+Dim comspec : comspec = wshShell.ExpandEnvironmentStrings("%comspec%")
+
+' https://docs.microsoft.com/en-us/windows/desktop/api/Shldisp/ne-shldisp-shellspecialfolderconstants
+Const CommonAppData = &H23&  ' second & means long integer '
+Const System = &H25&
+
+' https://docs.microsoft.com/en-us/windows/desktop/shell/shell
+Dim shellApplication : Set shellApplication = CreateObject("Shell.Application")
+Dim systemPath : systemPath = (shellApplication.Namespace(System)).Self.Path
+Dim takeown : takeown = systemPath & "\takeown.exe"
+Dim appDataPath : appDataPath = (shellApplication.Namespace(CommonAppData)).Self.Path
+
+' https://docs.microsoft.com/en-us/previous-versions/windows/internet-explorer/ie-developer/windows-scripting/z9ty6h50%28v%3dvs.84%29
+Dim fso : Set fso = CreateObject("Scripting.FileSystemObject")
+
+Dim dataDirectory : dataDirectory = appDataPath & "\PuppetLabs\puppet"
+
+If (fso.FolderExists(dataDirectory)) Then
+  Log "Modifying found directory : " & dataDirectory, False
+
+  ' while it is possible to call takeown directly, we avoid a WshShell stream problem with stderr this way
+  ' https://machine-cycle.blogspot.com/2008/06/pipe-dreams-or-vbscript-spawned.html
+  ExecuteCommand comspec & " /C " & takeown & " /F """ & dataDirectory & "\*"" /R /A /D N 2>&1"
+End If
+      ]]>
+    </CustomAction>
 
     <!-- Due to PUP-6729, now that we can modify the DACL, ensure admins and system have full control -->
     <CustomAction
