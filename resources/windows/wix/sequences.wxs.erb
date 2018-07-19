@@ -123,13 +123,7 @@
           NOT REMOVE
       </Custom>
       <!-- Reset permissions for children beneath each appdir -->
-      <Custom Action='SetResetFacterPermissions' After='TakeownPuppetPermissions'>
-          NOT REMOVE
-      </Custom>
-      <Custom Action='ResetFacterPermissions' After='SetResetFacterPermissions'>
-          NOT REMOVE
-      </Custom>
-      <Custom Action='SetResetPxpAgentPermissions' After='ResetFacterPermissions'>
+      <Custom Action='SetResetPxpAgentPermissions' After='TakeownPuppetPermissions'>
           NOT REMOVE
       </Custom>
       <Custom Action='ResetPxpAgentPermissions' After='SetResetPxpAgentPermissions'>
