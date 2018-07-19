@@ -119,14 +119,8 @@
       </Custom>
 
       <!-- Due to PUP-6729, make sure admins and system have permision to reset permissions -->
+      <!-- Also resets permissions for children beneath each appdir -->
       <Custom Action='TakeownPuppetPermissions' After='InstallFiles'>
-          NOT REMOVE
-      </Custom>
-      <!-- Reset permissions for children beneath each appdir -->
-      <Custom Action='SetResetMcoPermissions' After='TakeownPuppetPermissions'>
-          NOT REMOVE
-      </Custom>
-      <Custom Action='ResetMcoPermissions' After='SetResetMcoPermissions'>
           NOT REMOVE
       </Custom>
 

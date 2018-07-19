@@ -314,20 +314,15 @@ If (fso.FolderExists(pxpAgentDirectory)) Then
 
   ExecuteCommand comspec & " /C " & icacls & "  """ & pxpAgentDirectory & "\*"" /reset /T /C 2>&1"
 End If
+
+Dim mcoDirectory : mcoDirectory = appDataPath & "\PuppetLabs\mcollective"
+
+If (fso.FolderExists(mcoDirectory)) Then
+  Log "Modifying found directory : " & mcoDirectory
+
+  ExecuteCommand comspec & " /C " & icacls & "  """ & mcoDirectory & "\*"" /reset /T /C 2>&1"
+End If
       ]]>
     </CustomAction>
-
-    <CustomAction
-        Id="SetResetMcoPermissions"
-        Property="ResetMcoPermissions"
-        Value="&quot;[%WINDIR]\System32\cmd.exe&quot; /c IF EXIST &quot;[%ProgramData]\PuppetLabs\mcollective&quot; &quot;[%WINDIR]\System32\icacls.exe&quot; &quot;[%ProgramData]\PuppetLabs\mcollective\*&quot; /reset /T /C"
-        Execute="immediate"/>
-    <CustomAction
-        Id="ResetMcoPermissions"
-        BinaryKey="WixCA"
-        DllEntry="<%= @platform.architecture == "x64" ? "WixQuietExec64" : "WixQuietExec" %>"
-        Execute="deferred"
-        Return="check"
-        Impersonate="no"/>
   </Fragment>
 </Wix>
