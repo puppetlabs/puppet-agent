@@ -123,13 +123,7 @@
           NOT REMOVE
       </Custom>
       <!-- Reset permissions for children beneath each appdir -->
-      <Custom Action='SetResetCodePermissions' After='TakeownPuppetPermissions'>
-          NOT REMOVE
-      </Custom>
-      <Custom Action='ResetCodePermissions' After='SetResetCodePermissions'>
-          NOT REMOVE
-      </Custom>
-      <Custom Action='SetResetFacterPermissions' After='ResetCodePermissions'>
+      <Custom Action='SetResetFacterPermissions' After='TakeownPuppetPermissions'>
           NOT REMOVE
       </Custom>
       <Custom Action='ResetFacterPermissions' After='SetResetFacterPermissions'>
