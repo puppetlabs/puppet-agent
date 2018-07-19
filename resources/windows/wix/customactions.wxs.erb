@@ -305,21 +305,16 @@ If (fso.FolderExists(facterDirectory)) Then
 
   ExecuteCommand comspec & " /C " & icacls & "  """ & facterDirectory & "\*"" /reset /T /C 2>&1"
 End If
+
+Dim pxpAgentDirectory : pxpAgentDirectory = appDataPath & "\PuppetLabs\pxp-agent"
+
+If (fso.FolderExists(pxpAgentDirectory)) Then
+  Log "Modifying found directory : " & pxpAgentDirectory, False
+
+  ExecuteCommand comspec & " /C " & icacls & "  """ & pxpAgentDirectory & "\*"" /reset /T /C 2>&1"
+End If
       ]]>
     </CustomAction>
-
-    <CustomAction
-        Id="SetResetPxpAgentPermissions"
-        Property="ResetPxpAgentPermissions"
-        Value="&quot;[%WINDIR]\System32\cmd.exe&quot; /c IF EXIST &quot;[%ProgramData]\PuppetLabs\pxp-agent&quot; &quot;[%WINDIR]\System32\icacls.exe&quot; &quot;[%ProgramData]\PuppetLabs\pxp-agent\*&quot; /reset /T /C"
-        Execute="immediate"/>
-    <CustomAction
-        Id="ResetPxpAgentPermissions"
-        BinaryKey="WixCA"
-        DllEntry="<%= @platform.architecture == "x64" ? "WixQuietExec64" : "WixQuietExec" %>"
-        Execute="deferred"
-        Return="check"
-        Impersonate="no"/>
 
     <CustomAction
         Id="SetResetPuppetPermissions"
