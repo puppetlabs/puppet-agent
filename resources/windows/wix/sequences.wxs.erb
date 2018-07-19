@@ -122,15 +122,8 @@
       <Custom Action='TakeownPuppetPermissions' After='InstallFiles'>
           NOT REMOVE
       </Custom>
-      <Custom Action='SetGrantPuppetPermissions' After='TakeownPuppetPermissions'>
-          NOT REMOVE
-      </Custom>
-      <Custom Action='GrantPuppetPermissions' After='SetGrantPuppetPermissions'>
-          NOT REMOVE
-      </Custom>
-
       <!-- Reset permissions for children beneath each appdir -->
-      <Custom Action='SetResetCodePermissions' After='GrantPuppetPermissions'>
+      <Custom Action='SetResetCodePermissions' After='TakeownPuppetPermissions'>
           NOT REMOVE
       </Custom>
       <Custom Action='ResetCodePermissions' After='SetResetCodePermissions'>

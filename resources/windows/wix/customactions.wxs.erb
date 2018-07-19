@@ -267,6 +267,7 @@ Const System = &H25&
 Dim shellApplication : Set shellApplication = CreateObject("Shell.Application")
 Dim systemPath : systemPath = (shellApplication.Namespace(System)).Self.Path
 Dim takeown : takeown = systemPath & "\takeown.exe"
+Dim icacls : icacls = systemPath & "\icacls.exe"
 Dim appDataPath : appDataPath = (shellApplication.Namespace(CommonAppData)).Self.Path
 
 ' https://docs.microsoft.com/en-us/previous-versions/windows/internet-explorer/ie-developer/windows-scripting/z9ty6h50%28v%3dvs.84%29
@@ -280,23 +281,14 @@ If (fso.FolderExists(dataDirectory)) Then
   ' while it is possible to call takeown directly, we avoid a WshShell stream problem with stderr this way
   ' https://machine-cycle.blogspot.com/2008/06/pipe-dreams-or-vbscript-spawned.html
   ExecuteCommand comspec & " /C " & takeown & " /F """ & dataDirectory & "\*"" /R /A /D N 2>&1"
+
+  ' Due to PUP-6729, now that we can modify the DACL
+  ' ensure admins and system have full control
+  ExecuteCommand comspec & " /C " & icacls & "  """ & dataDirectory & "\*"" /grant ""*S-1-5-32-544:(F)"" ""*S-1-5-18:(F)"" /T /C 2>&1"
+
 End If
       ]]>
     </CustomAction>
-
-    <!-- Due to PUP-6729, now that we can modify the DACL, ensure admins and system have full control -->
-    <CustomAction
-        Id="SetGrantPuppetPermissions"
-        Property="GrantPuppetPermissions"
-        Value="&quot;[%WINDIR]\System32\cmd.exe&quot; /c IF EXIST &quot;[%ProgramData]\PuppetLabs\puppet&quot; &quot;[%WINDIR]\System32\icacls.exe&quot; &quot;[%ProgramData]\PuppetLabs\puppet\*&quot; /grant &quot;*S-1-5-32-544:(F)&quot; &quot;*S-1-5-18:(F)&quot; /T /C"
-        Execute="immediate"/>
-    <CustomAction
-        Id="GrantPuppetPermissions"
-        BinaryKey="WixCA"
-        DllEntry="<%= @platform.architecture == "x64" ? "WixQuietExec64" : "WixQuietExec" %>"
-        Execute="deferred"
-        Return="check"
-        Impersonate="no"/>
 
     <!-- Leave root APPDATADIR as-is -->
     <CustomAction
