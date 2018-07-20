@@ -208,6 +208,8 @@ On Error Resume Next
 ' Globals
 ' https://docs.microsoft.com/en-us/previous-versions/windows/internet-explorer/ie-developer/windows-scripting/aew9yb99%28v%3dvs.84%29
 Dim wshShell : Set wshShell = CreateObject("WScript.Shell")
+' https://docs.microsoft.com/en-us/previous-versions/windows/internet-explorer/ie-developer/windows-scripting/z9ty6h50%28v%3dvs.84%29
+Dim fso : Set fso = CreateObject("Scripting.FileSystemObject")
 ' https://docs.microsoft.com/en-us/windows/desktop/msi/session-message
 Const msiMessageTypeError   = &H01000000
 Const msiMessageTypeWarning = &H02000000
@@ -255,6 +257,17 @@ Sub ExecuteCommand (Command)
   End If
 End Sub
 
+Sub ResetPermissionsIfExists (Path)
+
+  If (fso.FolderExists(Path)) Then
+    Log "Modifying found directory : " & Path, False
+
+    ExecuteCommand comspec & " /C " & icacls & "  """ & Path & "\*"" /reset /T /C 2>&1"
+  Else
+    Log "Nothing to reset, directory not found : " & Path, False
+  End If
+End Sub
+
 
 ' Main Code Starts Here
 Dim comspec : comspec = wshShell.ExpandEnvironmentStrings("%comspec%")
@@ -269,9 +282,6 @@ Dim systemPath : systemPath = (shellApplication.Namespace(System)).Self.Path
 Dim takeown : takeown = systemPath & "\takeown.exe"
 Dim icacls : icacls = systemPath & "\icacls.exe"
 Dim appDataPath : appDataPath = (shellApplication.Namespace(CommonAppData)).Self.Path
-
-' https://docs.microsoft.com/en-us/previous-versions/windows/internet-explorer/ie-developer/windows-scripting/z9ty6h50%28v%3dvs.84%29
-Dim fso : Set fso = CreateObject("Scripting.FileSystemObject")
 
 Dim dataDirectory : dataDirectory = appDataPath & "\PuppetLabs\puppet"
 
@@ -291,37 +301,10 @@ End If
 
 ' Leave root APPDATADIR as-is
 
-Dim codeDirectory : codeDirectory = appDataPath & "\PuppetLabs\code"
-
-If (fso.FolderExists(codeDirectory)) Then
-  Log "Modifying found directory : " & codeDirectory, False
-
-  ExecuteCommand comspec & " /C " & icacls & "  """ & codeDirectory & "\*"" /reset /T /C 2>&1"
-End If
-
-Dim facterDirectory : facterDirectory = appDataPath & "\PuppetLabs\facter"
-
-If (fso.FolderExists(facterDirectory)) Then
-  Log "Modifying found directory : " & facterDirectory, False
-
-  ExecuteCommand comspec & " /C " & icacls & "  """ & facterDirectory & "\*"" /reset /T /C 2>&1"
-End If
-
-Dim pxpAgentDirectory : pxpAgentDirectory = appDataPath & "\PuppetLabs\pxp-agent"
-
-If (fso.FolderExists(pxpAgentDirectory)) Then
-  Log "Modifying found directory : " & pxpAgentDirectory, False
-
-  ExecuteCommand comspec & " /C " & icacls & "  """ & pxpAgentDirectory & "\*"" /reset /T /C 2>&1"
-End If
-
-Dim mcoDirectory : mcoDirectory = appDataPath & "\PuppetLabs\mcollective"
-
-If (fso.FolderExists(mcoDirectory)) Then
-  Log "Modifying found directory : " & mcoDirectory
-
-  ExecuteCommand comspec & " /C " & icacls & "  """ & mcoDirectory & "\*"" /reset /T /C 2>&1"
-End If
+ResetPermissionsIfExists appDataPath & "\PuppetLabs\code"
+ResetPermissionsIfExists appDataPath & "\PuppetLabs\facter"
+ResetPermissionsIfExists appDataPath & "\PuppetLabs\pxp-agent"
+ResetPermissionsIfExists appDataPath & "\PuppetLabs\mcollective"
       ]]>
     </CustomAction>
   </Fragment>
