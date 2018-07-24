@@ -257,10 +257,14 @@ Sub ExecuteCommand (Command)
   End If
 End Sub
 
-Sub ResetPermissionsIfExists (Path)
+Sub ResetPermissionsIfExists (Path, GrantAdmins)
 
   If (fso.FolderExists(Path)) Then
     Log "Modifying found directory : " & Path, False
+
+    If GrantAdmins = True Then
+      ExecuteCommand comspec & " /C " & icacls & "  """ & Path & "\*"" /grant ""*S-1-5-32-544:(F)"" ""*S-1-5-18:(F)"" /T /C 2>&1"
+    End If
 
     ExecuteCommand comspec & " /C " & icacls & "  """ & Path & "\*"" /reset /T /C 2>&1"
   Else
@@ -291,20 +295,17 @@ If (fso.FolderExists(dataDirectory)) Then
   ' while it is possible to call takeown directly, we avoid a WshShell stream problem with stderr this way
   ' https://machine-cycle.blogspot.com/2008/06/pipe-dreams-or-vbscript-spawned.html
   ExecuteCommand comspec & " /C " & takeown & " /F """ & dataDirectory & "\*"" /R /A /D N 2>&1"
-
-  ' Due to PUP-6729, now that we can modify the DACL
-  ' ensure admins and system have full control
-  ExecuteCommand comspec & " /C " & icacls & "  """ & dataDirectory & "\*"" /grant ""*S-1-5-32-544:(F)"" ""*S-1-5-18:(F)"" /T /C 2>&1"
-
-  ExecuteCommand comspec & " /C " & icacls & "  """ & dataDirectory & "\*"" /reset /T /C 2>&1"
 End If
 
 ' Leave root APPDATADIR as-is
 
-ResetPermissionsIfExists appDataPath & "\PuppetLabs\code"
-ResetPermissionsIfExists appDataPath & "\PuppetLabs\facter"
-ResetPermissionsIfExists appDataPath & "\PuppetLabs\pxp-agent"
-ResetPermissionsIfExists appDataPath & "\PuppetLabs\mcollective"
+' Due to PUP-6729, now that we can modify the DACL
+' ensure admins and system have full control
+ResetPermissionsIfExists dataDirectory, True
+ResetPermissionsIfExists appDataPath & "\PuppetLabs\code", False
+ResetPermissionsIfExists appDataPath & "\PuppetLabs\facter", False
+ResetPermissionsIfExists appDataPath & "\PuppetLabs\pxp-agent", False
+ResetPermissionsIfExists appDataPath & "\PuppetLabs\mcollective", False
       ]]>
     </CustomAction>
   </Fragment>
