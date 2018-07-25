@@ -242,19 +242,23 @@ Sub ExecuteCommand (Command)
 
   Log "Executing Command : " & Command, False
 
-  ' https://docs.microsoft.com/en-us/previous-versions/windows/internet-explorer/ie-developer/windows-scripting/2f38xsxe%28v%3dvs.84%29
-  ' Exec rather than Run to be able to capture stdout
-  Dim wshScriptExec : Set wshScriptExec = wshShell.Exec(Command)
+  Dim tempFilePath : tempFilePath = fso.GetTempName()
+  ' https://docs.microsoft.com/en-us/previous-versions/windows/internet-explorer/ie-developer/windows-scripting/d5fk67ky%28v%3dvs.84%29
+  ' intWindows Style - 0 - Hides the window and activates another window.
+  ' bWaitOnReturn - True - waits for program termination
+  Dim exitCode : exitCode = wshShell.Run(Command & " 2>&1 > """ & tempFilePath & """", 0, True)
 
-  Do While Not wshScriptExec.StdOut.AtEndOfStream
-    Log wshScriptExec.StdOut.ReadLine(), False
+  Dim outFile : Set outFile = fso.OpenTextFile(tempFilePath)
+  Do While Not outFile.AtEndOfStream
+    Log outFile.ReadLine(), False
   Loop
+  outFile.Close()
 
-  Log wshScriptExec.StdOut.ReadAll(), False
-
-  If wshScriptExec.ExitCode <> 0 Then
-    Log "Execution Failed With Code: " & wshScriptExec.ExitCode, True
+  If exitCode <> 0 Then
+    Log "Execution Failed With Code: " & exitCode, True
   End If
+
+  fso.DeleteFile(tempFilePath)
 End Sub
 
 Sub ResetPermissionsIfExists (Path, GrantAdmins)
@@ -263,10 +267,10 @@ Sub ResetPermissionsIfExists (Path, GrantAdmins)
     Log "Modifying found directory : " & Path, False
 
     If GrantAdmins = True Then
-      ExecuteCommand comspec & " /C " & icacls & "  """ & Path & "\*"" /grant ""*S-1-5-32-544:(F)"" ""*S-1-5-18:(F)"" /T /C 2>&1"
+      ExecuteCommand comspec & " /C " & icacls & "  """ & Path & "\*"" /grant ""*S-1-5-32-544:(F)"" ""*S-1-5-18:(F)"" /T /C"
     End If
 
-    ExecuteCommand comspec & " /C " & icacls & "  """ & Path & "\*"" /reset /T /C 2>&1"
+    ExecuteCommand comspec & " /C " & icacls & "  """ & Path & "\*"" /reset /T /C"
   Else
     Log "Nothing to reset, directory not found : " & Path, False
   End If
@@ -294,7 +298,7 @@ If (fso.FolderExists(dataDirectory)) Then
 
   ' while it is possible to call takeown directly, we avoid a WshShell stream problem with stderr this way
   ' https://machine-cycle.blogspot.com/2008/06/pipe-dreams-or-vbscript-spawned.html
-  ExecuteCommand comspec & " /C " & takeown & " /F """ & dataDirectory & "\*"" /R /A /D N 2>&1"
+  ExecuteCommand comspec & " /C " & takeown & " /F """ & dataDirectory & "\*"" /R /A /D N"
 End If
 
 ' Leave root APPDATADIR as-is
