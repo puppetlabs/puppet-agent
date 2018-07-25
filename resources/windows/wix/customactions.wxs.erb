@@ -197,96 +197,120 @@ End If
 
     <!-- Due to PUP-6729, system may not have permission to modify DACL, so first take ownership -->
     <CustomAction
-        Id="SetTakeownPuppetPermissions"
-        Property="TakeownPuppetPermissions"
-        Value="&quot;[%WINDIR]\System32\cmd.exe&quot; /c IF EXIST &quot;[%ProgramData]\PuppetLabs\puppet&quot; &quot;[%WINDIR]\System32\takeown.exe&quot; /F &quot;[%ProgramData]\PuppetLabs\puppet\*&quot; /R /A /D N"
-        Execute="immediate"/>
-    <CustomAction
-        Id="TakeownPuppetPermissions"
-        BinaryKey="WixCA"
-        DllEntry="<%= @platform.architecture == "x64" ? "WixQuietExec64" : "WixQuietExec" %>"
-        Execute="deferred"
-        Return="check"
-        Impersonate="no"/>
+      Id="ResetDataPermissions"
+      Script="vbscript"
+      Execute="deferred"
+      Return="check"
+      Impersonate="no">
+      <![CDATA[
+On Error Resume Next
 
-    <!-- Due to PUP-6729, now that we can modify the DACL, ensure admins and system have full control -->
-    <CustomAction
-        Id="SetGrantPuppetPermissions"
-        Property="GrantPuppetPermissions"
-        Value="&quot;[%WINDIR]\System32\cmd.exe&quot; /c IF EXIST &quot;[%ProgramData]\PuppetLabs\puppet&quot; &quot;[%WINDIR]\System32\icacls.exe&quot; &quot;[%ProgramData]\PuppetLabs\puppet\*&quot; /grant &quot;*S-1-5-32-544:(F)&quot; &quot;*S-1-5-18:(F)&quot; /T /C"
-        Execute="immediate"/>
-    <CustomAction
-        Id="GrantPuppetPermissions"
-        BinaryKey="WixCA"
-        DllEntry="<%= @platform.architecture == "x64" ? "WixQuietExec64" : "WixQuietExec" %>"
-        Execute="deferred"
-        Return="check"
-        Impersonate="no"/>
+' Globals
+' https://docs.microsoft.com/en-us/previous-versions/windows/internet-explorer/ie-developer/windows-scripting/aew9yb99%28v%3dvs.84%29
+Dim wshShell : Set wshShell = CreateObject("WScript.Shell")
+' https://docs.microsoft.com/en-us/previous-versions/windows/internet-explorer/ie-developer/windows-scripting/z9ty6h50%28v%3dvs.84%29
+Dim fso : Set fso = CreateObject("Scripting.FileSystemObject")
+' https://docs.microsoft.com/en-us/windows/desktop/msi/session-message
+Const msiMessageTypeError   = &H01000000
+Const msiMessageTypeWarning = &H02000000
+Const msiMessageTypeInfo    = &H04000000
 
-    <!-- Leave root APPDATADIR as-is -->
-    <CustomAction
-        Id="SetResetCodePermissions"
-        Property="ResetCodePermissions"
-        Value="&quot;[%WINDIR]\System32\cmd.exe&quot; /c IF EXIST &quot;[%ProgramData]\PuppetLabs\code&quot; &quot;[%WINDIR]\System32\icacls.exe&quot; &quot;[%ProgramData]\PuppetLabs\code\*&quot; /reset /T /C"
-        Execute="immediate"/>
-    <CustomAction
-        Id="ResetCodePermissions"
-        BinaryKey="WixCA"
-        DllEntry="<%= @platform.architecture == "x64" ? "WixQuietExec64" : "WixQuietExec" %>"
-        Execute="deferred"
-        Return="check"
-        Impersonate="no"/>
+Sub Log (Message, IsError)
 
-    <CustomAction
-        Id="SetResetFacterPermissions"
-        Property="ResetFacterPermissions"
-        Value="&quot;[%WINDIR]\System32\cmd.exe&quot; /c IF EXIST &quot;[%ProgramData]\PuppetLabs\facter&quot; &quot;[%WINDIR]\System32\icacls.exe&quot; &quot;[%ProgramData]\PuppetLabs\facter\*&quot; /reset /T /C"
-        Execute="immediate"/>
-    <CustomAction
-        Id="ResetFacterPermissions"
-        BinaryKey="WixCA"
-        DllEntry="<%= @platform.architecture == "x64" ? "WixQuietExec64" : "WixQuietExec" %>"
-        Execute="deferred"
-        Return="check"
-        Impersonate="no"/>
+  ' Logs through cscript
+  If IsObject(WScript) Then
+    If IsObject(WScript.StdErr) And IsError = True Then
+      WScript.StdErr.WriteLine(Message)
+    ElseIf IsObject(WScript.StdOut) Then
+      WScript.StdOut.WriteLine(Message)
+    End If
+  End If
 
-    <CustomAction
-        Id="SetResetPxpAgentPermissions"
-        Property="ResetPxpAgentPermissions"
-        Value="&quot;[%WINDIR]\System32\cmd.exe&quot; /c IF EXIST &quot;[%ProgramData]\PuppetLabs\pxp-agent&quot; &quot;[%WINDIR]\System32\icacls.exe&quot; &quot;[%ProgramData]\PuppetLabs\pxp-agent\*&quot; /reset /T /C"
-        Execute="immediate"/>
-    <CustomAction
-        Id="ResetPxpAgentPermissions"
-        BinaryKey="WixCA"
-        DllEntry="<%= @platform.architecture == "x64" ? "WixQuietExec64" : "WixQuietExec" %>"
-        Execute="deferred"
-        Return="check"
-        Impersonate="no"/>
+  ' Logs through MSI
+  If IsObject(Session) Then
+    ' https://docs.microsoft.com/en-us/windows/desktop/msi/installer-createrecord
+    Dim logRecord : Set logRecord = Installer.CreateRecord(1) ' 1 entry
+    logRecord.StringData(1) = Message ' Set Index 1
+    Dim kind : kind = msiMessageTypeInfo
+    If IsError = True Then kind = msiMessageTypeError
+    Session.Message kind, logRecord
+  End If
+End Sub
 
-    <CustomAction
-        Id="SetResetPuppetPermissions"
-        Property="ResetPuppetPermissions"
-        Value="&quot;[%WINDIR]\System32\cmd.exe&quot; /c IF EXIST &quot;[%ProgramData]\PuppetLabs\puppet&quot; &quot;[%WINDIR]\System32\icacls.exe&quot; &quot;[%ProgramData]\PuppetLabs\puppet\*&quot; /reset /T /C"
-        Execute="immediate"/>
-    <CustomAction
-        Id="ResetPuppetPermissions"
-        BinaryKey="WixCA"
-        DllEntry="<%= @platform.architecture == "x64" ? "WixQuietExec64" : "WixQuietExec" %>"
-        Execute="deferred"
-        Return="check"
-        Impersonate="no"/>
+' Executes command, sending its stdout / stderr to the WScript host
+Sub ExecuteCommand (Command)
 
-    <CustomAction
-        Id="SetResetMcoPermissions"
-        Property="ResetMcoPermissions"
-        Value="&quot;[%WINDIR]\System32\cmd.exe&quot; /c IF EXIST &quot;[%ProgramData]\PuppetLabs\mcollective&quot; &quot;[%WINDIR]\System32\icacls.exe&quot; &quot;[%ProgramData]\PuppetLabs\mcollective\*&quot; /reset /T /C"
-        Execute="immediate"/>
-    <CustomAction
-        Id="ResetMcoPermissions"
-        BinaryKey="WixCA"
-        DllEntry="<%= @platform.architecture == "x64" ? "WixQuietExec64" : "WixQuietExec" %>"
-        Execute="deferred"
-        Return="check"
-        Impersonate="no"/>
+  Log "Executing Command : " & Command, False
+
+  Dim tempFilePath : tempFilePath = fso.GetTempName()
+  ' https://docs.microsoft.com/en-us/previous-versions/windows/internet-explorer/ie-developer/windows-scripting/d5fk67ky%28v%3dvs.84%29
+  ' intWindows Style - 0 - Hides the window and activates another window.
+  ' bWaitOnReturn - True - waits for program termination
+  Dim exitCode : exitCode = wshShell.Run(Command & " 2>&1 > """ & tempFilePath & """", 0, True)
+
+  Dim outFile : Set outFile = fso.OpenTextFile(tempFilePath)
+  Do While Not outFile.AtEndOfStream
+    Log outFile.ReadLine(), False
+  Loop
+  outFile.Close()
+
+  If exitCode <> 0 Then
+    Log "Execution Failed With Code: " & exitCode, True
+  End If
+
+  fso.DeleteFile(tempFilePath)
+End Sub
+
+Sub ResetPermissionsIfExists (Path, GrantAdmins)
+
+  If (fso.FolderExists(Path)) Then
+    Log "Modifying found directory : " & Path, False
+
+    If GrantAdmins = True Then
+      ExecuteCommand comspec & " /C " & icacls & "  """ & Path & "\*"" /grant ""*S-1-5-32-544:(F)"" ""*S-1-5-18:(F)"" /T /C"
+    End If
+
+    ExecuteCommand comspec & " /C " & icacls & "  """ & Path & "\*"" /reset /T /C"
+  Else
+    Log "Nothing to reset, directory not found : " & Path, False
+  End If
+End Sub
+
+
+' Main Code Starts Here
+Dim comspec : comspec = wshShell.ExpandEnvironmentStrings("%comspec%")
+
+' https://docs.microsoft.com/en-us/windows/desktop/api/Shldisp/ne-shldisp-shellspecialfolderconstants
+Const CommonAppData = &H23&  ' second & means long integer '
+Const System = &H25&
+
+' https://docs.microsoft.com/en-us/windows/desktop/shell/shell
+Dim shellApplication : Set shellApplication = CreateObject("Shell.Application")
+Dim systemPath : systemPath = (shellApplication.Namespace(System)).Self.Path
+Dim takeown : takeown = systemPath & "\takeown.exe"
+Dim icacls : icacls = systemPath & "\icacls.exe"
+Dim appDataPath : appDataPath = (shellApplication.Namespace(CommonAppData)).Self.Path
+
+Dim dataDirectory : dataDirectory = appDataPath & "\PuppetLabs\puppet"
+
+If (fso.FolderExists(dataDirectory)) Then
+  Log "Modifying found directory : " & dataDirectory, False
+
+  ' while it is possible to call takeown directly, we avoid a WshShell stream problem with stderr this way
+  ' https://machine-cycle.blogspot.com/2008/06/pipe-dreams-or-vbscript-spawned.html
+  ExecuteCommand comspec & " /C " & takeown & " /F """ & dataDirectory & "\*"" /R /A /D N"
+End If
+
+' Leave root APPDATADIR as-is
+
+' Due to PUP-6729, now that we can modify the DACL
+' ensure admins and system have full control
+ResetPermissionsIfExists dataDirectory, True
+ResetPermissionsIfExists appDataPath & "\PuppetLabs\code", False
+ResetPermissionsIfExists appDataPath & "\PuppetLabs\facter", False
+ResetPermissionsIfExists appDataPath & "\PuppetLabs\pxp-agent", False
+ResetPermissionsIfExists appDataPath & "\PuppetLabs\mcollective", False
+      ]]>
+    </CustomAction>
   </Fragment>
 </Wix>
