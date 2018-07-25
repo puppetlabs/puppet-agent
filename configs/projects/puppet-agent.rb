@@ -130,6 +130,7 @@ project "puppet-agent" do |proj|
   proj.component "module-puppetlabs-augeas_core"
   proj.component "module-puppetlabs-host_core"
   proj.component "module-puppetlabs-mount_core"
+  proj.component "module-puppetlabs-scheduled_task"
   proj.component "module-puppetlabs-selinux_core"
   proj.component "module-puppetlabs-sshkeys_core"
   proj.component "module-puppetlabs-yumrepo_core"
