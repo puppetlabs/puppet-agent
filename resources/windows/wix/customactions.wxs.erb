@@ -288,8 +288,9 @@ Function GetSDDL (Path)
 End Function
 
 ' Executes command, sending its stdout / stderr to the WScript host
-Sub ExecuteCommand (Command)
+Function ExecuteCommand (Command)
 
+  ExecuteCommand = ""
   Log "Executing Command : " & Command, False
 
   Dim tempFilePath : tempFilePath = fso.GetTempName()
@@ -300,7 +301,7 @@ Sub ExecuteCommand (Command)
 
   Dim outFile : Set outFile = fso.OpenTextFile(tempFilePath)
   Do While Not outFile.AtEndOfStream
-    Log outFile.ReadLine(), False
+    ExecuteCommand = ExecuteCommand & outFile.ReadLine() & vbCRLF
   Loop
   outFile.Close()
 
@@ -309,7 +310,7 @@ Sub ExecuteCommand (Command)
   End If
 
   fso.DeleteFile(tempFilePath)
-End Sub
+End Function
 
 Sub ResetPermissionsIfNotMatches (PathToCheck, PathToReset, SDDL, GrantAdmins)
 
@@ -322,11 +323,11 @@ Sub ResetPermissionsIfNotMatches (PathToCheck, PathToReset, SDDL, GrantAdmins)
       If GrantAdmins = True Then
         ' while it is possible to call takeown directly, we avoid a WshShell stream problem with stderr this way
         ' https://machine-cycle.blogspot.com/2008/06/pipe-dreams-or-vbscript-spawned.html
-        ExecuteCommand comspec & " /C " & takeown & " /F """ & PathToReset & "\*"" /R /A /D N"
-        ExecuteCommand comspec & " /C " & icacls & "  """ & PathToReset & "\*"" /grant ""*S-1-5-32-544:(F)"" ""*S-1-5-18:(F)"" /T /C"
+        Log ExecuteCommand(comspec & " /C " & takeown & " /F """ & PathToReset & "\*"" /R /A /D N"), False
+        Log ExecuteCommand(comspec & " /C " & icacls & "  """ & PathToReset & "\*"" /grant ""*S-1-5-32-544:(F)"" ""*S-1-5-18:(F)"" /T /C"), False
       End If
 
-      ExecuteCommand comspec & " /C " & icacls & "  """ & PathToReset & "\*"" /reset /T /C"
+      Log ExecuteCommand(comspec & " /C " & icacls & "  """ & PathToReset & "\*"" /reset /T /C"), False
     Else
       Log "Nothing to reset, Found expected SDDL : " & SDDL, False
     End If
