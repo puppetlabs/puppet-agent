@@ -61,15 +61,13 @@ If you wish to build puppet-agent or the facter gem yourself:
    Puppet, you will need to make a few edits in the component and project
    files. The build process depends on the following packages:
      - GCC (>=4.8.0)
-     - Boost (>=1.57)
      - CMake (>= 3.2.3)
-     - yaml-cpp (>= 0.5.0)
 
-     Any references to pl-gcc, pl-cmake, pl-boost, pl-yaml-cpp, etc. in the
-     [configs directory](configs/) will need to be changed to refer to
-     equivalent installable packages on your target operating system. In many
-     cases, you can drop the `pl-` prefix and ensure that CXX or CC envrionment
-     variables are what they should be.
+     Any references to pl-gcc, pl-cmake, etc. in the [configs
+     directory](configs/) will need to be changed to refer to equivalent
+     installable packages on your target operating system. In many cases, you
+     can drop the `pl-` prefix and ensure that CXX or CC environment variables
+     are what they should be.
 4. Update the `location` and `version` in the [puppet-runtime
    component json file](configs/components/puppet-runtime.json) as follows:
    - `location` should be a file URL to your local puppet-runtime output

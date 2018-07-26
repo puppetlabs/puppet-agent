@@ -18,7 +18,7 @@ component "facter" do |pkg, settings, platform|
     pkg.build_requires 'openssl-devel'
   end
 
-  pkg.build_requires 'puppet-runtime' # Provides openssl, ruby, augeas, curl
+  pkg.build_requires 'puppet-runtime' # Provides augeas, boost, curl, openssl, ruby, yaml-cpp
   pkg.build_requires 'leatherman'
   pkg.build_requires 'runtime'
   pkg.build_requires 'cpp-hocon'
@@ -30,25 +30,9 @@ component "facter" do |pkg, settings, platform|
   end
 
   if platform.is_windows?
-    pkg.environment "PATH", "$(shell cygpath -u #{settings[:gcc_bindir]}):$(shell cygpath -u #{settings[:ruby_bindir]}):$(shell cygpath -u #{settings[:bindir]}):/cygdrive/c/Windows/system32:/cygdrive/c/Windows:/cygdrive/c/Windows/System32/WindowsPowerShell/v1.0"
+    pkg.environment "PATH", "$(shell cygpath -u #{settings[:prefix]}/lib):$(shell cygpath -u #{settings[:gcc_bindir]}):$(shell cygpath -u #{settings[:ruby_bindir]}):$(shell cygpath -u #{settings[:bindir]}):/cygdrive/c/Windows/system32:/cygdrive/c/Windows:/cygdrive/c/Windows/System32/WindowsPowerShell/v1.0"
   else
     pkg.environment "PATH", "#{settings[:bindir]}:$(PATH)"
-  end
-
-  if platform.is_macos?
-    pkg.build_requires "yaml-cpp"
-  elsif platform.name =~ /solaris-10/
-    pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/solaris/10/pl-yaml-cpp-0.5.1.#{platform.architecture}.pkg.gz"
-  elsif platform.is_cross_compiled_linux? || platform.name =~ /solaris-11/
-    pkg.build_requires "pl-yaml-cpp-#{platform.architecture}"
-  elsif platform.is_aix?
-    pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-gcc-5.2.0-11.aix#{platform.os_version}.ppc.rpm"
-    pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-cmake-3.2.3-2.aix#{platform.os_version}.ppc.rpm"
-    pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-yaml-cpp-0.5.1-1.aix#{platform.os_version}.ppc.rpm"
-  elsif platform.is_windows?
-    pkg.build_requires "pl-yaml-cpp-#{platform.architecture}"
-  else
-    pkg.build_requires "pl-yaml-cpp"
   end
 
   # Explicitly skip jruby if not installing a jdk.
@@ -172,8 +156,6 @@ component "facter" do |pkg, settings, platform|
         -DCMAKE_PREFIX_PATH=#{settings[:prefix]} \
         -DCMAKE_INSTALL_RPATH=#{settings[:libdir]} \
         #{special_flags} \
-        -DBOOST_STATIC=ON \
-        -DYAMLCPP_STATIC=ON \
         -DWITHOUT_CURL=#{skip_curl} \
         -DWITHOUT_BLKID=#{skip_blkid} \
         -DWITHOUT_JRUBY=#{skip_jruby} \
@@ -235,6 +217,15 @@ component "facter" do |pkg, settings, platform|
       "ssleay32.dll"
     ].each do |dll|
       pkg.install_file "#{settings[:prefix]}/bin/#{dll}", "#{settings[:facter_root]}/bin/#{dll}"
+    end
+
+    # Also copy the boost dlls that facter requires into the ruby and facter
+    # bindirs, so that dynamically linked executables can find them
+    settings[:boost_libs].each do |name|
+      pkg.install_file "#{settings[:prefix]}/lib/libboost_#{name}.dll",   "#{settings[:facter_root]}/bin/libboost_#{name}.dll"
+      pkg.install_file "#{settings[:prefix]}/lib/libboost_#{name}.dll.a", "#{settings[:facter_root]}/bin/libboost_#{name}.dll.a"
+      pkg.install_file "#{settings[:prefix]}/lib/libboost_#{name}.dll",   "#{settings[:ruby_bindir]}/libboost_#{name}.dll"
+      pkg.install_file "#{settings[:prefix]}/lib/libboost_#{name}.dll.a", "#{settings[:ruby_bindir]}/libboost_#{name}.dll.a"
     end
 
     # Copy these into both facter and ruby's bindirs

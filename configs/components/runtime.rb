@@ -58,7 +58,7 @@ component "runtime" do |pkg, settings, platform|
     # update curl to statically link against zlib
     pkg.install_file "#{settings[:tools_root]}/bin/zlib1.dll", "#{settings[:ruby_bindir]}/zlib1.dll"
 
-    # gdbm, yaml-cpp and iconv are all runtime dependancies of ruby, and their libraries need
+    # gdbm and iconv are runtime dependancies of ruby, and their libraries need
     # To exist inside our vendored ruby
     pkg.install_file "#{settings[:tools_root]}/bin/libgdbm-4.dll", "#{settings[:ruby_bindir]}/libgdbm-4.dll"
     pkg.install_file "#{settings[:tools_root]}/bin/libgdbm_compat-4.dll", "#{settings[:ruby_bindir]}/libgdbm_compat-4.dll"
