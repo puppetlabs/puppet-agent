@@ -5,7 +5,7 @@ component "pxp-agent" do |pkg, settings, platform|
   cmake = "/opt/pl-build-tools/bin/cmake"
 
   if platform.is_windows?
-    pkg.environment "PATH", "$(shell cygpath -u #{settings[:gcc_bindir]}):$(shell cygpath -u #{settings[:ruby_bindir]}):/cygdrive/c/Windows/system32:/cygdrive/c/Windows:/cygdrive/c/Windows/System32/WindowsPowerShell/v1.0"
+    pkg.environment "PATH", "$(shell cygpath -u #{settings[:prefix]}/lib):$(shell cygpath -u #{settings[:gcc_bindir]}):$(shell cygpath -u #{settings[:ruby_bindir]}):/cygdrive/c/Windows/system32:/cygdrive/c/Windows:/cygdrive/c/Windows/System32/WindowsPowerShell/v1.0"
   else
     pkg.environment "PATH", "#{settings[:bindir]}:/opt/pl-build-tools/bin:$(PATH)"
   end
@@ -62,7 +62,6 @@ component "pxp-agent" do |pkg, settings, platform|
           -DCMAKE_SYSTEM_PREFIX_PATH=#{settings[:prefix]} \
           -DMODULES_INSTALL_PATH=#{File.join(settings[:install_root], 'pxp-agent', 'modules')} \
           #{special_flags} \
-          -DBOOST_STATIC=ON \
           ."
     ]
   end
@@ -153,5 +152,30 @@ component "pxp-agent" do |pkg, settings, platform|
     pkg.install_service "SourceDir\\#{settings[:base_dir]}\\#{settings[:company_id]}\\#{settings[:product_id]}\\service\\nssm.exe"
   else
     fail "need to know where to put #{pkg.get_name} service files"
+  end
+
+  # Unless the settings specify that this is a development build, we remove
+  # unneeded header files so that they don't make it into the final package
+  # (boost headers, for example, increase the size of the package to an
+  # unacceptable degree).
+  #
+  # We're doing this in the pxp-agent component because pxp-agent is the last
+  # component to build that requires these headers.
+  unless settings[:dev_build]
+    # Note that ruby is _not_ included in this list because its headers are
+    # required to build native extensions for gems.
+    unwanted_headers = ["augeas.h", "boost", "cpp-pcp-client", "curl", "fa.h",
+                        "facter", "hocon", "leatherman", "libexslt", "libxml2",
+                        "libxslt", "openssl", "whereami", "yaml-cpp"]
+
+    # We need a full path on windows because /usr/bin is not in the PATH at this point
+    rm = platform.is_windows? ? '/usr/bin/rm' : 'rm'
+
+    pkg.install do
+      [
+        unwanted_headers.map { |h| "#{rm} -rf #{settings[:includedir]}/#{h}" },
+        "#{rm} -rf #{settings[:prefix]}/ssl/man", # Also remove unwanted OpenSSL manpages
+      ]
+    end
   end
 end
