@@ -284,6 +284,22 @@ Function GetSDDL (Path)
     Return
   End If
 
+  ' Win32_SecurityDescriptorHelper omits inheritance ID flag, and cacls omits O: and G: info
+  ' cacls output formatted like : C:\ProgramData\PuppetLabs\puppet "D:P(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)"
+  ' sddlString formatted like : O:SYG:SYD:AI(A;OICI;FA;;;SY)(A;OICI;FA;;;BA)
+  Dim caclsOutput : caclsOutput = ExecuteCommand(comspec & " /C " & cacls & "  """ & Path & """ /S")
+
+  ' Replace the DACL D: from SDDL string with the D: from cacls if different
+  Dim regEx : Set regEx = new RegExp
+  regEx.IgnoreCase = True
+  regEx.Pattern = "(D:(P){0,1}(AI){0,1}\(.*\))\n{0,1}"
+  Dim caclsMatches : Set caclsMatches = regEx.Execute(caclsOutput)
+  Dim sddlMatches : Set sddlMatches = regEx.Execute(sddlString)
+  If caclsMatches.Count > 0 And sddlMatches.Count > 0 And (sddlMatches.Item(0) <> caclsMatches.Item(0)) Then
+    Log "Replacing SDDL DACL " & sddlMatches.Item(0) & " with cacls output " & caclsMatches.Item(0), False
+    sddlString = Replace(sddlString, sddlMatches.Item(0), caclsMatches.Item(0))
+  End If
+
   GetSDDL = sddlString
 End Function
 
@@ -350,6 +366,7 @@ Dim shellApplication : Set shellApplication = CreateObject("Shell.Application")
 Dim systemPath : systemPath = (shellApplication.Namespace(System)).Self.Path
 Dim takeown : takeown = systemPath & "\takeown.exe"
 Dim icacls : icacls = systemPath & "\icacls.exe"
+Dim cacls : cacls = systemPath & "\cacls.exe"
 Dim appDataPath : appDataPath = (shellApplication.Namespace(CommonAppData)).Self.Path
 
 ' Leave root APPDATADIR as-is
