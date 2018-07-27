@@ -239,6 +239,7 @@ Const msiMessageTypeInfo    = &H04000000
 '     WD => world (everyone)
 '
 Const SDDL_DIR_INHERITED_ADMIN_ONLY = "O:SYG:SYD:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)"
+Const SDDL_DIR_INHERITED_ADMIN_ONLY_ADMINS_OWNER = "O:BAG:SYD:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)"
 Const SDDL_DIR_INHERITED_EVERYONE = "O:SYG:SYD:AI(A;OICIID;0x1200a9;;;WD)(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)"
 
 Sub Log (Message, IsError)
@@ -373,7 +374,7 @@ Dim appDataPath : appDataPath = (shellApplication.Namespace(CommonAppData)).Self
 
 ' Due to PUP-6729, now that we can modify the DACL
 ' ensure admins and system have full control
-ResetPermissionsIfNotMatches appDataPath & "\PuppetLabs\puppet\etc", appDataPath & "\PuppetLabs\puppet", SDDL_DIR_INHERITED_ADMIN_ONLY, True
+ResetPermissionsIfNotMatches appDataPath & "\PuppetLabs\puppet\etc", appDataPath & "\PuppetLabs\puppet", SDDL_DIR_INHERITED_ADMIN_ONLY_ADMINS_OWNER, True
 ResetPermissionsIfNotMatches appDataPath & "\PuppetLabs\code\environments", appDataPath & "\PuppetLabs\code", SDDL_DIR_INHERITED_ADMIN_ONLY, False
 ResetPermissionsIfNotMatches appDataPath & "\PuppetLabs\facter\facts.d", appDataPath & "\PuppetLabs\facter", SDDL_DIR_INHERITED_EVERYONE, False
 ResetPermissionsIfNotMatches appDataPath & "\PuppetLabs\pxp-agent\etc", appDataPath & "\PuppetLabs\pxp-agent", SDDL_DIR_INHERITED_ADMIN_ONLY, False
