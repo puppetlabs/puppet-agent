@@ -120,42 +120,8 @@
       </Custom>
 
       <!-- Due to PUP-6729, make sure admins and system have permision to reset permissions -->
-      <Custom Action='SetTakeownPuppetPermissions' After='InstallFiles'>
-          NOT REMOVE
-      </Custom>
-      <Custom Action='TakeownPuppetPermissions' After='SetTakeownPuppetPermissions'>
-          NOT REMOVE
-      </Custom>
-      <Custom Action='SetGrantPuppetPermissions' After='TakeownPuppetPermissions'>
-          NOT REMOVE
-      </Custom>
-      <Custom Action='GrantPuppetPermissions' After='SetGrantPuppetPermissions'>
-          NOT REMOVE
-      </Custom>
-
-      <!-- Reset permissions for children beneath each appdir -->
-      <Custom Action='SetResetCodePermissions' After='GrantPuppetPermissions'>
-          NOT REMOVE
-      </Custom>
-      <Custom Action='ResetCodePermissions' After='SetResetCodePermissions'>
-          NOT REMOVE
-      </Custom>
-      <Custom Action='SetResetFacterPermissions' After='ResetCodePermissions'>
-          NOT REMOVE
-      </Custom>
-      <Custom Action='ResetFacterPermissions' After='SetResetFacterPermissions'>
-          NOT REMOVE
-      </Custom>
-      <Custom Action='SetResetPxpAgentPermissions' After='ResetFacterPermissions'>
-          NOT REMOVE
-      </Custom>
-      <Custom Action='ResetPxpAgentPermissions' After='SetResetPxpAgentPermissions'>
-          NOT REMOVE
-      </Custom>
-      <Custom Action='SetResetPuppetPermissions' After='ResetPxpAgentPermissions'>
-          NOT REMOVE
-      </Custom>
-      <Custom Action='ResetPuppetPermissions' After='SetResetPuppetPermissions'>
+      <!-- Also resets permissions for children beneath each appdir -->
+      <Custom Action='ResetDataPermissions' After='InstallFiles'>
           NOT REMOVE
       </Custom>
 
