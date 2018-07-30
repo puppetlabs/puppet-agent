@@ -162,11 +162,15 @@ component "pxp-agent" do |pkg, settings, platform|
   # We're doing this in the pxp-agent component because pxp-agent is the last
   # component to build that requires these headers.
   unless settings[:dev_build]
-    # Note that ruby is _not_ included in this list because its headers are
-    # required to build native extensions for gems.
+    # Note that:
+    # - ruby is not included because its headers are required to build native
+    #   extensions for gems.
+    # - openssl is not included because its headers are required to build other
+    #   libraries (e.g. libssh2) in other projects that rely on puppet-agent
+    #   (e.g. pe-r10k-vanagon).
     unwanted_headers = ["augeas.h", "boost", "cpp-pcp-client", "curl", "fa.h",
                         "facter", "hocon", "leatherman", "libexslt", "libxml2",
-                        "libxslt", "openssl", "whereami", "yaml-cpp"]
+                        "libxslt", "whereami", "yaml-cpp"]
 
     # We need a full path on windows because /usr/bin is not in the PATH at this point
     rm = platform.is_windows? ? '/usr/bin/rm' : 'rm'
