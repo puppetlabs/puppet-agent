@@ -153,33 +153,4 @@ component "pxp-agent" do |pkg, settings, platform|
   else
     fail "need to know where to put #{pkg.get_name} service files"
   end
-
-  # Unless the settings specify that this is a development build, we remove
-  # unneeded header files so that they don't make it into the final package
-  # (boost headers, for example, increase the size of the package to an
-  # unacceptable degree).
-  #
-  # We're doing this in the pxp-agent component because pxp-agent is the last
-  # component to build that requires these headers.
-  unless settings[:dev_build]
-    # Note that:
-    # - ruby is not included because its headers are required to build native
-    #   extensions for gems.
-    # - openssl is not included because its headers are required to build other
-    #   libraries (e.g. libssh2) in other projects that rely on puppet-agent
-    #   (e.g. pe-r10k-vanagon).
-    unwanted_headers = ["augeas.h", "boost", "cpp-pcp-client", "curl", "fa.h",
-                        "facter", "hocon", "leatherman", "libexslt", "libxml2",
-                        "libxslt", "whereami", "yaml-cpp"]
-
-    # We need a full path on windows because /usr/bin is not in the PATH at this point
-    rm = platform.is_windows? ? '/usr/bin/rm' : 'rm'
-
-    pkg.install do
-      [
-        unwanted_headers.map { |h| "#{rm} -rf #{settings[:includedir]}/#{h}" },
-        "#{rm} -rf #{settings[:prefix]}/ssl/man", # Also remove unwanted OpenSSL manpages
-      ]
-    end
-  end
 end

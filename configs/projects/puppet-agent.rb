@@ -137,6 +137,10 @@ project "puppet-agent" do |proj|
   proj.component "module-puppetlabs-zfs_core"
   proj.component "module-puppetlabs-zone_core"
 
+  # Including headers can make the package unacceptably large; This component
+  # removes files that aren't required:
+  proj.component "cleanup"
+
   proj.directory proj.install_root
   proj.directory proj.prefix
   proj.directory proj.sysconfdir
