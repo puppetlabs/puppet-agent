@@ -238,6 +238,33 @@ Const msiMessageTypeError   = &H01000000
 Const msiMessageTypeWarning = &H02000000
 Const msiMessageTypeInfo    = &H04000000
 
+' SDDL Decoder Ring
+'
+' O:SY => owner system
+' G:SY => group system
+' D:   => DACL
+'   Flags
+'     P  => protected
+'     AI => automatic inheritance has been computed
+' ACES (ace1)(ace2)...
+'   Type
+'     A => allow
+'   Inheritance Flags
+'     OI => object inherit (affects child files)
+'     CI => container inherit (affects child directories)
+'     ID => inherited from a parent
+'   Access Right
+'     FA       => file all 0x1f01ff
+'     0x1200a9 => file read (0x00120089) | file execute (0x001200A0)
+'   Trustee SID
+'     SY => system
+'     BA => builtin local admins
+'     WD => world (everyone)
+'
+Const SDDL_DIR_INHERITED_ADMIN_ONLY = "O:SYG:SYD:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)"
+Const SDDL_DIR_INHERITED_ADMIN_ONLY_ADMINS_OWNER = "O:BAG:SYD:AI(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)"
+Const SDDL_DIR_INHERITED_EVERYONE = "O:SYG:SYD:AI(A;OICIID;0x1200a9;;;WD)(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)"
+
 Sub Log (Message, IsError)
 
   ' Logs through cscript
@@ -260,9 +287,50 @@ Sub Log (Message, IsError)
   End If
 End Sub
 
-' Executes command, sending its stdout / stderr to the WScript host
-Sub ExecuteCommand (Command)
+Function GetSDDL (Path)
+  ' omit root\cimv2 as local machine is default
+  Dim wmiService : Set wmiService = GetObject("winmgmts:")
+  ' https://docs.microsoft.com/en-us/previous-versions/windows/desktop/secrcw32prov/win32-securitydescriptorhelper
+  Dim sdHelper : Set sdHelper = GetObject("winmgmts:Win32_SecurityDescriptorHelper" )
+  Dim fileSecuritySettings : Set fileSecuritySettings = wmiService.Get("Win32_LogicalFileSecuritySetting='" & Path & "'")
 
+  Dim securityDescriptor
+  ' https://docs.microsoft.com/en-us/previous-versions/windows/desktop/secrcw32prov/win32-securitydescriptor
+  Dim succeeded : succeeded = fileSecuritySettings.GetSecurityDescriptor(securityDescriptor)
+
+  If succeeded <> 0 Then
+    Return
+  End If
+
+  Dim sddlString
+  succeeded = sdHelper.Win32SDToSDDL(securityDescriptor, sddlString)
+  If succeeded <> 0 Then
+    Return
+  End If
+
+  ' Win32_SecurityDescriptorHelper omits inheritance ID flag, and cacls omits O: and G: info
+  ' cacls output formatted like : C:\ProgramData\PuppetLabs\puppet "D:P(A;OICIID;FA;;;SY)(A;OICIID;FA;;;BA)"
+  ' sddlString formatted like : O:SYG:SYD:AI(A;OICI;FA;;;SY)(A;OICI;FA;;;BA)
+  Dim caclsOutput : caclsOutput = ExecuteCommand(comspec & " /C " & cacls & "  """ & Path & """ /S")
+
+  ' Replace the DACL D: from SDDL string with the D: from cacls if different
+  Dim regEx : Set regEx = new RegExp
+  regEx.IgnoreCase = True
+  regEx.Pattern = "(D:(P){0,1}(AI){0,1}\(.*\))\n{0,1}"
+  Dim caclsMatches : Set caclsMatches = regEx.Execute(caclsOutput)
+  Dim sddlMatches : Set sddlMatches = regEx.Execute(sddlString)
+  If caclsMatches.Count > 0 And sddlMatches.Count > 0 And (sddlMatches.Item(0) <> caclsMatches.Item(0)) Then
+    Log "Replacing SDDL DACL " & sddlMatches.Item(0) & " with cacls output " & caclsMatches.Item(0), False
+    sddlString = Replace(sddlString, sddlMatches.Item(0), caclsMatches.Item(0))
+  End If
+
+  GetSDDL = sddlString
+End Function
+
+' Executes command, sending its stdout / stderr to the WScript host
+Function ExecuteCommand (Command)
+
+  ExecuteCommand = ""
   Log "Executing Command : " & Command, False
 
   Dim tempFilePath : tempFilePath = fso.GetTempName()
@@ -273,7 +341,7 @@ Sub ExecuteCommand (Command)
 
   Dim outFile : Set outFile = fso.OpenTextFile(tempFilePath)
   Do While Not outFile.AtEndOfStream
-    Log outFile.ReadLine(), False
+    ExecuteCommand = ExecuteCommand & outFile.ReadLine() & vbCRLF
   Loop
   outFile.Close()
 
@@ -282,21 +350,31 @@ Sub ExecuteCommand (Command)
   End If
 
   fso.DeleteFile(tempFilePath)
-End Sub
+End Function
 
-Sub ResetPermissionsIfExists (Path, GrantAdmins)
+Sub ResetPermissionsIfNotMatches (PathToCheck, PathToReset, SDDL, GrantAdmins)
 
-  If (fso.FolderExists(Path)) Then
-    Log "Modifying found directory : " & Path, False
+  If (fso.FolderExists(PathToCheck)) Then
+    Log "Inspecting found directory : " & PathToCheck, False
 
-    If GrantAdmins = True Then
-      ExecuteCommand comspec & " /C " & icacls & "  """ & Path & "\*"" /grant ""*S-1-5-32-544:(F)"" ""*S-1-5-18:(F)"" /T /C"
+    Dim checkSDDL : checkSDDL = GetSDDL(PathToCheck)
+    If checkSDDL <> SDDL Then
+      Log "Resetting " & PathToReset & " based on unexpected SDDL for " & PathToCheck & " with " & checkSDDL & " expected to be " & SDDL, False
+      If GrantAdmins = True Then
+        ' while it is possible to call takeown directly, we avoid a WshShell stream problem with stderr this way
+        ' https://machine-cycle.blogspot.com/2008/06/pipe-dreams-or-vbscript-spawned.html
+        Log ExecuteCommand(comspec & " /C " & takeown & " /F """ & PathToReset & "\*"" /R /A /D N"), False
+        Log ExecuteCommand(comspec & " /C " & icacls & "  """ & PathToReset & "\*"" /grant ""*S-1-5-32-544:(F)"" ""*S-1-5-18:(F)"" /T /C"), False
+      End If
+
+      Log ExecuteCommand(comspec & " /C " & icacls & "  """ & PathToReset & "\*"" /reset /T /C"), False
+    Else
+      Log "Nothing to reset, Found expected SDDL : " & SDDL, False
     End If
-
-    ExecuteCommand comspec & " /C " & icacls & "  """ & Path & "\*"" /reset /T /C"
   Else
-    Log "Nothing to reset, directory not found : " & Path, False
+    Log "Nothing to reset, directory not found : " & PathToCheck, False
   End If
+
 End Sub
 
 
@@ -312,27 +390,18 @@ Dim shellApplication : Set shellApplication = CreateObject("Shell.Application")
 Dim systemPath : systemPath = (shellApplication.Namespace(System)).Self.Path
 Dim takeown : takeown = systemPath & "\takeown.exe"
 Dim icacls : icacls = systemPath & "\icacls.exe"
+Dim cacls : cacls = systemPath & "\cacls.exe"
 Dim appDataPath : appDataPath = (shellApplication.Namespace(CommonAppData)).Self.Path
-
-Dim dataDirectory : dataDirectory = appDataPath & "\PuppetLabs\puppet"
-
-If (fso.FolderExists(dataDirectory)) Then
-  Log "Modifying found directory : " & dataDirectory, False
-
-  ' while it is possible to call takeown directly, we avoid a WshShell stream problem with stderr this way
-  ' https://machine-cycle.blogspot.com/2008/06/pipe-dreams-or-vbscript-spawned.html
-  ExecuteCommand comspec & " /C " & takeown & " /F """ & dataDirectory & "\*"" /R /A /D N"
-End If
 
 ' Leave root APPDATADIR as-is
 
 ' Due to PUP-6729, now that we can modify the DACL
 ' ensure admins and system have full control
-ResetPermissionsIfExists dataDirectory, True
-ResetPermissionsIfExists appDataPath & "\PuppetLabs\code", False
-ResetPermissionsIfExists appDataPath & "\PuppetLabs\facter", False
-ResetPermissionsIfExists appDataPath & "\PuppetLabs\pxp-agent", False
-ResetPermissionsIfExists appDataPath & "\PuppetLabs\mcollective", False
+ResetPermissionsIfNotMatches appDataPath & "\PuppetLabs\puppet\etc", appDataPath & "\PuppetLabs\puppet", SDDL_DIR_INHERITED_ADMIN_ONLY_ADMINS_OWNER, True
+ResetPermissionsIfNotMatches appDataPath & "\PuppetLabs\code\environments", appDataPath & "\PuppetLabs\code", SDDL_DIR_INHERITED_ADMIN_ONLY, False
+ResetPermissionsIfNotMatches appDataPath & "\PuppetLabs\facter\facts.d", appDataPath & "\PuppetLabs\facter", SDDL_DIR_INHERITED_EVERYONE, False
+ResetPermissionsIfNotMatches appDataPath & "\PuppetLabs\pxp-agent\etc", appDataPath & "\PuppetLabs\pxp-agent", SDDL_DIR_INHERITED_ADMIN_ONLY, False
+ResetPermissionsIfNotMatches appDataPath & "\PuppetLabs\mcollective\etc", appDataPath & "\PuppetLabs\mcollective", SDDL_DIR_INHERITED_ADMIN_ONLY, False
       ]]>
     </CustomAction>
   </Fragment>
