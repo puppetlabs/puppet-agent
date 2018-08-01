@@ -17,10 +17,10 @@ component "cleanup" do |pkg, settings, platform|
     # Note that:
     # - Ruby is not in this list because its headers are required to build native
     #   extensions for gems.
-    # - OpenSSL is not in this list because its headers are required to build
-    #   other libraries (e.g. libssh2) in other projects that rely on
-    #   puppet-agent (e.g. pe-r10k-vanagon).
-    unwanted_headers = ["augeas.h", "boost", "cpp-pcp-client", "curl", "fa.h",
+    # - Curl and OpenSSL are not in this list because their headers are
+    #   required to build other libraries (e.g. libssh2 and libgit2) in other
+    #   projects that rely on puppet-agent (e.g. pe-r10k-vanagon).
+    unwanted_headers = ["augeas.h", "boost", "cpp-pcp-client", "fa.h",
                         "facter", "hocon", "leatherman", "libexslt", "libxml2",
                         "libxslt", "whereami", "yaml-cpp"]
 
