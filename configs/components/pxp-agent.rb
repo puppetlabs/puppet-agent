@@ -93,17 +93,20 @@ component "pxp-agent" do |pkg, settings, platform|
     # we ensure that Windows uses our in-house .dll files to start up pxp-agent.
     #
     # See https://tickets.puppetlabs.com/browse/PA-1850 for all the details.
-    pkg.install do
-      dependent_dlls = [
-        "libeay32.dll",
-        "ssleay32.dll",
-        platform.architecture == "x64" ? "libgcc_s_seh-1.dll" : "libgcc_s_sjlj-1.dll",
-        "libstdc++-6.dll"
-      ]
-
-      dependent_dlls.map do |dll|
-        "C:/cygwin64/bin/cp.exe #{settings[:prefix]}/bin/#{dll} #{settings[:pxp_root]}/bin"
-      end
+    if platform.architecture == "x64"
+      gcc_postfix = 'seh'
+      ssl_postfix = '-x64'
+    else
+      gcc_postfix = 'sjlj'
+      ssl_postfix = ''
+    end
+    [
+      "libssl-1_1#{ssl_postfix}.dll",
+      "libcrypto-1_1#{ssl_postfix}.dll",
+      "libgcc_s_#{gcc_postfix}-1.dll",
+      "libstdc++-6.dll"
+    ].each do |dll|
+      pkg.install_file "#{settings[:prefix]}/bin/#{dll}", "#{settings[:pxp_root]}/bin/#{dll}"
     end
   end
 

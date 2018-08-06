@@ -211,10 +211,17 @@ component "facter" do |pkg, settings, platform|
     # Copy these into facter's bindir, they've already been copied into ruby's
     # in the runtime component
     pkg.install_file "#{settings[:tools_root]}/bin/zlib1.dll", "#{settings[:facter_root]}/bin/zlib1.dll"
+    if platform.architecture == "x64"
+      gcc_postfix = 'seh'
+      ssl_postfix = '-x64'
+    else
+      gcc_postfix = 'sjlj'
+      ssl_postfix = ''
+    end
     [
-      "libeay32.dll",
-      platform.architecture == "x64" ? "libgcc_s_seh-1.dll" : "libgcc_s_sjlj-1.dll",
-      "ssleay32.dll"
+      "libssl-1_1#{ssl_postfix}.dll",
+      "libcrypto-1_1#{ssl_postfix}.dll",
+      "libgcc_s_#{gcc_postfix}-1.dll"
     ].each do |dll|
       pkg.install_file "#{settings[:prefix]}/bin/#{dll}", "#{settings[:facter_root]}/bin/#{dll}"
     end
