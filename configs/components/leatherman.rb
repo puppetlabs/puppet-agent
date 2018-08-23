@@ -84,6 +84,7 @@ component "leatherman" do |pkg, settings, platform|
         -DCMAKE_INSTALL_RPATH=#{settings[:libdir]} \
         #{leatherman_locale_var} \
         -DLEATHERMAN_SHARED=TRUE \
+        -DBOOST_INCLUDEDIR=#{settings[:libdir]} \
         #{special_flags} \
         ."]
   end
