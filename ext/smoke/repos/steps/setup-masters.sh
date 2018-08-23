@@ -1,7 +1,6 @@
 #!/bin/bash
 
 set -e
-set -x
 
 source "$(dirname $0)/../../helpers.sh"
 
