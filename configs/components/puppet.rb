@@ -12,6 +12,9 @@ component "puppet" do |pkg, settings, platform|
     pkg.build_requires "pl-gettext-#{platform.architecture}"
   elsif platform.is_aix?
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-gettext-0.19.8-2.aix#{platform.os_version}.ppc.rpm"
+  elsif platform.name =~ /sles-15/
+    # These platforms use their default OS toolchain and have package
+    # dependencies configured in the platform provisioning step.
   elsif !platform.is_solaris?
     pkg.build_requires "pl-gettext"
   end

@@ -47,6 +47,9 @@ component "facter" do |pkg, settings, platform|
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-yaml-cpp-0.5.1-1.aix#{platform.os_version}.ppc.rpm"
   elsif platform.is_windows?
     pkg.build_requires "pl-yaml-cpp-#{platform.architecture}"
+  elsif platform.name =~ /sles-15/
+    # These platforms use their default OS toolchain and have package
+    # dependencies configured in the platform provisioning step.
   else
     pkg.build_requires "pl-yaml-cpp"
   end
