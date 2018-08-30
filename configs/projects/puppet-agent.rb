@@ -111,7 +111,7 @@ project "puppet-agent" do |proj|
     proj.component "shellpath"
   end
 
-  proj.component "runtime"
+  proj.component "runtime" unless platform.name =~ /sles-15/
 
   # Windows doesn't need these wrappers, only unix platforms
   unless platform.is_windows?
