@@ -128,6 +128,7 @@ project "puppet-agent" do |proj|
 
   # Vendored modules
   proj.component "module-puppetlabs-augeas_core"
+  proj.component "module-puppetlabs-cron_core"
   proj.component "module-puppetlabs-host_core"
   proj.component "module-puppetlabs-mount_core"
   proj.component "module-puppetlabs-scheduled_task"

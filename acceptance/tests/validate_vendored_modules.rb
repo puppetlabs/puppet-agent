@@ -22,6 +22,7 @@ test_name "PA-1998: Validate that vendored modules are installed" do
   step "`describe --list` lists vendored module types" do
     vendored_types = %w[
       augeas
+      cron
       host
       mount
       selboolean
