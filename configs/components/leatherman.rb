@@ -33,11 +33,12 @@ component "leatherman" do |pkg, settings, platform|
   end
 
   pkg.build_requires "puppet-runtime" # Provides curl and ruby
-  pkg.build_requires "runtime"
+  pkg.build_requires "runtime" unless platform.name =~ /sles-15/
 
   ruby = "#{settings[:host_ruby]} -rrbconfig"
 
   leatherman_locale_var = ""
+  boost_static_flag = "-DBOOST_STATIC=ON"
 
   # cmake on OSX is provided by brew
   # a toolchain is not currently required for OSX since we're building with clang.
@@ -69,6 +70,11 @@ component "leatherman" do |pkg, settings, platform|
 
     # Use environment variable set in environment.bat to find locale files
     leatherman_locale_var = "-DLEATHERMAN_LOCALE_VAR='PUPPET_DIR' -DLEATHERMAN_LOCALE_INSTALL='share/locale'"
+  elsif platform.name =~ /sles-15/
+    # These platforms use the default OS toolchain, rather than pl-build-tools
+    cmake = "cmake"
+    toolchain = ""
+    boost_static_flag = "-DBOOST_STATIC=OFF"
   else
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/pl-build-toolchain.cmake"
     cmake = "/opt/pl-build-tools/bin/cmake"
@@ -94,7 +100,7 @@ component "leatherman" do |pkg, settings, platform|
         #{leatherman_locale_var} \
         -DLEATHERMAN_SHARED=TRUE \
         #{special_flags} \
-        -DBOOST_STATIC=ON \
+        #{boost_static_flag} \
         ."]
   end
 
