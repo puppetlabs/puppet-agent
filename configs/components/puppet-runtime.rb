@@ -25,6 +25,20 @@ component 'puppet-runtime' do |pkg, settings, platform|
   pkg.replaces 'pe-rubygem-deep-merge'
   pkg.replaces 'pe-rubygem-net-ssh'
 
+  # These platforms are built with the default OS distro toolchain, and
+  # thus have additional package deps
+  if platform.name =~ /sles-15/
+    pkg.requires 'libboost_atomic1_66_0'
+    pkg.requires 'libboost_chrono1_66_0'
+    pkg.requires 'libboost_date_time1_66_0'
+    pkg.requires 'libboost_filesystem1_66_0'
+    pkg.requires 'libboost_locale1_66_0'
+    pkg.requires 'libboost_log1_66_0'
+    pkg.requires 'libboost_program_options1_66_0'
+    pkg.requires 'libboost_regex1_66_0'
+    pkg.requires 'libyaml-cpp0_6'
+  end
+
   pkg.install_only true
 
   if platform.is_cross_compiled_linux? || platform.is_solaris? || platform.is_aix?

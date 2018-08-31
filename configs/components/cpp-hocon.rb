@@ -4,6 +4,7 @@ component "cpp-hocon" do |pkg, settings, platform|
   pkg.build_requires('leatherman')
 
   make = platform[:make]
+  boost_static_flag = "-DBOOST_STATIC=ON"
 
   # cmake on OSX is provided by brew
   # a toolchain is not currently required for OSX since we're building with clang.
@@ -27,6 +28,11 @@ component "cpp-hocon" do |pkg, settings, platform|
 
     cmake = "C:/ProgramData/chocolatey/bin/cmake.exe -G \"MinGW Makefiles\""
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=#{settings[:tools_root]}/pl-build-toolchain.cmake"
+  elsif platform.name =~ /sles-15/
+    # These platforms use the default OS toolchain, rather than pl-build-tools
+    cmake = "cmake"
+    toolchain = ""
+    boost_static_flag = "-DBOOST_STATIC=OFF"
   else
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/pl-build-toolchain.cmake"
     cmake = "/opt/pl-build-tools/bin/cmake"
@@ -45,7 +51,7 @@ component "cpp-hocon" do |pkg, settings, platform|
         -DCMAKE_PREFIX_PATH=#{settings[:prefix]} \
         -DCMAKE_INSTALL_PREFIX=#{settings[:prefix]} \
         #{special_flags} \
-        -DBOOST_STATIC=ON \
+        #{boost_static_flag} \
         ."]
   end
 

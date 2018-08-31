@@ -22,6 +22,7 @@ component "pxp-agent" do |pkg, settings, platform|
 
   make = platform[:make]
 
+  boost_static_flag = "-DBOOST_STATIC=ON"
   special_flags = " -DCMAKE_INSTALL_PREFIX=#{settings[:prefix]} "
 
   if platform.is_aix?
@@ -47,6 +48,12 @@ component "pxp-agent" do |pkg, settings, platform|
     special_flags = " -DCMAKE_INSTALL_PREFIX=#{settings[:pxp_root]} "
     cmake = "C:/ProgramData/chocolatey/bin/cmake.exe -G \"MinGW Makefiles\""
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=#{settings[:tools_root]}/pl-build-toolchain.cmake"
+  elsif platform.name =~ /sles-15/
+    # These platforms use the default OS toolchain, rather than pl-build-tools
+    cmake = "cmake"
+    toolchain = ""
+    boost_static_flag = "-DBOOST_STATIC=OFF"
+    special_flags += " -DCMAKE_CXX_FLAGS='#{settings[:cflags]} -Wno-deprecated -Wimplicit-fallthrough=0' "
   elsif platform.is_cisco_wrlinux?
     special_flags += " -DLEATHERMAN_USE_LOCALES=OFF "
   end
@@ -62,7 +69,7 @@ component "pxp-agent" do |pkg, settings, platform|
           -DCMAKE_SYSTEM_PREFIX_PATH=#{settings[:prefix]} \
           -DMODULES_INSTALL_PATH=#{File.join(settings[:install_root], 'pxp-agent', 'modules')} \
           #{special_flags} \
-          -DBOOST_STATIC=ON \
+          #{boost_static_flag} \
           ."
     ]
   end
