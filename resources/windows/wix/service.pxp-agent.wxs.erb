@@ -9,7 +9,7 @@
         <CreateFolder />
         <File Id="NSSM"
               KeyPath="yes"
-              Source="SourceDir\<%= settings[:base_dir] %>\<%= settings[:company_id] %>\<%= settings[:product_id] %>\service\nssm.exe" />
+              Source="SourceDir\<%= settings[:base_dir] %>\<%= settings[:company_id] %>\<%= settings[:product_id] %>\puppet\bin\nssm.exe" />
 
         <ServiceInstall Id="PXPServiceInstaller"
                         Account="[PUPPET_AGENT_ACCOUNT_DOMAIN]\[PUPPET_AGENT_ACCOUNT_USER]"
@@ -25,17 +25,16 @@
         <!-- Various registry keys documented at https://nssm.cc/usage and https://github.com/kirillkovalenko/nssm -->
         <RegistryKey Root="HKLM" Key="SYSTEM\CurrentControlSet\Services\pxp-agent\Parameters">
           <RegistryValue Name="AppDirectory"
-                         Value="[INSTALLDIR]pxp-agent\bin"
+                         Value="[INSTALLDIR]puppet\bin"
                          Type="expandable" />
           <RegistryValue Name="Application"
-                         Value="[INSTALLDIR]pxp-agent\bin\pxp-agent.exe"
+                         Value="[INSTALLDIR]puppet\bin\pxp-agent.exe"
                          Type="expandable" />
           <RegistryValue Name="AppParameters"
                          Value=""
                          Type="expandable" />
           <RegistryValue Name="AppEnvironmentExtra" Type="multiString">
-                         <MultiStringValue>PATH=[INSTALLDIR]pxp-agent\bin;[INSTALLDIR]puppet\bin;[INSTALLDIR]facter\bin;[INSTALLDIR]sys\ruby\bin;%PATH%</MultiStringValue>
-                         <MultiStringValue>RUBYLIB=[INSTALLDIR]puppet\lib;[INSTALLDIR]hiera\lib;[INSTALLDIR]facter\lib;%RUBYLIB%</MultiStringValue>
+                         <MultiStringValue>PATH=[INSTALLDIR]puppet\bin;%PATH%</MultiStringValue>
                          <MultiStringValue>OPENSSL_CONF=[INSTALLDIR]puppet\ssl\openssl.cnf</MultiStringValue>
           </RegistryValue>
           <!-- Write stdout/stderr to the same log file to catch startup errors -->

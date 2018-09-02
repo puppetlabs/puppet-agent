@@ -48,16 +48,8 @@ project "puppet-agent" do |proj|
     # Directory IDs
     proj.setting(:bindir_id, "bindir")
 
-    # We build for windows not in the final destination, but in the paths that correspond
-    # to the directory ids expected by WIX. This will allow for a portable installation (ideally).
-    proj.setting(:facter_root, File.join(proj.install_root, "facter"))
-    proj.setting(:hiera_root, File.join(proj.install_root, "hiera"))
-    proj.setting(:hiera_bindir, File.join(proj.hiera_root, "bin"))
-    proj.setting(:hiera_libdir, File.join(proj.hiera_root, "lib"))
     proj.setting(:pxp_root, File.join(proj.install_root, "pxp-agent"))
     proj.setting(:service_dir, File.join(proj.install_root, "service"))
-    proj.setting(:ruby_dir, File.join(proj.install_root, "sys/ruby"))
-    proj.setting(:ruby_bindir, File.join(proj.ruby_dir, "bin"))
   end
 
   proj.setting(:puppet_configdir, File.join(proj.sysconfdir, 'puppet'))

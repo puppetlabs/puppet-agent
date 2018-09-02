@@ -53,9 +53,6 @@ component "runtime" do |pkg, settings, platform|
     pkg.install_file "#{settings[:gcc_bindir]}/libgcc_s_#{lib_type}-1.dll", "#{settings[:bindir]}/libgcc_s_#{lib_type}-1.dll"
     pkg.install_file "#{settings[:gcc_bindir]}/libstdc++-6.dll", "#{settings[:bindir]}/libstdc++-6.dll"
     pkg.install_file "#{settings[:gcc_bindir]}/libwinpthread-1.dll", "#{settings[:bindir]}/libwinpthread-1.dll"
-    pkg.install_file "#{settings[:gcc_bindir]}/libgcc_s_#{lib_type}-1.dll", "#{settings[:facter_root]}/lib/libgcc_s_#{lib_type}-1.dll"
-    pkg.install_file "#{settings[:gcc_bindir]}/libstdc++-6.dll", "#{settings[:facter_root]}/lib/libstdc++-6.dll"
-    pkg.install_file "#{settings[:gcc_bindir]}/libwinpthread-1.dll", "#{settings[:facter_root]}/lib/libwinpthread-1.dll"
 
     # Curl is dynamically linking against zlib, so we need to include this file until we
     # update curl to statically link against zlib
@@ -63,11 +60,16 @@ component "runtime" do |pkg, settings, platform|
 
     # gdbm and iconv are runtime dependancies of ruby, and their libraries need
     # To exist inside our vendored ruby
-    pkg.install_file "#{settings[:tools_root]}/bin/libgdbm-4.dll", "#{settings[:ruby_bindir]}/libgdbm-4.dll"
-    pkg.install_file "#{settings[:tools_root]}/bin/libgdbm_compat-4.dll", "#{settings[:ruby_bindir]}/libgdbm_compat-4.dll"
-    pkg.install_file "#{settings[:tools_root]}/bin/libiconv-2.dll", "#{settings[:ruby_bindir]}/libiconv-2.dll"
-    pkg.install_file "#{settings[:tools_root]}/bin/libffi-6.dll", "#{settings[:ruby_bindir]}/libffi-6.dll"
+    pkg.install_file "#{settings[:tools_root]}/bin/libgdbm-4.dll", "#{settings[:bindir]}/libgdbm-4.dll"
+    pkg.install_file "#{settings[:tools_root]}/bin/libgdbm_compat-4.dll", "#{settings[:bindir]}/libgdbm_compat-4.dll"
+    pkg.install_file "#{settings[:tools_root]}/bin/libiconv-2.dll", "#{settings[:bindir]}/libiconv-2.dll"
+    pkg.install_file "#{settings[:tools_root]}/bin/libffi-6.dll", "#{settings[:bindir]}/libffi-6.dll"
 
+    # Copy the boost dlls into the bindir
+    settings[:boost_libs].each do |name|
+      pkg.install_file "#{settings[:prefix]}/lib/libboost_#{name}.dll",   "#{settings[:bindir]}/libboost_#{name}.dll"
+      pkg.install_file "#{settings[:prefix]}/lib/libboost_#{name}.dll.a", "#{settings[:bindir]}/libboost_#{name}.dll.a"
+    end
   else # Linux and Solaris systems
     pkg.install do
       "bash runtime.sh #{libdir}"

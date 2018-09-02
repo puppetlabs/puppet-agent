@@ -11,5 +11,5 @@ component "nssm" do |pkg, settings, platform|
     ]
   end
 
-  pkg.install_file "out/nssm.exe", "#{settings[:service_dir]}/nssm.exe"
+  pkg.install_file "out/nssm.exe", "#{settings[:bindir]}/nssm.exe"
 end

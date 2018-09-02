@@ -30,7 +30,7 @@ component "facter" do |pkg, settings, platform|
   end
 
   if platform.is_windows?
-    pkg.environment "PATH", "$(shell cygpath -u #{settings[:prefix]}/lib):$(shell cygpath -u #{settings[:gcc_bindir]}):$(shell cygpath -u #{settings[:ruby_bindir]}):$(shell cygpath -u #{settings[:bindir]}):/cygdrive/c/Windows/system32:/cygdrive/c/Windows:/cygdrive/c/Windows/System32/WindowsPowerShell/v1.0"
+    pkg.environment "PATH", "$(shell cygpath -u #{settings[:prefix]}/lib):$(shell cygpath -u #{settings[:gcc_bindir]}):$(shell cygpath -u #{settings[:bindir]}):/cygdrive/c/Windows/system32:/cygdrive/c/Windows:/cygdrive/c/Windows/System32/WindowsPowerShell/v1.0"
   else
     pkg.environment "PATH", "#{settings[:bindir]}:$(PATH)"
   end
@@ -126,8 +126,6 @@ component "facter" do |pkg, settings, platform|
 
     cmake = "C:/ProgramData/chocolatey/bin/cmake.exe -G \"MinGW Makefiles\""
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=#{settings[:tools_root]}/pl-build-toolchain.cmake"
-    special_flags = "-DCMAKE_INSTALL_PREFIX=#{settings[:facter_root]} \
-                     -DRUBY_LIB_INSTALL=#{settings[:facter_root]}/lib "
   elsif platform.name =~ /sles-15/
     # These platforms use the default OS toolchain, rather than pl-build-tools
     cmake = "cmake"
@@ -145,10 +143,11 @@ component "facter" do |pkg, settings, platform|
   # Strip it off; this should have no impact on final releases, as git sha would not be included.
   aio_agent_version = settings[:package_version].match(/^\d+\.\d+\.\d+(\.\d+){0,2}/).to_s
 
+  # FACTER_PATH is the location to look for specific binaries before looking at the PATH
+  # FACTER_RUBY specifies the location of libruby during compile time, bypassing dynamic lookup
   unless platform.is_windows?
     special_flags += " -DFACTER_PATH=#{settings[:bindir]} \
-                       -DFACTER_RUBY=#{settings[:libdir]}/$(shell #{ruby} -e 'print RbConfig::CONFIG[\"LIBRUBY_SO\"]') \
-                       -DRUBY_LIB_INSTALL=#{settings[:ruby_vendordir]}"
+                       -DFACTER_RUBY=#{settings[:libdir]}/$(shell #{ruby} -e 'print RbConfig::CONFIG[\"LIBRUBY_SO\"]')"
   end
 
   # FACTER_RUBY Needs bindir
@@ -159,6 +158,7 @@ component "facter" do |pkg, settings, platform|
         -DCMAKE_VERBOSE_MAKEFILE=ON \
         -DCMAKE_PREFIX_PATH=#{settings[:prefix]} \
         -DCMAKE_INSTALL_RPATH=#{settings[:libdir]} \
+        -DRUBY_LIB_INSTALL=#{settings[:ruby_vendordir]} \
         #{special_flags} \
         -DWITHOUT_CURL=#{skip_curl} \
         -DWITHOUT_BLKID=#{skip_blkid} \
@@ -211,56 +211,10 @@ component "facter" do |pkg, settings, platform|
     pkg.add_source("file://resources/files/windows/facter.bat", sum: "185b8645feecac4acadc55c64abb3755")
     pkg.add_source("file://resources/files/windows/facter_interactive.bat", sum: "20a1c0bc5368ffb24980f42432f1b372")
     pkg.add_source("file://resources/files/windows/run_facter_interactive.bat", sum: "c5e0c0a80e5c400a680a06a4bac8abd4")
+
     pkg.install_file "../facter.bat", "#{settings[:link_bindir]}/facter.bat"
     pkg.install_file "../facter_interactive.bat", "#{settings[:link_bindir]}/facter_interactive.bat"
     pkg.install_file "../run_facter_interactive.bat", "#{settings[:link_bindir]}/run_facter_interactive.bat"
-
-    # Copy these into facter's bindir, they've already been copied into ruby's
-    # in the runtime component
-    pkg.install_file "#{settings[:tools_root]}/bin/zlib1.dll", "#{settings[:facter_root]}/bin/zlib1.dll"
-    if platform.architecture == "x64"
-      gcc_postfix = 'seh'
-      ssl_postfix = '-x64'
-    else
-      gcc_postfix = 'sjlj'
-      ssl_postfix = ''
-    end
-    [
-      "libssl-1_1#{ssl_postfix}.dll",
-      "libcrypto-1_1#{ssl_postfix}.dll",
-      "libgcc_s_#{gcc_postfix}-1.dll"
-    ].each do |dll|
-      pkg.install_file "#{settings[:prefix]}/bin/#{dll}", "#{settings[:facter_root]}/bin/#{dll}"
-    end
-
-    # Also copy the boost dlls that facter requires into the ruby and facter
-    # bindirs, so that dynamically linked executables can find them
-    settings[:boost_libs].each do |name|
-      pkg.install_file "#{settings[:prefix]}/lib/libboost_#{name}.dll",   "#{settings[:facter_root]}/bin/libboost_#{name}.dll"
-      pkg.install_file "#{settings[:prefix]}/lib/libboost_#{name}.dll.a", "#{settings[:facter_root]}/bin/libboost_#{name}.dll.a"
-      pkg.install_file "#{settings[:prefix]}/lib/libboost_#{name}.dll",   "#{settings[:ruby_bindir]}/libboost_#{name}.dll"
-      pkg.install_file "#{settings[:prefix]}/lib/libboost_#{name}.dll.a", "#{settings[:ruby_bindir]}/libboost_#{name}.dll.a"
-    end
-
-    # Copy these into both facter and ruby's bindirs
-    [
-      "leatherman_curl.dll",
-      "leatherman_dynamic_library.dll",
-      "leatherman_execution.dll",
-      "leatherman_file_util.dll",
-      "leatherman_locale.dll",
-      "leatherman_logging.dll",
-      "leatherman_nowide.dll",
-      "leatherman_ruby.dll",
-      "leatherman_util.dll",
-      "leatherman_windows.dll",
-      "libcurl-4.dll",
-      "libstdc++-6.dll",
-      "libwinpthread-1.dll",
-    ].each do |dll|
-      pkg.install_file "#{settings[:prefix]}/bin/#{dll}", "#{settings[:ruby_bindir]}/#{dll}"
-      pkg.install_file "#{settings[:prefix]}/bin/#{dll}", "#{settings[:facter_root]}/bin/#{dll}"
-    end
   end
   if platform.is_windows?
     pkg.directory File.join(settings[:sysconfdir], 'facter', 'facts.d')
