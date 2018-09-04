@@ -24,6 +24,7 @@ foss_platforms:
   - sles-11-x86_64
   - sles-12-x86_64
   - sles-12-ppc64le
+  - sles-15-x86_64
   - ubuntu-14.04-amd64
   - ubuntu-14.04-i386
   - ubuntu-16.04-amd64
@@ -85,6 +86,8 @@ platform_repos:
     repo_location: repos/sles/12/**/x86_64
   - name: sles-12-ppc64le
     repo_location: repos/sles/12/**/ppc64le
+  - name: sles-15-x86_64
+    repo_location: repos/sles/15/**/x86_64
   - name: fedora-26-x86_64
     repo_location: repos/fedora/26/**/x86_64
   - name: fedora-27-x86_64
