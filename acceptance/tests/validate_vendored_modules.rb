@@ -25,6 +25,7 @@ test_name "PA-1998: Validate that vendored modules are installed" do
       cron
       host
       mount
+      scheduled_task
       selboolean
       selmodule
       ssh_authorized_key
