@@ -35,6 +35,7 @@ component 'puppet-runtime' do |pkg, settings, platform|
     pkg.requires 'libboost_locale1_66_0'
     pkg.requires 'libboost_log1_66_0'
     pkg.requires 'libboost_program_options1_66_0'
+    pkg.requires 'libboost_random1_66_0'
     pkg.requires 'libboost_regex1_66_0'
     pkg.requires 'libyaml-cpp0_6'
   end
