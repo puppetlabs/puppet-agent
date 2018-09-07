@@ -20,7 +20,7 @@ component "facter" do |pkg, settings, platform|
 
   pkg.build_requires 'puppet-runtime' # Provides augeas, boost, curl, openssl, ruby, yaml-cpp
   pkg.build_requires 'leatherman'
-  pkg.build_requires 'runtime'
+  pkg.build_requires 'runtime' unless platform.name =~ /sles-15/
   pkg.build_requires 'cpp-hocon'
   pkg.build_requires 'libwhereami'
 
@@ -128,6 +128,10 @@ component "facter" do |pkg, settings, platform|
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=#{settings[:tools_root]}/pl-build-toolchain.cmake"
     special_flags = "-DCMAKE_INSTALL_PREFIX=#{settings[:facter_root]} \
                      -DRUBY_LIB_INSTALL=#{settings[:facter_root]}/lib "
+  elsif platform.name =~ /sles-15/
+    # These platforms use the default OS toolchain, rather than pl-build-tools
+    cmake = "cmake"
+    toolchain = ""
   else
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/pl-build-toolchain.cmake"
     cmake = "/opt/pl-build-tools/bin/cmake"
@@ -195,8 +199,11 @@ component "facter" do |pkg, settings, platform|
     tests << "LD_LIBRARY_PATH=#{settings[:libdir]} LIBPATH=#{settings[:libdir]} #{make} test ARGS=-V"
   end
 
-  pkg.check do
-    tests
+  # Disable tests for platforms that use the default OS toolchain
+  unless platform.name =~ /sles-15/
+    pkg.check do
+      tests
+    end
   end
 
   pkg.install_file ".gemspec", "#{settings[:gem_home]}/specifications/#{pkg.get_name}.gemspec"

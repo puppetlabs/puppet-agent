@@ -47,6 +47,11 @@ component "pxp-agent" do |pkg, settings, platform|
     special_flags = " -DCMAKE_INSTALL_PREFIX=#{settings[:pxp_root]} "
     cmake = "C:/ProgramData/chocolatey/bin/cmake.exe -G \"MinGW Makefiles\""
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=#{settings[:tools_root]}/pl-build-toolchain.cmake"
+  elsif platform.name =~ /sles-15/
+    # These platforms use the default OS toolchain, rather than pl-build-tools
+    cmake = "cmake"
+    toolchain = ""
+    special_flags += " -DCMAKE_CXX_FLAGS='#{settings[:cflags]} -Wno-deprecated -Wimplicit-fallthrough=0' "
   elsif platform.is_cisco_wrlinux?
     special_flags += " -DLEATHERMAN_USE_LOCALES=OFF "
   end
