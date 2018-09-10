@@ -24,6 +24,9 @@ component "runtime" do |pkg, settings, platform|
     pkg.build_requires "pl-pdcurses-#{platform.architecture}"
     # We only need zlib because curl is dynamically linking against zlib
     pkg.build_requires "pl-zlib-#{platform.architecture}"
+  elsif platform.name =~ /sles-15/
+    # These platforms use their default OS toolchain and have package
+    # dependencies configured in the platform provisioning step.
   else
     pkg.build_requires "pl-gcc"
   end

@@ -9,6 +9,9 @@ component "facter-precompiled-gem" do |pkg, settings, platform|
   elsif platform.is_windows?
     pkg.build_requires "cmake"
     pkg.build_requires "pl-toolchain-#{platform.architecture}"
+  elsif platform.name =~ /sles-15/
+    # These platforms use their default OS toolchain and have package
+    # dependencies configured in the platform provisioning step.
   else
     pkg.build_requires "pl-gcc"
     pkg.build_requires "pl-cmake"
