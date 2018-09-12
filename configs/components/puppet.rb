@@ -55,7 +55,7 @@ component "puppet" do |pkg, settings, platform|
   when "windows"
     # Note - this definition indicates that the file should be filtered out from the Wix
     # harvest. A corresponding service definition file is also required in resources/windows/wix
-    pkg.install_service "SourceDir\\#{settings[:base_dir]}\\#{settings[:company_id]}\\#{settings[:product_id]}\\sys\\ruby\\bin\\ruby.exe"
+    pkg.install_service "SourceDir\\#{settings[:base_dir]}\\#{settings[:company_id]}\\#{settings[:product_id]}\\puppet\\bin\\ruby.exe"
   else
     fail "need to know where to put service files"
   end
@@ -137,9 +137,7 @@ component "puppet" do |pkg, settings, platform|
   end
 
   if platform.is_windows?
-    pkg.environment "FACTERDIR", settings[:facter_root]
     pkg.environment "PATH", "$(shell cygpath -u #{settings[:gcc_bindir]}):$(shell cygpath -u #{settings[:ruby_bindir]}):$(shell cygpath -u #{settings[:bindir]}):/cygdrive/c/Windows/system32:/cygdrive/c/Windows:/cygdrive/c/Windows/System32/WindowsPowerShell/v1.0"
-    pkg.environment "RUBYLIB", "#{settings[:hiera_libdir]};#{settings[:facter_root]}/lib"
   end
 
   if platform.is_windows?

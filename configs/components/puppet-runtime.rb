@@ -63,8 +63,8 @@ component 'puppet-runtime' do |pkg, settings, platform|
     # privileges it needs to run
     pkg.add_source "file://resources/files/windows/elevate.exe.config", sum: "a5aecf3f7335fa1250a0f691d754d561"
     pkg.add_source "#{settings[:buildsources_url]}/windows/elevate/elevate.exe", sum: "bd81807a5c13da32dd2a7157f66fa55d"
-    pkg.install_file 'elevate.exe.config', "#{settings[:windows_tools]}/elevate.exe.config"
-    pkg.install_file 'elevate.exe', "#{settings[:windows_tools]}/elevate.exe"
+    pkg.install_file 'elevate.exe.config', "#{settings[:bindir]}/elevate.exe.config"
+    pkg.install_file 'elevate.exe', "#{settings[:bindir]}/elevate.exe"
 
     # We need to make sure we're setting permissions correctly for the executables
     # in the ruby bindir since preserving permissions in archives in windows is
@@ -72,7 +72,7 @@ component 'puppet-runtime' do |pkg, settings, platform|
     # so cmd.exe was not working as expected.
     install_command = [
       "gunzip -c #{tarball_name} | tar -k -C /cygdrive/c/ -xf -",
-      "chmod 755 #{settings[:ruby_bindir].sub(/C:/, '/cygdrive/c')}/*"
+      "chmod 755 #{settings[:bindir].sub(/C:/, '/cygdrive/c')}/*"
     ]
   elsif platform.is_macos?
     # We can't untar into '/' because of SIP on macOS; Just copy the contents

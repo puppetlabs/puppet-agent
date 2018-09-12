@@ -14,11 +14,7 @@ component "hiera" do |pkg, settings, platform|
 
   if platform.is_windows?
     pkg.add_source("file://resources/files/windows/hiera.bat", sum: "bbe0a513808af61ed9f4b57463851326")
-    configdir = File.join(settings[:sysconfdir], 'puppet', 'etc')
     pkg.install_file "../hiera.bat", "#{settings[:link_bindir]}/hiera.bat"
-    flags = " --bindir=#{settings[:hiera_bindir]} \
-              --sitelibdir=#{settings[:hiera_libdir]} \
-              --ruby=#{File.join(settings[:ruby_bindir], 'ruby')} "
   end
 
   pkg.install do
