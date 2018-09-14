@@ -70,3 +70,8 @@ steps:
     Invoke-ContainerTest -Name puppet-agent-alpine -Namespace $ENV:NAMESPACE
   displayName: Test Puppet Agent Alpine
   name: test_puppet_agent_alpine
+- powershell: |
+    . ./docker/ci/build.ps1
+    Clear-ContainerBuilds
+  displayName: Container Cleanup
+  condition: always()

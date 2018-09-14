@@ -65,3 +65,10 @@ function Invoke-ContainerTest($Name, $Namespace = 'puppet', $Version = (Get-Cont
 
   Pop-Location
 }
+
+# removes any temporary containers / images used during builds
+function Clear-ContainerBuilds
+{
+  docker container prune --force
+  docker image prune --filter "dangling=true" --force
+}
