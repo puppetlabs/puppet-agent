@@ -4,6 +4,9 @@ pool:
   # includes Ruby 2.5, Go 1.10, Node.js 10.10, hadolint
   name: Default
 
+variables:
+  NAMESPACE: puppet
+
 steps:
 - powershell: |
     $line = '=' * 80
@@ -41,3 +44,19 @@ steps:
     Get-ChildItem Env: | % { Write-Host "$($_.Key): $($_.Value)"  }
   displayName: Diagnostic Host Information
   name: hostinfo
+- powershell: |
+    . ./docker/ci/build.ps1
+    Lint-Dockerfile -Path ./docker/puppet-agent-ubuntu/Dockerfile
+    Lint-Dockerfile -Path ./docker/puppet-agent-alpine/Dockerfile
+  displayName: Lint Ubuntu and Alpine Dockerfiles
+  name: lint_dockerfiles
+- powershell: |
+    . ./docker/ci/build.ps1
+    Build-Container -Namespace $ENV:NAMESPACE -Base 'ubuntu'
+  displayName: Build Ubuntu Agent Container
+  name: build_puppetagent_ubuntu_container
+- powershell: |
+    . ./docker/ci/build.ps1
+    Build-Container -Namespace $ENV:NAMESPACE -Base 'alpine'
+  displayName: Build Alpine Agent Container
+  name: build_puppetagent_alpine_container
