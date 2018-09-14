@@ -60,6 +60,13 @@ steps:
     Invoke-ContainerTest -Name puppet-agent-ubuntu -Namespace $ENV:NAMESPACE
   displayName: Test Puppet Agent Ubuntu
   name: test_puppet_agent_ubuntu
+- task: PublishTestResults@2
+  displayName: Publish Puppet Agent Ubuntu test results
+  inputs:
+    testResultsFormat: 'JUnit'
+    testResultsFiles: 'docker/TEST-*.xml'
+    #mergeTestResults: false # Optional
+    testRunTitle: Puppet Agent Ubuntu Test Results
 - powershell: |
     . ./docker/ci/build.ps1
     Build-Container -Namespace $ENV:NAMESPACE -Base 'alpine'
@@ -70,6 +77,13 @@ steps:
     Invoke-ContainerTest -Name puppet-agent-alpine -Namespace $ENV:NAMESPACE
   displayName: Test Puppet Agent Alpine
   name: test_puppet_agent_alpine
+- task: PublishTestResults@2
+  displayName: Publish Puppet Agent Alpine test results
+  inputs:
+    testResultsFormat: 'JUnit'
+    testResultsFiles: 'docker/TEST-*.xml'
+    #mergeTestResults: false # Optional
+    testRunTitle: Puppet Agent Alpine Test Results
 - powershell: |
     . ./docker/ci/build.ps1
     Clear-ContainerBuilds
