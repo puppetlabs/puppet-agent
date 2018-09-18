@@ -68,7 +68,7 @@ on_agent "puppet agent -t"
 set -e
 echo "### DEBUG: Sleeping for 5 seconds to give some time for the agent cert to appear on the master ..."
 sleep 5
-on_master "puppet cert sign --all"
+on_master "puppetserver ca sign --all"
 echo ""
 echo ""
 
