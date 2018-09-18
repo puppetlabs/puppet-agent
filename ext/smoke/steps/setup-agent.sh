@@ -48,7 +48,7 @@ echo "STEP: Install the puppet-agent package"
 master_ip=`on_master "facter ipaddress" | tail -n 1`
 on_agent "echo ${master_ip} puppet >> /etc/hosts"
 if [[ "${type}" = "repo" ]]; then
-  on_agent "rpm -Uvh http://yum.puppetlabs.com/puppet5/puppet5-release-el-7.noarch.rpm --force"
+  on_agent "rpm -Uvh http://yum.puppetlabs.com/${collection}/${collection}-release-el-7.noarch.rpm --force"
   on_agent "rpm --quiet --query puppet-agent-${agent_version} || yum install -y puppet-agent-${agent_version}"
 elif [[ "${type}" = "package" ]]; then
   on_agent "curl -f -O http://builds.puppetlabs.lan/puppet-agent/${agent_version}/artifacts/el/7/${collection}/x86_64/puppet-agent-${agent_version}-1.el7.x86_64.rpm"
@@ -68,7 +68,11 @@ on_agent "puppet agent -t"
 set -e
 echo "### DEBUG: Sleeping for 5 seconds to give some time for the agent cert to appear on the master ..."
 sleep 5
-on_master "puppet cert sign --all"
+if [[ "${collection}" = "puppet6" ]]; then
+  on_master "puppetserver ca sign --all"
+else
+  on_master "puppet cert sign --all"
+fi
 echo ""
 echo ""
 
