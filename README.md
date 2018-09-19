@@ -19,7 +19,7 @@ also vendored dependencies like ruby, curl, openssl, and more.
 
 This repository contains configuration to build puppet-agent and the facter gem
 for all of Puppet's supported platforms using
-[vanagon](https://github.com/puppetlabs/vanagon), a packaging utiltiy.
+[vanagon](https://github.com/puppetlabs/vanagon), a packaging utility.
 
 The full list of software components built into the puppet agent and the
 facter gem can be found in their [project definitions](configs/projects/), and
