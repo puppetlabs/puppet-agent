@@ -1,4 +1,6 @@
 platform "el-7-s390" do |plat|
+  # Note: This is a community-maintained platform. It is not tested in Puppet's
+  # CI pipelines, and does not receive official releases.
   plat.servicedir "/usr/lib/systemd/system"
   plat.defaultdir "/etc/sysconfig"
   plat.servicetype "systemd"
