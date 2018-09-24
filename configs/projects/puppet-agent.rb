@@ -102,7 +102,7 @@ project "puppet-agent" do |proj|
   # These utilites don't really work on unix
   if platform.is_linux?
     proj.component "virt-what"
-    proj.component "dmidecode" unless platform.architecture =~ /ppc64(?:le|el)/
+    proj.component "dmidecode" unless platform.architecture =~ /ppc64(?:le|el)/ || platform.architecture == "ppc64"
     proj.component "shellpath"
   end
 
