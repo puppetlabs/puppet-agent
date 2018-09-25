@@ -1,4 +1,6 @@
 platform "debian-8-armhf" do |plat|
+  # Note: This is a community-maintained platform. It is not tested in Puppet's
+  # CI pipelines, and does not receive official releases.
   plat.servicedir "/lib/systemd/system"
   plat.defaultdir "/etc/default"
   plat.servicetype "systemd"
