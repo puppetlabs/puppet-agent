@@ -1,15 +1,39 @@
 require 'json'
 require 'optparse'
+require 'yaml'
 
 namespace :release_lead do
   desc "Find platforms added and removed between releases"
   task :platform_diff, [:from, :to] do |t, args|
     abort ('`from` argument is required') unless args.from
     abort ('`to` argument is required') unless args.to
+    puts "Platform Changes:"
+    puts
     puts `git diff --summary #{args.from}..#{args.to} configs/platforms`.
         gsub('configs/platforms/', '').gsub(/mode \d+ /, '').
         gsub('delete', 'Retired').gsub('create', 'Added').
         gsub('rename', 'Renamed')
+  end
+
+  desc "List currently supported platforms on the current branch"
+  task :supported_platforms do |t, args|
+    puts "Currently Supported Platforms:"
+    puts
+    platform_names = Dir.glob("./configs/platforms/*").map do |platform_file|
+      File.basename(platform_file).gsub(".rb",'')
+    end
+    platform_names.each do |_platform|
+      # Aix platforms are _awesome_, we use -ppc as the name of the arch in the vanagon file for AIX (since that's
+      # what the package will look like). However, every other piece of our automation uses -power. Thus we just replace
+      # -ppc with -power
+      platform = _platform.gsub(/-ppc$/, '-power')
+      build_defaults = YAML.load_file('./ext/build_defaults.yaml')
+      if build_defaults['pe_platforms'].include?(platform)
+        puts "PE Only -- " + platform
+      else
+        puts "           " + platform
+      end
+    end
   end
 
   # Calculate name of repository from the .git URL.
