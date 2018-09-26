@@ -3,23 +3,26 @@ require 'puppet_docker_tools/spec_helper'
 CURRENT_DIRECTORY = File.dirname(File.dirname(__FILE__))
 
 describe 'Dockerfile' do
-  include_context 'using centos'
   include_context 'with a docker image'
-
-  describe yumrepo('puppet5') do
-    it { should exist }
+  include_context 'with a docker container' do
+    def docker_run_options
+      "--entrypoint /bin/bash"
+    end
   end
 
-  describe package('puppet-agent.x86_64') do
-    it { is_expected.to be_installed }
+  describe 'the puppet5 repo is installed' do
+    it_should_behave_like 'a running container', 'ls /etc/yum.repos.d/puppet5.repo', 0
   end
 
-  describe file('/opt/puppetlabs/bin/puppet') do
-    it { should exist }
-    it { should be_executable }
+  describe 'puppet-agent is installed' do
+    it_should_behave_like 'a running container', 'rpm -q puppet-agent', 0
+  end
+
+  describe 'has /opt/puppetlabs/bin/puppet' do
+    it_should_behave_like 'a running container', 'stat -L /opt/puppetlabs/bin/puppet', 0, 'Access: \(0755\/\-rwxr\-xr\-x\)'
   end
 
   describe 'Dockerfile#running' do
-    it_should_behave_like 'a running container', 'help', 0
+    it_should_behave_like 'a running container', 'puppet help', 0
   end
 end
