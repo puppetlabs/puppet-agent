@@ -1,8 +1,12 @@
+puts "hey I'm at the top of the Rakefile"
 require 'packaging'
 
+puts "cool we required packaging"
 load './ext/release-lead.rake'
-
+puts "loaded more stuff"
 Pkg::Util::RakeUtils.load_packaging_tasks
+
+puts "aight packaging tasks have been loaded"
 
 namespace :package do
   task :bootstrap do
