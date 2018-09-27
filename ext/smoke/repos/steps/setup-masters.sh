@@ -42,7 +42,7 @@ function identify_master() {
 echo "STEP: Install puppetserver and puppet-agent on both masters"
 for master_vm in ${master_vm1} ${master_vm2}; do
   which_master=`identify_master ${master_vm}`
-  on_master ${master_vm} "rpm -Uvh http://yum.puppetlabs.com/puppet5/puppet5-release-el-7.noarch.rpm --force"
+  on_master ${master_vm} "rpm -Uvh http://yum.puppetlabs.com/${collection}/${collection}-release-el-7.noarch.rpm --force"
 
   echo "STEP: Install puppet-agent on ${which_master}"
   on_master ${master_vm} "rpm --quiet --query puppet-agent-${agent_version} || yum install -y puppet-agent-${agent_version}"
@@ -89,7 +89,7 @@ done
 for master_vm in ${master_vm1} ${master_vm2}; do
   which_master=`identify_master ${master_vm}`
   SEMANTIC_VERSION_RE="[0-9]+\.[0-9]+\.[0-9]+"
-  REQUIRED_PACKAGES="puppet5-release-${SEMANTIC_VERSION_RE}-1.el7\.noarch puppet-agent-${SEMANTIC_VERSION_RE}-1\.el7\.x86_64 puppetserver-${SEMANTIC_VERSION_RE}-1\.el7\.noarch puppetdb-${SEMANTIC_VERSION_RE}-1\.el7\.noarch puppetdb-termini-${SEMANTIC_VERSION_RE}-1\.el7\.noarch"
+  REQUIRED_PACKAGES="${collection}-release-${SEMANTIC_VERSION_RE}-1.el7\.noarch puppet-agent-${SEMANTIC_VERSION_RE}-1\.el7\.x86_64 puppetserver-${SEMANTIC_VERSION_RE}-1\.el7\.noarch puppetdb-${SEMANTIC_VERSION_RE}-1\.el7\.noarch puppetdb-termini-${SEMANTIC_VERSION_RE}-1\.el7\.noarch"
 
   echo "STEP: Verify that the required puppet packages are installed on ${which_master}!"
   grep_results=`on_master "${master_vm}" "rpm -qa | grep puppet"`
