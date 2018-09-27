@@ -1,12 +1,12 @@
 FROM alpine:3.4
 
-ARG version=5.5.1
+ARG version=6.0.0
 ARG vcs_ref
 ARG build_date
 
 ENV PUPPET_AGENT_VERSION="$version"
-ENV PUPPET_VERSION="~> 5.5.1"
-ENV FACTER_VERSION="2.5.1"
+ENV PUPPET_VERSION="~> 6.0.0"
+ENV FACTER_VERSION="~> 3.12.0.cfacter"
 
 LABEL org.label-schema.maintainer="Puppet Release Team <release@puppet.com>" \
       org.label-schema.vendor="Puppet" \
@@ -21,14 +21,22 @@ LABEL org.label-schema.maintainer="Puppet Release Team <release@puppet.com>" \
       org.label-schema.dockerfile="/Dockerfile"
 
 RUN apk add --no-cache \
+      boost-system \
+      boost-dev \
+      cmake \
+      curl \
+      curl-dev \
       ca-certificates \
+      make \
       pciutils \
       ruby \
+      ruby-dev \
       ruby-irb \
       ruby-rdoc \
       && \
     echo http://dl-4.alpinelinux.org/alpine/edge/community/ >> /etc/apk/repositories && \
-    apk add --no-cache shadow && \
+    apk add --no-cache shadow yaml-dev && \
+    sed -i -e 's/sys\/poll/poll/' /usr/include/boost/asio/detail/socket_types.hpp && \
     gem install puppet:"$PUPPET_VERSION" facter:"$FACTER_VERSION" && \
     /usr/bin/puppet module install puppetlabs-apk
 
