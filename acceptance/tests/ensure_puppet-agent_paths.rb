@@ -66,9 +66,6 @@ def config_options(agent)
     # vardir
     {:name => :vardir,          :expected => "#{vardir}",                 :installed => :dir},
     {:name => :bucketdir,       :expected => "#{vardir}/bucket"},
-    {:name => :clientyamldir,   :expected => "#{vardir}/client_yaml",     :installed => :dir},
-    {:name => :client_datadir,  :expected => "#{vardir}/client_data",     :installed => :dir},
-    {:name => :clientbucketdir, :expected => "#{vardir}/clientbucket",    :installed => :dir},
     {:name => :devicedir,       :expected => "#{vardir}/devices"},
     {:name => :pluginfactdest,  :expected => "#{vardir}/facts.d",         :installed => :dir},
     {:name => :libdir,          :expected => "#{vardir}/lib",             :installed => :dir},
