@@ -58,10 +58,12 @@
                         Value="1"
                         Type="integer" />
           <RegistryKey Key="AppExit">
-            <!-- Stop the service completely on exit(2) (Invalid configuration) otherwise restart with NSSM service throttling -->
+            <!-- Restart the service on an exit code of 1 since that will likely  -->
+            <!-- correspond to a crash or an unexpected failure. Stop the service -->
+            <!-- for all other exit codes. -->
             <!-- nssm AppExit codes reference https://nssm.cc/usage#exit -->
-            <RegistryValue Value="Restart" Type="string" />
-            <RegistryValue Name="2" Value="Exit" Type="string" />
+            <RegistryValue Value="Exit" Type="string" />
+            <RegistryValue Name="1" Value="Restart" Type="string" />
           </RegistryKey>
         </RegistryKey>
         <ServiceControl Id="PXPStartService"
