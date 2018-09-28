@@ -6,7 +6,8 @@ PATH="$PATH":/usr/local/bin
 BUNDLER_PATH=.bundle/gems
 
 function build_and_test_image() {
-  container_name="$1"
+  local container_name="$1"
+  local container_version="$2"
 
   : ===
   : === run linter on the docker files
@@ -16,17 +17,17 @@ function build_and_test_image() {
   : ===
   : === build and test $container_name
   : ===
-  bundle exec puppet-docker build "$container_name" --no-cache --repository puppet --version "$version"
-  bundle exec puppet-docker spec "$container_name" --image "puppet/$container_name:$version"
+  bundle exec puppet-docker build "$container_name" --repository puppet --version "$container_version"
+  bundle exec puppet-docker spec "$container_name" --image "puppet/$container_name:$container_version"
 }
 
 function push_image() {
-  container_name="$1"
-  container_version="$2"
+  local container_name="$1"
+  local container_version="$2"
   : ===
   : === push $container_name
   : ===
-  bundle exec puppet-docker push "$container_name" --repository puppet --version "$container_version" --no-latest
+  bundle exec puppet-docker push "$container_name" --repository puppet --version "$container_version"
 }
 
 : ===
@@ -49,7 +50,7 @@ version="${git_describe%%-*}"
 : ===
 : === pull updated base images
 : ===
-bundle exec puppet-docker update-base-images centos:7 alpine:3.4 debian:9 ubuntu:16.04
+bundle exec puppet-docker update-base-images centos:7 alpine:3.8 debian:9 ubuntu:16.04
 
 container_list=(puppet-agent-centos puppet-agent-alpine puppet-agent-debian puppet-agent-ubuntu puppet-agent)
 
@@ -57,14 +58,14 @@ container_list=(puppet-agent-centos puppet-agent-alpine puppet-agent-debian pupp
 : === build and test all the images before we push anything
 : ===
 for container in "${container_list[@]}"; do
-  build_and_test_image "$container"
+  build_and_test_image "$container" "$version"
 done
 
 : ===
 : === push all the images
 : ===
 for container in "${container_list[@]}"; do
-  push_image "$container"
+  push_image "$container" "$version"
 done
 
 : ===

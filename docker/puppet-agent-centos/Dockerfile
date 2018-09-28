@@ -2,7 +2,7 @@ FROM centos:7
 
 ARG vcs_ref
 ARG build_date
-ARG version="5.5.1"
+ARG version="6.0.0"
 
 ENV PUPPET_AGENT_VERSION="$version"
 
@@ -18,8 +18,7 @@ LABEL org.label-schema.maintainer="Puppet Release Team <release@puppet.com>" \
       org.label-schema.schema-version="1.0" \
       org.label-schema.dockerfile="/Dockerfile"
 
-RUN rpm -Uvh https://yum.puppetlabs.com/puppet5/puppet5-release-el-7.noarch.rpm && \
-    yum upgrade -y && \
+RUN rpm -Uvh https://yum.puppetlabs.com/puppet6/puppet6-release-el-7.noarch.rpm && \
     yum update -y && \
     yum install -y puppet-agent-"$PUPPET_AGENT_VERSION" && \
     yum clean all

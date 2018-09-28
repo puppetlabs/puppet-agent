@@ -10,8 +10,8 @@ describe 'Dockerfile' do
     end
   end
 
-  describe 'the puppet5 repo is installed' do
-    it_should_behave_like 'a running container', 'ls /etc/yum.repos.d/puppet5.repo', 0
+  describe 'the puppet6 repo is installed' do
+    it_should_behave_like 'a running container', 'ls /etc/yum.repos.d/puppet6.repo', 0
   end
 
   describe 'puppet-agent is installed' do

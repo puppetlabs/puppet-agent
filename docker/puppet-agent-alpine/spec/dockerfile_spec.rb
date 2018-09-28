@@ -15,7 +15,7 @@ describe 'Dockerfile' do
   end
 
   describe 'has /usr/bin/puppet' do
-    it_should_behave_like 'a running container', 'stat -L /usr/bin/puppet', 0, 'Access: \(0755\/\-rwxr\-xr\-x\)'
+    it_should_behave_like 'a running container', 'stat -L /usr/local/bin/puppet', 0, 'Access: \(0755\/\-rwxr\-xr\-x\)'
   end
 
   describe 'Dockerfile#running' do

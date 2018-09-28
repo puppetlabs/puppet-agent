@@ -1,4 +1,4 @@
-ARG version="5.5.1"
+ARG version="6.0.0"
 ARG namespace="puppet"
 FROM "$namespace"/puppet-agent-ubuntu:"$version"
 

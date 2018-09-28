@@ -2,7 +2,7 @@ FROM debian:9
 
 ARG vcs_ref
 ARG build_date
-ARG version="5.5.1"
+ARG version="6.0.0"
 
 ENV PUPPET_AGENT_VERSION="$version"
 ENV DEBIAN_CODENAME="stretch"
@@ -21,9 +21,9 @@ LABEL org.label-schema.maintainer="Puppet Release Team <release@puppet.com>" \
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends wget ca-certificates && \
-    wget https://apt.puppetlabs.com/puppet5-release-"$DEBIAN_CODENAME".deb && \
-    dpkg -i puppet5-release-"$DEBIAN_CODENAME".deb && \
-    rm puppet5-release-"$DEBIAN_CODENAME".deb && \
+    wget https://apt.puppetlabs.com/puppet6-release-"$DEBIAN_CODENAME".deb && \
+    dpkg -i puppet6-release-"$DEBIAN_CODENAME".deb && \
+    rm puppet6-release-"$DEBIAN_CODENAME".deb && \
     apt-get update && \
     apt-get install --no-install-recommends -y puppet-agent="$PUPPET_AGENT_VERSION"-1"$DEBIAN_CODENAME" && \
     apt-get clean && \

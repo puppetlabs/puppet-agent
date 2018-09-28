@@ -1,6 +1,6 @@
 FROM ubuntu:16.04
 
-ARG version="5.5.1"
+ARG version="6.0.0"
 ARG vcs_ref
 ARG build_date
 
@@ -21,9 +21,9 @@ LABEL org.label-schema.maintainer="Puppet Release Team <release@puppet.com>" \
 
 RUN apt-get update && \
     apt-get install --no-install-recommends -y wget ca-certificates lsb-release && \
-    wget https://apt.puppetlabs.com/puppet5-release-"$UBUNTU_CODENAME".deb && \
-    dpkg -i puppet5-release-"$UBUNTU_CODENAME".deb && \
-    rm puppet5-release-"$UBUNTU_CODENAME".deb && \
+    wget https://apt.puppetlabs.com/puppet6-release-"$UBUNTU_CODENAME".deb && \
+    dpkg -i puppet6-release-"$UBUNTU_CODENAME".deb && \
+    rm puppet6-release-"$UBUNTU_CODENAME".deb && \
     apt-get update && \
     apt-get install --no-install-recommends -y puppet-agent="$PUPPET_AGENT_VERSION"-1"$UBUNTU_CODENAME" && \
     apt-get remove --purge -y wget && \

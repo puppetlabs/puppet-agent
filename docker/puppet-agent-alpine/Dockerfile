@@ -4,36 +4,39 @@ RUN apk add --no-cache cmake boost-dev make curl git curl-dev ruby ruby-dev gcc 
 
 RUN mkdir /workspace 
 WORKDIR /workspace
-RUN git clone -b 1.5.x https://github.com/puppetlabs/leatherman && \
-    git clone -b 0.2.x https://github.com/puppetlabs/libwhereami && \
-    git clone -b 0.2.x https://github.com/puppetlabs/cpp-hocon && \
-    git clone -b 3.12.x https://github.com/puppetlabs/facter && \
-    git clone -b 1.10.x https://github.com/puppetlabs/pxp-agent && \
-    git clone -b 1.6.x https://github.com/puppetlabs/cpp-pcp-client && \
-    git clone -b 3.4.x https://github.com/puppetlabs/hiera && \
-    git clone -b 6.0.x https://github.com/puppetlabs/puppet && \
-    sed -i -e 's/sys\/poll/poll/' /usr/include/boost/asio/detail/socket_types.hpp
-RUN mkdir -p /workspace/leatherman/build /workspace/cpp-hocon/build /workspace/libwhereami/build /workspace/facter/build /workspace/pxp-agent/build /workspace/cpp-pcp-client/build
+RUN sed -i -e 's/sys\/poll/poll/' /usr/include/boost/asio/detail/socket_types.hpp
+
+RUN git clone -b 1.5.x https://github.com/puppetlabs/leatherman && mkdir -p /workspace/leatherman/build
 WORKDIR /workspace/leatherman/build
 RUN cmake  -DBOOST_STATIC=OFF -DCMAKE_VERBOSE_MAKEFILE=ON ..; make ; make install
 
-WORKDIR /workspace/cpp-hocon/build
-RUN cmake  -DBOOST_STATIC=OFF -DCMAKE_VERBOSE_MAKEFILE=ON ..; make ; make install
-
+WORKDIR /workspace
+RUN git clone -b 0.2.x https://github.com/puppetlabs/libwhereami && mkdir -p /workspace/libwhereami/build
 WORKDIR /workspace/libwhereami/build
 RUN cmake  -DBOOST_STATIC=OFF -DCMAKE_VERBOSE_MAKEFILE=ON ..; make ; make install
 
+WORKDIR /workspace
+RUN git clone -b 0.2.x https://github.com/puppetlabs/cpp-hocon && mkdir -p /workspace/cpp-hocon/build
+WORKDIR /workspace/cpp-hocon/build
+RUN cmake  -DBOOST_STATIC=OFF -DCMAKE_VERBOSE_MAKEFILE=ON ..; make ; make install
+
+WORKDIR /workspace
+RUN git clone -b 3.12.x https://github.com/puppetlabs/facter && mkdir -p /workspace/facter/build
 WORKDIR /workspace/facter/build
 RUN cmake -DCMAKE_VERBOSE_MAKEFILE=ON ..; make ; make install
 
-RUN apk add --no-cache augeas ruby-augeas libressl-dev
-RUN gem install --no-rdoc --no-ri deep_merge json etc semantic_puppet puppet-resource_api multi_json locale httpclient fast_gettext
-
+WORKDIR /workspace
+RUN git clone -b 1.6.x https://github.com/puppetlabs/cpp-pcp-client && mkdir -p /workspace/cpp-pcp-client/build
 WORKDIR /workspace/cpp-pcp-client/build
 RUN cmake ..  -DCMAKE_VERBOSE_MAKEFILE=ON ; make ; make install
 
+WORKDIR /workspace
+RUN git clone -b 1.10.x https://github.com/puppetlabs/pxp-agent && mkdir -p /workspace/pxp-agent/build
 WORKDIR /workspace/pxp-agent/build
 RUN cmake ..  -DCMAKE_VERBOSE_MAKEFILE=ON; make; make install
+
+RUN apk add --no-cache augeas ruby-augeas libressl-dev
+RUN gem install --no-rdoc --no-ri deep_merge json etc semantic_puppet puppet-resource_api multi_json locale httpclient fast_gettext
 
 WORKDIR /workspace
 RUN curl -O -L https://people.redhat.com/~rjones/virt-what/files/virt-what-1.18.tar.gz && \
@@ -44,9 +47,13 @@ RUN ./configure && \
     make && \
     make install
 
+WORKDIR /workspace
+RUN git clone -b 3.4.x https://github.com/puppetlabs/hiera
 WORKDIR /workspace/hiera
 RUN ./install.rb --no-configs --bindir=/usr/local/bin
 
+WORKDIR /workspace
+RUN git clone -b 6.0.x https://github.com/puppetlabs/puppet
 WORKDIR /workspace/puppet
 RUN ./install.rb --bindir=/usr/local/bin --configdir=/etc/puppetlabs/puppet --codedir=/etc/puppetlabs/puppet/code --vardir=/usr/local/var/lib/puppet --logdir=/var/log/puppet --rundir=/var/run --quick
 
