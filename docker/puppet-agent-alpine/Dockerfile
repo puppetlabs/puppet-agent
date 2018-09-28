@@ -1,12 +1,10 @@
-FROM alpine:3.4
+FROM alpine:3.8
 
 ARG version=6.0.0
 ARG vcs_ref
 ARG build_date
 
 ENV PUPPET_AGENT_VERSION="$version"
-ENV PUPPET_VERSION="~> 6.0.0"
-ENV FACTER_VERSION="~> 3.12.0.cfacter"
 
 LABEL org.label-schema.maintainer="Puppet Release Team <release@puppet.com>" \
       org.label-schema.vendor="Puppet" \
@@ -21,29 +19,40 @@ LABEL org.label-schema.maintainer="Puppet Release Team <release@puppet.com>" \
       org.label-schema.dockerfile="/Dockerfile"
 
 RUN apk add --no-cache \
-      boost-system \
-      boost-dev \
-      cmake \
-      curl \
-      curl-dev \
-      ca-certificates \
-      make \
-      pciutils \
-      ruby \
-      ruby-dev \
-      ruby-irb \
-      ruby-rdoc \
-      && \
-    echo http://dl-4.alpinelinux.org/alpine/edge/community/ >> /etc/apk/repositories && \
-    apk add --no-cache shadow yaml-dev && \
-    sed -i -e 's/sys\/poll/poll/' /usr/include/boost/asio/detail/socket_types.hpp && \
-    gem install puppet:"$PUPPET_VERSION" facter:"$FACTER_VERSION" && \
-    /usr/bin/puppet module install puppetlabs-apk
+    bash \
+    ruby \
+    curl \
+    shadow \
+    yaml-cpp \
+    ruby-json \
+    ruby-augeas \
+    boost-random \
+    boost-iostreams \
+    boost-graph \
+    boost-signals \
+    boost \
+    boost-serialization \
+    boost-program_options \
+    boost-system \
+    boost-unit_test_framework \
+    boost-math \
+    boost-doc \
+    boost-wserialization \
+    boost-date_time \
+    boost-wave \
+    boost-filesystem \
+    boost-prg_exec_monitor \
+    boost-regex \
+    boost-thread
 
-# Workaround for https://tickets.puppetlabs.com/browse/FACT-1351
-RUN rm /usr/lib/ruby/gems/2.3.0/gems/facter-"$FACTER_VERSION"/lib/facter/blockdevices.rb
+COPY output/facter.rb /usr/lib/ruby/vendor_ruby/facter.rb
+COPY output/puppetlabs /etc/puppetlabs/
+COPY output/bin /usr/local/bin/
+COPY output/lib /usr/local/lib/
+COPY output/share /usr/local/share/
+COPY output/gems /usr/lib/ruby/gems/
 
-ENTRYPOINT ["/usr/bin/puppet"]
+ENTRYPOINT ["/usr/local/bin/puppet"]
 CMD ["agent", "--verbose", "--onetime", "--no-daemonize", "--summarize"]
 
 COPY Dockerfile /
