@@ -8,7 +8,7 @@ def package_installer(agent)
   # need to manually set up the package installer for these platforms.
   case agent['platform']
   when /aix/
-    lambda { |package| on(agent, "rpm -Uvh #{package}") }
+    lambda { |package| on(agent, "yum install -y #{package}") }
   when /solaris-10/
     lambda { |package| on(agent, "opt/csw/bin/pkgutil --config=/var/tmp/vanagon-pkgutil.conf  -y -i #{package}") }
   else
@@ -106,15 +106,7 @@ def install_dependencies(agent)
     'yum' => ['gcc', 'make', 'sqlite-devel'],
     'zypper' => ['gcc', 'sqlite3-devel'],
     'opt/csw/bin/pkgutil' => ['sqlite3', 'libsqlite3_dev'],
-    'rpm' => [
-      'http://pl-build-tools.delivery.puppetlabs.net/aix/6.1/ppc/pl-gcc-5.2.0-11.aix6.1.ppc.rpm',
-      'http://osmirror.delivery.puppetlabs.net/AIX_MIRROR/pkg-config-0.19-6.aix5.2.ppc.rpm',
-      'http://osmirror.delivery.puppetlabs.net/AIX_MIRROR/info-4.6-1.aix5.1.ppc.rpm',
-      'http://www.oss4aix.org/download/RPMS/readline/readline-7.0-3.aix5.1.ppc.rpm',
-      'http://www.oss4aix.org/download/RPMS/readline/readline-devel-7.0-3.aix5.1.ppc.rpm',
-      'http://www.oss4aix.org/download/RPMS/sqlite/sqlite-3.20.0-1.aix5.1.ppc.rpm',
-      'http://www.oss4aix.org/download/RPMS/sqlite/sqlite-devel-3.20.0-1.aix5.1.ppc.rpm'
-    ]
+    'rpm' => [ 'gcc', 'pkg-config', 'info', 'readline', 'readline-devel', 'sqlite', 'sqlite-devel']
   }
 
   provider = dependencies.keys.find do |_provider|
