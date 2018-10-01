@@ -273,14 +273,17 @@ component "puppet" do |pkg, settings, platform|
 # can drop them back in place if the package manager
 # tries to remove it.
 if [ -e #{old_hiera} ]; then
+  [ -e #{old_hiera}.pkg-old ] && rm -f #{old_hiera}.pkg-old
   #{cp_cmd} #{old_hiera}{,.pkg-old}
   touch #{rmv_hiera}
 fi
 if [ -e #{cnf_hiera} ]; then
+  [ -e #{cnf_hiera}.pkg-old ] && rm -f #{cnf_hiera}.pkg-old
   #{cp_cmd} #{cnf_hiera}{,.pkg-old}
   touch #{rmv_hiera}
 fi
 if [ -e #{env_hiera} ]; then
+  [ -e #{env_hiera}.pkg-old ] && rm -f #{env_hiera}.pkg-old
   #{cp_cmd} #{env_hiera}{,.pkg-old}
   touch #{rmv_hiera}
 fi
