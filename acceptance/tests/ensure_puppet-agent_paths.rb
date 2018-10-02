@@ -126,11 +126,6 @@ public_binaries = {
   :win   => ['puppet.bat', 'facter.bat', 'hiera.bat']
 }
 
-if @options[:type] != 'git' then
-  public_binaries[:posix].concat ['mco']
-  public_binaries[:win].concat ['mco.bat']
-end
-
 def locations(platform, ruby_arch, type)
   if type == 'foss'
     return '/usr/bin'
