@@ -1,4 +1,6 @@
 sudo: false
+git:
+  depth: 150
 language: ruby
 bundler_args: --without development
 before_script:
