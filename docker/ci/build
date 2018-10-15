@@ -78,10 +78,10 @@ dockerfile="$(get_dockerfile)"
 : ===
 : === pull updated base images
 : ===
-bundle exec puppet-docker update-base-images centos:7 alpine:3.8 debian:9 ubuntu:16.04
+bundle exec puppet-docker update-base-images alpine:3.8 ubuntu:16.04
 
 if [[ "$IS_NIGHTLY" == 'false' ]]; then
-  container_list=(puppet-agent-centos puppet-agent-alpine puppet-agent-debian puppet-agent-ubuntu puppet-agent)
+  container_list=(puppet-agent-alpine puppet-agent-ubuntu)
 else
   container_list=(puppet-agent-ubuntu)
 fi
