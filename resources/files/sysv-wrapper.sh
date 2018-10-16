@@ -7,7 +7,8 @@ STRIP_LDLYP_COMMAND=" \
 if ENV['LD_LIBRARY_PATH']; \
   print ENV['LD_LIBRARY_PATH'].split(':', -1).keep_if { |path| path.start_with?('/opt/rh/') }.join(':') \
 end"
-export LD_LIBRARY_PATH=$(/opt/puppetlabs/puppet/bin/ruby -e "$STRIP_LDLYP_COMMAND")
+LD_LIBRARY_PATH=`/opt/puppetlabs/puppet/bin/ruby -e "$STRIP_LDLYP_COMMAND"`
+export LD_LIBRARY_PATH
 unset LD_PRELOAD
 
 COMMAND=`basename "${0}"`
