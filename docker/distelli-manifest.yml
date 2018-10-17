@@ -1,4 +1,4 @@
-release-engineering/puppet-agent:
+pe-and-platform/puppet-agent:
   Build:
     - docker login -u "$DISTELLI_DOCKER_USERNAME" -p "$DISTELLI_DOCKER_PW" "$DISTELLI_DOCKER_ENDPOINT"
     - /bin/bash -x ./ci/build
