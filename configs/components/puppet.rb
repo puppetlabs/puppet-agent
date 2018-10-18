@@ -179,6 +179,11 @@ component "puppet" do |pkg, settings, platform|
     end
   end
 
+  unless platform.is_windows?
+    # Include the eyaml executable
+    pkg.link "#{settings[:puppet_gem_vendor_dir]}/bin/eyaml", "#{settings[:bindir]}/eyaml"
+  end
+
   #The following will add the vim syntax files for puppet
   #in the /opt/puppetlabs/puppet/share/vim directory
   pkg.add_source "file://resources/files/ftdetect/ftdetect_puppet.vim", sum: "9e93cd63787de6b9ed458c95061f06eb"
