@@ -27,7 +27,7 @@ def setup_build_environment(agent)
   when /el-5/
     # PA-1638
     gem_install_sqlite3 += " -v 1.3.11"
-  when /solaris-11-i386/
+  when /solaris-11(.4|)-i386/
     # for some reason pkg install does not install developer/gcc-48 for sol 11, so need
     # to use the one provided by pl-build-tools instead.
     on(agent, "curl -O http://pl-build-tools.delivery.puppetlabs.net/solaris/11/sol-11-i386-compiler.tar.gz")
