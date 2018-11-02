@@ -55,8 +55,8 @@ for master_vm in ${master_vm1} ${master_vm2}; do
   on_master ${master_vm} "puppet resource service puppetserver ensure=running"
   set +e
   on_master ${master_vm} "puppet agent -t"
-  set -e
   exitcode=$?
+  set -e
   if [[ "$exitcode" -ne 0 && "$exitcode" -ne 2 ]]; then
     echo "FAILED to run puppet on master"
     exit 1
@@ -89,13 +89,15 @@ done
 for master_vm in ${master_vm1} ${master_vm2}; do
   which_master=`identify_master ${master_vm}`
   SEMANTIC_VERSION_RE="[0-9]+\.[0-9]+\.[0-9]+"
-  REQUIRED_PACKAGES="${collection}-release-${SEMANTIC_VERSION_RE}-1.el7\.noarch puppet-agent-${SEMANTIC_VERSION_RE}-1\.el7\.x86_64 puppetserver-${SEMANTIC_VERSION_RE}-1\.el7\.noarch puppetdb-${SEMANTIC_VERSION_RE}-1\.el7\.noarch puppetdb-termini-${SEMANTIC_VERSION_RE}-1\.el7\.noarch"
+  REQUIRED_PACKAGES="${collection}-release-${SEMANTIC_VERSION_RE}-[0-9]+\.el7\.noarch puppet-agent-${SEMANTIC_VERSION_RE}-[0-9]+\.el7\.x86_64 puppetserver-${SEMANTIC_VERSION_RE}-[0-9]+\.el7\.noarch puppetdb-${SEMANTIC_VERSION_RE}-[0-9]+\.el7\.noarch puppetdb-termini-${SEMANTIC_VERSION_RE}-[0-9]+\.el7\.noarch"
 
   echo "STEP: Verify that the required puppet packages are installed on ${which_master}!"
   grep_results=`on_master "${master_vm}" "rpm -qa | grep puppet"`
   for required_package in  ${REQUIRED_PACKAGES}; do
 
+    set +e
     concrete_package=`echo "${grep_results}" | grep -E  "${required_package}"`
+    set -e
     if [[ -n "${concrete_package}" ]]; then
       echo "The required puppet package is present on ${which_master} as ${concrete_package}!"
     else
