@@ -75,7 +75,7 @@ function start_puppetdb() {
   on_master ${master_vm} "puppet agent -t"
   local exit_code="$?"
   set -e
-  if [[ ! "${exit_code}" = 2 && ! "${exit_code}" = 0 ]]; then
+  if [[ "${exit_code}" -ne 2 && "${exit_code}" -ne 0 ]]; then
     echo "Failed to start-up PuppetDB on ${which_master}!"
     echo "Exiting the script with a failure ..."
     exit 1
@@ -108,9 +108,9 @@ function install_puppetdb_from_module() {
   # puppet agent -t returns an exit code of 2 if changes are successfully applied
   set +e
   on_master ${master_vm} "puppet agent -t"
+  local exit_code="$?"
   set -e
-  exited="$?"
-  if [[ "$exited" -ne 2 && "$exited" -ne 0 ]]; then
+  if [[ "${exit_code}" -ne 2 && "${exit_code}" -ne 0 ]]; then
     echo "Failed to install PuppetDB from the module on ${which_master}!"
     echo "Exiting the script with a failure ..."
     exit 1

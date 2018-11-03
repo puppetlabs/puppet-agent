@@ -79,8 +79,8 @@ echo ""
 echo "STEP: Run puppet to get the catalog"
 set +e
 on_agent "puppet agent -t"
-set -e
 exitcode=$?
+set -e
 if [[ "$exitcode" = 0 || "$exitcode" = 2 ]]; then
   echo "Successfully set-up the agent VM!"
 else
