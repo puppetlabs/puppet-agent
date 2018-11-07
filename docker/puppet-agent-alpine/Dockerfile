@@ -1,39 +1,63 @@
 FROM alpine:3.8 as build
 
-RUN apk add --no-cache cmake boost-dev make curl git curl-dev ruby ruby-dev gcc g++ yaml-cpp-dev
+RUN apk add --no-cache cmake boost-dev make curl git curl-dev ruby ruby-dev gcc g++ yaml-cpp-dev jq
 
 RUN mkdir /workspace
 WORKDIR /workspace
 RUN sed -i -e 's/sys\/poll/poll/' /usr/include/boost/asio/detail/socket_types.hpp
 
-RUN git clone -b 1.5.x https://github.com/puppetlabs/leatherman && mkdir -p /workspace/leatherman/build
+COPY configs/components/leatherman.json /workspace
+RUN git clone https://github.com/puppetlabs/leatherman && \
+    mkdir -p /workspace/leatherman/build
 WORKDIR /workspace/leatherman/build
-RUN cmake .. -DBOOST_STATIC=OFF -DCMAKE_VERBOSE_MAKEFILE=ON ; make ; make install
+RUN git checkout $(jq .ref /workspace/leatherman.json | tr -d \") && \
+    cmake .. -DBOOST_STATIC=OFF -DCMAKE_VERBOSE_MAKEFILE=ON ; make ; make install
 
 WORKDIR /workspace
-RUN git clone -b 0.2.x https://github.com/puppetlabs/libwhereami && mkdir -p /workspace/libwhereami/build
+
+COPY configs/components/libwhereami.json /workspace
+RUN git clone https://github.com/puppetlabs/libwhereami && \
+    mkdir -p /workspace/libwhereami/build
 WORKDIR /workspace/libwhereami/build
-RUN cmake .. -DBOOST_STATIC=OFF -DCMAKE_VERBOSE_MAKEFILE=ON ; make ; make install
+RUN git checkout $(jq .ref /workspace/libwhereami.json | tr -d \") && \
+    cmake .. -DBOOST_STATIC=OFF -DCMAKE_VERBOSE_MAKEFILE=ON ; make ; make install
 
 WORKDIR /workspace
-RUN git clone -b 0.2.x https://github.com/puppetlabs/cpp-hocon && mkdir -p /workspace/cpp-hocon/build
+
+COPY configs/components/cpp-hocon.json /workspace
+RUN git clone https://github.com/puppetlabs/cpp-hocon && \
+    mkdir -p /workspace/cpp-hocon/build
 WORKDIR /workspace/cpp-hocon/build
-RUN cmake .. -DBOOST_STATIC=OFF -DCMAKE_VERBOSE_MAKEFILE=ON ; make ; make install
+RUN git checkout $(jq .ref /workspace/cpp-hocon.json | tr -d \") && \
+    cmake .. -DBOOST_STATIC=OFF -DCMAKE_VERBOSE_MAKEFILE=ON ; make ; make install
 
 WORKDIR /workspace
-RUN git clone -b 3.12.x https://github.com/puppetlabs/facter && mkdir -p /workspace/facter/build
+
+COPY configs/components/facter.json /workspace
+
+RUN git clone https://github.com/puppetlabs/facter && \
+    mkdir -p /workspace/facter/build
 WORKDIR /workspace/facter/build
-RUN cmake .. -DCMAKE_VERBOSE_MAKEFILE=ON ; make ; make install
+RUN git checkout $(jq .ref /workspace/facter.json | tr -d \") && \
+    cmake .. -DCMAKE_VERBOSE_MAKEFILE=ON ; make ; make install
 
 WORKDIR /workspace
-RUN git clone -b 1.6.x https://github.com/puppetlabs/cpp-pcp-client && mkdir -p /workspace/cpp-pcp-client/build
+
+COPY configs/components/cpp-pcp-client.json /workspace
+RUN git clone https://github.com/puppetlabs/cpp-pcp-client && \
+    mkdir -p /workspace/cpp-pcp-client/build
 WORKDIR /workspace/cpp-pcp-client/build
-RUN cmake .. -DCMAKE_VERBOSE_MAKEFILE=ON ; make ; make install
+RUN git checkout $(jq .ref /workspace/cpp-pcp-client.json | tr -d \") && \
+    cmake .. -DCMAKE_VERBOSE_MAKEFILE=ON ; make ; make install
 
 WORKDIR /workspace
-RUN git clone -b 1.10.x https://github.com/puppetlabs/pxp-agent && mkdir -p /workspace/pxp-agent/build
+
+COPY configs/components/pxp-agent.json /workspace
+RUN git clone https://github.com/puppetlabs/pxp-agent && \
+    mkdir -p /workspace/pxp-agent/build
 WORKDIR /workspace/pxp-agent/build
-RUN cmake .. -DCMAKE_VERBOSE_MAKEFILE=ON ; make ; make install
+RUN git checkout $(jq .ref /workspace/pxp-agent.json | tr -d \") && \
+    cmake .. -DCMAKE_VERBOSE_MAKEFILE=ON ; make ; make install
 
 RUN apk add --no-cache augeas ruby-augeas libressl-dev
 RUN gem install --no-rdoc --no-ri deep_merge json etc semantic_puppet puppet-resource_api multi_json locale httpclient fast_gettext
@@ -48,14 +72,19 @@ RUN ./configure && \
     make install
 
 WORKDIR /workspace
-RUN git clone -b 3.4.x https://github.com/puppetlabs/hiera
+
+COPY configs/components/hiera.json /workspace
+RUN git clone https://github.com/puppetlabs/hiera
 WORKDIR /workspace/hiera
-RUN ./install.rb --no-configs --bindir=/usr/local/bin
+RUN git checkout $(jq .ref /workspace/hiera.json | tr -d \") && \
+    ./install.rb --no-configs --bindir=/usr/local/bin
 
 WORKDIR /workspace
-RUN git clone -b 6.0.x https://github.com/puppetlabs/puppet
+COPY configs/components/puppet.json /workspace
+RUN git clone https://github.com/puppetlabs/puppet
 WORKDIR /workspace/puppet
-RUN ./install.rb --bindir=/usr/local/bin --configdir=/etc/puppetlabs/puppet --codedir=/etc/puppetlabs/puppet/code --vardir=/usr/local/var/lib/puppet --logdir=/var/log/puppet --rundir=/var/run --quick
+RUN git checkout $(jq .ref /workspace/puppet.json | tr -d \") && \
+ ./install.rb --bindir=/usr/local/bin --configdir=/etc/puppetlabs/puppet --codedir=/etc/puppetlabs/puppet/code --vardir=/usr/local/var/lib/puppet --logdir=/var/log/puppet --rundir=/var/run --quick
 
 RUN puppet config set confdir /etc/puppetlabs/puppet && \
     puppet config set codedir /etc/puppetlabs/puppet/code && \
@@ -134,4 +163,4 @@ COPY --from=build /usr/lib/ruby/gems /usr/lib/ruby/gems
 ENTRYPOINT ["/usr/local/bin/puppet"]
 CMD ["agent", "--verbose", "--onetime", "--no-daemonize", "--summarize"]
 
-COPY Dockerfile /
+COPY docker/puppet-agent-alpine/Dockerfile /
