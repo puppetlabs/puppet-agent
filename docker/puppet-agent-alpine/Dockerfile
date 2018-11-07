@@ -2,38 +2,38 @@ FROM alpine:3.8 as build
 
 RUN apk add --no-cache cmake boost-dev make curl git curl-dev ruby ruby-dev gcc g++ yaml-cpp-dev
 
-RUN mkdir /workspace 
+RUN mkdir /workspace
 WORKDIR /workspace
 RUN sed -i -e 's/sys\/poll/poll/' /usr/include/boost/asio/detail/socket_types.hpp
 
 RUN git clone -b 1.5.x https://github.com/puppetlabs/leatherman && mkdir -p /workspace/leatherman/build
 WORKDIR /workspace/leatherman/build
-RUN cmake  -DBOOST_STATIC=OFF -DCMAKE_VERBOSE_MAKEFILE=ON ..; make ; make install
+RUN cmake .. -DBOOST_STATIC=OFF -DCMAKE_VERBOSE_MAKEFILE=ON ; make ; make install
 
 WORKDIR /workspace
 RUN git clone -b 0.2.x https://github.com/puppetlabs/libwhereami && mkdir -p /workspace/libwhereami/build
 WORKDIR /workspace/libwhereami/build
-RUN cmake  -DBOOST_STATIC=OFF -DCMAKE_VERBOSE_MAKEFILE=ON ..; make ; make install
+RUN cmake .. -DBOOST_STATIC=OFF -DCMAKE_VERBOSE_MAKEFILE=ON ; make ; make install
 
 WORKDIR /workspace
 RUN git clone -b 0.2.x https://github.com/puppetlabs/cpp-hocon && mkdir -p /workspace/cpp-hocon/build
 WORKDIR /workspace/cpp-hocon/build
-RUN cmake  -DBOOST_STATIC=OFF -DCMAKE_VERBOSE_MAKEFILE=ON ..; make ; make install
+RUN cmake .. -DBOOST_STATIC=OFF -DCMAKE_VERBOSE_MAKEFILE=ON ; make ; make install
 
 WORKDIR /workspace
 RUN git clone -b 3.12.x https://github.com/puppetlabs/facter && mkdir -p /workspace/facter/build
 WORKDIR /workspace/facter/build
-RUN cmake -DCMAKE_VERBOSE_MAKEFILE=ON ..; make ; make install
+RUN cmake .. -DCMAKE_VERBOSE_MAKEFILE=ON ; make ; make install
 
 WORKDIR /workspace
 RUN git clone -b 1.6.x https://github.com/puppetlabs/cpp-pcp-client && mkdir -p /workspace/cpp-pcp-client/build
 WORKDIR /workspace/cpp-pcp-client/build
-RUN cmake ..  -DCMAKE_VERBOSE_MAKEFILE=ON ; make ; make install
+RUN cmake .. -DCMAKE_VERBOSE_MAKEFILE=ON ; make ; make install
 
 WORKDIR /workspace
 RUN git clone -b 1.10.x https://github.com/puppetlabs/pxp-agent && mkdir -p /workspace/pxp-agent/build
 WORKDIR /workspace/pxp-agent/build
-RUN cmake ..  -DCMAKE_VERBOSE_MAKEFILE=ON; make; make install
+RUN cmake .. -DCMAKE_VERBOSE_MAKEFILE=ON ; make ; make install
 
 RUN apk add --no-cache augeas ruby-augeas libressl-dev
 RUN gem install --no-rdoc --no-ri deep_merge json etc semantic_puppet puppet-resource_api multi_json locale httpclient fast_gettext
