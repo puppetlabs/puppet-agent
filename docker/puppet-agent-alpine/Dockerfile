@@ -1,6 +1,9 @@
 FROM alpine:3.8 as build
 
-RUN apk add --no-cache cmake boost-dev make curl git curl-dev ruby ruby-dev gcc g++ yaml-cpp-dev jq
+RUN apk add --no-cache cmake boost-dev make curl git curl-dev ruby ruby-dev gcc g++ yaml-cpp-dev jq openjdk8
+
+ENV JAVA_HOME /usr/lib/jvm/java-1.8-openjdk
+ENV PATH $PATH:$JAVA_HOME/jre/bin:$JAVA_HOME/bin
 
 RUN mkdir /workspace
 WORKDIR /workspace
@@ -153,7 +156,7 @@ RUN apk add --no-cache \
     boost-regex \
     boost-thread
 
-COPY --from=build /usr/lib/ruby/vendor_ruby/facter.rb /usr/lib/ruby/vendor_ruby/facter.rb
+COPY --from=build /usr/lib/ruby/vendor_ruby /usr/lib/ruby/vendor_ruby
 COPY --from=build /etc/puppetlabs /etc/puppetlabs
 COPY --from=build /usr/local/bin /usr/local/bin
 COPY --from=build /usr/local/lib /usr/local/lib
