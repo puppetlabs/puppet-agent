@@ -127,6 +127,7 @@ component "facter" do |pkg, settings, platform|
     toolchain = ""
     cmake = "/usr/local/bin/cmake"
     special_flags += "-DCMAKE_CXX_FLAGS='#{settings[:cflags]}'"
+    yamlcpp_static_flag = "-DYAMLCPP_STATIC=OFF" if platform.name =~ /osx-10.12/
   elsif platform.is_cross_compiled_linux?
     ruby = "#{settings[:host_ruby]} -r#{settings[:datadir]}/doc/rbconfig-#{settings[:ruby_version]}-orig.rb"
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/#{settings[:platform_triple]}/pl-build-toolchain.cmake"
