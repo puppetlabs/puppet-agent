@@ -4,6 +4,8 @@ build_date := $(shell date -u +%FT%T)
 hadolint_available := $(shell hadolint --help > /dev/null 2>&1; echo $$?)
 hadolint_command := hadolint --ignore DL3008 --ignore DL3018 --ignore DL4000 --ignore DL4001
 hadolint_container := hadolint/hadolint:latest
+makefile_path := $(abspath $(lastword $(MAKEFILE_LIST)))
+makefile_dir := $(dir $(makefile_path))
 
 ifeq ($(IS_NIGHTLY),true)
 	dockerfile := Dockerfile.nightly
@@ -38,7 +40,7 @@ build: prep
 	@docker build --pull --build-arg vcs_ref=$(vcs_ref) --build-arg build_date=$(build_date) --build-arg version=$(version) --file puppet-agent-ubuntu/$(dockerfile) --tag puppet/puppet-agent-ubuntu:$(version) puppet-agent-ubuntu
 	@docker tag puppet/puppet-agent-ubuntu:$(version) puppet/puppet-agent:$(version)
 ifneq ($(IS_NIGHTLY),true)
-	@docker build --pull --build-arg vcs_ref=$(vcs_ref) --build-arg build_date=$(build_date) --build-arg version=$(version) --file puppet-agent-alpine/$(dockerfile) --tag puppet/puppet-agent-alpine:$(version) puppet-agent-alpine
+	@docker build --pull --build-arg vcs_ref=$(vcs_ref) --build-arg build_date=$(build_date) --build-arg version=$(version) --file puppet-agent-alpine/$(dockerfile) --tag puppet/puppet-agent-alpine:$(version) $(makefile_dir)/..
 endif
 ifeq ($(IS_LATEST),true)
 	@docker tag puppet/puppet-agent-ubuntu:$(version) puppet/puppet-agent-ubuntu:latest
