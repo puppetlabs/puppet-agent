@@ -27,12 +27,19 @@ component "cleanup" do |pkg, settings, platform|
     # We need a full path on windows because /usr/bin is not in the PATH at this point
     rm = platform.is_windows? ? '/usr/bin/rm' : 'rm'
 
-    pkg.install do
-      [
-        unwanted_headers.map { |h| "#{rm} -rf #{settings[:includedir]}/#{h}" },
-        # Also remove OpenSSL manpages
-        "#{rm} -rf #{settings[:prefix]}/ssl/man",
-      ]
+    cleanup_steps = [
+      unwanted_headers.map { |h| "#{rm} -rf #{settings[:includedir]}/#{h}" },
+      # Also remove OpenSSL manpages
+      "#{rm} -rf #{settings[:prefix]}/ssl/man",
+    ]
+
+    if platform.is_windows?
+      # On Windows releases that distribute curl, these curl binaries can
+      # interfere with the native ones when puppet-agent's bindir is in the PATH:
+      cleanup_steps << "#{rm} #{settings[:bindir]}/curl*"
     end
+
+
+    pkg.install { cleanup_steps }
   end
 end
