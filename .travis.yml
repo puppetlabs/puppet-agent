@@ -14,10 +14,13 @@ notifications:
 
 matrix:
   include:
-    - rvm: 2.1.7
+    - stage: puppet-agent lint
+      rvm: 2.1.7
       env: "CHECK='rubocop -D'"
-    - rvm: 2.1.7
+    - stage: puppet-agent lint
+      rvm: 2.1.7
       env: "CHECK='rake commits'"
-    - language: generic
+    - stage: puppet-agent container tests
+      language: generic
       script:
         - cd docker && make lint && make build && make test
