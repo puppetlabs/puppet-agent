@@ -11,7 +11,7 @@ component "puppet" do |pkg, settings, platform|
   elsif platform.is_windows?
     pkg.build_requires "pl-gettext-#{platform.architecture}"
   elsif platform.is_aix?
-    #
+    pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-gettext-0.19.8-2.aix#{platform.os_version}.ppc.rpm"
   elsif platform.name =~ /sles-15/
     # These platforms use their default OS toolchain and have package
     # dependencies configured in the platform provisioning step.
@@ -108,8 +108,6 @@ component "puppet" do |pkg, settings, platform|
   unless platform.is_solaris?
     if platform.is_windows?
       msgfmt = "/cygdrive/c/tools/pl-build-tools/bin/msgfmt.exe"
-    elsif platform.is_aix?
-      msgfmt = "/opt/freeware/bin/msgfmt"
     elsif platform.is_macos?
       msgfmt = "/usr/local/opt/gettext/bin/msgfmt"
     elsif platform.name =~ /sles-15/
