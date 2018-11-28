@@ -6,12 +6,29 @@ function Get-CurrentDirectory
   [IO.Path]::GetDirectoryName((Get-Content function:$thisName).File)
 }
 
+function Get-ContainerVersion
+{
+  # shallow repositories need to pull remaining code to `git describe` correctly
+  if (Test-Path "$(git rev-parse --git-dir)/shallow")
+  {
+    git fetch --unshallow
+  }
+
+  # tags required for versioning
+  git fetch origin 'refs/tags/*:refs/tags/*'
+  (git describe) -replace '-.*', ''
+}
+
 function Lint-Dockerfile($Path)
 {
   hadolint --ignore DL3008 --ignore DL3018 --ignore DL4000 --ignore DL4001 $Path
 }
 
-function Build-Container($Namespace = 'puppet', $Vcs_ref = $(git rev-parse HEAD), $Base = 'ubuntu')
+function Build-Container(
+  $Namespace = 'puppet',
+  $Version = (Get-ContainerVersion),
+  $Vcs_ref = $(git rev-parse HEAD),
+  $Base = 'ubuntu')
 {
   Push-Location (Join-Path (Get-CurrentDirectory) '..')
 
@@ -20,13 +37,16 @@ function Build-Container($Namespace = 'puppet', $Vcs_ref = $(git rev-parse HEAD)
     '--pull',
     '--build-arg', "vcs_ref=$Vcs_ref",
     '--build-arg', "build_date=$build_date",
+    '--build-arg', "version=$Version",
     '--file', "puppet-agent-$Base/Dockerfile",
+    '--tag', "$Namespace/puppet-agent-${Base}:$Version",
     '--tag', "$Namespace/puppet-agent-${Base}:latest"
   )
   if ($Base -eq 'ubuntu')
   {
     $docker_args += @(
-      '--tag', "$Namespace/puppet-agent:latest"
+      '--tag', "$Namespace/puppet-agent:latest",
+      '--tag', "$Namespace/puppet-agent:$Version"
     )
   }
 
