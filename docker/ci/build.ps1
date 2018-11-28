@@ -54,3 +54,14 @@ function Build-Container(
 
   Pop-Location
 }
+
+function Invoke-ContainerTest($Name, $Namespace = 'puppet', $Version = (Get-ContainerVersion))
+{
+  Push-Location (Join-Path (Get-CurrentDirectory) '..')
+
+  bundle install --path .bundle/gems
+  $ENV:PUPPET_TEST_DOCKER_IMAGE = "$Namespace/${Name}:$Version"
+  bundle exec rspec $Name\spec
+
+  Pop-Location
+}

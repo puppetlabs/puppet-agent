@@ -57,6 +57,16 @@ steps:
   name: build_puppetagent_ubuntu_container
 - powershell: |
     . ./docker/ci/build.ps1
+    Invoke-ContainerTest -Name puppet-agent-ubuntu -Namespace $ENV:NAMESPACE
+  displayName: Test Puppet Agent Ubuntu
+  name: test_puppet_agent_ubuntu
+- powershell: |
+    . ./docker/ci/build.ps1
     Build-Container -Namespace $ENV:NAMESPACE -Base 'alpine'
   displayName: Build Alpine Agent Container
   name: build_puppetagent_alpine_container
+- powershell: |
+    . ./docker/ci/build.ps1
+    Invoke-ContainerTest -Name puppet-agent-alpine -Namespace $ENV:NAMESPACE
+  displayName: Test Puppet Agent Alpine
+  name: test_puppet_agent_alpine
