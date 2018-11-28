@@ -8,32 +8,32 @@ RUN sed -i -e 's/sys\/poll/poll/' /usr/include/boost/asio/detail/socket_types.hp
 
 RUN git clone -b 1.5.x https://github.com/puppetlabs/leatherman && mkdir -p /workspace/leatherman/build
 WORKDIR /workspace/leatherman/build
-RUN cmake  -DBOOST_STATIC=OFF -DCMAKE_VERBOSE_MAKEFILE=ON ..; make ; make install
+RUN cmake -DCMAKE_PREFIX_PATH=/opt/puppetlabs/puppet -DCMAKE_INSTALL_PREFIX=/opt/puppetlabs/puppet -DCMAKE_INSTALL_RPATH=/opt/puppetlabs/puppet/lib -DBOOST_STATIC=OFF -DCMAKE_VERBOSE_MAKEFILE=ON ..; make ; make install
 
 WORKDIR /workspace
 RUN git clone -b 0.2.x https://github.com/puppetlabs/libwhereami && mkdir -p /workspace/libwhereami/build
 WORKDIR /workspace/libwhereami/build
-RUN cmake  -DBOOST_STATIC=OFF -DCMAKE_VERBOSE_MAKEFILE=ON ..; make ; make install
+RUN cmake -DCMAKE_PREFIX_PATH=/opt/puppetlabs/puppet -DCMAKE_INSTALL_PREFIX=/opt/puppetlabs/puppet -DCMAKE_INSTALL_RPATH=/opt/puppetlabs/puppet/lib -DBOOST_STATIC=OFF -DCMAKE_VERBOSE_MAKEFILE=ON ..; make ; make install
 
 WORKDIR /workspace
 RUN git clone -b 0.2.x https://github.com/puppetlabs/cpp-hocon && mkdir -p /workspace/cpp-hocon/build
 WORKDIR /workspace/cpp-hocon/build
-RUN cmake  -DBOOST_STATIC=OFF -DCMAKE_VERBOSE_MAKEFILE=ON ..; make ; make install
+RUN cmake -DCMAKE_PREFIX_PATH=/opt/puppetlabs/puppet -DCMAKE_INSTALL_PREFIX=/opt/puppetlabs/puppet -DCMAKE_INSTALL_RPATH=/opt/puppetlabs/puppet/lib -DBOOST_STATIC=OFF -DCMAKE_VERBOSE_MAKEFILE=ON ..; make ; make install
 
 WORKDIR /workspace
 RUN git clone -b 3.12.x https://github.com/puppetlabs/facter && mkdir -p /workspace/facter/build
 WORKDIR /workspace/facter/build
-RUN cmake -DCMAKE_VERBOSE_MAKEFILE=ON ..; make ; make install
+RUN cmake -DCMAKE_PREFIX_PATH=/opt/puppetlabs/puppet -DCMAKE_INSTALL_PREFIX=/opt/puppetlabs/puppet -DCMAKE_INSTALL_RPATH=/opt/puppetlabs/puppet/lib -DCMAKE_VERBOSE_MAKEFILE=ON -DRUBY_LIB_INSTALL=/usr/lib/ruby/vendor_ruby ..; make ; make install
 
 WORKDIR /workspace
 RUN git clone -b 1.6.x https://github.com/puppetlabs/cpp-pcp-client && mkdir -p /workspace/cpp-pcp-client/build
 WORKDIR /workspace/cpp-pcp-client/build
-RUN cmake ..  -DCMAKE_VERBOSE_MAKEFILE=ON ; make ; make install
+RUN cmake .. -DCMAKE_PREFIX_PATH=/opt/puppetlabs/puppet -DCMAKE_INSTALL_PREFIX=/opt/puppetlabs/puppet -DCMAKE_INSTALL_RPATH=/opt/puppetlabs/puppet/lib -DCMAKE_VERBOSE_MAKEFILE=ON ; make ; make install
 
 WORKDIR /workspace
 RUN git clone -b 1.10.x https://github.com/puppetlabs/pxp-agent && mkdir -p /workspace/pxp-agent/build
 WORKDIR /workspace/pxp-agent/build
-RUN cmake ..  -DCMAKE_VERBOSE_MAKEFILE=ON; make; make install
+RUN cmake .. -DCMAKE_PREFIX_PATH=/opt/puppetlabs/puppet -DCMAKE_INSTALL_PREFIX=/opt/puppetlabs/puppet -DCMAKE_INSTALL_RPATH=/opt/puppetlabs/puppet/lib -DCMAKE_VERBOSE_MAKEFILE=ON; make; make install
 
 RUN apk add --no-cache augeas ruby-augeas libressl-dev
 RUN gem install --no-rdoc --no-ri deep_merge json etc semantic_puppet puppet-resource_api multi_json locale httpclient fast_gettext
@@ -50,16 +50,23 @@ RUN ./configure && \
 WORKDIR /workspace
 RUN git clone -b 3.4.x https://github.com/puppetlabs/hiera
 WORKDIR /workspace/hiera
-RUN ./install.rb --no-configs --bindir=/usr/local/bin
+RUN ./install.rb --no-configs --bindir=/opt/puppetlabs/puppet/bin --sitelibdir=/usr/lib/ruby/vendor_ruby
 
 WORKDIR /workspace
 RUN git clone -b 6.0.x https://github.com/puppetlabs/puppet
 WORKDIR /workspace/puppet
-RUN ./install.rb --bindir=/usr/local/bin --configdir=/etc/puppetlabs/puppet --codedir=/etc/puppetlabs/puppet/code --vardir=/usr/local/var/lib/puppet --logdir=/var/log/puppet --rundir=/var/run --quick
+RUN ./install.rb --bindir=/opt/puppetlabs/puppet/bin --configdir=/etc/puppetlabs/puppet --sitelibdir=/usr/lib/ruby/vendor_ruby --codedir=/etc/puppetlabs/puppet/code --vardir=/etc/puppetlabs/puppet/cache --logdir=/var/log/puppet --rundir=/var/run --quick
+
+RUN mkdir -p /opt/puppetlabs/bin && \
+    ln -s /opt/puppetlabs/puppet/bin/facter /opt/puppetlabs/bin/facter && \
+    ln -s /opt/puppetlabs/puppet/bin/puppet /opt/puppetlabs/bin/puppet && \
+    ln -s /opt/puppetlabs/puppet/bin/hiera /opt/puppetlabs/bin/hiera
+
+ENV PATH="/opt/puppetlabs/bin:$PATH"
 
 RUN puppet config set confdir /etc/puppetlabs/puppet && \
     puppet config set codedir /etc/puppetlabs/puppet/code && \
-    puppet config set vardir /usr/local/var/lib/puppet && \
+    puppet config set vardir /etc/puppetlabs/puppet/cache && \
     puppet config set logdir /var/log/puppet && \
     puppet config set rundir /var/run
 
@@ -84,6 +91,7 @@ ARG vcs_ref
 ARG build_date
 
 ENV PUPPET_AGENT_VERSION="$version"
+ENV PATH="/opt/puppetlabs/bin:$PATH"
 
 LABEL org.label-schema.maintainer="Puppet Release Team <release@puppet.com>" \
       org.label-schema.vendor="Puppet" \
@@ -124,14 +132,12 @@ RUN apk add --no-cache \
     boost-regex \
     boost-thread
 
-COPY --from=build /usr/lib/ruby/vendor_ruby/facter.rb /usr/lib/ruby/vendor_ruby/facter.rb
 COPY --from=build /etc/puppetlabs /etc/puppetlabs
-COPY --from=build /usr/local/bin /usr/local/bin
-COPY --from=build /usr/local/lib /usr/local/lib
-COPY --from=build /usr/local/share /usr/local/share
+COPY --from=build /opt/puppetlabs /opt/puppetlabs
 COPY --from=build /usr/lib/ruby/gems /usr/lib/ruby/gems
+COPY --from=build /usr/lib/ruby/vendor_ruby /usr/lib/ruby/vendor_ruby
 
-ENTRYPOINT ["/usr/local/bin/puppet"]
+ENTRYPOINT ["/opt/puppetlabs/bin/puppet"]
 CMD ["agent", "--verbose", "--onetime", "--no-daemonize", "--summarize"]
 
 COPY Dockerfile /
