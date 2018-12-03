@@ -8,7 +8,7 @@ project "puppet-agent" do |proj|
 
   settings[:puppet_runtime_version] = runtime_details['version']
   settings[:puppet_runtime_location] = runtime_details['location']
-  settings[:puppet_runtime_basename] = "agent-runtime-6.0.x-#{runtime_details['version']}.#{platform.name}"
+  settings[:puppet_runtime_basename] = "agent-runtime-master-#{runtime_details['version']}.#{platform.name}"
 
   settings_uri = File.join(runtime_details['location'], "#{proj.settings[:puppet_runtime_basename]}.settings.yaml")
   sha1sum_uri = "#{settings_uri}.sha1"
