@@ -15,16 +15,16 @@ describe 'puppet-agent' do
   end
 
   it 'should be able to run a puppet apply' do
-    output = `docker run --rm #{@image} apply -e 'notify { "test": }'`
+    output = `docker run --rm #{@image} apply -e "notify { 'test': }"`
     status = $?
     puts output unless status == 0
     expect(status).to eq(0)
   end
 
   it 'should be able to run facter' do
-    output = `docker run --rm --entrypoint facter #{@image} virtual`.chomp
+    output = `docker run --rm --entrypoint facter #{@image} is_virtual`.chomp
     status = $?
     expect(status).to eq(0)
-    expect(output).to eq('docker')
+    expect(output).to eq('true')
   end
 end
