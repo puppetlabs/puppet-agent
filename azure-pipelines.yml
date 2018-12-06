@@ -4,6 +4,9 @@ pool:
   # includes Ruby 2.5, Go 1.10, Node.js 10.10, hadolint
   name: Default
 
+variables:
+  NAMESPACE: puppet
+
 steps:
 - powershell: |
     $line = '=' * 80
@@ -41,3 +44,51 @@ steps:
     Get-ChildItem Env: | % { Write-Host "$($_.Key): $($_.Value)"  }
   displayName: Diagnostic Host Information
   name: hostinfo
+- powershell: |
+    . ./docker/ci/build.ps1
+    Lint-Dockerfile -Path ./docker/puppet-agent-ubuntu/Dockerfile
+    Lint-Dockerfile -Path ./docker/puppet-agent-alpine/Dockerfile
+  displayName: Lint Ubuntu and Alpine Dockerfiles
+  name: lint_dockerfiles
+- powershell: |
+    . ./docker/ci/build.ps1
+    Build-Container -Namespace $ENV:NAMESPACE -Base 'ubuntu'
+  displayName: Build Ubuntu Agent Container
+  name: build_puppetagent_ubuntu_container
+- powershell: |
+    . ./docker/ci/build.ps1
+    Invoke-ContainerTest -Name puppet-agent-ubuntu -Namespace $ENV:NAMESPACE
+  displayName: Test Puppet Agent Ubuntu
+  name: test_puppet_agent_ubuntu
+- task: PublishTestResults@2
+  displayName: Publish Puppet Agent Ubuntu test results
+  inputs:
+    testResultsFormat: 'JUnit'
+    testResultsFiles: 'docker/TEST-*.xml'
+    #mergeTestResults: false # Optional
+    testRunTitle: Puppet Agent Ubuntu Test Results
+- powershell: |
+    . ./docker/ci/build.ps1
+    Build-Container -Namespace $ENV:NAMESPACE -Base 'alpine'
+  displayName: Build Alpine Agent Container
+  name: build_puppetagent_alpine_container
+  enabled: false
+- powershell: |
+    . ./docker/ci/build.ps1
+    Invoke-ContainerTest -Name puppet-agent-alpine -Namespace $ENV:NAMESPACE
+  displayName: Test Puppet Agent Alpine
+  name: test_puppet_agent_alpine
+  enabled: false
+- task: PublishTestResults@2
+  displayName: Publish Puppet Agent Alpine test results
+  enabled: false
+  inputs:
+    testResultsFormat: 'JUnit'
+    testResultsFiles: 'docker/TEST-*.xml'
+    #mergeTestResults: false # Optional
+    testRunTitle: Puppet Agent Alpine Test Results
+- powershell: |
+    . ./docker/ci/build.ps1
+    Clear-ContainerBuilds
+  displayName: Container Cleanup
+  condition: always()
