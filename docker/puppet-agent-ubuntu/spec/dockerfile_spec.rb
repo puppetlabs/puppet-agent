@@ -1,30 +1,30 @@
 require 'puppet_docker_tools/spec_helper'
 
-CURRENT_DIRECTORY = File.dirname(File.dirname(__FILE__))
-
-describe 'Dockerfile' do
-  include_context 'with a docker image'
-  include_context 'with a docker container' do
-    def docker_run_options
-      "--entrypoint /bin/bash"
+describe 'puppet-agent' do
+  before(:all) do
+    @image = ENV['PUPPET_TEST_DOCKER_IMAGE']
+    if @image.nil?
+      error_message = <<-MSG
+* * * * *
+  PUPPET_TEST_DOCKER_IMAGE environment variable must be set so we
+  know which image to test against!
+* * * * *
+      MSG
+      fail error_message
     end
   end
 
-  ['puppet-agent', 'lsb-release'].each do |package_name|
-    describe "has #{package_name} installed" do
-      it_should_behave_like 'a running container', "dpkg -l #{package_name}", 0
-    end
+  it 'should be able to run a puppet apply' do
+    output = `docker run --rm #{@image} apply -e "notify { 'test': }"`
+    status = $?
+    puts output unless status == 0
+    expect(status).to eq(0)
   end
 
-  describe 'wget is not installed' do
-    it_should_behave_like 'a running container', "dpkg -l wget", 1
-  end
-
-  describe 'has /opt/puppetlabs/bin/puppet' do
-    it_should_behave_like 'a running container', 'stat -L /opt/puppetlabs/bin/puppet', 0, 'Access: \(0755\/\-rwxr\-xr\-x\)'
-  end
-
-  describe 'Dockerfile#running' do
-    it_should_behave_like 'a running container', 'puppet help', 0
+  it 'should be able to run facter' do
+    output = `docker run --rm --entrypoint facter #{@image} is_virtual`.chomp
+    status = $?
+    expect(status).to eq(0)
+    expect(output).to eq('true')
   end
 end
