@@ -97,7 +97,7 @@ project "puppet-agent" do |proj|
   # Provides augeas, curl, libedit, libxml2, libxslt, openssl, puppet-ca-bundle, ruby and rubygem-*
   proj.component "puppet-runtime"
   proj.component "nssm" if platform.is_windows?
-  proj.component "rubygem-puppet-resource_api"
+  proj.component "puppet-resource_api"
 
   # These utilites don't really work on unix
   if platform.is_linux?
