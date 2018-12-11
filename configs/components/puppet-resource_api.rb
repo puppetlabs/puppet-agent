@@ -1,5 +1,5 @@
-component "rubygem-puppet-resource_api" do |pkg, settings, platform|
-  pkg.load_from_json("configs/components/rubygem-puppet-resource_api.json")
+component "puppet-resource_api" do |pkg, settings, platform|
+  pkg.load_from_json("configs/components/puppet-resource_api.json")
 
   pkg.build_requires "puppet-runtime"
 
