@@ -57,7 +57,7 @@ RUN ./install.rb --no-configs --bindir=/opt/puppetlabs/puppet/bin --sitelibdir=/
 WORKDIR /workspace
 RUN git clone -b 6.0.x https://github.com/puppetlabs/puppet
 WORKDIR /workspace/puppet
-RUN ./install.rb --bindir=/opt/puppetlabs/puppet/bin --configdir=/etc/puppetlabs/puppet --sitelibdir=/usr/lib/ruby/vendor_ruby --codedir=/etc/puppetlabs/puppet/code --vardir=/etc/puppetlabs/puppet/cache --logdir=/var/log/puppet --rundir=/var/run --quick
+RUN ./install.rb --bindir=/opt/puppetlabs/puppet/bin --configdir=/etc/puppetlabs/puppet --sitelibdir=/usr/lib/ruby/vendor_ruby --codedir=/etc/puppetlabs/code --vardir=/opt/puppetlabs/puppet/cache --logdir=/var/log/puppetlabs/puppet --rundir=/var/run/puppetlabs --quick
 
 RUN mkdir -p /opt/puppetlabs/bin && \
     ln -s /opt/puppetlabs/puppet/bin/facter /opt/puppetlabs/bin/facter && \
@@ -67,12 +67,12 @@ RUN mkdir -p /opt/puppetlabs/bin && \
 ENV PATH="/opt/puppetlabs/bin:$PATH"
 
 RUN puppet config set confdir /etc/puppetlabs/puppet && \
-    puppet config set codedir /etc/puppetlabs/puppet/code && \
-    puppet config set vardir /etc/puppetlabs/puppet/cache && \
-    puppet config set logdir /var/log/puppet && \
-    puppet config set rundir /var/run
+    puppet config set codedir /etc/puppetlabs/code && \
+    puppet config set vardir /opt/puppetlabs/puppet/cache && \
+    puppet config set logdir /var/log/puppetlabs/puppet && \
+    puppet config set rundir /var/run/puppetlabs
 
-RUN mkdir -p /etc/puppetlabs/puppet/code/environment/production && \
+RUN mkdir -p /etc/puppetlabs/code/environment/production && \
     puppet module install puppetlabs-augeas_core && \
     puppet module install puppetlabs-cron_core && \
     puppet module install puppetlabs-host_core && \
