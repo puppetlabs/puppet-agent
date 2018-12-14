@@ -5,6 +5,7 @@ ARG vcs_ref
 ARG build_date
 
 ENV PUPPET_AGENT_VERSION="$version"
+ENV PATH="/opt/puppetlabs/bin:$PATH"
 
 LABEL org.label-schema.maintainer="Puppet Release Team <release@puppet.com>" \
       org.label-schema.vendor="Puppet" \
@@ -45,14 +46,12 @@ RUN apk add --no-cache \
     boost-regex \
     boost-thread
 
-COPY output/facter.rb /usr/lib/ruby/vendor_ruby/facter.rb
-COPY output/puppetlabs /etc/puppetlabs/
-COPY output/bin /usr/local/bin/
-COPY output/lib /usr/local/lib/
-COPY output/share /usr/local/share/
+COPY output/vendor_ruby /usr/lib/ruby/vendor_ruby/
+COPY output/opt_puppetlabs /opt/puppetlabs/
+COPY output/etc_puppetlabs /etc/puppetlabs/
 COPY output/gems /usr/lib/ruby/gems/
 
-ENTRYPOINT ["/usr/local/bin/puppet"]
+ENTRYPOINT ["/opt/puppetlabs/bin/puppet"]
 CMD ["agent", "--verbose", "--onetime", "--no-daemonize", "--summarize"]
 
 COPY Dockerfile /
