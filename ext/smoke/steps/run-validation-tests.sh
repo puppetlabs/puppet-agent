@@ -1,17 +1,23 @@
 #!/bin/bash
 
 set -e
-set -x
+# set -x
 
 function on_host() {
   host="$1"
   cmd="$2"
   suppress="$3"
 
-  if [[ -z "${suppress}" || "${suppress}" == "false" ]]; then
-    ssh -oStrictHostKeyChecking=no root@${host} "${cmd}" 2>/dev/null
+  if [[ -z "${VANAGON_SSH_KEY}" ]]; then
+    identity=''
   else
-    ssh -oStrictHostKeyChecking=no root@${host} "${cmd}" 2>/dev/null 1>/dev/null
+    identity="-i ${VANAGON_SSH_KEY}"
+  fi
+
+  if [[ -z "${suppress}" || "${suppress}" == "false" ]]; then
+    ssh $identity -oStrictHostKeyChecking=no root@${host} "${cmd}" 2>/dev/null
+  else
+    ssh $identity -oStrictHostKeyChecking=no root@${host} "${cmd}" 2>/dev/null 1>/dev/null
   fi
 }
 
