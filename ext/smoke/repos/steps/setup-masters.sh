@@ -107,7 +107,7 @@ for master_vm in ${master_vm1} ${master_vm2}; do
       echo "${REQUIRED_PACKAGES}" | tr " " "\n"
       echo "###"
       echo ""
-      echo "### ACTUAL: ###" 
+      echo "### ACTUAL: ###"
       echo "${grep_results}"
       echo "###"
       echo ""
