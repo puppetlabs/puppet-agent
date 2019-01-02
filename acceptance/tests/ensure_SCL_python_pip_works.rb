@@ -1,5 +1,5 @@
 test_name 'PUP-8351: Ensure pip provider works with RHSCL python' do
-  confine :to, :platform => /centos-(6|7)/
+  confine :to, :platform => /centos-(6|7)-x86_64/
   tag 'audit:medium',
       'audit:acceptance'
 
