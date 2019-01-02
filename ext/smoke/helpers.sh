@@ -11,10 +11,18 @@ function on_host() {
   echo "  ${cmd}"
   echo "###"
 
-  if [[ -z "${suppress}" || "${suppress}" == "false" ]]; then
-    ssh -oStrictHostKeyChecking=no root@${host} "${cmd}" 2>/dev/null
+  if [[ -z "${VANAGON_SSH_KEY}" ]]; then
+    identity=''
   else
-    ssh -oStrictHostKeyChecking=no root@${host} "${cmd}" 2>/dev/null 1>/dev/null
+    identity="-i ${VANAGON_SSH_KEY}"
+  fi
+
+  echo $identity
+
+  if [[ -z "${suppress}" || "${suppress}" == "false" ]]; then
+    ssh $identity -oStrictHostKeyChecking=no root@${host} "${cmd}" 2>/dev/null
+  else
+    ssh $identity -oStrictHostKeyChecking=no root@${host} "${cmd}" 2>/dev/null 1>/dev/null
   fi
 }
 
