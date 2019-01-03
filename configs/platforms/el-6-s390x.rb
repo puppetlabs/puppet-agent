@@ -8,5 +8,5 @@ platform "el-6-s390x" do |plat|
   plat.provision_with "yum install --assumeyes autoconf automake createrepo rsync gcc make rpmdevtools rpm-libs yum-utils rpm-sign"
   plat.install_build_dependencies_with "yum install --assumeyes"
   plat.cross_compiled true
-  plat.vmpooler_template "redhat-6-x86_64"
+  plat.vmpooler_template "centos-6-x86_64"
 end
