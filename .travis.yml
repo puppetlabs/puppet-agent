@@ -3,6 +3,8 @@ git:
   depth: 150
 language: ruby
 bundler_args: --without development
+before_install:
+  - gem install bundler -v '< 2' --no-document;
 before_script:
   - 'git config --global user.email "you@example.com"'
   - 'git config --global user.name "Your Name"'
