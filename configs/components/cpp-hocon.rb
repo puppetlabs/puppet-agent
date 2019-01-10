@@ -28,12 +28,13 @@ component "cpp-hocon" do |pkg, settings, platform|
 
     cmake = "C:/ProgramData/chocolatey/bin/cmake.exe -G \"MinGW Makefiles\""
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=#{settings[:tools_root]}/pl-build-toolchain.cmake"
-  elsif platform.name =~ /sles-15|fedora-29/
+  elsif platform.name =~ /sles-15|fedora-29|el-8/
     # These platforms use the default OS toolchain, rather than pl-build-tools
     cmake = "cmake"
     toolchain = ""
     boost_static_flag = "-DBOOST_STATIC=OFF"
     special_flags = "-DCMAKE_CXX_FLAGS='-Wno-error=address -Wno-error=nonnull-compare'" if platform.name =~ /fedora-29/
+    special_flags = " -DENABLE_CXX_WERROR=OFF " if platform.name =~ /el-8/
   else
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/pl-build-toolchain.cmake"
     cmake = "/opt/pl-build-tools/bin/cmake"
