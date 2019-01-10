@@ -1,5 +1,3 @@
-require 'puppet_docker_tools/spec_helper'
-
 describe 'puppet-agent' do
   before(:all) do
     @image = ENV['PUPPET_TEST_DOCKER_IMAGE']
