@@ -4,6 +4,7 @@ component "leatherman" do |pkg, settings, platform|
   make = platform[:make]
 
   if platform.is_macos?
+    pkg.build_requires "cmake"
     pkg.build_requires "gettext"
   elsif platform.name =~ /solaris-10/
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/solaris/10/pl-boost-1.58.0-7.#{platform.architecture}.pkg.gz"
