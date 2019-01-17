@@ -156,7 +156,7 @@ component "facter" do |pkg, settings, platform|
     toolchain = ""
     boost_static_flag = "-DBOOST_STATIC=OFF"
     yamlcpp_static_flag = "-DYAMLCPP_STATIC=OFF"
-    special_flags += " -DENABLE_CXX_WERROR=OFF " if platform.name =~ /el-8/
+    special_flags += " -DENABLE_CXX_WERROR=OFF " if platform.name =~ /el-8|fedora-29/
   else
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/pl-build-toolchain.cmake"
     cmake = "/opt/pl-build-tools/bin/cmake"
