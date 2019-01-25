@@ -68,7 +68,7 @@ component "leatherman" do |pkg, settings, platform|
     cmake = "cmake"
     toolchain = ""
     special_flags = "-DCMAKE_CXX_FLAGS='-Wno-error=deprecated-declarations'" if platform.name =~ /fedora-29/
-    special_flags = " -DENABLE_CXX_WERROR=OFF -DCMAKE_CXX_FLAGS='-O1' " if platform.name =~ /el-8/
+    special_flags = " -DENABLE_CXX_WERROR=OFF -DCMAKE_CXX_FLAGS='-O1' " if platform.name =~ /el-8|fedora-29/
   else
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/pl-build-toolchain.cmake"
     cmake = "/opt/pl-build-tools/bin/cmake"
