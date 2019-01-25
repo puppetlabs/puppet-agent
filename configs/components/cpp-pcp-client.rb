@@ -44,7 +44,7 @@ component "cpp-pcp-client" do |pkg, settings, platform|
     cmake = "cmake"
     toolchain = ""
     platform_flags = "-DCMAKE_CXX_FLAGS='#{settings[:cflags]} -Wimplicit-fallthrough=0'"
-    special_flags = " -DENABLE_CXX_WERROR=OFF " if platform.name =~ /el-8/
+    special_flags = " -DENABLE_CXX_WERROR=OFF " if platform.name =~ /el-8|fedora-29/
   elsif platform.is_cisco_wrlinux?
     platform_flags = "-DLEATHERMAN_USE_LOCALES=OFF"
   end
