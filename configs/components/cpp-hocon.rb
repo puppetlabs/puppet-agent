@@ -32,7 +32,7 @@ component "cpp-hocon" do |pkg, settings, platform|
     cmake = "cmake"
     toolchain = ""
     special_flags = "-DCMAKE_CXX_FLAGS='-Wno-error=address -Wno-error=nonnull-compare'" if platform.name =~ /fedora-29/
-    special_flags = " -DENABLE_CXX_WERROR=OFF " if platform.name =~ /el-8/
+    special_flags = " -DENABLE_CXX_WERROR=OFF " if platform.name =~ /el-8|fedora-29/
   else
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/pl-build-toolchain.cmake"
     cmake = "/opt/pl-build-tools/bin/cmake"

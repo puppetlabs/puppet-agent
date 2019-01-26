@@ -51,7 +51,7 @@ component "pxp-agent" do |pkg, settings, platform|
     cmake = "cmake"
     toolchain = ""
     special_flags += " -DCMAKE_CXX_FLAGS='#{settings[:cflags]} -Wno-deprecated -Wimplicit-fallthrough=0' "
-    special_flags += " -DENABLE_CXX_WERROR=OFF " if platform.name =~ /el-8/
+    special_flags += " -DENABLE_CXX_WERROR=OFF " if platform.name =~ /el-8|fedora-29/
   elsif platform.is_cisco_wrlinux?
     special_flags += " -DLEATHERMAN_USE_LOCALES=OFF "
   end

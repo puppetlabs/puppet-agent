@@ -31,7 +31,7 @@ component "libwhereami" do |pkg, settings, platform|
     # These platforms use the default OS toolchain, rather than pl-build-tools
     cmake = "cmake"
     toolchain = ""
-    special_flags = " -DENABLE_CXX_WERROR=OFF " if platform.name =~ /el-8/
+    special_flags = " -DENABLE_CXX_WERROR=OFF " if platform.name =~ /el-8|fedora-29/
   else
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/pl-build-toolchain.cmake"
     cmake = "/opt/pl-build-tools/bin/cmake"
