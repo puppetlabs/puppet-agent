@@ -18,8 +18,8 @@ platform "osx-10.12-x86_64" do |plat|
   plat.provision_with 'cd /etc/homebrew'
   plat.provision_with 'su test -c \'echo | /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"\''
   plat.provision_with 'sudo chown -R test:admin /Users/test/Library/'
-
-  packages = ['https://raw.githubusercontent.com/Homebrew/homebrew-core/10c7c4d90919120ce4839f687c29f68cfc2fca92/Formula/boost.rb']
+  #Temporary fix for installing boost without icu4c support
+  packages = ['https://raw.githubusercontent.com/mihaibuzgau/homebrew-core/50b53d7dd993bc7a91588740c5a200a56855d259/Formula/boost.rb']
 
   plat.provision_with "su test -c '/usr/local/bin/brew install #{packages.join(' ')}'"
 
