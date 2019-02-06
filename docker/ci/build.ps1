@@ -52,7 +52,7 @@ function Build-Container(
   }
   else # alpine
   {
-    $docker_args += '--memory 3g'
+    $docker_args += @('--memory', '4g')
 
     # fake multistage builds for Windows since LCOW doesn't support yet
     docker build --pull `

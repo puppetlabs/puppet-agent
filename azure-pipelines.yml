@@ -74,16 +74,16 @@ steps:
     Build-Container -Namespace $ENV:NAMESPACE -Base 'alpine'
   displayName: Build Alpine Agent Container
   name: build_puppetagent_alpine_container
-  enabled: false
+  enabled: true
 - powershell: |
     . ./docker/ci/build.ps1
     Invoke-ContainerTest -Name puppet-agent-alpine -Namespace $ENV:NAMESPACE
   displayName: Test Puppet Agent Alpine
   name: test_puppet_agent_alpine
-  enabled: false
+  enabled: true
 - task: PublishTestResults@2
   displayName: Publish Puppet Agent Alpine test results
-  enabled: false
+  enabled: true
   inputs:
     testResultsFormat: 'JUnit'
     testResultsFiles: 'docker/TEST-*.xml'
