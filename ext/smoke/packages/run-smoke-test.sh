@@ -1,6 +1,7 @@
 #!/bin/bash
 
 set -e
+source "$(dirname $0)/../helpers.sh"
 
 # Redirect stdout ( > ) into a named pipe ( >() ) running "tee"
 exec > >(tee -i "$(dirname $0)/../puppet-agent-${3}-smoke-test-packages-output.txt")
@@ -24,9 +25,8 @@ if [[ -z "${master_vm}" || -z "${agent_vm}" || -z "${agent_version}" || \
   exit 1
 fi
 
-# Append domains after validation.
-master_vm="$1$domain"
-agent_vm="$2$domain"
+master_vm=$(hostname_with_domain $master_vm)
+agent_vm=$(hostname_with_domain $agent_vm)
 
 echo "##### master_vm = ${master_vm}"
 echo "##### agent_vm = ${agent_vm}"
@@ -41,7 +41,7 @@ $(dirname $0)/steps/setup-master.sh ${master_vm} ${agent_version} ${server_versi
 echo "#### Setting up agent..."
 $(dirname $0)/../steps/setup-agent.sh ${master_vm} ${agent_vm} ${agent_version} "package" ${collection}
 
-echo "#### Running validation..."
+echo "#### Running validation"
 $(dirname $0)/../steps/run-validation-tests.sh ${master_vm} ${agent_vm}
 
 echo "All done!"
