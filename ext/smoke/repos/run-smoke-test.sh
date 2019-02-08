@@ -27,11 +27,10 @@ if [[ -z "${master_vm1}" || -z "${master_vm2}" || -z "${agent_vm1}" || \
   exit 1
 fi
 
-# Append domains after validation.
-master_vm1="$1$domain"
-master_vm2="$2$domain"
-agent_vm1="$3$domain"
-agent_vm2="$4$domain"
+master_vm1=$(hostname_with_domain $master_vm1)
+master_vm2=$(hostname_with_domain $master_vm2)
+agent_vm1=$(hostname_with_domain $agent_vm1)
+agent_vm2=$(hostname_with_domain $agent_vm2)
 
 echo "##### master_vm1 = ${master_vm1}"
 echo "##### master_vm2 = ${master_vm2}"
