@@ -201,3 +201,14 @@ function install_puppetdb_from_package() {
   echo ""
   echo ""
 }
+
+# Given a hostname or FQDN ($1), append a domain ($2, defaults to
+# '.delivery.puppetlabs.net') to form an FQDN if necessary
+function hostname_with_domain() {
+  host=$1
+  domain=${2:-.delivery.puppetlabs.net}
+  if [[ ! $host == *.* ]]; then
+    host="$host$domain"
+  fi
+  echo $host
+}

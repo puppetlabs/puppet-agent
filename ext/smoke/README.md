@@ -11,9 +11,7 @@ the release process.
 #### Manually smoke test platform components installed from packages
 
 To run these smoke tests, check out 2 redhat-7-x86_64 VMs.
-Then run the `packages/run-smoke-test.sh` script as follows, where
-VM names should not include the domain, as that will be appended in the
-script:
+Then run the `packages/run-smoke-test.sh` script as follows:
 
 ```
 ./packages/run-smoke-test.sh <VM> <VM> <agent_version> <server_version> <puppetdb_version>
