@@ -40,13 +40,11 @@ function Build-Container(
     '--build-arg', "build_date=$build_date",
     '--build-arg', "version=$Version",
     '--file', "puppet-agent-$Base/$subdir/Dockerfile",
-    '--tag', "$Namespace/puppet-agent-${Base}:$Version",
-    '--tag', "$Namespace/puppet-agent-${Base}:latest"
+    '--tag', "$Namespace/puppet-agent-${Base}:$Version"
   )
   if ($Base -eq 'ubuntu')
   {
     $docker_args += @(
-      '--tag', "$Namespace/puppet-agent:latest",
       '--tag', "$Namespace/puppet-agent:$Version"
     )
   }
