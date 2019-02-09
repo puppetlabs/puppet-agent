@@ -13,10 +13,12 @@ foss_platforms:
   - el-7-x86_64
   - el-7-ppc64le
   - el-7-aarch64
+  - el-8-x86_64
   - fedora-28-x86_64
   - fedora-29-x86_64
   - osx-10.12-x86_64
   - osx-10.13-x86_64
+  - osx-10.14-x86_64
   - sles-11-i386
   - sles-11-x86_64
   - sles-12-x86_64
@@ -54,6 +56,8 @@ platform_repos:
     repo_location: repos/el/7/**/ppc64le
   - name: el-7-aarch64
     repo_location: repos/el/7/**/aarch64
+  - name: el-8-x86_64
+    repo_location: repos/el/8/**/x86_64
   - name: redhatfips-7-x86_64
     repo_location: repos/redhatfips/7/**/x86_64
   - name: sles-11-i386
@@ -94,6 +98,8 @@ platform_repos:
     repo_location: repos/apple/10.12/**/x86_64/*.dmg
   - name: osx-10.13
     repo_location: repos/apple/10.13/**/x86_64/*.dmg
+  - name: osx-10.14
+    repo_location: repos/apple/10.14/**/x86_64/*.dmg
   - name: solaris-10-i386
     repo_location: repos/solaris/10/**/*.i386.pkg.gz
   - name: solaris-10-sparc

@@ -8,6 +8,8 @@ variables:
   NAMESPACE: puppet
 
 steps:
+- checkout: self
+  clean: true
 - powershell: |
     $line = '=' * 80
     Write-Host "$line`nWindows`n$line`n"
@@ -89,6 +91,8 @@ steps:
     testRunTitle: Puppet Agent Alpine Test Results
 - powershell: |
     . ./docker/ci/build.ps1
-    Clear-ContainerBuilds
+    # builds alias puppet-agent to puppet-agent-ubuntu which requires forced removal
+    Clear-ContainerBuilds -Name puppet-agent-ubuntu -Force
+    Clear-ContainerBuilds -Name puppet-agent-alpine
   displayName: Container Cleanup
   condition: always()

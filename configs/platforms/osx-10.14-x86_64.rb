@@ -1,12 +1,9 @@
-platform "osx-10.13-x86_64" do |plat|
+platform 'osx-10.14-x86_64' do |plat|
   plat.servicetype 'launchd'
   plat.servicedir '/Library/LaunchDaemons'
-  plat.codename "highsierra"
-
-  plat.provision_with 'export HOMEBREW_NO_AUTO_UPDATE=true'
+  plat.codename "mojave"
   plat.provision_with 'export HOMEBREW_NO_EMOJI=true'
   plat.provision_with 'export HOMEBREW_VERBOSE=true'
-
   plat.provision_with 'sudo dscl . -create /Users/test'
   plat.provision_with 'sudo dscl . -create /Users/test UserShell /bin/bash'
   plat.provision_with 'sudo dscl . -create /Users/test UniqueID 1001'
@@ -18,7 +15,7 @@ platform "osx-10.13-x86_64" do |plat|
   plat.provision_with 'mkdir -p /etc/homebrew'
   plat.provision_with 'cd /etc/homebrew'
   plat.provision_with 'su test -c \'echo | /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"\''
-  plat.provision_with 'sudo chown -R test:admin /Users/test/Library/'
+  plat.provision_with 'sudo chown -R test:admin /Users/test/'
 
   # If you need to add packages to install pre-build, add them to 'packages'
   # and uncomment the provision_with line below
@@ -26,5 +23,5 @@ platform "osx-10.13-x86_64" do |plat|
   # plat.provision_with "su test -c '/usr/local/bin/brew install #{packages.join(' ')}'"
 
   plat.vmpooler_template 'osx-1012-x86_64'
-  plat.output_dir File.join('apple', '10.13', 'puppet6', 'x86_64')
+  plat.output_dir File.join('apple', '10.14', 'puppet6', 'x86_64')
 end

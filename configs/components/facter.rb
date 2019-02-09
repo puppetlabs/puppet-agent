@@ -20,7 +20,7 @@ component "facter" do |pkg, settings, platform|
 
   pkg.build_requires 'puppet-runtime' # Provides augeas, boost, curl, openssl, ruby, yaml-cpp
   pkg.build_requires 'leatherman'
-  pkg.build_requires 'runtime' unless platform.name =~ /sles-15|fedora-29/
+  pkg.build_requires 'runtime' unless platform.name =~ /sles-15|fedora-29|el-8/
   pkg.build_requires 'cpp-hocon'
   pkg.build_requires 'libwhereami'
 
@@ -106,7 +106,7 @@ component "facter" do |pkg, settings, platform|
     toolchain = ""
     cmake = "/usr/local/bin/cmake"
     special_flags += "-DCMAKE_CXX_FLAGS='#{settings[:cflags]}'"
-    yamlcpp_static_flag = "-DYAMLCPP_STATIC=OFF" if platform.name =~ /osx-10.12/
+    yamlcpp_static_flag = "-DYAMLCPP_STATIC=OFF"
   elsif platform.is_cross_compiled_linux?
     ruby = "#{settings[:host_ruby]} -r#{settings[:datadir]}/doc/rbconfig-#{settings[:ruby_version]}-orig.rb"
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/#{settings[:platform_triple]}/pl-build-toolchain.cmake"
@@ -127,10 +127,11 @@ component "facter" do |pkg, settings, platform|
 
     cmake = "C:/ProgramData/chocolatey/bin/cmake.exe -G \"MinGW Makefiles\""
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=#{settings[:tools_root]}/pl-build-toolchain.cmake"
-  elsif platform.name =~ /sles-15|fedora-29/
+  elsif platform.name =~ /sles-15|fedora-29|el-8/
     # These platforms use the default OS toolchain, rather than pl-build-tools
     cmake = "cmake"
     toolchain = ""
+    special_flags += " -DENABLE_CXX_WERROR=OFF " if platform.name =~ /el-8|fedora-29/
   else
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/pl-build-toolchain.cmake"
     cmake = "/opt/pl-build-tools/bin/cmake"
@@ -201,7 +202,7 @@ component "facter" do |pkg, settings, platform|
   end
 
   # Disable tests for platforms that use the default OS toolchain
-  unless platform.name =~ /sles-15|fedora-29/
+  unless platform.name =~ /sles-15|fedora-29|el-8/
     pkg.check do
       tests
     end
