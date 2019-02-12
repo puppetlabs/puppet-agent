@@ -52,9 +52,9 @@ component "facter" do |pkg, settings, platform|
     pkg.build_requires 'java-1_7_0-openjdk-devel'
     java_home = "/usr/lib64/jvm/java-1.7.0-openjdk"
   when /sles-11/
-    pkg.build_requires 'java-1_7_0-ibm-devel'
-    java_home = "/usr/lib64/jvm/java-1.7.0-ibm-1.7.0"
-    java_includedir = "-DJAVA_JVM_LIBRARY=/usr/lib64/jvm/java-1.7.0-ibm-1.7.0/include"
+    pkg.build_requires 'java-1_7_1-ibm-devel'
+    java_home = "/usr/lib64/jvm/java-1.7.1-ibm-1.7.1"
+    java_includedir = "-DJAVA_JVM_LIBRARY=/usr/lib64/jvm/java-1.7.1-ibm-1.7.1/include"
   else
     skip_jruby = 'ON'
   end
