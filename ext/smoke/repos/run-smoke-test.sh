@@ -1,6 +1,7 @@
 #!/bin/bash
 
 set -e
+source "$(dirname $0)/../helpers.sh"
 
 # Redirect stdout ( > ) into a named pipe ( >() ) running "tee"
 exec > >(tee -i "$(dirname $0)/../puppet-agent-${5}-smoke-test-repos-output.txt")
