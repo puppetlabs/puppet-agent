@@ -42,7 +42,14 @@ echo "Running with type ${type}"
 echo ""
 
 echo "Clean out the agent's SSL directory so it forgets any old masters"
-on_master "puppet cert clean ${agent_vm}; find /etc/puppetlabs/puppet/ssl -name ${agent_vm}.pem -delete"
+
+if [[ "$collection" =~ "puppet5" ]]; then
+  on_master "puppet cert clean ${agent_vm}"
+else
+  # This produces an error when the cert can't be cleaned; we don't care
+  on_master "puppetserver ca clean --certname ${agent_vm} || true"
+fi
+
 on_agent "rm -rf /etc/puppetlabs/puppet/ssl; sed -i '/puppet/d' /etc/hosts"
 
 echo "STEP: Install the puppet-agent package"
@@ -69,7 +76,11 @@ on_agent "puppet agent -t"
 set -e
 echo "### DEBUG: Sleeping for 5 seconds to give some time for the agent cert to appear on the master ..."
 sleep 5
-on_master "puppet cert sign --all"
+if [[ "$collection" =~ "puppet5" ]]; then
+  on_master "puppet cert sign --all"
+else
+  on_master "puppetserver ca sign --certname ${agent_vm}"
+fi
 echo ""
 echo ""
 

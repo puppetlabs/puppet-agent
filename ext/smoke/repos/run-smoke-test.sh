@@ -5,7 +5,6 @@ set -e
 source "$(dirname $0)/../helpers.sh"
 
 USAGE="USAGE: $0 <master-vm1> <master-vm2> <agent-vm1> <agent-vm2> <agent-version> <server-version> <puppetdb-version> [<collection>]"
-domain=".delivery.puppetlabs.net"
 
 master_vm1="$1"
 master_vm2="$2"
