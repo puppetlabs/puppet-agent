@@ -4,7 +4,7 @@ set -e
 
 source "$(dirname $0)/../helpers.sh"
 
-USAGE="USAGE: $0 <master-vm> <agent-vm> <agent-version> <type>"
+USAGE="USAGE: $0 <master-vm> <agent-vm> <agent-version> <type> [<collection>]"
 
 master_vm="$1"
 agent_vm="$2"
@@ -15,6 +15,8 @@ if [[ -z "${master_vm}" || -z "${agent_vm}" || -z "${agent_version}" || -z "${ty
   echo "${USAGE}"
   exit 1
 fi
+
+collection="${5:-$(guess_puppet_collection_for $agent_version})}"
 
 function on_master() {
   cmd="$1"
@@ -47,10 +49,10 @@ echo "STEP: Install the puppet-agent package"
 master_ip=`on_master "facter ipaddress" | tail -n 1`
 on_agent "echo ${master_ip} puppet >> /etc/hosts"
 if [[ "${type}" = "repo" ]]; then
-  on_agent "rpm -Uvh http://yum.puppetlabs.com/puppet5/puppet5-release-el-7.noarch.rpm --force"
+  on_agent "rpm -Uvh http://yum.puppetlabs.com/${collection}/${collection}-release-el-7.noarch.rpm --force"
   on_agent "rpm --quiet --query puppet-agent-${agent_version} || yum install -y puppet-agent-${agent_version}"
 elif [[ "${type}" = "package" ]]; then
-  on_agent "curl -f -O http://builds.puppetlabs.lan/puppet-agent/${agent_version}/artifacts/el/7/puppet5/x86_64/puppet-agent-${agent_version}-1.el7.x86_64.rpm"
+  on_agent "curl -f -O http://builds.puppetlabs.lan/puppet-agent/${agent_version}/artifacts/el/7/${collection}/x86_64/puppet-agent-${agent_version}-1.el7.x86_64.rpm"
   on_agent "rpm -ivh puppet-agent-${agent_version}-1.el7.x86_64.rpm"
 else
   echo "Unrecognized type '${type}' supplied"
