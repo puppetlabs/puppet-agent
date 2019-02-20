@@ -1,7 +1,6 @@
 #!/bin/bash
 
 set -e
-set -x
 
 source "$(dirname $0)/../../helpers.sh"
 
@@ -11,7 +10,7 @@ master_vm="$1"
 agent_version="$2"
 server_version="$3"
 puppetdb_version="$4"
-collection="${5:-puppet5}"
+collection="${5:-$(guess_puppet_collection_for $agent_version)}"
 
 if [[ -z "${master_vm}" || -z "${agent_version}" || -z "${server_version}" || -z "${puppetdb_version}}" ]]; then
   echo "${USAGE}"
