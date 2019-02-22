@@ -37,8 +37,6 @@ foss_platforms:
 pe_platforms:
   - aix-6.1-power
   - aix-7.1-power
-  - el-6-s390x
-  - el-7-s390x
   - redhatfips-7-x86_64
   - sles-11-s390x
   - sles-12-s390x
@@ -63,12 +61,8 @@ platform_repos:
     repo_location: repos/el/6/**/i386
   - name: el-6-x86_64
     repo_location: repos/el/6/**/x86_64
-  - name: el-6-s390x
-    repo_location: repos/el/6/**/s390x
   - name: el-7-x86_64
     repo_location: repos/el/7/**/x86_64
-  - name: el-7-s390x
-    repo_location: repos/el/7/**/s390x
   - name: el-7-ppc64le
     repo_location: repos/el/7/**/ppc64le
   - name: el-7-aarch64
