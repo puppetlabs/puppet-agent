@@ -50,9 +50,9 @@ endif
 
 test: prep
 	@bundle install --path .bundle/gems
-	@PUPPET_TEST_DOCKER_IMAGE=puppet/puppet-agent-ubuntu:$(version) bundle exec rspec puppet-agent-ubuntu/spec
+	@PUPPET_TEST_DOCKER_IMAGE=puppet/puppet-agent-ubuntu:$(version) bundle exec rspec spec
 ifneq ($(IS_NIGHTLY),true)
-	@PUPPET_TEST_DOCKER_IMAGE=puppet/puppet-agent-alpine:$(version) bundle exec rspec puppet-agent-alpine/spec
+	@PUPPET_TEST_DOCKER_IMAGE=puppet/puppet-agent-alpine:$(version) bundle exec rspec spec
 endif
 
 publish: prep
