@@ -16,9 +16,8 @@ platform 'osx-10.14-x86_64' do |plat|
     plat.provision_with 'cd /etc/homebrew'
     plat.provision_with 'su test -c \'echo | /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"\''
     plat.provision_with 'sudo chown -R test:admin /Users/test/'
-    #Temporary fix for installing boost without icu4c support
-    packages = ['https://raw.githubusercontent.com/mihaibuzgau/homebrew-core/50b53d7dd993bc7a91588740c5a200a56855d259/Formula/boost.rb']
+    packages = ['boost']
     plat.provision_with "su test -c '/usr/local/bin/brew install #{packages.join(' ')}'"
-    plat.vmpooler_template 'osx-1012-x86_64'
+    plat.vmpooler_template 'osx-1014-x86_64'
     plat.output_dir File.join('apple', '10.14', 'puppet5', 'x86_64')
   end
