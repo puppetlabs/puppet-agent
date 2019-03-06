@@ -10,12 +10,13 @@ master_vm="$1"
 agent_vm="$2"
 agent_version="$3"
 type="$4"
-collection="${5:-puppet5}"
 
 if [[ -z "${master_vm}" || -z "${agent_vm}" || -z "${agent_version}" || -z "${type}" ]]; then
   echo "${USAGE}"
   exit 1
 fi
+
+collection="${5:-$(guess_puppet_collection_for $agent_version})}"
 
 function on_master() {
   cmd="$1"
@@ -41,7 +42,14 @@ echo "Running with type ${type}"
 echo ""
 
 echo "Clean out the agent's SSL directory so it forgets any old masters"
-on_master "puppet cert clean ${agent_vm}; find /etc/puppetlabs/puppet/ssl -name ${agent_vm}.pem -delete"
+
+if [[ "$collection" =~ "puppet5" ]]; then
+  on_master "puppet cert clean ${agent_vm}"
+else
+  # This produces an error when the cert can't be cleaned; we don't care
+  on_master "puppetserver ca clean --certname ${agent_vm} || true"
+fi
+
 on_agent "rm -rf /etc/puppetlabs/puppet/ssl; sed -i '/puppet/d' /etc/hosts"
 
 echo "STEP: Install the puppet-agent package"

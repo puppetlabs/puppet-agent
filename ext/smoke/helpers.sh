@@ -212,3 +212,13 @@ function hostname_with_domain() {
   fi
   echo $host
 }
+
+# Guesses the puppet collection based on a version of puppet-agent ($1)
+function guess_puppet_collection_for() {
+  if [[ $1 =~ ^[0-9] ]]; then
+    echo "puppet${1:0:1}"
+  else
+    echo "ERROR: Couldn't determine a puppet collection based on the puppet-agent version '${1}'"
+    exit 1
+  fi
+}
