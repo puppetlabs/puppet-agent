@@ -32,6 +32,7 @@ component "leatherman" do |pkg, settings, platform|
   ruby = "#{settings[:host_ruby]} -rrbconfig"
 
   leatherman_locale_var = ""
+  special_flags = ""
 
   # cmake on OSX is provided by brew
   # a toolchain is not currently required for OSX since we're building with clang.
