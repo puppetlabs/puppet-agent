@@ -17,7 +17,6 @@ agent_vm="$2"
 agent_version="$3"
 server_version="$4"
 puppetdb_version="$5"
-collection="${6:-puppet5}"
 
 if [[ -z "${master_vm}" || -z "${agent_vm}" || -z "${agent_version}" || \
       -z "${server_version}" || -z "${puppetdb_version}" ]]; then
@@ -27,6 +26,7 @@ fi
 
 master_vm=$(hostname_with_domain $master_vm)
 agent_vm=$(hostname_with_domain $agent_vm)
+collection="${6:-$(guess_puppet_collection_for $agent_version)}"
 
 echo "##### master_vm = ${master_vm}"
 echo "##### agent_vm = ${agent_vm}"

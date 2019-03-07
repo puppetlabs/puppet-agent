@@ -19,7 +19,6 @@ agent_vm2="$4"
 agent_version="$5"
 server_version="$6"
 puppetdb_version="$7"
-collection="${8:-puppet5}"
 
 if [[ -z "${master_vm1}" || -z "${master_vm2}" || -z "${agent_vm1}" || \
       -z "${agent_vm2}" || -z "${agent_version}" || -z "${server_version}" || \
@@ -32,6 +31,7 @@ master_vm1=$(hostname_with_domain $master_vm1)
 master_vm2=$(hostname_with_domain $master_vm2)
 agent_vm1=$(hostname_with_domain $agent_vm1)
 agent_vm2=$(hostname_with_domain $agent_vm2)
+collection="${8:-$(guess_puppet_collection_for $agent_version)}"
 
 echo "##### master_vm1 = ${master_vm1}"
 echo "##### master_vm2 = ${master_vm2}"
