@@ -12,6 +12,10 @@ namespace :release_lead do
         gsub('rename', 'Renamed')
   end
 
+  def is_module?(component_file)
+    component_file =~ /module-puppetlabs/ ? true : false
+  end
+
   # Calculate name of repository from the .git URL.
   def url_to_component_name(url)
     url.split('/').last.split('.').first
@@ -80,7 +84,12 @@ namespace :release_lead do
         end
         name = url_to_component_name(url)
         ref = json['ref']
-        sha_or_tag = ref =~ /^refs\/tags/ ? ref.gsub('refs/tags/', '') : ref
+        if is_module?(component)
+          sha_or_tag = 'master'
+        else
+          sha_or_tag = ref =~ /^refs\/tags/ ? ref.gsub('refs/tags/', '') : ref
+        end
+
         result[name] = git_describe_repo(name, url, sha_or_tag, where_to_clone, show_extra_commits)
       end
 
