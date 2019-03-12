@@ -12,9 +12,7 @@ component "virt-what" do |pkg, settings, platform|
     requires "util-linux"
   end
   if platform.name =~ /^sles-(10|11)-.*$/
-    # pmtools (which contains the dmidecode command) is not
-    # available in the s390x repos
-    requires "pmtools" unless platform.architecture == "s390x"
+    requires "pmtools"
   end
 
   if platform.is_rpm?
