@@ -37,6 +37,7 @@ foss_platforms:
 pe_platforms:
   - aix-6.1-power
   - aix-7.1-power
+  - redhatfips-7-x86_64
   - solaris-10-i386
   - solaris-10-sparc
   - solaris-11-i386
@@ -66,6 +67,8 @@ platform_repos:
     repo_location: repos/el/7/**/aarch64
   - name: el-8-x86_64
     repo_location: repos/el/8/**/x86_64
+  - name: redhatfips-7-x86_64
+    repo_location: repos/redhatfips/7/**/x86_64
   - name: sles-11-i386
     repo_location: repos/sles/11/**/i386
   - name: sles-11-x86_64
