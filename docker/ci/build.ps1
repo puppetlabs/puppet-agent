@@ -80,6 +80,8 @@ function Invoke-ContainerTest($Name, $Namespace = 'puppet', $Version = (Get-Cont
 
   bundle install --path .bundle/gems
   $ENV:PUPPET_TEST_DOCKER_IMAGE = "$Namespace/${Name}:$Version"
+  Write-Host "Testing against image: ${ENV:PUPPET_TEST_DOCKER_IMAGE}"
+  bundle exec rspec --version
   bundle exec rspec spec
 
   Pop-Location
@@ -100,7 +102,7 @@ function Clear-ContainerBuilds(
 
   # this provides example data which ConvertFrom-String infers parsing structure with
   $template = @'
-{Version*:1.2.3} {ID:5b84704c1d01} {[DateTime]Created:2019-02-07 18:24:51} +0000 GMT
+{Version*:10.2.3*} {ID:5b84704c1d01} {[DateTime]Created:2019-02-07 18:24:51} +0000 GMT
 {Version*:latest} {ID:0123456789ab} {[DateTime]Created:2019-01-29 00:05:33} +0000 GMT
 '@
   $output = docker images --filter=reference="$Namespace/${Name}" --format "{{.Tag}} {{.ID}} {{.CreatedAt}}"
