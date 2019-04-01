@@ -2,7 +2,6 @@
 project: 'puppet-agent'
 # foss_platforms will be shipped to the nightly repos
 foss_platforms:
-  - cumulus-2.2-amd64
   - debian-8-amd64
   - debian-8-i386
   - debian-9-amd64
@@ -47,8 +46,6 @@ platform_repos:
     repo_location: repos/aix/6.1/**/ppc
   - name: aix-7.1-power
     repo_location: repos/aix/7.1/**/ppc
-  - name: cumulus-amd64
-    repo_location: repos/apt/cumulus
   - name: eos-4-i386
     repo_location: repos/eos/4/**/i386
   - name: el-5-i386
