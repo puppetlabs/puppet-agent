@@ -44,7 +44,7 @@ echo ""
 echo "Clean out the agent's SSL directory so it forgets any old masters"
 
 if [[ "$collection" =~ "puppet5" ]]; then
-  on_master "puppet cert clean ${agent_vm}"
+  on_master "puppet cert clean ${agent_vm} || true"
 else
   # This produces an error when the cert can't be cleaned; we don't care
   on_master "puppetserver ca clean --certname ${agent_vm} || true"
