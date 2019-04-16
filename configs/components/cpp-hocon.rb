@@ -11,7 +11,12 @@ component "cpp-hocon" do |pkg, settings, platform|
   if platform.is_macos?
     toolchain = ""
     cmake = "/usr/local/bin/cmake"
-    special_flags = "-DCMAKE_CXX_FLAGS='#{settings[:cflags]}'"
+    boost_static_flag = "-DBOOST_STATIC=OFF"
+    if platform.name =~ /osx-10.14/ #apple's clang 10 complains about delete-non-virtual-destructor
+      special_flags = "-DCMAKE_CXX_FLAGS='#{settings[:cflags]} -Wno-delete-non-virtual-dtor'"
+    else
+      special_flags = "-DCMAKE_CXX_FLAGS='#{settings[:cflags]}'"
+    end
   elsif platform.is_cross_compiled_linux?
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/#{settings[:platform_triple]}/pl-build-toolchain.cmake"
     cmake = "/opt/pl-build-tools/bin/cmake"

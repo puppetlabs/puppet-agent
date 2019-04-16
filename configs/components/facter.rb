@@ -126,7 +126,12 @@ component "facter" do |pkg, settings, platform|
   if platform.is_macos?
     toolchain = ""
     cmake = "/usr/local/bin/cmake"
-    special_flags += "-DCMAKE_CXX_FLAGS='#{settings[:cflags]}'"
+    boost_static_flag = "-DBOOST_STATIC=OFF"
+    if platform.name =~ /osx-10.14/ #apple's clang 10 complains about expansion-to-defined and delete-non-virtual-destructor
+      special_flags += "-DCMAKE_CXX_FLAGS='#{settings[:cflags]} -Wno-delete-non-virtual-dtor -Wno-expansion-to-defined'"
+    else
+      special_flags += "-DCMAKE_CXX_FLAGS='#{settings[:cflags]}'"
+    end
     yamlcpp_static_flag = "-DYAMLCPP_STATIC=OFF"
   elsif platform.is_cross_compiled_linux?
     ruby = "#{settings[:host_ruby]} -r#{settings[:datadir]}/doc/rbconfig-#{settings[:ruby_version]}-orig.rb"
