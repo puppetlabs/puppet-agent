@@ -20,7 +20,7 @@ component "facter" do |pkg, settings, platform|
 
   pkg.build_requires 'puppet-runtime' # Provides augeas, boost, curl, openssl, ruby, yaml-cpp
   pkg.build_requires 'leatherman'
-  pkg.build_requires 'runtime' unless platform.name =~ /sles-15|fedora-29|el-8/
+  pkg.build_requires 'runtime' unless platform.name =~ /sles-15|fedora-29|el-8|debian-10/
   pkg.build_requires 'cpp-hocon'
   pkg.build_requires 'libwhereami'
 
@@ -99,13 +99,20 @@ component "facter" do |pkg, settings, platform|
   cp = platform[:cp]
 
   special_flags = " -DCMAKE_INSTALL_PREFIX=#{settings[:prefix]} "
+  boost_static_flag = ""
+  yamlcpp_static_flag = ""
 
   # cmake on OSX is provided by brew
   # a toolchain is not currently required for OSX since we're building with clang.
   if platform.is_macos?
     toolchain = ""
     cmake = "/usr/local/bin/cmake"
-    special_flags += "-DCMAKE_CXX_FLAGS='#{settings[:cflags]}'"
+    boost_static_flag = "-DBOOST_STATIC=OFF"
+    if platform.name =~ /osx-10.14/ #apple's clang 10 complains about expansion-to-defined and delete-non-virtual-destructor
+      special_flags += "-DCMAKE_CXX_FLAGS='#{settings[:cflags]} -Wno-delete-non-virtual-dtor -Wno-expansion-to-defined'"
+    else
+      special_flags += "-DCMAKE_CXX_FLAGS='#{settings[:cflags]}'"
+    end
     yamlcpp_static_flag = "-DYAMLCPP_STATIC=OFF"
   elsif platform.is_cross_compiled_linux?
     ruby = "#{settings[:host_ruby]} -r#{settings[:datadir]}/doc/rbconfig-#{settings[:ruby_version]}-orig.rb"
@@ -128,11 +135,13 @@ component "facter" do |pkg, settings, platform|
 
     cmake = "C:/ProgramData/chocolatey/bin/cmake.exe -G \"MinGW Makefiles\""
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=#{settings[:tools_root]}/pl-build-toolchain.cmake"
-  elsif platform.name =~ /sles-15|fedora-29|el-8/
+  elsif platform.name =~ /sles-15|fedora-29|el-8|debian-10/
     # These platforms use the default OS toolchain, rather than pl-build-tools
     cmake = "cmake"
     toolchain = ""
-    special_flags += " -DENABLE_CXX_WERROR=OFF " if platform.name =~ /el-8|fedora-29/
+    boost_static_flag = "-DBOOST_STATIC=OFF"
+    yamlcpp_static_flag = "-DYAMLCPP_STATIC=OFF"
+    special_flags += " -DENABLE_CXX_WERROR=OFF " if platform.name =~ /el-8|fedora-29|debian-10/
   else
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/pl-build-toolchain.cmake"
     cmake = "/opt/pl-build-tools/bin/cmake"
@@ -163,6 +172,8 @@ component "facter" do |pkg, settings, platform|
         -DCMAKE_INSTALL_RPATH=#{settings[:libdir]} \
         -DRUBY_LIB_INSTALL=#{settings[:ruby_vendordir]} \
         #{special_flags} \
+        #{boost_static_flag} \
+        #{yamlcpp_static_flag} \
         -DWITHOUT_CURL=#{skip_curl} \
         -DWITHOUT_BLKID=#{skip_blkid} \
         -DWITHOUT_JRUBY=#{skip_jruby} \
@@ -203,7 +214,7 @@ component "facter" do |pkg, settings, platform|
   end
 
   # Disable tests for platforms that use the default OS toolchain
-  unless platform.name =~ /sles-15|fedora-29|el-8/
+  unless platform.name =~ /sles-15|fedora-29|el-8|debian-10/
     pkg.check do
       tests
     end

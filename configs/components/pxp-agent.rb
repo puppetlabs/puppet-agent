@@ -3,6 +3,7 @@ component "pxp-agent" do |pkg, settings, platform|
 
   toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/pl-build-toolchain.cmake"
   cmake = "/opt/pl-build-tools/bin/cmake"
+  boost_static_flag = ""
 
   if platform.is_windows?
     pkg.environment "PATH", "$(shell cygpath -u #{settings[:prefix]}/lib):$(shell cygpath -u #{settings[:gcc_bindir]}):$(shell cygpath -u #{settings[:ruby_bindir]}):/cygdrive/c/Windows/system32:/cygdrive/c/Windows:/cygdrive/c/Windows/System32/WindowsPowerShell/v1.0"
@@ -30,7 +31,12 @@ component "pxp-agent" do |pkg, settings, platform|
   elsif platform.is_macos?
     cmake = "/usr/local/bin/cmake"
     toolchain = ""
-    special_flags += "-DCMAKE_CXX_FLAGS='#{settings[:cflags]}'"
+    if platform.name =~ /osx-10.14/ #apple's clang 10 complains about expansion-to-defined and delete-non-virtual-destructor
+      special_flags += "-DCMAKE_CXX_FLAGS='#{settings[:cflags]} -Wno-expansion-to-defined -Wno-delete-non-virtual-dtor'"
+    else
+      special_flags += "-DCMAKE_CXX_FLAGS='#{settings[:cflags]}'"
+    end
+    boost_static_flag = "-DBOOST_STATIC=OFF"
   elsif platform.is_cross_compiled_linux?
     cmake = "/opt/pl-build-tools/bin/cmake"
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/#{settings[:platform_triple]}/pl-build-toolchain.cmake"
@@ -50,12 +56,12 @@ component "pxp-agent" do |pkg, settings, platform|
 
     cmake = "C:/ProgramData/chocolatey/bin/cmake.exe -G \"MinGW Makefiles\""
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=#{settings[:tools_root]}/pl-build-toolchain.cmake"
-  elsif platform.name =~ /sles-15|fedora-29|el-8/
+  elsif platform.name =~ /sles-15|fedora-29|el-8|debian-10/
     # These platforms use the default OS toolchain, rather than pl-build-tools
     cmake = "cmake"
     toolchain = ""
     special_flags += " -DCMAKE_CXX_FLAGS='#{settings[:cflags]} -Wno-deprecated -Wimplicit-fallthrough=0' "
-    special_flags += " -DENABLE_CXX_WERROR=OFF " if platform.name =~ /el-8|fedora-29/
+    special_flags += " -DENABLE_CXX_WERROR=OFF " if platform.name =~ /el-8|fedora-29|debian-10/
   elsif platform.is_cisco_wrlinux?
     special_flags += " -DLEATHERMAN_USE_LOCALES=OFF "
   end
@@ -71,6 +77,7 @@ component "pxp-agent" do |pkg, settings, platform|
           -DCMAKE_SYSTEM_PREFIX_PATH=#{settings[:prefix]} \
           -DMODULES_INSTALL_PATH=#{File.join(settings[:install_root], 'pxp-agent', 'modules')} \
           #{special_flags} \
+          #{boost_static_flag} \
           ."
     ]
   end
