@@ -4,6 +4,7 @@ component "libwhereami" do |pkg, settings, platform|
   pkg.build_requires('leatherman')
 
   make = platform[:make]
+  boost_static_flag = ""
 
   # cmake on OSX is provided by brew
   # a toolchain is not currently required for OSX since we're building with clang.
@@ -11,6 +12,7 @@ component "libwhereami" do |pkg, settings, platform|
     toolchain = ""
     cmake = "/usr/local/bin/cmake"
     special_flags = "-DCMAKE_CXX_FLAGS='#{settings[:cflags]}'"
+    boost_static_flag = "-DBOOST_STATIC=OFF"
   elsif platform.is_cross_compiled_linux?
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/#{settings[:platform_triple]}/pl-build-toolchain.cmake"
     cmake = "/opt/pl-build-tools/bin/cmake"
@@ -27,11 +29,12 @@ component "libwhereami" do |pkg, settings, platform|
 
     cmake = "C:/ProgramData/chocolatey/bin/cmake.exe -G \"MinGW Makefiles\""
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=#{settings[:tools_root]}/pl-build-toolchain.cmake"
-  elsif platform.name =~ /sles-15|fedora-29|el-8/
+  elsif platform.name =~ /sles-15|fedora-29|el-8|debian-10/
     # These platforms use the default OS toolchain, rather than pl-build-tools
     cmake = "cmake"
     toolchain = ""
-    special_flags = " -DENABLE_CXX_WERROR=OFF " if platform.name =~ /el-8|fedora-29/
+    boost_static_flag = ""
+    special_flags = " -DENABLE_CXX_WERROR=OFF " if platform.name =~ /el-8|fedora-29|debian-10/
   else
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/pl-build-toolchain.cmake"
     cmake = "/opt/pl-build-tools/bin/cmake"
@@ -51,6 +54,7 @@ component "libwhereami" do |pkg, settings, platform|
         -DCMAKE_INSTALL_PREFIX=#{settings[:prefix]} \
         -DCMAKE_INSTALL_RPATH=#{settings[:libdir]} \
         #{special_flags} \
+        #{boost_static_flag} \
         ."]
   end
 

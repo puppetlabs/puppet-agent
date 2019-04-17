@@ -1,6 +1,7 @@
 component "cpp-pcp-client" do |pkg, settings, platform|
   pkg.load_from_json('configs/components/cpp-pcp-client.json')
 
+  boost_static_flag = ""
   cmake = "/opt/pl-build-tools/bin/cmake"
   toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/pl-build-toolchain.cmake"
   make = platform[:make]
@@ -25,8 +26,13 @@ component "cpp-pcp-client" do |pkg, settings, platform|
     platform_flags = '-DCMAKE_SHARED_LINKER_FLAGS="-Wl,-bbigtoc"'
   elsif platform.is_macos?
     cmake = "/usr/local/bin/cmake"
-    platform_flags = "-DCMAKE_CXX_FLAGS='#{settings[:cflags]}'"
+    if platform.name =~ /osx-10.14/#apple's clang 10 complains about expansion-to-defined
+      platform_flags = "-DCMAKE_CXX_FLAGS='#{settings[:cflags]} -Wno-expansion-to-defined'"
+    else
+      platform_flags = "-DCMAKE_CXX_FLAGS='#{settings[:cflags]}'"
+    end
     toolchain = ""
+    boost_static_flag = "-DBOOST_STATIC=OFF"
   elsif platform.is_cross_compiled_linux?
     cmake = "/opt/pl-build-tools/bin/cmake"
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/#{settings[:platform_triple]}/pl-build-toolchain.cmake"
@@ -39,12 +45,12 @@ component "cpp-pcp-client" do |pkg, settings, platform|
 
     cmake = "C:/ProgramData/chocolatey/bin/cmake.exe -G \"MinGW Makefiles\""
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=#{settings[:tools_root]}/pl-build-toolchain.cmake"
-  elsif platform.name =~ /sles-15|fedora-29|el-8/
+  elsif platform.name =~ /sles-15|fedora-29|el-8|debian-10/
     # These platforms use the default OS toolchain, rather than pl-build-tools
     cmake = "cmake"
     toolchain = ""
     platform_flags = "-DCMAKE_CXX_FLAGS='#{settings[:cflags]} -Wimplicit-fallthrough=0'"
-    special_flags = " -DENABLE_CXX_WERROR=OFF " if platform.name =~ /el-8|fedora-29/
+    special_flags = " -DENABLE_CXX_WERROR=OFF " if platform.name =~ /el-8|fedora-29|debian-10/
   elsif platform.is_cisco_wrlinux?
     platform_flags = "-DLEATHERMAN_USE_LOCALES=OFF"
   end
@@ -61,6 +67,7 @@ component "cpp-pcp-client" do |pkg, settings, platform|
           -DCMAKE_INSTALL_RPATH=#{settings[:libdir]} \
           -DCMAKE_SYSTEM_PREFIX_PATH=#{settings[:prefix]} \
           #{special_flags} \
+          #{boost_static_flag} \
           ."
     ]
   end
