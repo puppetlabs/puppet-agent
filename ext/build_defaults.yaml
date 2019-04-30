@@ -18,10 +18,6 @@ foss_platforms:
   - fedora-f25-x86_64
   - fedora-f26-x86_64
   - fedora-f27-x86_64
-  - osx-10.10-x86_64
-  - osx-10.11-x86_64
-  - osx-10.12-x86_64
-  - osx-10.13-x86_64
   - sles-11-i386
   - sles-11-x86_64
   - sles-12-x86_64
@@ -95,13 +91,6 @@ platform_repos:
     repo_location: repos/apt/xenial
   - name: ubuntu-16.04-ppc64el
     repo_location: repos/apt/xenial
-  - name: osx-10.10
-    repo_location: repos/apple/10.10/**/x86_64/*.dmg
-  - name: osx-10.11
-    repo_location: repos/apple/10.11/**/x86_64/*.dmg
-  - name: osx-10.12
-    repo_location: repos/apple/10.12/**/x86_64/*.dmg
-  - name: osx-10.13
     repo_location: repos/apple/10.13/**/x86_64/*.dmg
   - name: solaris-10-i386
     repo_location: repos/solaris/10/**/*.i386.pkg.gz
