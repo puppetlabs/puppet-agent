@@ -17,3 +17,5 @@ gem 'rake'
 gem 'json'
 gem 'octokit'
 gem 'rubocop', "~> 0.34.2"
+
+eval_gemfile("#{__FILE__}.local") if File.exist?("#{__FILE__}.local")
