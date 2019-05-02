@@ -1,4 +1,4 @@
-FROM alpine:3.8 as build
+FROM alpine:3.9 as build
 
 RUN apk add --no-cache cmake boost-dev make curl git curl-dev ruby ruby-dev gcc g++ yaml-cpp-dev jq openjdk8
 
@@ -119,7 +119,7 @@ RUN mkdir -p /etc/puppetlabs/code/environment/production && \
     puppet module install puppetlabs-apk
 
 
-FROM alpine:3.8
+FROM alpine:3.9
 
 ARG version=6.0.0
 ARG vcs_ref

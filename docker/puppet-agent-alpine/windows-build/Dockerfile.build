@@ -1,8 +1,8 @@
-FROM alpine:3.8
+FROM alpine:3.9
 
 RUN apk add --no-cache cmake boost-dev make curl git curl-dev ruby ruby-dev gcc g++ yaml-cpp-dev
 
-RUN mkdir /workspace 
+RUN mkdir /workspace
 WORKDIR /workspace
 RUN sed -i -e 's/sys\/poll/poll/' /usr/include/boost/asio/detail/socket_types.hpp
 
