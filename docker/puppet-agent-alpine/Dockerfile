@@ -143,6 +143,7 @@ LABEL org.label-schema.maintainer="Puppet Release Team <release@puppet.com>" \
 RUN apk add --no-cache \
     bash \
     ruby \
+    bind-tools \
     curl \
     shadow \
     yaml-cpp \
