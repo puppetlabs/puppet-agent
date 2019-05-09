@@ -198,7 +198,7 @@ component "puppet" do |pkg, settings, platform|
   pkg.install_configfile("../indent_puppet.vim", "#{settings[:datadir]}/vim/puppet-vimfiles/indent/puppet.vim")
   pkg.install_configfile("../syntax_puppet.vim", "#{settings[:datadir]}/vim/puppet-vimfiles/syntax/puppet.vim")
 
-  pkg.install_file ".gemspec", "#{settings[:gem_home]}/specifications/#{pkg.get_name}.gemspec"
+  pkg.install_file ".gemspec", "#{settings[:gem_home]}/specifications/#{pkg.get_name}-#{pkg.get_version_forced}.gemspec"
 
   if platform.is_windows?
     # Install the appropriate .batch files to the INSTALLDIR/bin directory
