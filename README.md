@@ -48,6 +48,9 @@ The location of Vanagon in the Gemfile can be overridden with the environment va
 * `file:///workspace/vanagon` - Absolute file path
 * `file://../vanagon` - File path relative to the project directory
 
+#### DEV\_BUILD
+By default, headers and other files that aren't needed in the final puppet-agent package will be removed as part of the [cleanup component](configs/components/cleanup.rb). If you'd like to keep these files in the finished package, set the `DEV_BUILD` environment variable to some non-empty value. Note that this will increase the size of the package considerably.
+
 Building puppet-agent or the facter gem
 ---
 
