@@ -40,6 +40,8 @@ component 'puppet-runtime' do |pkg, settings, platform|
     pkg.requires 'libyaml-cpp0_6'
   end
 
+  pkg.requires 'findutils' if platform.is_linux?
+
   pkg.install_only true
 
   if platform.is_cross_compiled_linux? || platform.is_solaris? || platform.is_aix?
