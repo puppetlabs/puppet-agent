@@ -1,5 +1,5 @@
 describe 'puppet-agent' do
-  include Helpers
+  include Pupperware::SpecHelpers
 
   before(:all) do
     @image = ENV['PUPPET_TEST_DOCKER_IMAGE']
