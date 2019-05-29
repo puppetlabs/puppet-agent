@@ -7,6 +7,11 @@ hadolint_command := hadolint --ignore DL3008 --ignore DL3018 --ignore DL4000 --i
 hadolint_container := hadolint/hadolint:latest
 makefile_path := $(abspath $(lastword $(MAKEFILE_LIST)))
 makefile_dir := $(dir $(makefile_path))
+pwd := $(shell pwd)
+export BUNDLE_PATH = $(pwd)/.bundle/gems
+export BUNDLE_BIN = $(pwd)/.bundle/bin
+export GEMFILE = $(pwd)/Gemfile
+
 version = $(shell echo $(git_describe) | sed 's/-.*//')
 dockerfile := Dockerfile
 
@@ -35,9 +40,11 @@ ifeq ($(IS_LATEST),true)
 endif
 
 test: prep
-	@bundle install --path .bundle/gems
-	@PUPPET_TEST_DOCKER_IMAGE=$(NAMESPACE)/puppet-agent-ubuntu:$(version) bundle exec rspec spec
-	@PUPPET_TEST_DOCKER_IMAGE=$(NAMESPACE)/puppet-agent-alpine:$(version) bundle exec rspec spec
+	@bundle install --path $$BUNDLE_PATH --gemfile $$GEMFILE
+	@PUPPET_TEST_DOCKER_IMAGE=$(NAMESPACE)/puppet-agent-ubuntu:$(version) \
+		bundle exec --gemfile $$GEMFILE rspec spec
+	@PUPPET_TEST_DOCKER_IMAGE=$(NAMESPACE)/puppet-agent-alpine:$(version) \
+		bundle exec --gemfile $$GEMFILE rspec spec
 
 publish: prep
 	@docker push $(NAMESPACE)/puppet-agent-ubuntu:$(version)
