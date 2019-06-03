@@ -111,7 +111,7 @@ platform_repos:
 gpg_name: 'info@puppetlabs.com'
 gpg_key: '7F438280EF8D349F'
 deb_targets: 'xenial-amd64 bionic-amd64'
-rpm_targets: 'el-6-x86_64 el-7-x86_64 el-8-x86_64 sles-12-x86_64'
+rpm_targets: 'el-6-x86_64 el-7-x86_64 el-8-x86_64 redhatfips-7-x86_64 sles-12-x86_64'
 sign_tar: FALSE
 osx_signing_cert: "Developer ID Installer: PUPPET LABS, INC. (VKGLGN2B6Y)"
 osx_signing_keychain: "/Users/jenkins/Library/Keychains/signing.keychain"
