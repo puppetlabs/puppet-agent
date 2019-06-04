@@ -28,6 +28,6 @@ component "hiera" do |pkg, settings, platform|
     #{flags}"]
   end
 
-  pkg.install_file ".gemspec", "#{settings[:gem_home]}/specifications/#{pkg.get_name}.gemspec" unless platform.is_windows?
+  pkg.install_file ".gemspec", "#{settings[:gem_home]}/specifications/#{pkg.get_name}-#{pkg.get_version_forced}.gemspec" unless platform.is_windows?
 
 end
