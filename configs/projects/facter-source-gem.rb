@@ -6,7 +6,7 @@ project "facter-source-gem" do |proj|
 
   settings[:puppet_runtime_version] = runtime_details['version']
   settings[:puppet_runtime_location] = runtime_details['location']
-  settings[:puppet_runtime_basename] = "agent-runtime-6.4.x-#{runtime_details['version']}.#{platform.name}"
+  settings[:puppet_runtime_basename] = "agent-runtime-master-#{runtime_details['version']}.#{platform.name}"
 
   platform = proj.get_platform
   # identify if we are at a tag. Git sets the release to '0' when we are on a tag
