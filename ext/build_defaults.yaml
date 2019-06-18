@@ -2,10 +2,6 @@
 project: 'puppet-agent'
 # foss_platforms will be shipped to the nightly repos
 foss_platforms:
-  - debian-8-amd64
-  - debian-8-i386
-  - debian-9-amd64
-  - debian-9-i386
   - el-5-i386
   - el-5-x86_64
   - el-6-i386
@@ -13,36 +9,13 @@ foss_platforms:
   - el-7-x86_64
   - el-7-ppc64le
   - el-7-aarch64
-  - eos-4-i386
-  - fedora-f25-i386
-  - fedora-f25-x86_64
-  - fedora-f26-x86_64
-  - fedora-f27-x86_64
-  - sles-11-i386
-  - sles-11-x86_64
-  - sles-12-x86_64
-  - sles-12-ppc64le
-  - ubuntu-14.04-amd64
-  - ubuntu-14.04-i386
-  - ubuntu-16.04-amd64
-  - ubuntu-16.04-i386
-  - ubuntu-16.04-ppc64el
   - windows-2012-x86
   - windows-2012-x64
 pe_platforms:
-  - aix-6.1-power
   - aix-7.1-power
-  - solaris-10-i386
-  - solaris-10-sparc
-  - solaris-11-i386
-  - solaris-11-sparc
 platform_repos:
-  - name: aix-6.1-power
-    repo_location: repos/aix/6.1/**/ppc
   - name: aix-7.1-power
     repo_location: repos/aix/7.1/**/ppc
-  - name: eos-4-i386
-    repo_location: repos/eos/4/**/i386
   - name: el-5-i386
     repo_location: repos/el/5/**/i386
   - name: el-5-x86_64
@@ -57,48 +30,6 @@ platform_repos:
     repo_location: repos/el/7/**/ppc64le
   - name: el-7-aarch64
     repo_location: repos/el/7/**/aarch64
-  - name: sles-11-i386
-    repo_location: repos/sles/11/**/i386
-  - name: sles-11-x86_64
-    repo_location: repos/sles/11/**/x86_64
-  - name: sles-12-x86_64
-    repo_location: repos/sles/12/**/x86_64
-  - name: sles-12-ppc64le
-    repo_location: repos/sles/12/**/ppc64le
-  - name: fedora-25-i386
-    repo_location: repos/fedora/f25/**/i386
-  - name: fedora-25-x86_64
-    repo_location: repos/fedora/f25/**/x86_64
-  - name: fedora-26-x86_64
-    repo_location: repos/fedora/f26/**/x86_64
-  - name: fedora-27-x86_64
-    repo_location: repos/fedora/f27/**/x86_64
-  - name: debian-8-i386
-    repo_location: repos/apt/jessie
-  - name: debian-8-amd64
-    repo_location: repos/apt/jessie
-  - name: debian-9-i386
-    repo_location: repos/apt/stretch
-  - name: debian-9-amd64
-    repo_location: repos/apt/stretch
-  - name: ubuntu-14.04-i386
-    repo_location: repos/apt/trusty
-  - name: ubuntu-14.04-amd64
-    repo_location: repos/apt/trusty
-  - name: ubuntu-16.04-i386
-    repo_location: repos/apt/xenial
-  - name: ubuntu-16.04-amd64
-    repo_location: repos/apt/xenial
-  - name: ubuntu-16.04-ppc64el
-    repo_location: repos/apt/xenial
-  - name: solaris-10-i386
-    repo_location: repos/solaris/10/**/*.i386.pkg.gz
-  - name: solaris-10-sparc
-    repo_location: repos/solaris/10/**/*.sparc.pkg.gz
-  - name: solaris-11-i386
-    repo_location: repos/solaris/11/**/*.i386.p5p
-  - name: solaris-11-sparc
-    repo_location: repos/solaris/11/**/*.sparc.p5p
 gpg_name: 'info@puppetlabs.com'
 gpg_key: '7F438280EF8D349F'
 deb_targets: 'trusty-amd64 xenial-amd64'
