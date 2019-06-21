@@ -30,14 +30,4 @@
   <!-- Above directly copies Vanagons default filter.xslt.erb as Vanagon does not provide a
        way to perform additional transforms against heat harvested file list -->
 
-  <!-- (PA-768) Modify puppetres.dll component as permanent -->
-  <xsl:template match="wix:Component[wix:File[@Source='$(var.AppSourcePath)\puppet\bin\puppetres.dll']]">
-    <!-- Copy original component with all attributes, marking "Permanent" -->
-    <xsl:copy>
-      <xsl:apply-templates select="@*" />
-      <xsl:attribute name="Permanent">yes</xsl:attribute>
-      <xsl:apply-templates select="node()" />
-    </xsl:copy>
-  </xsl:template>
-
 </xsl:stylesheet>
