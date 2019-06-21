@@ -49,7 +49,7 @@
         </RegistryKey>
       </Component>
 
-      <%# <Component Id="EventLogRegistryEntries"
+      <Component Id="EventLogRegistryEntries"
         Guid="3A4E2A16-1919-4BAF-A4CF-9FA3543BB27C"
         Directory="TARGETDIR"
         Win64="no"
@@ -62,13 +62,13 @@
           <RegistryValue
             Type="string"
             Name="EventMessageFile"
-            Value="[INSTALLDIR]puppet\bin\puppetres.dll"/>
+            Value="%SystemRoot%\System32\EventCreate.exe"/>
           <RegistryValue
             Type="integer"
             Name="TypesSupported"
             Value="7"/>
         </RegistryKey>
-      </Component> %>
+      </Component>
 
       <Component
         Id="RegistryEntriesArchitectureDependent"
