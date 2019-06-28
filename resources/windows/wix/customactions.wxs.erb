@@ -337,7 +337,7 @@ Function ExecuteCommand (Command)
   ' https://docs.microsoft.com/en-us/previous-versions/windows/internet-explorer/ie-developer/windows-scripting/d5fk67ky%28v%3dvs.84%29
   ' intWindows Style - 0 - Hides the window and activates another window.
   ' bWaitOnReturn - True - waits for program termination
-  Dim exitCode : exitCode = wshShell.Run(Command & " 2>&1 > """ & tempFilePath & """", 0, True)
+  Dim exitCode : exitCode = wshShell.Run(Command & " > """ & tempFilePath & """ 2>&1", 0, True)
 
   Dim outFile : Set outFile = fso.OpenTextFile(tempFilePath)
   Do While Not outFile.AtEndOfStream
