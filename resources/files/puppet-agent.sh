@@ -6,8 +6,6 @@ elif ! echo ${PATH} | grep -q /opt/puppetlabs/bin ; then
   export PATH=${PATH}:/opt/puppetlabs/bin
 fi
 
-if [ -z ${MANPATH-} ] ; then
-  export MANPATH=/opt/puppetlabs/puppet/share/man
-elif ! echo ${MANPATH} | grep -q /opt/puppetlabs/puppet/share/man ; then
-  export MANPATH=${MANPATH}:/opt/puppetlabs/puppet/share/man
+if ! echo ${MANPATH-} | grep -q /opt/puppetlabs/puppet/share/man ; then
+  export MANPATH=${MANPATH-}:/opt/puppetlabs/puppet/share/man
 fi
