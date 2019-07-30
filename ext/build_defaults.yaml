@@ -6,6 +6,7 @@ foss_platforms:
   - debian-8-i386
   - debian-9-amd64
   - debian-9-i386
+  - debian-10-amd64
   - el-5-i386
   - el-5-x86_64
   - el-6-i386
@@ -85,6 +86,8 @@ platform_repos:
     repo_location: repos/apt/stretch
   - name: debian-9-amd64
     repo_location: repos/apt/stretch
+  - name: debian-10-amd64
+    repo_location: repos/apt/buster
   - name: ubuntu-14.04-i386
     repo_location: repos/apt/trusty
   - name: ubuntu-14.04-amd64
