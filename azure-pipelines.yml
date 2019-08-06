@@ -51,7 +51,7 @@ steps:
   displayName: Build $(CONTAINER_NAME) Container
   name: build_container
 - powershell: |
-    . ./docker/ci/build.ps1
+    . "$(bundle show pupperware)/ci/build.ps1"
     Invoke-ContainerTest -Name $ENV:CONTAINER_NAME -Namespace $ENV:NAMESPACE
   displayName: Test $(CONTAINER_NAME)
   name: test_container
@@ -69,7 +69,7 @@ steps:
   name: build_alpine_container
   enabled: false
 - powershell: |
-    . ./docker/ci/build.ps1
+    . "$(bundle show pupperware)/ci/build.ps1"
     Invoke-ContainerTest -Name $ENV:CONTAINER_NAME2 -Namespace $ENV:NAMESPACE
   displayName: Test $(CONTAINER_NAME2)
   name: test_alpine_container
