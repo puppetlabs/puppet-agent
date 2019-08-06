@@ -17,6 +17,7 @@ variables:
   NAMESPACE: puppet
   CONTAINER_NAME: puppet-agent-ubuntu
   CONTAINER_NAME2: puppet-agent-alpine
+  LINT_IGNORES: DL3008 DL3018 DL4000 DL4001 DL3028
 
 steps:
 - checkout: self
@@ -35,11 +36,15 @@ steps:
   displayName: Diagnostic Host Information
   name: hostinfo
 - powershell: |
-    . ./docker/ci/build.ps1
-    Lint-Dockerfile -Path ./docker/${ENV:CONTAINER_NAME}/Dockerfile
-    Lint-Dockerfile -Path ./docker/${ENV:CONTAINER_NAME2}/Dockerfile
-  displayName: Lint $(CONTAINER_NAME) / $(CONTAINER_NAME2) Dockerfiles
-  name: lint_dockerfiles
+    . "$(bundle show pupperware)/ci/build.ps1"
+    Lint-Dockerfile -Name $ENV:CONTAINER_NAME2 -Ignore ($ENV:LINT_IGNORES -split ' ')
+  displayName: Lint $(CONTAINER_NAME2) Dockerfile
+  name: lint_alpine_dockerfile
+- powershell: |
+    . "$(bundle show pupperware)/ci/build.ps1"
+    Lint-Dockerfile -Name $ENV:CONTAINER_NAME -Ignore ($ENV:LINT_IGNORES -split ' ')
+  displayName: Lint $(CONTAINER_NAME) Dockerfile
+  name: lint_dockerfile
 - powershell: |
     . ./docker/ci/build.ps1
     Build-Container -Namespace $ENV:NAMESPACE -Base 'ubuntu'

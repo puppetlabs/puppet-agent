@@ -19,11 +19,6 @@ function Get-ContainerVersion
   (git describe) -replace '-.*', ''
 }
 
-function Lint-Dockerfile($Path)
-{
-  hadolint --ignore DL3008 --ignore DL3018 --ignore DL4000 --ignore DL4001 $Path
-}
-
 function Build-Container(
   $Namespace = 'puppet',
   $Version = (Get-ContainerVersion),
