@@ -57,6 +57,13 @@ steps:
   name: build_container
 
 - powershell: |
+    . ./docker/ci/build.ps1
+    Build-Container -Namespace $ENV:NAMESPACE -Base 'alpine'
+  displayName: Build $(CONTAINER_NAME2) Container
+  name: build_alpine_container
+  enabled: false
+
+- powershell: |
     . "$(bundle show pupperware)/ci/build.ps1"
     Initialize-TestEnv
   displayName: Prepare Test Environment
@@ -68,26 +75,19 @@ steps:
   displayName: Test $(CONTAINER_NAME)
   name: test_container
 
-- task: PublishTestResults@2
-  displayName: Publish $(CONTAINER_NAME) test results
-  inputs:
-    testResultsFormat: 'JUnit'
-    testResultsFiles: 'docker/TEST-*.xml'
-    testRunTitle: $(CONTAINER_NAME) Test Results
-
-- powershell: |
-    . ./docker/ci/build.ps1
-    Build-Container -Namespace $ENV:NAMESPACE -Base 'alpine'
-  displayName: Build $(CONTAINER_NAME2) Container
-  name: build_alpine_container
-  enabled: false
-
 - powershell: |
     . "$(bundle show pupperware)/ci/build.ps1"
     Invoke-ContainerTest -Name $ENV:CONTAINER_NAME2 -Namespace $ENV:NAMESPACE
   displayName: Test $(CONTAINER_NAME2)
   name: test_alpine_container
   enabled: false
+
+- task: PublishTestResults@2
+  displayName: Publish $(CONTAINER_NAME) test results
+  inputs:
+    testResultsFormat: 'JUnit'
+    testResultsFiles: 'docker/TEST-*.xml'
+    testRunTitle: $(CONTAINER_NAME) Test Results
 
 - task: PublishTestResults@2
   displayName: Publish $(CONTAINER_NAME2) test results
