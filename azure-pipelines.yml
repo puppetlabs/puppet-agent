@@ -20,6 +20,14 @@ steps:
 - checkout: self
   clean: true
 - powershell: |
+    $gemfile = Join-Path -Path (Get-Location) -ChildPath 'docker/Gemfile'
+    $gempath = Join-Path -Path (Get-Location) -ChildPath 'docker/.bundle/gems'
+    bundle config --local gemfile $gemfile
+    bundle config --local path $gempath
+    bundle install
+  displayName: Fetch Dependencies
+  name: fetch_deps
+- powershell: |
     $line = '=' * 80
     Write-Host "$line`nWindows`n$line`n"
     Get-ComputerInfo |
