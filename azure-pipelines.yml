@@ -78,9 +78,9 @@ steps:
     #mergeTestResults: false # Optional
     testRunTitle: $(CONTAINER_NAME2) Test Results
 - powershell: |
-    . ./docker/ci/build.ps1
+    . "$(bundle show pupperware)/ci/build.ps1"
     # builds alias puppet-agent to puppet-agent-ubuntu which requires forced removal
-    Clear-ContainerBuilds -Name $ENV:CONTAINER_NAME -Force
-    Clear-ContainerBuilds -Name $ENV:CONTAINER_NAME2
+    Clear-BuildState -Name $ENV:CONTAINER_NAME -Force
+    Clear-BuildState -Name $ENV:CONTAINER_NAME2
   displayName: Container Cleanup
   condition: always()
