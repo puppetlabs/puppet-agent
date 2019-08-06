@@ -58,6 +58,12 @@ steps:
 
 - powershell: |
     . "$(bundle show pupperware)/ci/build.ps1"
+    Initialize-TestEnv
+  displayName: Prepare Test Environment
+  name: test_prepare
+
+- powershell: |
+    . "$(bundle show pupperware)/ci/build.ps1"
     Invoke-ContainerTest -Name $ENV:CONTAINER_NAME -Namespace $ENV:NAMESPACE
   displayName: Test $(CONTAINER_NAME)
   name: test_container
@@ -94,7 +100,8 @@ steps:
 - powershell: |
     . "$(bundle show pupperware)/ci/build.ps1"
     # builds alias puppet-agent to puppet-agent-ubuntu which requires forced removal
-    Clear-BuildState -Name $ENV:CONTAINER_NAME -Force
-    Clear-BuildState -Name $ENV:CONTAINER_NAME2
+    Clear-BuildState -Name $ENV:CONTAINER_NAME -Namespace $ENV:NAMESPACE -Force
+    Clear-BuildState -Name $ENV:CONTAINER_NAME2 -Namespace $ENV:NAMESPACE
   displayName: Container Cleanup
+  timeoutInMinutes: 3
   condition: always()
