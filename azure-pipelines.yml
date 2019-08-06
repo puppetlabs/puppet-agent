@@ -8,9 +8,9 @@ pr:
     - '*'
 
 pool:
-  # self-hosted agent on Windows 10 1709 environment
+  # self-hosted agent on Windows 10 1903 environment
   # includes newer Docker engine with LCOW enabled, new build of LCOW image
-  # includes Ruby 2.5, Go 1.10, Node.js 10.10, hadolint
+  # includes Ruby 2.5, Go 1.10, Node.js 10.10
   name: Default
 
 variables:
@@ -20,8 +20,9 @@ variables:
   LINT_IGNORES: DL3008 DL3018 DL4000 DL4001 DL3028
 
 steps:
-- checkout: self
-  clean: true
+- checkout: self  # self represents the repo where the initial Pipelines YAML file was found
+  clean: true  # whether to fetch clean each time
+
 - powershell: |
     $gemfile = Join-Path -Path (Get-Location) -ChildPath 'docker/Gemfile'
     $gempath = Join-Path -Path (Get-Location) -ChildPath 'docker/.bundle/gems'
@@ -30,58 +31,66 @@ steps:
     bundle install
   displayName: Fetch Dependencies
   name: fetch_deps
+
 - powershell: |
     . "$(bundle show pupperware)/ci/build.ps1"
     Write-HostDiagnostics
   displayName: Diagnostic Host Information
   name: hostinfo
+
 - powershell: |
     . "$(bundle show pupperware)/ci/build.ps1"
     Lint-Dockerfile -Name $ENV:CONTAINER_NAME2 -Ignore ($ENV:LINT_IGNORES -split ' ')
   displayName: Lint $(CONTAINER_NAME2) Dockerfile
   name: lint_alpine_dockerfile
+
 - powershell: |
     . "$(bundle show pupperware)/ci/build.ps1"
     Lint-Dockerfile -Name $ENV:CONTAINER_NAME -Ignore ($ENV:LINT_IGNORES -split ' ')
   displayName: Lint $(CONTAINER_NAME) Dockerfile
   name: lint_dockerfile
+
 - powershell: |
     . ./docker/ci/build.ps1
     Build-Container -Namespace $ENV:NAMESPACE -Base 'ubuntu'
   displayName: Build $(CONTAINER_NAME) Container
   name: build_container
+
 - powershell: |
     . "$(bundle show pupperware)/ci/build.ps1"
     Invoke-ContainerTest -Name $ENV:CONTAINER_NAME -Namespace $ENV:NAMESPACE
   displayName: Test $(CONTAINER_NAME)
   name: test_container
+
 - task: PublishTestResults@2
   displayName: Publish $(CONTAINER_NAME) test results
   inputs:
     testResultsFormat: 'JUnit'
     testResultsFiles: 'docker/TEST-*.xml'
-    #mergeTestResults: false # Optional
     testRunTitle: $(CONTAINER_NAME) Test Results
+
 - powershell: |
     . ./docker/ci/build.ps1
     Build-Container -Namespace $ENV:NAMESPACE -Base 'alpine'
   displayName: Build $(CONTAINER_NAME2) Container
   name: build_alpine_container
   enabled: false
+
 - powershell: |
     . "$(bundle show pupperware)/ci/build.ps1"
     Invoke-ContainerTest -Name $ENV:CONTAINER_NAME2 -Namespace $ENV:NAMESPACE
   displayName: Test $(CONTAINER_NAME2)
   name: test_alpine_container
   enabled: false
+
 - task: PublishTestResults@2
   displayName: Publish $(CONTAINER_NAME2) test results
   enabled: false
   inputs:
     testResultsFormat: 'JUnit'
     testResultsFiles: 'docker/TEST-*.xml'
-    #mergeTestResults: false # Optional
     testRunTitle: $(CONTAINER_NAME2) Test Results
+
 - powershell: |
     . "$(bundle show pupperware)/ci/build.ps1"
     # builds alias puppet-agent to puppet-agent-ubuntu which requires forced removal
