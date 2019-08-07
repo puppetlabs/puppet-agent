@@ -48,6 +48,9 @@ component "facter" do |pkg, settings, platform|
   when /(debian-9|ubuntu-(15|16|18))/
     pkg.build_requires 'openjdk-8-jdk'
     java_home = "/usr/lib/jvm/java-8-openjdk-#{platform.architecture}"
+  when /debian-10/
+    pkg.build_requires 'openjdk-11-jdk'
+    java_home = "/usr/lib/jvm/java-11-openjdk-#{platform.architecture}"
   when /sles-12/
     pkg.build_requires 'java-1_7_0-openjdk-devel'
     java_home = "/usr/lib64/jvm/java-1.7.0-openjdk"
