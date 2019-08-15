@@ -37,4 +37,5 @@ echo "puppetdb: ${puppetdb_version}" >> ${versions_file}
 curl -T ${versions_file} "https://artifactory.delivery.puppetlabs.net/artifactory/scratchpad__local/puppet-agent-version-compatibility/${versions_file}"
 rm ${versions_file}
 
+echo
 echo "All done!"
