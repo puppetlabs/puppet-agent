@@ -45,11 +45,14 @@ echo "#### Running validation"
 $(dirname $0)/../steps/run-validation-tests.sh ${master_vm} ${agent_vm}
 
 echo "#### Sending parameters to Artifactory for use by repo smoke test"
-versions_file=${agent_version}.yaml
-echo "puppetserver: ${server_version}" > ${versions_file}
-echo "puppetdb: ${puppetdb_version}" >> ${versions_file}
-curl -T ${versions_file} "https://artifactory.delivery.puppetlabs.net/artifactory/scratchpad__local/puppet-agent-version-compatibility/${versions_file}"
-rm ${versions_file}
+versions_file=${agent_version}.json
+version_data="{
+                \"puppetserver\":\"$server_version\",
+                \"puppetdb\":\"$puppetdb_version\"
+              }"
+echo $version_data > $versions_file
+curl -T $versions_file "https://artifactory.delivery.puppetlabs.net/artifactory/scratchpad__local/puppet-agent-version-compatibility/${versions_file}"
+rm $versions_file
 
 echo
 echo "All done!"
