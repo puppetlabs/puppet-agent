@@ -1,11 +1,11 @@
-FROM ubuntu:16.04
+FROM ubuntu:18.04
 
 ARG version="6.0.0"
 ARG vcs_ref
 ARG build_date
 
 ENV PUPPET_AGENT_VERSION="$version"
-ENV UBUNTU_CODENAME="xenial"
+ENV UBUNTU_CODENAME="bionic"
 
 LABEL org.label-schema.maintainer="Puppet Release Team <release@puppet.com>" \
       org.label-schema.vendor="Puppet" \
