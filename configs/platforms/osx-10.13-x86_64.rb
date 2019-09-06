@@ -18,7 +18,7 @@ platform "osx-10.13-x86_64" do |plat|
   plat.provision_with 'cd /etc/homebrew'
   plat.provision_with 'su test -c \'echo | /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"\''
   plat.provision_with 'sudo chown -R test:admin /Users/test/Library/'
-  packages = ['boost']
+  packages = ['boost@1.60']
 
   plat.provision_with "su test -c '/usr/local/bin/brew install #{packages.join(' ')}'"
 
