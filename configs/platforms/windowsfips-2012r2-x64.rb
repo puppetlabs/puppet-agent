@@ -1,10 +1,9 @@
 platform "windowsfips-2012r2-x64" do |plat|
-  plat.vmpooler_template "win-2012r2-x86_64"
+  plat.vmpooler_template 'win-2012r2-fips-x86_64'
 
-  plat.servicetype "windows"
+  plat.servicetype 'windows'
   visual_studio_version = '2017'
   visual_studio_sdk_version = 'win8.1'
-  plat.provision_with 'powershell.exe -NoProfile -ExecutionPolicy Bypass -Command \'Set-ItemProperty -Path HKLM:\SYSTEM\CurrentControlSet\Control\Lsa\FipsAlgorithmPolicy -name Enabled -value 1\''
 
   # We need to ensure we install chocolatey prior to adding any nuget repos. Otherwise, everything will fall over
   plat.add_build_repository "https://artifactory.delivery.puppetlabs.net/artifactory/generic/buildsources/windows/chocolatey/install-chocolatey.ps1"
@@ -44,5 +43,5 @@ platform "windowsfips-2012r2-x64" do |plat|
   plat.platform_triple "x86_64-w64-mingw32"
 
   plat.package_type "msi"
-  plat.output_dir "windows"
+  plat.output_dir "windowsfips"
 end
