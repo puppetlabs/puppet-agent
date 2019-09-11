@@ -66,7 +66,7 @@ RUN git checkout "$(jq .ref /workspace/pxp-agent.json | tr -d \")"
 RUN cmake .. $CMAKE_SHARED_OPTIONS ; make ; make install
 
 RUN apk add --no-cache augeas ruby-augeas libressl-dev
-RUN gem install --no-rdoc --no-ri deep_merge json etc semantic_puppet puppet-resource_api multi_json locale httpclient fast_gettext
+RUN gem install --no-rdoc --no-ri deep_merge json etc semantic_puppet puppet-resource_api multi_json locale httpclient fast_gettext concurrent-ruby
 
 WORKDIR /workspace
 RUN curl -O -L https://people.redhat.com/~rjones/virt-what/files/virt-what-1.18.tar.gz && \
