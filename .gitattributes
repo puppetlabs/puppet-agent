@@ -1,2 +1,1 @@
-docker/puppet-agent-alpine/*               text  eol=lf
-docker/puppet-agent-ubuntu/*    text  eol=lf
+docker/** text eol=lf
