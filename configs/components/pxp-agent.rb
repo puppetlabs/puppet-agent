@@ -31,11 +31,7 @@ component "pxp-agent" do |pkg, settings, platform|
   elsif platform.is_macos?
     cmake = "/usr/local/bin/cmake"
     toolchain = ""
-    if platform.name =~ /osx-10.14/ #apple's clang 10 complains about expansion-to-defined and delete-non-virtual-destructor
-      special_flags += "-DCMAKE_CXX_FLAGS='#{settings[:cflags]} -Wno-expansion-to-defined -Wno-delete-non-virtual-dtor'"
-    else
-      special_flags += "-DCMAKE_CXX_FLAGS='#{settings[:cflags]}'"
-    end
+    special_flags += "-DCMAKE_CXX_FLAGS='#{settings[:cflags]}' -DENABLE_CXX_WERROR=OFF"
     boost_static_flag = "-DBOOST_STATIC=OFF"
   elsif platform.is_cross_compiled_linux?
     cmake = "/opt/pl-build-tools/bin/cmake"
