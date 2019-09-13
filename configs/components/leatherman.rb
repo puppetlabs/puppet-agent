@@ -46,11 +46,7 @@ component "leatherman" do |pkg, settings, platform|
     toolchain = ""
     cmake = "/usr/local/bin/cmake"
     boost_static_flag = "-DBOOST_STATIC=OFF"
-    if platform.name =~ /osx-10.14/
-      special_flags = "-DCMAKE_CXX_FLAGS='#{settings[:cflags]} -Wno-expansion-to-defined' -DLEATHERMAN_MOCK_CURL=FALSE"
-    else
-      special_flags = "-DCMAKE_CXX_FLAGS='#{settings[:cflags]}' -DLEATHERMAN_MOCK_CURL=FALSE"
-    end
+    special_flags = "-DCMAKE_CXX_FLAGS='#{settings[:cflags]}' -DENABLE_CXX_WERROR=OFF -DLEATHERMAN_MOCK_CURL=FALSE"
   elsif platform.is_cross_compiled_linux?
     ruby = "#{settings[:host_ruby]} -r#{settings[:datadir]}/doc/rbconfig-#{settings[:ruby_version]}-orig.rb"
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/#{settings[:platform_triple]}/pl-build-toolchain.cmake"

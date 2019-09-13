@@ -28,11 +28,7 @@ component "cpp-pcp-client" do |pkg, settings, platform|
     platform_flags = '-DCMAKE_SHARED_LINKER_FLAGS="-Wl,-bbigtoc"'
   elsif platform.is_macos?
     cmake = "/usr/local/bin/cmake"
-    if platform.name =~ /osx-10.14/#apple's clang 10 complains about expansion-to-defined
-      platform_flags = "-DCMAKE_CXX_FLAGS='#{settings[:cflags]} -Wno-expansion-to-defined'"
-    else
-      platform_flags = "-DCMAKE_CXX_FLAGS='#{settings[:cflags]}'"
-    end
+    special_flags = "-DCMAKE_CXX_FLAGS='#{settings[:cflags]}' -DENABLE_CXX_WERROR=OFF"
     toolchain = ""
     boost_static_flag = "-DBOOST_STATIC=OFF"
   elsif platform.is_cross_compiled_linux?
