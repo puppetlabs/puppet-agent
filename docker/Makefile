@@ -12,6 +12,9 @@ export GEMFILE = $(pwd)/Gemfile
 
 version = $(shell echo $(git_describe) | sed 's/-.*//')
 dockerfile := Dockerfile
+makefile_path := $(abspath $(lastword $(MAKEFILE_LIST)))
+makefile_dir := $(dir $(makefile_path))
+LATEST_VERSION ?= latest
 
 prep:
 	@git fetch --unshallow ||:
@@ -32,9 +35,9 @@ build: prep
 	@docker tag $(NAMESPACE)/puppet-agent-ubuntu:$(version) $(NAMESPACE)/puppet-agent:$(version)
 	@docker build --pull --build-arg vcs_ref=$(vcs_ref) --build-arg build_date=$(build_date) --build-arg version=$(version) --file puppet-agent-alpine/$(dockerfile) --tag $(NAMESPACE)/puppet-agent-alpine:$(version) $(pwd)/..
 ifeq ($(IS_LATEST),true)
-	@docker tag $(NAMESPACE)/puppet-agent-ubuntu:$(version) $(NAMESPACE)/puppet-agent-ubuntu:latest
-	@docker tag $(NAMESPACE)/puppet-agent-ubuntu:$(version) $(NAMESPACE)/puppet-agent:latest
-	@docker tag $(NAMESPACE)/puppet-agent-alpine:$(version) $(NAMESPACE)/puppet-agent-alpine:latest
+	@docker tag $(NAMESPACE)/puppet-agent-ubuntu:$(version) $(NAMESPACE)/puppet-agent-ubuntu:$(LATEST_VERSION)
+	@docker tag $(NAMESPACE)/puppet-agent-ubuntu:$(version) $(NAMESPACE)/puppet-agent:$(LATEST_VERSION)
+	@docker tag $(NAMESPACE)/puppet-agent-alpine:$(version) $(NAMESPACE)/puppet-agent-alpine:$(LATEST_VERSION)
 endif
 
 test: prep
@@ -49,9 +52,9 @@ publish: prep
 	@docker push $(NAMESPACE)/puppet-agent:$(version)
 	@docker push $(NAMESPACE)/puppet-agent-alpine:$(version)
 ifeq ($(IS_LATEST),true)
-	@docker push $(NAMESPACE)/puppet-agent-ubuntu:latest
-	@docker push $(NAMESPACE)/puppet-agent:latest
-	@docker push $(NAMESPACE)/puppet-agent-alpine:latest
+	@docker push $(NAMESPACE)/puppet-agent-ubuntu:$(LATEST_VERSION)
+	@docker push $(NAMESPACE)/puppet-agent:$(LATEST_VERSION)
+	@docker push $(NAMESPACE)/puppet-agent-alpine:$(LATEST_VERSION)
 endif
 
 .PHONY: lint build test publish
