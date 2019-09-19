@@ -26,8 +26,6 @@ foss_platforms:
   - sles-12-x86_64
   - sles-12-ppc64le
   - sles-15-x86_64
-  - ubuntu-14.04-amd64
-  - ubuntu-14.04-i386
   - ubuntu-16.04-amd64
   - ubuntu-16.04-i386
   - ubuntu-16.04-ppc64el
@@ -88,10 +86,6 @@ platform_repos:
     repo_location: repos/apt/stretch
   - name: debian-10-amd64
     repo_location: repos/apt/buster
-  - name: ubuntu-14.04-i386
-    repo_location: repos/apt/trusty
-  - name: ubuntu-14.04-amd64
-    repo_location: repos/apt/trusty
   - name: ubuntu-16.04-i386
     repo_location: repos/apt/xenial
   - name: ubuntu-16.04-amd64
