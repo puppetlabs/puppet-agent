@@ -86,6 +86,7 @@ project "puppet-agent" do |proj|
   # First our stuff
   proj.component "puppet"
   proj.component "facter"
+  proj.component "facter-ng"
   proj.component "hiera"
   proj.component "leatherman"
   proj.component "cpp-hocon"
