@@ -39,6 +39,7 @@ pe_platforms:
   - solaris-10-sparc
   - solaris-11-i386
   - solaris-11-sparc
+  - windowsfips-2012r2-x64
 platform_repos:
   - name: aix-6.1-power
     repo_location: repos/aix/6.1/**/ppc
