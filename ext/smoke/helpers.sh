@@ -143,13 +143,21 @@ function install_puppetdb_from_package() {
   echo "STEP: Install PuppetDB from package on ${which_master}!"
 
   # FIXME: Parametrize on postgres version?
+  # TODO: Fix once posgres fixes upstream:
+  # the pgdb package installs the postgress repositories. Postgres repositories make the assumption that the $releasever on Rehat 7 is "7" which is not corrent. 
+  # The $releasever on Rehat 7 Server is "7Server" causing the postgresql installtion to fail because //download.postgresql.org/pub/repos/yum/12/redhat/rhel-7Server-x86_64/repodata/repomd.xml does not exist.
+  local yum_cmd="yum --releasever=7"
+
   echo "STEP: Set-up postgresql 9.6 to use with PuppetDB"
-  on_master ${master_vm} "rpm --query --quiet pgdg-redhat96-9.6-3.noarch || yum install -y https://yum.postgresql.org/9.6/redhat/rhel-7-x86_64/pgdg-redhat96-9.6-3.noarch.rpm"
-  on_master ${master_vm} "rpm --query --quiet postgresql96-server || yum install -y postgresql96-server"
-  on_master ${master_vm} "rpm --query --quiet postgresql96-contrib || yum install -y postgresql96-contrib"
+  on_master ${master_vm} "rpm --query --quiet pgdg-redhat96-9.6-3.noarch || ${yum_cmd} install -y https://yum.postgresql.org/9.6/redhat/rhel-7-x86_64/pgdg-redhat96-9.6-3.noarch.rpm"
+  on_master ${master_vm} "rpm --query --quiet postgresql96-server || ${yum_cmd} install -y postgresql96-server"
+  on_master ${master_vm} "rpm --query --quiet postgresql96-contrib || ${yum_cmd} install -y postgresql96-contrib"
   on_master ${master_vm} "puppet resource service postgresql-9.6 ensure=stopped"
   on_master ${master_vm} "rm -rf /var/lib/pgsql/9.6/data && /usr/pgsql-9.6/bin/postgresql96-setup initdb"
   on_master ${master_vm} "puppet resource service postgresql-9.6 ensure=running enable=true"
+
+  #After postgress has been installed we need to remove the postgress repo or else other yum install commands will fail.
+  on_master ${master_vm} "${yum_cmd} remove -y pgdg-redhat-repo-42.0-5.noarch"
 
   # Enters 'puppet' as the password.
   on_master ${master_vm} "runuser -l postgres -c '(echo puppet && echo puppet) | createuser -DRSP puppetdb'"
