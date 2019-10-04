@@ -42,6 +42,7 @@ endif
 
 test: prep
 	@bundle install --path $$BUNDLE_PATH --gemfile $$GEMFILE
+	@bundle update
 	@PUPPET_TEST_DOCKER_IMAGE=$(NAMESPACE)/puppet-agent-ubuntu:$(version) \
 		bundle exec --gemfile $$GEMFILE rspec spec
 	@PUPPET_TEST_DOCKER_IMAGE=$(NAMESPACE)/puppet-agent-alpine:$(version) \
