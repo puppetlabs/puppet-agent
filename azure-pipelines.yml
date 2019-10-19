@@ -33,36 +33,42 @@ steps:
     bundle config --local path $gempath
     bundle install --with test
   displayName: Fetch Dependencies
+  timeoutInMinutes: 1
   name: fetch_deps
 
 - powershell: |
     . "$(bundle show pupperware)/ci/build.ps1"
     Write-HostDiagnostics
   displayName: Diagnostic Host Information
+  timeoutInMinutes: 2
   name: hostinfo
 
 - powershell: |
     . "$(bundle show pupperware)/ci/build.ps1"
     Lint-Dockerfile -Name $ENV:CONTAINER_NAME2 -Ignore ($ENV:LINT_IGNORES -split ' ')
   displayName: Lint $(CONTAINER_NAME2) Dockerfile
+  timeoutInMinutes: 1
   name: lint_alpine_dockerfile
 
 - powershell: |
     . "$(bundle show pupperware)/ci/build.ps1"
     Lint-Dockerfile -Name $ENV:CONTAINER_NAME -Ignore ($ENV:LINT_IGNORES -split ' ')
   displayName: Lint $(CONTAINER_NAME) Dockerfile
+  timeoutInMinutes: 1
   name: lint_dockerfile
 
 - powershell: |
     . ./docker/ci/build.ps1
     Build-Container -Namespace $ENV:NAMESPACE -Base 'ubuntu'
   displayName: Build $(CONTAINER_NAME) Container
+  timeoutInMinutes: 5
   name: build_container
 
 - powershell: |
     . ./docker/ci/build.ps1
     Build-Container -Namespace $ENV:NAMESPACE -Base 'alpine'
   displayName: Build $(CONTAINER_NAME2) Container
+  timeoutInMinutes: 20
   name: build_alpine_container
   enabled: false
 
@@ -76,12 +82,14 @@ steps:
     . "$(bundle show pupperware)/ci/build.ps1"
     Invoke-ContainerTest -Name $ENV:CONTAINER_NAME -Namespace $ENV:NAMESPACE
   displayName: Test $(CONTAINER_NAME)
+  timeoutInMinutes: 5
   name: test_container
 
 - powershell: |
     . "$(bundle show pupperware)/ci/build.ps1"
     Invoke-ContainerTest -Name $ENV:CONTAINER_NAME2 -Namespace $ENV:NAMESPACE
   displayName: Test $(CONTAINER_NAME2)
+  timeoutInMinutes: 5
   name: test_alpine_container
   enabled: false
 
@@ -106,5 +114,5 @@ steps:
     Clear-BuildState -Name $ENV:CONTAINER_NAME -Namespace $ENV:NAMESPACE -Force
     Clear-BuildState -Name $ENV:CONTAINER_NAME2 -Namespace $ENV:NAMESPACE
   displayName: Container Cleanup
-  timeoutInMinutes: 3
+  timeoutInMinutes: 4
   condition: always()
