@@ -47,6 +47,8 @@ function Build-Container(
   {
     $docker_args += @('--memory', '3g')
 
+    Write-Host "docker build --pull --file puppet-agent-alpine/windows-build/Dockerfile.build --tag $Namespace/puppet-agent-alpine:build ."
+
     # fake multistage builds for Windows since LCOW doesn't support yet
     docker build --pull `
       --file puppet-agent-alpine/windows-build/Dockerfile.build `
@@ -63,6 +65,8 @@ function Build-Container(
       /usr/lib/ruby/gems `
       /srv
   }
+
+  Write-Host "docker build $docker_args puppet-agent-$Base"
 
   docker build $docker_args puppet-agent-$Base
 
