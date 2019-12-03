@@ -1,25 +1,20 @@
 component "facter-precompiled-gem" do |pkg, settings, platform|
+  pkg.build_requires 'puppet-runtime' # provides boost and yaml-cpp
   pkg.build_requires 'facter-source-gem'
 
   pkg.add_source("file://resources/files/facter-gem/facter-precompiled.gemspec.erb")
 
   if platform.is_osx?
     pkg.build_requires "cmake"
-    pkg.build_requires "boost"
-    pkg.build_requires "yaml-cpp"
   elsif platform.is_windows?
     pkg.build_requires "cmake"
     pkg.build_requires "pl-toolchain-#{platform.architecture}"
-    pkg.build_requires "pl-boost-#{platform.architecture}"
-    pkg.build_requires "pl-yaml-cpp-#{platform.architecture}"
   elsif platform.name =~ /sles-15/
     # These platforms use their default OS toolchain and have package
     # dependencies configured in the platform provisioning step.
   else
     pkg.build_requires "pl-gcc"
     pkg.build_requires "pl-cmake"
-    pkg.build_requires "pl-boost"
-    pkg.build_requires "pl-yaml-cpp"
   end
 
   pkg.add_source("file://resources/files/facter-gem/make.bat")
@@ -29,7 +24,7 @@ component "facter-precompiled-gem" do |pkg, settings, platform|
     make = 'make'
     rm = 'rm'
     pkg.environment "PATH" => "/usr/local/bin:#{settings[:build_tools_dir]}:#{settings[:ruby_dir]}:$$PATH"
-    pkg.environment('FACTER_CMAKE_OPTS', "-DBOOST_STATIC=ON -DYAMLCPP_STATIC=ON -DLEATHERMAN_USE_CURL=FALSE -DWITHOUT_CURL=TRUE -DWITHOUT_OPENSSL=TRUE -DWITHOUT_BLKID=TRUE -DFACTER_SKIP_TESTS=TRUE -DWITHOUT_JRUBY=ON")
+    pkg.environment('FACTER_CMAKE_OPTS', "-DLEATHERMAN_USE_CURL=FALSE -DWITHOUT_CURL=TRUE -DWITHOUT_OPENSSL=TRUE -DWITHOUT_BLKID=TRUE -DFACTER_SKIP_TESTS=TRUE -DWITHOUT_JRUBY=ON")
   elsif platform.is_windows?
     make = "#{settings[:gcc_bindir]}/mingw32-make"
     rm = '/bin/rm'
@@ -39,7 +34,7 @@ component "facter-precompiled-gem" do |pkg, settings, platform|
     make = 'make'
     rm = 'rm'
     pkg.environment "PATH" => "#{settings[:build_tools_dir]}:#{settings[:ruby_dir]}:$$PATH"
-    pkg.environment('FACTER_CMAKE_OPTS', "-DBOOST_STATIC=ON -DYAMLCPP_STATIC=ON -DLEATHERMAN_USE_CURL=FALSE -DWITHOUT_CURL=TRUE -DWITHOUT_OPENSSL=TRUE -DWITHOUT_BLKID=TRUE -DFACTER_SKIP_TESTS=TRUE -DWITHOUT_JRUBY=ON")
+    pkg.environment('FACTER_CMAKE_OPTS', "-DLEATHERMAN_USE_CURL=FALSE -DWITHOUT_CURL=TRUE -DWITHOUT_OPENSSL=TRUE -DWITHOUT_BLKID=TRUE -DFACTER_SKIP_TESTS=TRUE -DWITHOUT_JRUBY=ON")
   end
 
   if platform.is_windows?

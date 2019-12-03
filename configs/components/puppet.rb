@@ -11,7 +11,7 @@ component "puppet" do |pkg, settings, platform|
   elsif platform.is_windows?
     pkg.build_requires "pl-gettext-#{platform.architecture}"
   elsif platform.is_aix?
-    pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-gettext-0.19.8-2.aix#{platform.os_version}.ppc.rpm"
+    pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/6.1/ppc/pl-gettext-0.19.8-2.aix6.1.ppc.rpm"
   elsif platform.name =~ /sles-15|el-8|debian-10/ || (platform.is_fedora? && platform.os_version.to_i >= 29)
     # These platforms use their default OS toolchain and have package
     # dependencies configured in the platform provisioning step.
