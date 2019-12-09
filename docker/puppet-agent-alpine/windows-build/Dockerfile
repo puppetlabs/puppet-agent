@@ -4,7 +4,6 @@ ARG version=6.0.0
 ARG vcs_ref
 ARG build_date
 
-ENV PUPPET_AGENT_VERSION="$version"
 ENV PATH="/opt/puppetlabs/bin:$PATH"
 
 LABEL org.label-schema.maintainer="Puppet Release Team <release@puppet.com>" \

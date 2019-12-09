@@ -4,7 +4,6 @@ ARG version="6.0.0"
 ARG vcs_ref
 ARG build_date
 
-ENV PUPPET_AGENT_VERSION="$version"
 ENV UBUNTU_CODENAME="bionic"
 
 LABEL org.label-schema.maintainer="Puppet Release Team <release@puppet.com>" \
@@ -25,7 +24,7 @@ RUN apt-get update && \
     dpkg -i puppet6-release-"$UBUNTU_CODENAME".deb && \
     rm puppet6-release-"$UBUNTU_CODENAME".deb && \
     apt-get update && \
-    apt-get install --no-install-recommends -y puppet-agent="$PUPPET_AGENT_VERSION"-1"$UBUNTU_CODENAME" && \
+    apt-get install --no-install-recommends -y puppet-agent="$version"-1"$UBUNTU_CODENAME" && \
     apt-get remove --purge -y wget && \
     apt-get autoremove -y && \
     apt-get clean && \
