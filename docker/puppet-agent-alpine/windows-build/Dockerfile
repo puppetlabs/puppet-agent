@@ -4,19 +4,27 @@ ARG version=6.0.0
 ARG vcs_ref
 ARG build_date
 
-ENV PATH="/opt/puppetlabs/bin:$PATH"
-
 LABEL org.label-schema.maintainer="Puppet Release Team <release@puppet.com>" \
       org.label-schema.vendor="Puppet" \
       org.label-schema.url="https://github.com/puppetlabs/puppet-agent" \
       org.label-schema.name="Puppet Agent (Alpine)" \
       org.label-schema.license="Apache-2.0" \
-      org.label-schema.version="$version" \
       org.label-schema.vcs-url="https://github.com/puppetlabs/puppet-agent" \
-      org.label-schema.vcs-ref="$vcs_ref" \
-      org.label-schema.build-date="$build_date" \
       org.label-schema.schema-version="1.0" \
       org.label-schema.dockerfile="/Dockerfile"
+
+ENV PATH="/opt/puppetlabs/bin:$PATH"
+
+ENTRYPOINT ["/opt/puppetlabs/bin/puppet"]
+CMD ["agent", "--verbose", "--onetime", "--no-daemonize", "--summarize"]
+
+COPY output/opt_puppetlabs /opt/puppetlabs/
+COPY output/etc_puppetlabs /etc/puppetlabs/
+
+# dyanmic LABELs placed lower for the sake of Docker layer caching
+LABEL org.label-schema.version="$version" \
+      org.label-schema.vcs-ref="$vcs_ref" \
+      org.label-schema.build-date="$build_date"
 
 RUN apk add --no-cache \
     bash \
@@ -47,11 +55,6 @@ RUN apk add --no-cache \
     boost-thread
 
 COPY output/vendor_ruby /usr/lib/ruby/vendor_ruby/
-COPY output/opt_puppetlabs /opt/puppetlabs/
-COPY output/etc_puppetlabs /etc/puppetlabs/
 COPY output/gems /usr/lib/ruby/gems/
-
-ENTRYPOINT ["/opt/puppetlabs/bin/puppet"]
-CMD ["agent", "--verbose", "--onetime", "--no-daemonize", "--summarize"]
 
 COPY Dockerfile /
