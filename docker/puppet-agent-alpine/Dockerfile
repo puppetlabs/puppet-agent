@@ -9,97 +9,85 @@ SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 
 RUN mkdir /workspace
 WORKDIR /workspace
-RUN sed -i -e 's/sys\/poll/poll/' /usr/include/boost/asio/detail/socket_types.hpp
 
-COPY configs/components/leatherman.json /workspace
-RUN git clone -b 1.5.x https://github.com/puppetlabs/leatherman && \
-    mkdir -p /workspace/leatherman/build
+COPY configs/components/leatherman.json \
+     configs/components/libwhereami.json \
+     configs/components/cpp-hocon.json \
+     configs/components/facter.json \
+     configs/components/cpp-pcp-client.json \
+     configs/components/pxp-agent.json \
+     configs/components/hiera.json \
+     configs/components/puppet.json \
+     /workspace/
+
+RUN sed -i -e 's/sys\/poll/poll/' /usr/include/boost/asio/detail/socket_types.hpp && \
+    git clone -b 1.5.x https://github.com/puppetlabs/leatherman && \
+    mkdir -p /workspace/leatherman/build && \
+    git clone https://github.com/puppetlabs/libwhereami && \
+    mkdir -p /workspace/libwhereami/build && \
+    git clone https://github.com/puppetlabs/cpp-hocon && \
+    mkdir -p /workspace/cpp-hocon/build && \
+    git clone https://github.com/puppetlabs/cpp-pcp-client && \
+    mkdir -p /workspace/cpp-pcp-client/build && \
+    git clone https://github.com/puppetlabs/facter && \
+    mkdir -p /workspace/facter/build && \
+    git clone https://github.com/puppetlabs/pxp-agent && \
+    mkdir -p /workspace/pxp-agent/build && \
+    curl -O -L https://people.redhat.com/~rjones/virt-what/files/virt-what-1.18.tar.gz && \
+    tar zxf virt-what-1.18.tar.gz && \
+    git clone https://github.com/puppetlabs/hiera && \
+    git clone https://github.com/puppetlabs/puppet
+
 WORKDIR /workspace/leatherman/build
 RUN git checkout "$(jq .ref /workspace/leatherman.json | tr -d \")" && \
     cmake .. -DBOOST_STATIC=OFF -DCMAKE_VERBOSE_MAKEFILE=ON ; make ; make install
+
 ENV CMAKE_SHARED_OPTIONS='-DCMAKE_PREFIX_PATH=/opt/puppetlabs/puppet -DCMAKE_INSTALL_PREFIX=/opt/puppetlabs/puppet -DCMAKE_INSTALL_RPATH=/opt/puppetlabs/puppet/lib -DCMAKE_VERBOSE_MAKEFILE=ON'
 
-WORKDIR /workspace
-
-COPY configs/components/libwhereami.json /workspace
-RUN git clone https://github.com/puppetlabs/libwhereami && \
-    mkdir -p /workspace/libwhereami/build
 WORKDIR /workspace/libwhereami/build
 RUN git checkout "$(jq .ref /workspace/libwhereami.json | tr -d \")" && \
     cmake $CMAKE_SHARED_OPTIONS -DBOOST_STATIC=OFF ..; make ; make install
 
-WORKDIR /workspace
-
-COPY configs/components/cpp-hocon.json /workspace
-RUN git clone https://github.com/puppetlabs/cpp-hocon && \
-    mkdir -p /workspace/cpp-hocon/build
 WORKDIR /workspace/cpp-hocon/build
 RUN git checkout "$(jq .ref /workspace/cpp-hocon.json | tr -d \")" && \
     cmake $CMAKE_SHARED_OPTIONS -DBOOST_STATIC=OFF ..; make ; make install
 
-WORKDIR /workspace
-
-COPY configs/components/facter.json /workspace
-
-RUN git clone https://github.com/puppetlabs/facter && \
-    mkdir -p /workspace/facter/build
 WORKDIR /workspace/facter/build
 RUN git checkout "$(jq .ref /workspace/facter.json | tr -d \")" && \
     cmake /lib $CMAKE_SHARED_OPTIONS -DRUBY_LIB_INSTALL=/usr/lib/ruby/vendor_ruby ..; make ; make install
 
-WORKDIR /workspace
-
-COPY configs/components/cpp-pcp-client.json /workspace
-RUN git clone https://github.com/puppetlabs/cpp-pcp-client && \
-    mkdir -p /workspace/cpp-pcp-client/build
 WORKDIR /workspace/cpp-pcp-client/build
 RUN git checkout "$(jq .ref /workspace/cpp-pcp-client.json | tr -d \")" && \
     cmake .. $CMAKE_SHARED_OPTIONS ; make ; make install
 
-WORKDIR /workspace
-
-COPY configs/components/pxp-agent.json /workspace
-RUN git clone https://github.com/puppetlabs/pxp-agent && \
-    mkdir -p /workspace/pxp-agent/build
 WORKDIR /workspace/pxp-agent/build
 RUN git checkout "$(jq .ref /workspace/pxp-agent.json | tr -d \")" && \
-    cmake .. $CMAKE_SHARED_OPTIONS ; make ; make install
+    cmake .. $CMAKE_SHARED_OPTIONS ; make ; make install && \
 
-RUN apk add --no-cache augeas ruby-augeas libressl-dev
-RUN gem install --no-rdoc --no-ri deep_merge json etc semantic_puppet puppet-resource_api multi_json locale httpclient fast_gettext concurrent-ruby
-
-WORKDIR /workspace
-RUN curl -O -L https://people.redhat.com/~rjones/virt-what/files/virt-what-1.18.tar.gz && \
-    tar zxf virt-what-1.18.tar.gz
+    apk add --no-cache augeas ruby-augeas libressl-dev && \
+    gem install --no-rdoc --no-ri deep_merge json etc semantic_puppet puppet-resource_api multi_json locale httpclient fast_gettext concurrent-ruby
 
 WORKDIR /workspace/virt-what-1.18
 RUN ./configure && \
     make && \
     make install
 
-WORKDIR /workspace
-
-COPY configs/components/hiera.json /workspace
-RUN git clone https://github.com/puppetlabs/hiera
 WORKDIR /workspace/hiera
 RUN git checkout "$(jq .ref /workspace/hiera.json | tr -d \")" && \
     ./install.rb --no-configs --bindir=/opt/puppetlabs/puppet/bin --sitelibdir=/usr/lib/ruby/vendor_ruby
 
-WORKDIR /workspace
-COPY configs/components/puppet.json /workspace
-RUN git clone https://github.com/puppetlabs/puppet
 WORKDIR /workspace/puppet
+ENV PATH="/opt/puppetlabs/bin:$PATH"
+
 RUN git checkout "$(jq .ref /workspace/puppet.json | tr -d \")" && \
     ./install.rb --bindir=/opt/puppetlabs/puppet/bin --configdir=/etc/puppetlabs/puppet --sitelibdir=/usr/lib/ruby/vendor_ruby --codedir=/etc/puppetlabs/code --vardir=/opt/puppetlabs/puppet/cache --logdir=/var/log/puppetlabs/puppet --rundir=/var/run/puppetlabs --quick && \
 
     mkdir -p /opt/puppetlabs/bin && \
     ln -s /opt/puppetlabs/puppet/bin/facter /opt/puppetlabs/bin/facter && \
     ln -s /opt/puppetlabs/puppet/bin/puppet /opt/puppetlabs/bin/puppet && \
-    ln -s /opt/puppetlabs/puppet/bin/hiera /opt/puppetlabs/bin/hiera
+    ln -s /opt/puppetlabs/puppet/bin/hiera /opt/puppetlabs/bin/hiera && \
 
-ENV PATH="/opt/puppetlabs/bin:$PATH"
-
-RUN puppet config set confdir /etc/puppetlabs/puppet && \
+    puppet config set confdir /etc/puppetlabs/puppet && \
     puppet config set codedir /etc/puppetlabs/code && \
     puppet config set vardir /opt/puppetlabs/puppet/cache && \
     puppet config set logdir /var/log/puppetlabs/puppet && \
