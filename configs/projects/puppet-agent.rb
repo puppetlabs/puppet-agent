@@ -119,9 +119,9 @@ project "puppet-agent" do |proj|
   end
 
   # Components only applicable on OSX
-  if platform.is_macos?
-    proj.component "cfpropertylist"
-  end
+  # if platform.is_macos?
+  #   proj.component "cfpropertylist"
+  # end
 
   # Including headers can make the package unacceptably large; This component
   # removes files that aren't required.
