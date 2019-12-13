@@ -16,5 +16,5 @@ platform "aix-7.1-ppc" do |plat|
   # for pl-autoconf) we'll need to force the installation
   #                                         Sean P. McD.
   plat.install_build_dependencies_with "rpm -Uvh --replacepkgs --force "
-  plat.vmpooler_template "aix-7.1-power"
+  plat.vmpooler_template "aix-6.1-power"
 end

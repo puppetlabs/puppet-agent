@@ -15,8 +15,8 @@ component "runtime" do |pkg, settings, platform|
     pkg.build_requires "pl-gcc-#{platform.architecture}"
     pkg.build_requires "pl-binutils-#{platform.architecture}"
   elsif platform.is_aix?
-    pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-gcc-5.2.0-11.aix#{platform.os_version}.ppc.rpm"
-    libdir = "/opt/pl-build-tools/lib/gcc/powerpc-ibm-aix#{platform.os_version}.0.0/5.2.0/"
+    pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/6.1/ppc/pl-gcc-5.2.0-11.aix6.1.ppc.rpm"
+    libdir = "/opt/pl-build-tools/lib/gcc/powerpc-ibm-aix6.1.0.0/5.2.0/"
   elsif platform.is_windows?
     pkg.build_requires "pl-gdbm-#{platform.architecture}"
     pkg.build_requires "pl-iconv-#{platform.architecture}"
@@ -68,6 +68,11 @@ component "runtime" do |pkg, settings, platform|
     pkg.install_file "#{settings[:tools_root]}/bin/libiconv-2.dll", "#{settings[:ruby_bindir]}/libiconv-2.dll"
     pkg.install_file "#{settings[:tools_root]}/bin/libffi-6.dll", "#{settings[:ruby_bindir]}/libffi-6.dll"
 
+    # # Copy the boost dlls into the bindir
+    # settings[:boost_libs].each do |name|
+    #   pkg.install_file "#{settings[:prefix]}/lib/libboost_#{name}.dll",   "#{settings[:bindir]}/libboost_#{name}.dll"
+    #   pkg.install_file "#{settings[:prefix]}/lib/libboost_#{name}.dll.a", "#{settings[:libdir]}/libboost_#{name}.dll.a"
+    # end
   else # Linux and Solaris systems
     pkg.install do
       "bash runtime.sh #{libdir}"

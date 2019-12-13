@@ -3,6 +3,7 @@ component "pxp-agent" do |pkg, settings, platform|
 
   toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/pl-build-toolchain.cmake"
   cmake = "/opt/pl-build-tools/bin/cmake"
+  boost_static_flag = ""
 
   if platform.is_windows?
     pkg.environment "PATH", "$(shell cygpath -u #{settings[:gcc_bindir]}):$(shell cygpath -u #{settings[:ruby_bindir]}):/cygdrive/c/Windows/system32:/cygdrive/c/Windows:/cygdrive/c/Windows/System32/WindowsPowerShell/v1.0"
@@ -22,12 +23,12 @@ component "pxp-agent" do |pkg, settings, platform|
 
   make = platform[:make]
 
-  boost_static_flag = "-DBOOST_STATIC=ON"
+  boost_static_flag = ""
   special_flags = " -DCMAKE_INSTALL_PREFIX=#{settings[:prefix]} "
 
   if platform.is_aix?
-    pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-gcc-5.2.0-11.aix#{platform.os_version}.ppc.rpm"
-    pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-cmake-3.2.3-2.aix#{platform.os_version}.ppc.rpm"
+    pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/6.1/ppc/pl-gcc-5.2.0-11.aix6.1.ppc.rpm"
+    pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/6.1/ppc/pl-cmake-3.2.3-2.aix6.1.ppc.rpm"
   elsif platform.is_macos?
     cmake = "/usr/local/bin/cmake"
     toolchain = ""
@@ -53,6 +54,7 @@ component "pxp-agent" do |pkg, settings, platform|
     special_flags = " -DCMAKE_INSTALL_PREFIX=#{settings[:pxp_root]} "
     cmake = "C:/ProgramData/chocolatey/bin/cmake.exe -G \"MinGW Makefiles\""
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=#{settings[:tools_root]}/pl-build-toolchain.cmake"
+    boost_static_flag = "-DBOOST_STATIC=ON"
   elsif platform.name =~ /sles-15|el-8|debian-10/ || (platform.is_fedora? && platform.os_version.to_i >= 29)
     # These platforms use the default OS toolchain, rather than pl-build-tools
     cmake = "cmake"
@@ -119,8 +121,8 @@ component "pxp-agent" do |pkg, settings, platform|
         "leatherman_util.dll",
         "leatherman_windows.dll",
         "libcpp-pcp-client.dll",
-        "libeay32.dll",
-        "ssleay32.dll",
+        platform.architecture == "x64" ? "libcrypto-1_1-x64.dll" : "libcrypto-1_1.dll",
+        platform.architecture == "x64" ? "libssl-1_1-x64.dll" : "libssl-1_1.dll",
         platform.architecture == "x64" ? "libgcc_s_seh-1.dll" : "libgcc_s_sjlj-1.dll",
         "libstdc++-6.dll"
       ]

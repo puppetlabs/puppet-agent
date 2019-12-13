@@ -123,6 +123,15 @@ project "puppet-agent" do |proj|
     proj.component "cfpropertylist"
   end
 
+  # Including headers can make the package unacceptably large; This component
+  # removes files that aren't required.
+  # Set the $DEV_BUILD environment variable to leave headers in place.
+  proj.component "cleanup"
+
+  unless ENV['DEV_BUILD'].to_s.empty?
+    proj.settings[:dev_build] = true
+  end
+
   proj.directory proj.install_root
   proj.directory proj.prefix
   proj.directory proj.sysconfdir

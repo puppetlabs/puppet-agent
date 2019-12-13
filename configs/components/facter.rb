@@ -18,7 +18,7 @@ component "facter" do |pkg, settings, platform|
     pkg.build_requires 'openssl-devel'
   end
 
-  pkg.build_requires 'puppet-runtime' # Provides openssl, ruby, augeas, curl
+  pkg.build_requires 'puppet-runtime' # Provides augeas, boost, curl, openssl, ruby, yaml-cpp
   pkg.build_requires 'leatherman'
   pkg.build_requires 'runtime' unless platform.name =~ /sles-15|el-8|debian-10/ || (platform.is_fedora? && platform.os_version.to_i >= 29)
   pkg.build_requires 'cpp-hocon'
@@ -33,25 +33,6 @@ component "facter" do |pkg, settings, platform|
     pkg.environment "PATH", "$(shell cygpath -u #{settings[:gcc_bindir]}):$(shell cygpath -u #{settings[:ruby_bindir]}):$(shell cygpath -u #{settings[:bindir]}):/cygdrive/c/Windows/system32:/cygdrive/c/Windows:/cygdrive/c/Windows/System32/WindowsPowerShell/v1.0"
   else
     pkg.environment "PATH", "#{settings[:bindir]}:$(PATH)"
-  end
-
-  if platform.is_macos?
-    pkg.build_requires "yaml-cpp"
-  elsif platform.name =~ /solaris-10/
-    pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/solaris/10/pl-yaml-cpp-0.5.1.#{platform.architecture}.pkg.gz"
-  elsif platform.is_cross_compiled_linux? || platform.name =~ /solaris-11/
-    pkg.build_requires "pl-yaml-cpp-#{platform.architecture}"
-  elsif platform.is_aix?
-    pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-gcc-5.2.0-11.aix#{platform.os_version}.ppc.rpm"
-    pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-cmake-3.2.3-2.aix#{platform.os_version}.ppc.rpm"
-    pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-yaml-cpp-0.5.1-1.aix#{platform.os_version}.ppc.rpm"
-  elsif platform.is_windows?
-    pkg.build_requires "pl-yaml-cpp-#{platform.architecture}"
-  elsif platform.name =~ /sles-15|el-8|debian-10/ || (platform.is_fedora? && platform.os_version.to_i >= 29)
-    # These platforms use their default OS toolchain and have package
-    # dependencies configured in the platform provisioning step.
-  else
-    pkg.build_requires "pl-yaml-cpp"
   end
 
   # Explicitly skip jruby if not installing a jdk.
@@ -121,8 +102,8 @@ component "facter" do |pkg, settings, platform|
   cp = platform[:cp]
 
   special_flags = " -DCMAKE_INSTALL_PREFIX=#{settings[:prefix]} "
-  boost_static_flag = "-DBOOST_STATIC=ON"
-  yamlcpp_static_flag = "-DYAMLCPP_STATIC=ON"
+  boost_static_flag = ""
+  yamlcpp_static_flag = ""
 
   # cmake on OSX is provided by brew
   # a toolchain is not currently required for OSX since we're building with clang.
@@ -153,6 +134,9 @@ component "facter" do |pkg, settings, platform|
 
     cmake = "C:/ProgramData/chocolatey/bin/cmake.exe -G \"MinGW Makefiles\""
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=#{settings[:tools_root]}/pl-build-toolchain.cmake"
+    boost_static_flag = "-DBOOST_STATIC=ON"
+    yamlcpp_static_flag = "-DYAMLCPP_STATIC=ON"
+
     special_flags = "-DCMAKE_INSTALL_PREFIX=#{settings[:facter_root]} \
                      -DRUBY_LIB_INSTALL=#{settings[:facter_root]}/lib "
   elsif platform.name =~ /sles-15|el-8|debian-10/ || (platform.is_fedora? && platform.os_version.to_i >= 29)
@@ -177,10 +161,11 @@ component "facter" do |pkg, settings, platform|
   # Strip it off; this should have no impact on final releases, as git sha would not be included.
   aio_agent_version = settings[:package_version].match(/^\d+\.\d+\.\d+(\.\d+){0,2}/).to_s
 
+  # FACTER_PATH is the location to look for specific binaries before looking at the PATH
+  # FACTER_RUBY specifies the location of libruby during compile time, bypassing dynamic lookup
   unless platform.is_windows?
     special_flags += " -DFACTER_PATH=#{settings[:bindir]} \
-                       -DFACTER_RUBY=#{settings[:libdir]}/$(shell #{ruby} -e 'print RbConfig::CONFIG[\"LIBRUBY_SO\"]') \
-                       -DRUBY_LIB_INSTALL=#{settings[:ruby_vendordir]}"
+                       -DFACTER_RUBY=#{settings[:libdir]}/$(shell #{ruby} -e 'print RbConfig::CONFIG[\"LIBRUBY_SO\"]')"
   end
 
   # FACTER_RUBY Needs bindir
@@ -191,6 +176,7 @@ component "facter" do |pkg, settings, platform|
         -DCMAKE_VERBOSE_MAKEFILE=ON \
         -DCMAKE_PREFIX_PATH=#{settings[:prefix]} \
         -DCMAKE_INSTALL_RPATH=#{settings[:libdir]} \
+        -DRUBY_LIB_INSTALL=#{settings[:ruby_vendordir]} \
         #{special_flags} \
         #{boost_static_flag} \
         #{yamlcpp_static_flag} \
@@ -245,6 +231,7 @@ component "facter" do |pkg, settings, platform|
     pkg.add_source("file://resources/files/windows/facter.bat", sum: "185b8645feecac4acadc55c64abb3755")
     pkg.add_source("file://resources/files/windows/facter_interactive.bat", sum: "20a1c0bc5368ffb24980f42432f1b372")
     pkg.add_source("file://resources/files/windows/run_facter_interactive.bat", sum: "c5e0c0a80e5c400a680a06a4bac8abd4")
+
     pkg.install_file "../facter.bat", "#{settings[:link_bindir]}/facter.bat"
     pkg.install_file "../facter_interactive.bat", "#{settings[:link_bindir]}/facter_interactive.bat"
     pkg.install_file "../run_facter_interactive.bat", "#{settings[:link_bindir]}/run_facter_interactive.bat"
@@ -253,9 +240,9 @@ component "facter" do |pkg, settings, platform|
     # in the runtime component
     pkg.install_file "#{settings[:tools_root]}/bin/zlib1.dll", "#{settings[:facter_root]}/bin/zlib1.dll"
     [
-      "libeay32.dll",
-      platform.architecture == "x64" ? "libgcc_s_seh-1.dll" : "libgcc_s_sjlj-1.dll",
-      "ssleay32.dll"
+      platform.architecture == "x64" ? "libcrypto-1_1-x64.dll" : "libcrypto-1_1.dll",
+      platform.architecture == "x64" ? "libssl-1_1-x64.dll" : "libssl-1_1.dll",
+      platform.architecture == "x64" ? "libgcc_s_seh-1.dll" : "libgcc_s_sjlj-1.dll"
     ].each do |dll|
       pkg.install_file "#{settings[:prefix]}/bin/#{dll}", "#{settings[:facter_root]}/bin/#{dll}"
     end
