@@ -1,0 +1,10 @@
+--- source_list.rb	2019-12-17 14:24:50.000000000 +0200
++++ source_list_good.rb	2019-12-17 14:24:38.000000000 +0200
+@@ -50,6 +50,7 @@
+   # String.
+ 
+   def <<(obj)
++    require 'uri'
+     src = case obj
+           when URI
+             Gem::Source.new(obj)

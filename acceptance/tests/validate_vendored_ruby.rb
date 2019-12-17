@@ -186,11 +186,30 @@ test_name 'PA-1319: Validate that the vendored ruby can load gems and is configu
     end
   end
 
+  dirs = {}
+  teardown do
+    agents.each do |agent|
+      next if dirs[agent] == nil
+      on agent, "rm -rf #{dirs[agent]}"
+    end
+  end
+
   step "'gem update --system' keeps vendor_gems still in path" do
+    fixture = File.dirname(__FILE__) + "/../fixtures/rubygems/gem_env.patch"
+
     agents_to_skip = select_hosts({:platform => [/windows/, /cisco/, /eos/, /cumulus/]}, agents)
     agents_to_test = agents - agents_to_skip
     agents_to_test.each do |agent|
+      dirs[agent] = agent.tmpdir("lib")
+      patch = "#{dirs[agent]}/gem_env.patch"
+
       on(agent, "/opt/puppetlabs/puppet/bin/gem update --system")
+
+      #TODO: remove the following lines once rubygems 3.1.2 is release
+      #more info here: https://github.com/rubygems/rubygems/issues/3033
+      scp_to(agent, fixture, patch)
+      on(agent, "patch -f -u /opt/puppetlabs/puppet/lib/ruby/site_ruby/2.5.0/rubygems/source_list.rb -i #{patch}")
+
       list_env = on(agent, "/opt/puppetlabs/puppet/bin/gem env").stdout.chomp
       unless list_env.include?("/opt/puppetlabs/puppet/lib/ruby/vendor_gems")
         fail_test("Failed to keep vendor_gems directory in GEM_PATH!")
