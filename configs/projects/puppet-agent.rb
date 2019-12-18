@@ -118,11 +118,6 @@ project "puppet-agent" do |proj|
     proj.component "wrapper-script"
   end
 
-  # Components only applicable on OSX
-  if platform.is_macos?
-    proj.component "cfpropertylist"
-  end
-
   # Including headers can make the package unacceptably large; This component
   # removes files that aren't required.
   # Set the $DEV_BUILD environment variable to leave headers in place.
