@@ -113,11 +113,6 @@ project "puppet-agent" do |proj|
     proj.component "wrapper-script"
   end
 
-  # Components only applicable on OSX
-  if platform.is_macos?
-    proj.component "cfpropertylist"
-  end
-
   # Vendored modules
   proj.component "module-puppetlabs-augeas_core"
   proj.component "module-puppetlabs-cron_core"
