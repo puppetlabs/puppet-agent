@@ -1,4 +1,17 @@
 platform "aix-7.1-ppc" do |plat|
+  # patch AIX platform to set the rpm filename to 7.1 instead of 6.1
+  class Vanagon
+    class Platform
+      class RPM
+        class AIX < Vanagon::Platform::RPM
+          def rpm_defines
+            %(--define '_topdir $(tempdir)/rpmbuild' --define '_rpmfilename %%{ARCH}/%%{NAME}-%%{VERSION}-%%{RELEASE}.aix7.1.%%{ARCH}.rpm')
+          end
+        end
+      end
+    end
+  end
+
   plat.servicetype "aix"
 
   plat.make "gmake"
