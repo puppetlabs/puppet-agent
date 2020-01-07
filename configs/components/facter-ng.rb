@@ -1,6 +1,6 @@
 component "facter-ng" do |pkg, settings, platform|
-  pkg.version '0.0.10'
-  pkg.md5sum 'db682261626152ecce7440af89856c70'
+  pkg.version '4.0.1'
+  pkg.md5sum 'affc924768aef22ba0731301a63e4f58'
   # This file is a common basis for multiple rubygem components.
   #
   # It should not be included as a component itself; Instead, other components
