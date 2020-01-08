@@ -60,8 +60,13 @@ Patch dialog sequence:
 
       <Publish Dialog="ExitDialog" Control="Finish" Event="EndDialog" Value="Return" Order="999">1</Publish>
 
-      <Publish Dialog="PuppetWelcomeDlg" Control="Next" Event="NewDialog" Value="PuppetLicenseAgreementDlg"><![CDATA[NOT Installed]]></Publish>
-      <Publish Dialog="PuppetWelcomeDlg" Control="Next" Event="NewDialog" Value="VerifyReadyDlg"><![CDATA[Installed AND PATCH]]></Publish>
+     <Publish Dialog="PuppetWelcomeDlg" Control="Next" Event="NewDialog" Value="PuppetLicenseAgreementDlg" Order="1"><![CDATA[NOT Installed]]></Publish>
+     <Publish Dialog="PuppetWelcomeDlg" Control="Next" Event="NewDialog" Value="VerifyReadyDlg" Order="1"><![CDATA[Installed AND PATCH]]></Publish>
+     <Publish Dialog="PuppetWelcomeDlg" Control="Next" Event="NewDialog" Value="WarningDlg" Order="2"><![CDATA[VersionNT <= 601]]></Publish>
+ 
+      <Publish Dialog="WarningDlg" Control="Next" Event="NewDialog" Value="PuppetLicenseAgreementDlg"><![CDATA[NOT Installed]]></Publish>
+      <Publish Dialog="WarningDlg" Control="Next" Event="NewDialog" Value="VerifyReadyDlg"><![CDATA[Installed AND PATCH]]></Publish>
+      <Publish Dialog="WarningDlg" Control="Back" Event="NewDialog" Value="PuppetWelcomeDlg"></Publish>
 
       <Publish Dialog="PuppetLicenseAgreementDlg" Control="Back" Event="NewDialog" Value="PuppetWelcomeDlg"></Publish>
       <Publish Dialog="PuppetLicenseAgreementDlg" Control="Next" Event="NewDialog" Value="PuppetInstallDirDlg">LicenseAccepted = "1"</Publish>
@@ -89,8 +94,13 @@ Patch dialog sequence:
 
       <Publish Dialog="ExitDialog" Control="Finish" Event="EndDialog" Value="Return" Order="999">1</Publish>
 
-      <Publish Dialog="PuppetWelcomeDlg" Control="Next" Event="NewDialog" Value="PuppetLicenseAgreementDlg"><![CDATA[NOT VersionNT64 AND NOT Installed]]></Publish>
-      <Publish Dialog="PuppetWelcomeDlg" Control="Next" Event="NewDialog" Value="VerifyReadyDlg"><![CDATA[NOT VersionNT64 AND Installed AND PATCH]]></Publish>
+      <Publish Dialog="PuppetWelcomeDlg" Control="Next" Event="NewDialog" Value="PuppetLicenseAgreementDlg" Order="1"><![CDATA[NOT VersionNT64 AND NOT Installed]]></Publish>
+      <Publish Dialog="PuppetWelcomeDlg" Control="Next" Event="NewDialog" Value="VerifyReadyDlg" Order="1"><![CDATA[NOT VersionNT64 AND Installed AND PATCH]]></Publish>
+      <Publish Dialog="PuppetWelcomeDlg" Control="Next" Event="NewDialog" Value="WarningDlg" Order="2"><![CDATA[VersionNT <= 601]]></Publish>
+
+      <Publish Dialog="WarningDlg" Control="Next" Event="NewDialog" Value="PuppetLicenseAgreementDlg"><![CDATA[NOT Installed]]></Publish>
+      <Publish Dialog="WarningDlg" Control="Next" Event="NewDialog" Value="VerifyReadyDlg"><![CDATA[Installed AND PATCH]]></Publish>
+      <Publish Dialog="WarningDlg" Control="Back" Event="NewDialog" Value="PuppetWelcomeDlg"></Publish>
 
       <Publish Dialog="PuppetLicenseAgreementDlg" Control="Back" Event="NewDialog" Value="PuppetWelcomeDlg"><![CDATA[VersionNT >= 600]]></Publish>
       <Publish Dialog="PuppetLicenseAgreementDlg" Control="Next" Event="NewDialog" Value="PuppetInstallDirDlg">LicenseAccepted = "1"</Publish>
