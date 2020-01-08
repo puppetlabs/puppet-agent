@@ -5,10 +5,9 @@ build_date := $(shell date -u +%FT%T)
 hadolint_available := $(shell hadolint --help > /dev/null 2>&1; echo $$?)
 hadolint_command := hadolint --ignore DL3008 --ignore DL3018 --ignore DL4000 --ignore DL4001 --ignore DL3028
 hadolint_container := hadolint/hadolint:latest
-pwd := $(shell pwd)
-export BUNDLE_PATH = $(pwd)/.bundle/gems
-export BUNDLE_BIN = $(pwd)/.bundle/bin
-export GEMFILE = $(pwd)/Gemfile
+export BUNDLE_PATH = $(PWD)/.bundle/gems
+export BUNDLE_BIN = $(PWD)/.bundle/bin
+export GEMFILE = $(PWD)/Gemfile
 
 version = $(shell echo $(git_describe) | sed 's/-.*//')
 dockerfile := Dockerfile
@@ -33,7 +32,7 @@ endif
 build: prep
 	docker build --pull --build-arg vcs_ref=$(vcs_ref) --build-arg build_date=$(build_date) --build-arg version=$(version) --file puppet-agent-ubuntu/$(dockerfile) --tag $(NAMESPACE)/puppet-agent-ubuntu:$(version) puppet-agent-ubuntu
 	@docker tag $(NAMESPACE)/puppet-agent-ubuntu:$(version) $(NAMESPACE)/puppet-agent:$(version)
-	docker build --pull --build-arg vcs_ref=$(vcs_ref) --build-arg build_date=$(build_date) --build-arg version=$(version) --file puppet-agent-alpine/$(dockerfile) --tag $(NAMESPACE)/puppet-agent-alpine:$(version) $(pwd)/..
+	docker build --pull --build-arg vcs_ref=$(vcs_ref) --build-arg build_date=$(build_date) --build-arg version=$(version) --file puppet-agent-alpine/$(dockerfile) --tag $(NAMESPACE)/puppet-agent-alpine:$(version) $(PWD)/..
 ifeq ($(IS_LATEST),true)
 	@docker tag $(NAMESPACE)/puppet-agent-ubuntu:$(version) $(NAMESPACE)/puppet-agent-ubuntu:$(LATEST_VERSION)
 	@docker tag $(NAMESPACE)/puppet-agent-ubuntu:$(version) $(NAMESPACE)/puppet-agent:$(LATEST_VERSION)
