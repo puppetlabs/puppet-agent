@@ -139,5 +139,17 @@
 
     <SetProperty Id="ARPINSTALLLOCATION" Value="[INSTALLDIR]" After="CostFinalize" />
 
+    <SetProperty Id="OSWarningText1" After="AppSearch"
+     Value="Detected Windows Server 2008">
+     <![CDATA[(VersionNT = 600) AND (MsiNTProductType <> 1)]]>
+    </SetProperty>
+
+    <SetProperty Id="OSWarningText2" After="SetOSWarningText1"
+     Value="Detected indows Server 2008 R2">
+     <![CDATA[(VersionNT = 601)]]>
+    </SetProperty>
+
+    <SetProperty Id="OSWarningText" After="SetOSWarningText2"
+     Value="[OSWarningText1][OSWarningText2]" />
   </Fragment>
 </Wix>
