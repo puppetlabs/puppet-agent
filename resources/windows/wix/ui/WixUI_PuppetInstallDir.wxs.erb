@@ -14,6 +14,7 @@
 <!--
 First-time install dialog sequence:
  - WixUI_PuppetWelcomeDlg
+ - WixUI_WarningDlg
  - WixUI_PuppetLicenseAgreementDlg
  - WixUI_PuppetInstallDirDlg
  - WixUI_VerifyReadyDlg
@@ -44,6 +45,7 @@ Patch dialog sequence:
       <Property Id="WixUI_Mode" Value="InstallDir" />
 
       <DialogRef Id="BrowseDlg" />
+      <DialogRef Id="WarningDlg" />
       <DialogRef Id="DiskCostDlg" />
       <DialogRef Id="ErrorDlg" />
       <DialogRef Id="FatalError" />
@@ -60,10 +62,22 @@ Patch dialog sequence:
 
       <Publish Dialog="ExitDialog" Control="Finish" Event="EndDialog" Value="Return" Order="999">1</Publish>
 
-      <Publish Dialog="PuppetWelcomeDlg" Control="Next" Event="NewDialog" Value="PuppetLicenseAgreementDlg"><![CDATA[NOT Installed]]></Publish>
-      <Publish Dialog="PuppetWelcomeDlg" Control="Next" Event="NewDialog" Value="VerifyReadyDlg"><![CDATA[Installed AND PATCH]]></Publish>
+      <!--<Publish Dialog="PuppetWelcomeDlg" Control="Next" Event="NewDialog" Value="PuppetLicenseAgreementDlg"><![CDATA[NOT Installed]]></Publish>
+      <Publish Dialog="PuppetWelcomeDlg" Control="Next" Event="NewDialog" Value="VerifyReadyDlg"><![CDATA[Installed AND PATCH]]></Publish> -->
 
-      <Publish Dialog="PuppetLicenseAgreementDlg" Control="Back" Event="NewDialog" Value="PuppetWelcomeDlg"></Publish>
+      <Publish Dialog="PuppetWelcomeDlg" Control="Next" Property="WelcomeDlg_Next" Value="{}" Order="1">1</Publish>
+      <Publish Dialog="PuppetWelcomeDlg" Control="Next" Property="WelcomeDlg_Next" Value="WarningDlg" Order="2">OSWarningText</Publish>
+      <Publish Dialog="PuppetWelcomeDlg" Control="Next" Property="WelcomeDlg_Next" Value="PuppetLicenseAgreementDlg" Order="3"><![CDATA[NOT Installed AND NOT OSWarningText]]></Publish>
+      <Publish Dialog="PuppetWelcomeDlg" Control="Next" Property="WelcomeDlg_Next" Value="VerifyReadyDlg" Order="4"><![CDATA[Installed AND PATCH AND NOT OSWarningText]]></Publish>
+      <Publish Dialog="PuppetWelcomeDlg" Control="Next" Event="NewDialog" Value="[WelcomeDlg_Next]" Order="5">WelcomeDlg_Next</Publish>
+
+      <!--<Publish Dialog="PuppetLicenseAgreementDlg" Control="Back" Event="NewDialog" Value="PuppetWelcomeDlg"></Publish>
+      <Publish Dialog="PuppetLicenseAgreementDlg" Control="Next" Event="NewDialog" Value="PuppetInstallDirDlg">LicenseAccepted = "1"</Publish> -->
+
+      <Publish Dialog="PuppetLicenseAgreementDlg" Control="Back" Property="PuppetLicenseAgreementDlg_Back" Value="{}" Order="1">1</Publish>
+      <Publish Dialog="PuppetLicenseAgreementDlg" Control="Back" Property="PuppetLicenseAgreementDlg_Back" Value="WarningDlg" Order="2">OSWarningText</Publish>
+      <Publish Dialog="PuppetLicenseAgreementDlg" Control="Back" Property="PuppetLicenseAgreementDlg_Back" Value="WelcomeDlg" Order="3"><![CDATA[NOT Installed AND NOT OSWarningText]]></Publish>
+      <Publish Dialog="PuppetLicenseAgreementDlg" Control="Back" Event="NewDialog" Value="[PuppetLicenseAgreementDlg_Back]" Order="4">PuppetLicenseAgreementDlg_Back</Publish>
       <Publish Dialog="PuppetLicenseAgreementDlg" Control="Next" Event="NewDialog" Value="PuppetInstallDirDlg">LicenseAccepted = "1"</Publish>
 
       <Publish Dialog="PuppetInstallDirDlg" Control="Back" Event="NewDialog" Value="PuppetLicenseAgreementDlg">1</Publish>
@@ -74,9 +88,16 @@ Patch dialog sequence:
       <Publish Dialog="PuppetInstallDirDlg" Control="ChangeFolder" Property="_BrowseProperty" Value="[WIXUI_INSTALLDIR]" Order="1">1</Publish>
       <Publish Dialog="PuppetInstallDirDlg" Control="ChangeFolder" Event="SpawnDialog" Value="BrowseDlg" Order="2">1</Publish>
 
-      <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="PuppetInstallDirDlg" Order="1">NOT Installed</Publish>
+      <!--<Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="PuppetInstallDirDlg" Order="1">NOT Installed</Publish>
       <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="MaintenanceTypeDlg" Order="2">Installed AND NOT PATCH</Publish>
-      <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="PuppetWelcomeDlg" Order="2"><![CDATA[Installed AND PATCH]]></Publish>
+      <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="PuppetWelcomeDlg" Order="2"><![CDATA[Installed AND PATCH]]></Publish> -->
+
+      <Publish Dialog="VerifyReadyDlg" Control="Back" Property="VerifyReadyDlg_Back" Value="{}" Order="1">1</Publish>
+      <Publish Dialog="VerifyReadyDlg" Control="Back" Property="VerifyReadyDlg_Back" Value="WarningDlg" Order="2">OSWarningText</Publish>
+      <Publish Dialog="VerifyReadyDlg" Control="Back" Value="PuppetInstallDirDlg" Order="3"><![CDATA[NOT Installed AND NOT OSWarningText]]></Publish>
+      <Publish Dialog="VerifyReadyDlg" Control="Back" Value="MaintenanceTypeDlg" Order="4"><![CDATA[Installed AND NOT PATCH]]></Publish>
+      <Publish Dialog="VerifyReadyDlg" Control="Back" Value="PuppetWelcomeDlg" Order="5"><![CDATA[Installed AND PATCH AND NOT OSWarningText]]></Publish>
+      <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="[VerifyReadyDlg_Back]" Order="6">VerifyReadyDlg_Back</Publish>
 
       <Publish Dialog="MaintenanceWelcomeDlg" Control="Next" Event="NewDialog" Value="MaintenanceTypeDlg">1</Publish>
 
