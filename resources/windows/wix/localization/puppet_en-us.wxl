@@ -260,6 +260,11 @@
     <String Id="WelcomeUpdateDlgDescriptionUpdate" Overridable="yes"><!-- _locID_text="WelcomeUpdateDlgDescriptionUpdate" _locComment="WelcomeUpdateDlgDescriptionUpdate" -->This will update [ProductName] to version [VersionUIString] and configure the system to fetch configurations every half hour given a valid master. This installer also includes tooling to run Puppet standalone, independent of a master.</String>
     <String Id="WelcomeDlgTitle" Overridable="yes"><!-- _locID_text="WelcomeDlgTitle" _locComment="WelcomeDlgTitle" -->{\WixUI_Font_Bigger}Welcome to the [ProductName] Setup Wizard</String>
 
+    <String Id="WarningDlg_Title" Overridable="yes"><!-- _locID_text="WarningDlg_Title" _locComment="WarningDlg_Title" -->[ProductName] Warning</String>
+    <String Id="WarningDlgBitmap" Overridable="yes"><!-- _locID_text="WarningDlgBannerBitmap" _locComment="WarningDlgBannerBitmap" -->WixUI_Bmp_Dialog</String>
+    <String Id="WarningDlgDescription" Overridable="yes"><!-- _locID_text="WarningDlgDescription" _locComment="WarningDlgDescription" -->Deprecation warning: On January 14, 2020, support for Windows Server 2008 and 2008 R2 will end.</String>
+    <String Id="WarningDlgTitle" Overridable="yes"><!-- _locID_text="WarningDlgTitle" _locComment="WarningDlgTitle" -->{\WixUI_Font_Bigger}Operating System Compatibility Warning</String>
+
     <String Id="WelcomeEulaDlg_Title" Overridable="yes"><!-- _locID_text="WelcomeEulaDlg_Title" _locComment="WelcomeEulaDlg_Title" -->[ProductName] Setup</String>
     <String Id="WelcomeEulaDlgBitmap" Overridable="yes"><!-- _locID_text="WelcomeEulaDlgBitmap" _locComment="WelcomeEulaDlgBitmap" -->WixUI_Bmp_Dialog</String>
     <String Id="WelcomeEulaDlgLicenseAcceptedCheckBox" Overridable="yes"><!-- _locID_text="WelcomeEulaDlgLicenseAcceptedCheckBox" _locComment="WelcomeEulaDlgLicenseAcceptedCheckBox" -->I &amp;accept the terms in the License Agreement</String>
