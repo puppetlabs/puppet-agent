@@ -1,0 +1,35 @@
+name: Docker test and publish
+
+on:
+  push:
+    branches:
+      - 6.4.x
+      - master
+
+jobs:
+  build-and-publish:
+    env:
+      PUPPERWARE_ANALYTICS_STREAM: production
+      IS_LATEST: true
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: Set up Ruby 2.6
+        uses: actions/setup-ruby@v1
+        with:
+          ruby-version: 2.6.x
+      - run: gem install bundler
+      - name: Set custom latest version
+        if: endsWith(github.ref, '/6.4.x')
+        run: echo "::set-env name=LATEST_VERSION::6.4"
+      - name: Build container
+        working-directory: docker
+        run: make lint build test
+      - name: Publish container
+        working-directory: docker
+        run: |
+          docker login -u "$DOCKERHUB_USERNAME" -p "$DOCKERHUB_PASSWORD"
+          make publish
