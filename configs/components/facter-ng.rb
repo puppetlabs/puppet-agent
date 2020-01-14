@@ -1,6 +1,6 @@
 component "facter-ng" do |pkg, settings, platform|
-  pkg.version '0.0.10'
-  pkg.md5sum 'db682261626152ecce7440af89856c70'
+  pkg.version '4.0.2'
+  pkg.md5sum 'c298cdbfe8579187d8a8ada4125af25b'
   # This file is a common basis for multiple rubygem components.
   #
   # It should not be included as a component itself; Instead, other components
@@ -27,6 +27,7 @@ component "facter-ng" do |pkg, settings, platform|
   # When cross-compiling, we can't use the rubygems we just built.
   # Instead we use the host gem installation and override GEM_HOME. Yay?
   pkg.environment "GEM_HOME", settings[:gem_home]
+  pkg.environment "GEM_PATH", settings[:puppet_gem_vendor_dir]
 
   # PA-25 in order to install gems in a cross-compiled environment we need to
   # set RUBYLIB to include puppet and hiera, so that their gemspecs can resolve
@@ -36,8 +37,10 @@ component "facter-ng" do |pkg, settings, platform|
     pkg.environment "RUBYLIB", "#{settings[:ruby_vendordir]}:$(RUBYLIB)"
   end
 
-  pkg.add_source("file://resources/files/windows/facter-ng.bat", sum: "1521ec859c1ec981a088de5ebe2b270c")
-  pkg.install_file "facter-ng.bat", "#{settings[:link_bindir]}/facter-ng.bat"
+  if platform.is_windows?
+    pkg.add_source("file://resources/files/windows/facter-ng.bat", sum: "1521ec859c1ec981a088de5ebe2b270c")
+    pkg.install_file "facter-ng.bat", "#{settings[:link_bindir]}/facter-ng.bat"
+  end
 
   pkg.url("https://rubygems.org/downloads/#{name}-#{version}.gem")
   pkg.mirror("#{settings[:buildsources_url]}/#{name}-#{version}.gem")
