@@ -4,8 +4,7 @@
   <Fragment>
     <ComponentGroup Id="FragmentCustomActions" />
 
-    <!-- Properties for existing Ini Values - expanding the remembered properties pattern just a bit
-    -->
+    <!-- Properties for existing Ini Values - expanding the remembered properties pattern just a bit -->
 
     <CustomAction
       Id="SetIniPropertyValues"
@@ -43,6 +42,7 @@ If (fso.FileExists(iniPath)) Then
   iniFile.Close
   Set iniFile = Nothing
   SetPropertyFromIni "server", "INI_PUPPET_MASTER_SERVER", iniFileText
+  SetPropertyFromIni "masterport", "INI_PUPPET_MASTER_PORT", iniFileText
   SetPropertyFromIni "environment", "INI_PUPPET_AGENT_ENVIRONMENT", iniFileText
   SetPropertyFromIni "certname", "INI_PUPPET_AGENT_CERTNAME", iniFileText
   SetPropertyFromIni "ca_server", "INI_PUPPET_CA_SERVER", iniFileText
@@ -71,7 +71,6 @@ End If
       Session.Property("PUP_LCL_ACCOUNT_ADMINISTRATORS") = objSIDAdmins.AccountName
         ]]>
     </CustomAction>
-
 
     <!-- Custom Actions to handle command line property values that override
          remembered property values -->
@@ -108,6 +107,16 @@ End If
       Property="PUPPET_MASTER_SERVER"
       Value="puppet"
       Execute="firstSequence" />
+     <CustomAction
+      Id="SetFromIniPuppetMasterPort"
+      Property="MASTER_PORT"
+      Value="[INI_PUPPET_MASTER_PORT]"
+      Execute="firstSequence" />
+    <CustomAction
+       Id="SetFromCmdLinePuppetMasterPort"
+       Property="MASTER_PORT"
+       Value="[PUPPET_MASTER_PORT]"
+       Execute="firstSequence" />
 
     <!-- PUPPET_AGENT_ENVIRONMENT -->
     <CustomAction

@@ -107,6 +107,34 @@
           <PermissionEx Sddl="O:SYG:SYD:P(A;OICI;FA;;;SY)(A;OICI;FA;;;BA)" />
         </CreateFolder>
       </Component>
+      <Component
+        Id="PuppetConditionalSettings"
+        Guid="DEEB3D70-7613-488C-A1CF-E7EF952EB4F5"
+        Transitive = "yes"
+        Directory="PuppetConfDir" >
+        <CreateFolder />
+        <Condition><![CDATA[(MASTER_PORT <> ".") AND (MASTER_PORT <> "")]]></Condition>
+        <IniFile
+          Id="PuppetConfPort" Name="puppet.conf"
+          Action="addLine"
+          Section="main"
+          Key="masterport" Value="[MASTER_PORT]"
+          Directory="PuppetConfDir" />
+      </Component>
+      <Component
+        Id="PuppetConditionalSettingsClean"
+        Guid="96D97BD8-E70C-4949-98B6-5387B428B8DD"
+        Transitive = "yes"
+        Directory="PuppetConfDir" >
+        <CreateFolder />
+        <Condition><![CDATA[(MASTER_PORT = ".") OR (MASTER_PORT = "")]]></Condition>
+        <IniFile
+          Id="PuppetConfPort" Name="puppet.conf"
+          Action="removeLine"
+          Section="main"
+          Key="masterport"
+          Directory="PuppetConfDir" />
+      </Component>
       <!-- This is a permanent directory, do not remove on uninstall -->
       <Component
         Id="PuppetConfUnconditionalSettings"
