@@ -52,6 +52,8 @@ component "pxp-agent" do |pkg, settings, platform|
 
     cmake = "C:/ProgramData/chocolatey/bin/cmake.exe -G \"MinGW Makefiles\""
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=#{settings[:tools_root]}/pl-build-toolchain.cmake"
+    special_flags += ' -DDYNAMICBASE=OFF' if platform.name =~ /windowsfips-2012r2/
+
   elsif platform.name =~ /sles-15|el-8|debian-10/ || (platform.is_fedora? && platform.os_version.to_i >= 29)
     # These platforms use the default OS toolchain, rather than pl-build-tools
     cmake = "cmake"
