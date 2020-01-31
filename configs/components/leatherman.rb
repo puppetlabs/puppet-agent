@@ -46,6 +46,7 @@ component "leatherman" do |pkg, settings, platform|
     ruby = "#{settings[:host_ruby]} -r#{settings[:datadir]}/doc/rbconfig-#{settings[:ruby_version]}-orig.rb"
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/#{settings[:platform_triple]}/pl-build-toolchain.cmake"
     cmake = "/opt/pl-build-tools/bin/cmake"
+    special_flags = "-DCMAKE_CXX_FLAGS='-DBOOST_UUID_RANDOM_PROVIDER_FORCE_POSIX'"
   elsif platform.is_solaris?
     if platform.architecture == 'sparc'
       ruby = "#{settings[:host_ruby]} -r#{settings[:datadir]}/doc/rbconfig-#{settings[:ruby_version]}-orig.rb"
