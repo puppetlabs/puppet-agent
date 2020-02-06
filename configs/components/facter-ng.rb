@@ -2,6 +2,7 @@ component "facter-ng" do |pkg, settings, platform|
   pkg.load_from_json("configs/components/facter-ng.json")
 
   pkg.build_requires "puppet-runtime"
+  pkg.build_requires "pl-ruby-patch"
 
   # When cross-compiling, we can't use the rubygems we just built.
   # Instead we use the host gem installation and override GEM_HOME. Yay?
