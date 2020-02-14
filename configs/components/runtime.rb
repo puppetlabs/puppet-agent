@@ -24,7 +24,7 @@ component "runtime" do |pkg, settings, platform|
     pkg.build_requires "pl-pdcurses-#{platform.architecture}"
     # We only need zlib because curl is dynamically linking against zlib
     pkg.build_requires "pl-zlib-#{platform.architecture}"
-  elsif platform.name =~ /sles-15|el-8|debian-10/ || platform.is_macos? || (platform.is_fedora? && platform.os_version.to_i >= 29)
+  elsif platform.name =~ /sles-15|el-8|debian-10/ || platform.is_macos? || platform.is_fedora?
     # These platforms use their default OS toolchain and have package
     # dependencies configured in the platform provisioning step.
   else
