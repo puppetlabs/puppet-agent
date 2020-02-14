@@ -4,7 +4,7 @@ test_name 'PA-3067: Manage selinux' do
       'audit:acceptance'
 
   confine :to, :platform => /el-|fedora-|debian-|ubuntu-/
-  confine :except, :platform => /ubuntu-.*-ppc64el|ubuntu-14|fedora-28|el-6/
+  confine :except, :platform => /ubuntu-.*-ppc64el|ubuntu-14|el-6/
 
   require 'puppet/acceptance/common_utils'
 
