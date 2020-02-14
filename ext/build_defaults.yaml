@@ -20,7 +20,6 @@ foss_platforms:
   - fedora-29-x86_64
   - fedora-30-x86_64
   - fedora-31-x86_64
-  - osx-10.13-x86_64
   - osx-10.14-x86_64
   - osx-10.15-x86_64
   - sles-11-i386
@@ -110,8 +109,6 @@ platform_repos:
     repo_location: repos/apt/xenial
   - name: ubuntu-18.04-amd64
     repo_location: repos/apt/bionic
-  - name: osx-10.13
-    repo_location: repos/apple/10.13/**/x86_64/*.dmg
   - name: osx-10.14
     repo_location: repos/apple/10.14/**/x86_64/*.dmg
   - name: osx-10.15
