@@ -16,12 +16,8 @@ foss_platforms:
   - el-7-aarch64
   - el-8-x86_64
   - eos-4-i386
-  - fedora-28-x86_64
-  - fedora-29-x86_64
   - fedora-30-x86_64
   - fedora-31-x86_64
-  - osx-10.12-x86_64
-  - osx-10.13-x86_64
   - osx-10.14-x86_64
   - osx-10.15-x86_64
   - sles-11-i386
@@ -81,10 +77,6 @@ platform_repos:
     repo_location: repos/sles/12/**/ppc64le
   - name: sles-15-x86_64
     repo_location: repos/sles/15/**/x86_64
-  - name: fedora-28-x86_64
-    repo_location: repos/fedora/28/**/x86_64
-  - name: fedora-29-x86_64
-    repo_location: repos/fedora/29/**/x86_64
   - name: fedora-30-x86_64
     repo_location: repos/fedora/30/**/x86_64
   - name: fedora-31-x86_64
@@ -111,10 +103,6 @@ platform_repos:
     repo_location: repos/apt/xenial
   - name: ubuntu-18.04-amd64
     repo_location: repos/apt/bionic
-  - name: osx-10.12
-    repo_location: repos/apple/10.12/**/x86_64/*.dmg
-  - name: osx-10.13
-    repo_location: repos/apple/10.13/**/x86_64/*.dmg
   - name: osx-10.14
     repo_location: repos/apple/10.14/**/x86_64/*.dmg
   - name: osx-10.15
