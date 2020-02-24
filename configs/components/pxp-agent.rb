@@ -54,12 +54,12 @@ component "pxp-agent" do |pkg, settings, platform|
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=#{settings[:tools_root]}/pl-build-toolchain.cmake"
     special_flags += ' -DDYNAMICBASE=OFF' if platform.name =~ /windowsfips-2012r2/
 
-  elsif platform.name =~ /sles-15|el-8|debian-10/ || (platform.is_fedora? && platform.os_version.to_i >= 29)
+  elsif platform.name =~ /sles-15|el-8|debian-10/ || platform.is_fedora?
     # These platforms use the default OS toolchain, rather than pl-build-tools
     cmake = "cmake"
     toolchain = ""
     special_flags += " -DCMAKE_CXX_FLAGS='#{settings[:cflags]} -Wno-deprecated -Wimplicit-fallthrough=0' "
-    special_flags += " -DENABLE_CXX_WERROR=OFF " if platform.name =~ /el-8|debian-10/ || (platform.is_fedora? && platform.os_version.to_i >= 29)
+    special_flags += " -DENABLE_CXX_WERROR=OFF " if platform.name =~ /el-8|debian-10/ || platform.is_fedora?
   elsif platform.is_cisco_wrlinux?
     special_flags += " -DLEATHERMAN_USE_LOCALES=OFF "
   end

@@ -20,7 +20,7 @@ component "facter" do |pkg, settings, platform|
 
   pkg.build_requires 'puppet-runtime' # Provides augeas, boost, curl, openssl, ruby, yaml-cpp
   pkg.build_requires 'leatherman'
-  pkg.build_requires 'runtime' unless platform.name =~ /sles-15|el-8|debian-10/ || (platform.is_fedora? && platform.os_version.to_i >= 29)
+  pkg.build_requires 'runtime' unless platform.name =~ /sles-15|el-8|debian-10/ || platform.is_fedora?
   pkg.build_requires 'cpp-hocon'
   pkg.build_requires 'libwhereami'
 
@@ -136,7 +136,7 @@ component "facter" do |pkg, settings, platform|
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=#{settings[:tools_root]}/pl-build-toolchain.cmake"
     special_flags += ' -DDYNAMICBASE=OFF' if platform.name =~ /windowsfips-2012r2/
 
-  elsif platform.name =~ /sles-15|el-8|debian-10/ || (platform.is_fedora? && platform.os_version.to_i >= 29)
+  elsif platform.name =~ /sles-15|el-8|debian-10/ || platform.is_fedora?
     # These platforms use the default OS toolchain, rather than pl-build-tools
     pkg.environment "CPPFLAGS", settings[:cppflags]
     pkg.environment "LDFLAGS", settings[:ldflags]
@@ -217,7 +217,7 @@ component "facter" do |pkg, settings, platform|
   end
 
   # Disable tests for platforms that use the default OS toolchain
-  unless platform.name =~ /sles-15|el-8|debian-10/ || (platform.is_fedora? && platform.os_version.to_i >= 29)
+  unless platform.name =~ /sles-15|el-8|debian-10/ || platform.is_fedora?
     pkg.check do
       tests
     end

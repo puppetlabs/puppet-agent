@@ -107,7 +107,7 @@ project "puppet-agent" do |proj|
     proj.component "shellpath"
   end
 
-  proj.component "runtime" unless platform.name =~ /sles-15|el-8|debian-10/ || (platform.is_fedora? && platform.os_version.to_i >= 29)
+  proj.component "runtime" unless platform.name =~ /sles-15|el-8|debian-10/ || platform.is_fedora?
 
   # Windows doesn't need these wrappers, only unix platforms
   unless platform.is_windows?
