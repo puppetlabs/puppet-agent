@@ -10,7 +10,7 @@ before_install:
 before_script:
   - 'git config --global user.email "you@example.com"'
   - 'git config --global user.name "Your Name"'
-script: "bundle exec $CHECK"
+script: "bundle exec rake $CHECK"
 notifications:
   email: false
 
@@ -18,10 +18,10 @@ matrix:
   include:
     - stage: puppet-agent lint
       rvm: 2.5
-      env: "CHECK='rubocop -D'"
+      env: "CHECK=rubocop"
     - stage: puppet-agent lint
       rvm: 2.5
-      env: "CHECK='rake commits'"
+      env: "CHECK=commits"
     - stage: puppet-agent container tests
       language: ruby
       rvm: 2.5.5
