@@ -4,9 +4,9 @@ services:
 git:
   depth: 150
 language: ruby
-bundler_args: --without development
+bundler_args: --jobs 4 --retry 2 --without packaging documentation
 before_install:
-  - gem install bundler -v '< 2' --no-document;
+  - gem update --system --force
 before_script:
   - 'git config --global user.email "you@example.com"'
   - 'git config --global user.name "Your Name"'
@@ -17,10 +17,10 @@ notifications:
 matrix:
   include:
     - stage: puppet-agent lint
-      rvm: 2.1.7
+      rvm: 2.5
       env: "CHECK='rubocop -D'"
     - stage: puppet-agent lint
-      rvm: 2.1.7
+      rvm: 2.5
       env: "CHECK='rake commits'"
     - stage: puppet-agent container tests
       language: ruby
