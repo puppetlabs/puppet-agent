@@ -20,7 +20,7 @@ component "facter" do |pkg, settings, platform|
 
   pkg.build_requires 'puppet-runtime' # Provides augeas, boost, curl, openssl, ruby, yaml-cpp
   pkg.build_requires 'leatherman'
-  pkg.build_requires 'runtime' unless platform.name =~ /sles-15|el-8|debian-10/ || platform.is_fedora?
+  pkg.build_requires 'runtime' if platform.name =~ /cisco-wrlinux-[57]|debian-[89]|el-[567]|eos-4|redhatfips-7|sles-(:?11|12)|ubuntu-(:?14.04|16.04|18.04)/ || !platform.is_linux?
   pkg.build_requires 'cpp-hocon'
   pkg.build_requires 'libwhereami'
 
@@ -48,7 +48,7 @@ component "facter" do |pkg, settings, platform|
   when /(debian-9|ubuntu-(15|16|18))/
     pkg.build_requires 'openjdk-8-jdk'
     java_home = "/usr/lib/jvm/java-8-openjdk-#{platform.architecture}"
-  when /debian-10/
+  when /debian-10|ubuntu-20/
     pkg.build_requires 'openjdk-11-jdk'
     java_home = "/usr/lib/jvm/java-11-openjdk-#{platform.architecture}"
   when /sles-12/
@@ -139,7 +139,15 @@ component "facter" do |pkg, settings, platform|
 
     special_flags = "-DCMAKE_INSTALL_PREFIX=#{settings[:facter_root]} \
                      -DRUBY_LIB_INSTALL=#{settings[:facter_root]}/lib "
-  elsif platform.name =~ /sles-15|el-8|debian-10/ || platform.is_fedora?
+  elsif platform.name =~ /cisco-wrlinux-[57]|debian-[89]|el-[567]|eos-4|redhatfips-7|sles-(:?11|12)|ubuntu-(:?14.04|16.04|18.04)/ ||
+        platform.is_aix?
+    toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/pl-build-toolchain.cmake"
+    cmake = "/opt/pl-build-tools/bin/cmake"
+
+    if platform.is_cisco_wrlinux?
+      special_flags += " -DLEATHERMAN_USE_LOCALES=OFF"
+    end
+  else
     # These platforms use the default OS toolchain, rather than pl-build-tools
     pkg.environment "CPPFLAGS", settings[:cppflags]
     pkg.environment "LDFLAGS", settings[:ldflags]
@@ -148,13 +156,6 @@ component "facter" do |pkg, settings, platform|
     boost_static_flag = "-DBOOST_STATIC=OFF"
     yamlcpp_static_flag = "-DYAMLCPP_STATIC=OFF"
     special_flags += " -DENABLE_CXX_WERROR=OFF -DCMAKE_CXX_FLAGS='#{settings[:cflags]}'"
-  else
-    toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/pl-build-toolchain.cmake"
-    cmake = "/opt/pl-build-tools/bin/cmake"
-
-    if platform.is_cisco_wrlinux?
-      special_flags += " -DLEATHERMAN_USE_LOCALES=OFF"
-    end
   end
 
   # In PE, aio_agent_version is distinguished from aio_agent_build by not including the git sha.
@@ -220,7 +221,7 @@ component "facter" do |pkg, settings, platform|
   end
 
   # Disable tests for platforms that use the default OS toolchain
-  unless platform.name =~ /sles-15|el-8|debian-10/ || platform.is_fedora?
+  if platform.name =~ /cisco-wrlinux-[57]|debian-[89]|el-[567]|eos-4|redhatfips-7|sles-(:?11|12)|ubuntu-(:?14.04|16.04|18.04)/ || !platform.is_linux?
     pkg.check do
       tests
     end

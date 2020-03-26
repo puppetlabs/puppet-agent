@@ -24,11 +24,11 @@ component "runtime" do |pkg, settings, platform|
     pkg.build_requires "pl-pdcurses-#{platform.architecture}"
     # We only need zlib because curl is dynamically linking against zlib
     pkg.build_requires "pl-zlib-#{platform.architecture}"
-  elsif platform.name =~ /sles-15|el-8|debian-10/ || platform.is_macos? || platform.is_fedora?
+  elsif platform.name =~ /cisco-wrlinux-[57]|debian-[89]|el-[567]|eos-4|redhatfips-7|sles-(:?11|12)|ubuntu-(:?14.04|16.04|18.04)/
+    pkg.build_requires "pl-gcc"
+  else
     # These platforms use their default OS toolchain and have package
     # dependencies configured in the platform provisioning step.
-  else
-    pkg.build_requires "pl-gcc"
   end
 
   if platform.is_cross_compiled?

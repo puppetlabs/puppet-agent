@@ -30,19 +30,21 @@ component "libwhereami" do |pkg, settings, platform|
     cmake = "C:/ProgramData/chocolatey/bin/cmake.exe -G \"MinGW Makefiles\""
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=#{settings[:tools_root]}/pl-build-toolchain.cmake"
     boost_static_flag = "-DBOOST_STATIC=ON"
-  elsif platform.name =~ /sles-15|el-8|debian-10/ || platform.is_fedora?
-    # These platforms use the default OS toolchain, rather than pl-build-tools
-    cmake = "cmake"
-    toolchain = ""
-    boost_static_flag = "-DBOOST_STATIC=OFF"
-    special_flags = " -DENABLE_CXX_WERROR=OFF " if platform.name =~ /el-8|debian-10/ || platform.is_fedora?
-  else
+
+  elsif platform.name =~ /cisco-wrlinux-[57]|debian-[89]|el-[567]|eos-4|redhatfips-7|sles-(:?11|12)|ubuntu-(:?14.04|16.04|18.04)/ ||
+        platform.is_aix?
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/pl-build-toolchain.cmake"
     cmake = "/opt/pl-build-tools/bin/cmake"
 
     if platform.is_cisco_wrlinux?
       special_flags = "-DLEATHERMAN_USE_LOCALES=OFF"
     end
+  else
+    # These platforms use the default OS toolchain, rather than pl-build-tools
+    cmake = "cmake"
+    toolchain = ""
+    boost_static_flag = "-DBOOST_STATIC=OFF"
+    special_flags = " -DENABLE_CXX_WERROR=OFF " unless platform.name =~ /sles-15/
   end
 
   # Until we build our own gettext packages, disable using locales.
