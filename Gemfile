@@ -11,7 +11,8 @@ def location_for(place)
 end
 
 gem 'vanagon', *location_for(ENV['VANAGON_LOCATION'] || '~> 0.15.17')
-gem 'packaging', *location_for(ENV['PACKAGING_LOCATION'] || '~> 0.99.43')
+gem 'packaging', :git => 'https://github.com/ciprianbadescu/packaging.git', :ref => 'PA-3129/add-ubuntu-2004'
+# gem 'packaging', *location_for(ENV['PACKAGING_LOCATION'] || '~> 0.99.43')
 gem 'artifactory'
 gem 'rake'
 gem 'json'
