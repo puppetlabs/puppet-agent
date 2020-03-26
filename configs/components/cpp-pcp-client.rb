@@ -41,7 +41,9 @@ component "cpp-pcp-client" do |pkg, settings, platform|
 
     cmake = "C:/ProgramData/chocolatey/bin/cmake.exe -G \"MinGW Makefiles\""
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=#{settings[:tools_root]}/pl-build-toolchain.cmake"
-  elsif platform.name =~ /sles-15|el-8|debian-10/ || platform.is_fedora?
+  elsif platform.name =~ /debian-[89]|el-[567]|redhatfips-7|sles-(:?11|12)|ubuntu-(:?14.04|16.04|18.04)/
+    # use default that is pl-build-tools
+  else
     # These platforms use the default OS toolchain, rather than pl-build-tools
     pkg.environment "CPPFLAGS", settings[:cppflags]
     pkg.environment "LDFLAGS", settings[:ldflags]
@@ -49,8 +51,6 @@ component "cpp-pcp-client" do |pkg, settings, platform|
     toolchain = ""
     platform_flags = "-DCMAKE_CXX_FLAGS='#{settings[:cflags]} -Wimplicit-fallthrough=0'"
     special_flags = " -DENABLE_CXX_WERROR=OFF"
-  elsif platform.is_cisco_wrlinux?
-    platform_flags = "-DLEATHERMAN_USE_LOCALES=OFF"
   end
 
   pkg.configure do

@@ -12,10 +12,7 @@ component "puppet" do |pkg, settings, platform|
     pkg.build_requires "pl-gettext-#{platform.architecture}"
   elsif platform.is_aix?
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-gettext-0.19.8-2.aix#{platform.os_version}.ppc.rpm"
-  elsif platform.name =~ /sles-15|el-8|debian-10/ || platform.is_fedora?
-    # These platforms use their default OS toolchain and have package
-    # dependencies configured in the platform provisioning step.
-  elsif !platform.is_solaris?
+  elsif platform.name =~ /debian-[89]|el-[567]|redhatfips-7|sles-(:?11|12)|ubuntu-(:?14.04|16.04|18.04)/
     pkg.build_requires "pl-gettext"
   end
 
@@ -110,10 +107,11 @@ component "puppet" do |pkg, settings, platform|
       msgfmt = "/cygdrive/c/tools/pl-build-tools/bin/msgfmt.exe"
     elsif platform.is_macos?
       msgfmt = "/usr/local/opt/gettext/bin/msgfmt"
-    elsif platform.name =~ /sles-15|el-8|debian-10/ || platform.is_fedora?
-      msgfmt = "msgfmt"
-    else
+    elsif platform.name =~ /debian-[89]|el-[567]|redhatfips-7|sles-(:?11|12)|ubuntu-(:?14.04|16.04|18.04)/ ||
+          platform.is_aix?
       msgfmt = "/opt/pl-build-tools/bin/msgfmt"
+    else
+      msgfmt = "msgfmt"
     end
     pkg.configure do
       ["for dir in ./locales/*/ ; do [ -d \"$${dir}\" ] || continue ; [ -d \"$${dir}/LC_MESSAGES\" ] || /bin/mkdir \"$${dir}/LC_MESSAGES\" ; #{msgfmt} \"$${dir}/puppet.po\" -o \"$${dir}/LC_MESSAGES/puppet.mo\" ; done ;",]
