@@ -18,16 +18,14 @@ component "leatherman" do |pkg, settings, platform|
     pkg.build_requires "cmake"
     pkg.build_requires "pl-toolchain-#{platform.architecture}"
     pkg.build_requires "pl-gettext-#{platform.architecture}"
-  elsif platform.name =~ /sles-15|el-8|debian-10/ || platform.is_fedora?
-    # These platforms use their default OS toolchain and have package
-    # dependencies configured in the platform provisioning step.
-  else
+  elsif platform.name =~ /debian-[89]|el-[567]|redhatfips-7|sles-(:?11|12)|ubuntu-(:?14.04|16.04|18.04)/
     pkg.build_requires "pl-cmake"
     pkg.build_requires "pl-gettext"
   end
 
   pkg.build_requires "puppet-runtime" # Provides curl and ruby
-  pkg.build_requires "runtime" unless platform.name =~ /sles-15|el-8|debian-10/ || platform.is_fedora?
+  pkg.build_requires "runtime" if platform.name =~ /debian-[89]|el-[567]|redhatfips-7|sles-(:?11|12)|ubuntu-(:?14.04|16.04|18.04)/ ||
+                                  !platform.is_linux?
 
   ruby = "#{settings[:host_ruby]} -rrbconfig"
 
@@ -68,7 +66,11 @@ component "leatherman" do |pkg, settings, platform|
 
     # Use environment variable set in environment.bat to find locale files
     leatherman_locale_var = "-DLEATHERMAN_LOCALE_VAR='PUPPET_DIR' -DLEATHERMAN_LOCALE_INSTALL='share/locale'"
-  elsif platform.name =~ /sles-15|el-8|debian-10/ || platform.is_fedora?
+  elsif platform.name =~ /debian-[89]|el-[567]|redhatfips-7|sles-(:?11|12)|ubuntu-(:?14.04|16.04|18.04)/ ||
+        platform.is_aix?
+    toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/pl-build-toolchain.cmake"
+    cmake = "/opt/pl-build-tools/bin/cmake"
+  else
     # These platforms use the default OS toolchain, rather than pl-build-tools
     pkg.environment "CPPFLAGS", settings[:cppflags]
     pkg.environment "LDFLAGS", settings[:ldflags]
@@ -78,13 +80,6 @@ component "leatherman" do |pkg, settings, platform|
 
     # Workaround for hanging leatherman tests (-fno-strict-overflow)
     special_flags = " -DENABLE_CXX_WERROR=OFF -DCMAKE_CXX_FLAGS='#{settings[:cflags]} -fno-strict-overflow' "
-  else
-    toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/pl-build-toolchain.cmake"
-    cmake = "/opt/pl-build-tools/bin/cmake"
-
-    if platform.is_cisco_wrlinux?
-      special_flags = "-DLEATHERMAN_USE_LOCALES=OFF"
-    end
   end
 
   if platform.is_linux?
