@@ -19,6 +19,7 @@ platform "windowsfips-2012r2-x64" do |plat|
   plat.provision_with "C:/ProgramData/chocolatey/bin/choco.exe sources remove -name chocolatey"
 
   plat.provision_with "C:/ProgramData/chocolatey/bin/choco.exe install -y mingw-w64 -version 5.2.0 -debug --no-progress"
+  plat.provision_with "C:/ProgramData/chocolatey/bin/choco.exe install -y pl-toolchain-x64 -version 2015.12.01.1 -debug --no-progress"
 
   #FIXME we need Fips Compliant Wix, currently not in choco repositories
   #plat.provision_with "C:/ProgramData/chocolatey/bin/choco.exe install -y Wix310 -version 3.10.2 -debug -x86 --no-progress"
