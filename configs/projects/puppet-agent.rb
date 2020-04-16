@@ -5,14 +5,16 @@ project "puppet-agent" do |proj|
   # - Modifications to global settings like flags and target directories should be made in puppet-runtime.
   # - Settings included in this file should apply only to local components in this repository.
   runtime_details = JSON.parse(File.read('configs/components/puppet-runtime.json'))
+  agent_branch = '5.5.x'
 
   settings[:puppet_runtime_version] = runtime_details['version']
   settings[:puppet_runtime_location] = runtime_details['location']
-  settings[:puppet_runtime_basename] = "agent-runtime-5.5.x-#{runtime_details['version']}.#{platform.name}"
+  settings[:puppet_runtime_basename] = "agent-runtime-#{agent_branch}-#{runtime_details['version']}.#{platform.name}"
 
   settings_uri = File.join(runtime_details['location'], "#{proj.settings[:puppet_runtime_basename]}.settings.yaml")
   sha1sum_uri = "#{settings_uri}.sha1"
-  proj.inherit_yaml_settings(settings_uri, sha1sum_uri)
+  metadata_uri = File.join(runtime_details['location'], "#{runtime_details['version']}.build_metadata.agent-runtime-#{agent_branch}.#{platform.name}.json")
+  proj.inherit_yaml_settings(settings_uri, sha1sum_uri, metadata_uri: metadata_uri)
 
   # (PA-678) pe-r10k versions prior to 2.5.0.0 ship gettext gems.
   # Since we also ship those gems as part of puppet-agent
