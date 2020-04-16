@@ -9,7 +9,6 @@ component "facter-precompiled-gem" do |pkg, settings, platform|
     pkg.build_requires "yaml-cpp"
   elsif platform.is_windows?
     pkg.build_requires "cmake"
-    pkg.build_requires "pl-toolchain-#{platform.architecture}"
     pkg.build_requires "pl-boost-#{platform.architecture}"
     pkg.build_requires "pl-yaml-cpp-#{platform.architecture}"
   else
