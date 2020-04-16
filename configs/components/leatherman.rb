@@ -21,7 +21,6 @@ component "leatherman" do |pkg, settings, platform|
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-boost-1.58.0-1.aix#{platform.os_version}.ppc.rpm"
   elsif platform.is_windows?
     pkg.build_requires "cmake"
-    pkg.build_requires "pl-toolchain-#{platform.architecture}"
     pkg.build_requires "pl-boost-#{platform.architecture}"
   else
     pkg.build_requires "pl-gcc"
