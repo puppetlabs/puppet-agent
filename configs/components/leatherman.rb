@@ -16,7 +16,6 @@ component "leatherman" do |pkg, settings, platform|
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/6.1/ppc/pl-gettext-0.19.8-2.aix6.1.ppc.rpm"
   elsif platform.is_windows?
     pkg.build_requires "cmake"
-    pkg.build_requires "pl-toolchain-#{platform.architecture}"
     pkg.build_requires "pl-gettext-#{platform.architecture}"
   elsif platform.name =~ /sles-15|el-8|debian-10/ || platform.is_fedora?
     # These platforms use their default OS toolchain and have package
