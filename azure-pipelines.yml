@@ -8,12 +8,12 @@ pr:
     - '*'
 
 pool:
-  # self-hosted agent on Windows 10 1903 environment
-  # includes newer Docker engine with LCOW enabled, new build of LCOW image
-  # includes Ruby 2.5, Go 1.10, Node.js 10.10
+  # self-hosted agent on Windows 10 2004 / WSL2 environment
+  # includes Ruby 2.5
   name: Default
 
 variables:
+  DOCKER_BUILDKIT: 1
   NAMESPACE: puppet
   CONTAINER_NAME: puppet-agent-ubuntu
   CONTAINER_NAME2: puppet-agent-alpine
@@ -68,9 +68,8 @@ steps:
     . ./docker/ci/build.ps1
     Build-Container -Namespace $ENV:NAMESPACE -Base 'alpine'
   displayName: Build $(CONTAINER_NAME2) Container
-  timeoutInMinutes: 20
+  timeoutInMinutes: 40
   name: build_alpine_container
-  enabled: false
 
 - powershell: |
     . "$(bundle show pupperware)/ci/build.ps1"
@@ -91,7 +90,6 @@ steps:
   displayName: Test $(CONTAINER_NAME2)
   timeoutInMinutes: 5
   name: test_alpine_container
-  enabled: false
 
 - task: PublishTestResults@2
   displayName: Publish $(CONTAINER_NAME) test results
@@ -102,7 +100,6 @@ steps:
 
 - task: PublishTestResults@2
   displayName: Publish $(CONTAINER_NAME2) test results
-  enabled: false
   inputs:
     testResultsFormat: 'JUnit'
     testResultsFiles: 'docker/TEST-*.xml'
