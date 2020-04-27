@@ -8,16 +8,18 @@ pr:
     - '*'
 
 pool:
-  # self-hosted agent on Windows 10 1903 environment
-  # includes newer Docker engine with LCOW enabled, new build of LCOW image
-  # includes Ruby 2.5, Go 1.10, Node.js 10.10
+  # self-hosted agent on Windows 10 2004 / WSL2 environment
+  # includes Ruby 2.5
   name: Default
 
 variables:
+  DOCKER_BUILDKIT: 1
   NAMESPACE: puppet
   CONTAINER_NAME: puppet-agent-ubuntu
+  CONTAINER_BUILD_PATH: .
   CONTAINER_NAME2: puppet-agent-alpine
   LINT_IGNORES: DL3008 DL3018 DL4000 DL4001 DL3028
+  BUILD_OPTIONS: --memory 3g
 
 workspace:
   clean: resources
@@ -58,19 +60,18 @@ steps:
   name: lint_dockerfile
 
 - powershell: |
-    . ./docker/ci/build.ps1
-    Build-Container -Namespace $ENV:NAMESPACE -Base 'ubuntu'
+    . "$(bundle show pupperware)/ci/build.ps1"
+    Build-Container -Name $ENV:CONTAINER_NAME -Namespace $ENV:NAMESPACE -AdditionalOptions ($ENV:BUILD_OPTIONS -split ' ')
   displayName: Build $(CONTAINER_NAME) Container
   timeoutInMinutes: 5
   name: build_container
 
 - powershell: |
-    . ./docker/ci/build.ps1
-    Build-Container -Namespace $ENV:NAMESPACE -Base 'alpine'
+    . "$(bundle show pupperware)/ci/build.ps1"
+    Build-Container -Name $ENV:CONTAINER_NAME2 -Namespace $ENV:NAMESPACE -PathOrUri $ENV:CONTAINER_BUILD_PATH -AdditionalOptions ($ENV:BUILD_OPTIONS -split ' ')
   displayName: Build $(CONTAINER_NAME2) Container
-  timeoutInMinutes: 20
+  timeoutInMinutes: 40
   name: build_alpine_container
-  enabled: false
 
 - powershell: |
     . "$(bundle show pupperware)/ci/build.ps1"
@@ -91,7 +92,6 @@ steps:
   displayName: Test $(CONTAINER_NAME2)
   timeoutInMinutes: 5
   name: test_alpine_container
-  enabled: false
 
 - task: PublishTestResults@2
   displayName: Publish $(CONTAINER_NAME) test results
@@ -102,7 +102,6 @@ steps:
 
 - task: PublishTestResults@2
   displayName: Publish $(CONTAINER_NAME2) test results
-  enabled: false
   inputs:
     testResultsFormat: 'JUnit'
     testResultsFiles: 'docker/TEST-*.xml'

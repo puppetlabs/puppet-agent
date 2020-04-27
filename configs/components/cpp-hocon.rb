@@ -29,7 +29,11 @@ component "cpp-hocon" do |pkg, settings, platform|
 
     cmake = "C:/ProgramData/chocolatey/bin/cmake.exe -G \"MinGW Makefiles\""
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=#{settings[:tools_root]}/pl-build-toolchain.cmake"
-  elsif platform.name =~ /sles-15|el-8|debian-10/ || platform.is_fedora?
+  elsif platform.name =~ /debian-[89]|el-[567]|redhatfips-7|sles-(:?11|12)|ubuntu-(:?14.04|16.04|18.04)/ ||
+        platform.is_aix?
+    toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/pl-build-toolchain.cmake"
+    cmake = "/opt/pl-build-tools/bin/cmake"
+  else
     # These platforms use the default OS toolchain, rather than pl-build-tools
     pkg.environment "CPPFLAGS", settings[:cppflags]
     pkg.environment "LDFLAGS", settings[:ldflags]
@@ -37,13 +41,6 @@ component "cpp-hocon" do |pkg, settings, platform|
     toolchain = ""
     boost_static_flag = "-DBOOST_STATIC=OFF"
     special_flags = " -DENABLE_CXX_WERROR=OFF -DCMAKE_CXX_FLAGS='#{settings[:cflags]}'"
-  else
-    toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/pl-build-toolchain.cmake"
-    cmake = "/opt/pl-build-tools/bin/cmake"
-
-    if platform.is_cisco_wrlinux?
-      special_flags = "-DLEATHERMAN_USE_LOCALES=OFF"
-    end
   end
 
   # Until we build our own gettext packages, disable using locales.
