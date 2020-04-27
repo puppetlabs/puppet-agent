@@ -12,7 +12,7 @@ WORKDIR /workspace
 RUN sed -i -e 's/sys\/poll/poll/' /usr/include/boost/asio/detail/socket_types.hpp
 
 COPY configs/components/leatherman.json /workspace
-RUN git clone -b 1.5.x https://github.com/puppetlabs/leatherman && \
+RUN git clone -b master https://github.com/puppetlabs/leatherman && \
     mkdir -p /workspace/leatherman/build
 WORKDIR /workspace/leatherman/build
 RUN git checkout "$(jq .ref /workspace/leatherman.json | tr -d \")" && \
