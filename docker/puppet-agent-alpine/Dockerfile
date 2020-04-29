@@ -172,7 +172,6 @@ RUN apk add --no-cache \
     boost-regex \
     boost-thread
 
-COPY --from=build /usr/lib/ruby/vendor_ruby /usr/lib/ruby/vendor_ruby
 COPY --from=build /etc/puppetlabs /etc/puppetlabs
 COPY --from=build /opt/puppetlabs /opt/puppetlabs
 COPY --from=build /usr/lib/ruby/gems /usr/lib/ruby/gems
