@@ -68,9 +68,9 @@ RUN git checkout "$(jq .ref /workspace/pxp-agent.json | tr -d \")" && \
     cmake .. $CMAKE_SHARED_OPTIONS ; make ; make install
 
 # hadolint ignore=DL3018,DL3028
-RUN apk add --no-cache augeas ruby-augeas libressl-dev && \
+RUN apk add --no-cache augeas ruby-augeas ruby-etc ruby-json ruby-multi_json libressl-dev && \
 # hadolint ignore=DL3028
-    gem install --no-rdoc --no-ri deep_merge json etc semantic_puppet puppet-resource_api multi_json locale httpclient fast_gettext concurrent-ruby
+    gem install --no-rdoc --no-ri deep_merge semantic_puppet puppet-resource_api locale httpclient fast_gettext concurrent-ruby
 
 WORKDIR /workspace
 RUN curl -O -L https://people.redhat.com/~rjones/virt-what/files/virt-what-1.18.tar.gz && \
@@ -150,7 +150,9 @@ RUN apk add --no-cache \
     curl \
     shadow \
     yaml-cpp \
+    ruby-etc \
     ruby-json \
+    ruby-multi_json \
     ruby-augeas \
     boost-random \
     boost-iostreams \
