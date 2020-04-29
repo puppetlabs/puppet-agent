@@ -127,7 +127,6 @@ FROM alpine:3.8
 ARG version=6.0.0
 ARG vcs_ref
 ARG build_date
-ARG PUPPET_AGENT_VERSION="$version"
 
 ENV PATH="/opt/puppetlabs/bin:$PATH"
 
@@ -136,7 +135,7 @@ LABEL org.label-schema.maintainer="Puppet Release Team <release@puppet.com>" \
       org.label-schema.url="https://github.com/puppetlabs/puppet-agent" \
       org.label-schema.name="Puppet Agent (Alpine)" \
       org.label-schema.license="Apache-2.0" \
-      org.label-schema.version="$PUPPET_AGENT_VERSION" \
+      org.label-schema.version="$version" \
       org.label-schema.vcs-url="https://github.com/puppetlabs/puppet-agent" \
       org.label-schema.vcs-ref="$vcs_ref" \
       org.label-schema.build-date="$build_date" \
