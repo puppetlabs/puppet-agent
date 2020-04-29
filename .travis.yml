@@ -28,7 +28,7 @@ matrix:
       language: ruby
       rvm: 2.5.5
       env:
-        - DOCKER_COMPOSE_VERSION=1.24.0
+        - DOCKER_COMPOSE_VERSION=1.25.5
         # necessary to prevent overwhelming TravisCI build output limits
         - DOCKER_BUILD_FLAGS="--progress plain"
       script:
