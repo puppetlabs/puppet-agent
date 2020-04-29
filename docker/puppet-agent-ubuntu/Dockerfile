@@ -18,15 +18,13 @@ LABEL org.label-schema.maintainer="Puppet Release Team <release@puppet.com>" \
       org.label-schema.schema-version="1.0" \
       org.label-schema.dockerfile="/Dockerfile"
 
+ADD https://apt.puppetlabs.com/puppet6-release-"$UBUNTU_CODENAME".deb /puppet6.deb
+
 # hadolint ignore=DL3008
-RUN apt-get update && \
-    apt-get install --no-install-recommends -y wget ca-certificates lsb-release && \
-    wget https://apt.puppetlabs.com/puppet6-release-"$UBUNTU_CODENAME".deb && \
-    dpkg -i puppet6-release-"$UBUNTU_CODENAME".deb && \
-    rm puppet6-release-"$UBUNTU_CODENAME".deb && \
+RUN dpkg -i /puppet6.deb && \
+    rm /puppet6.deb && \
     apt-get update && \
-    apt-get install --no-install-recommends -y puppet-agent="$PUPPET_AGENT_VERSION"-1"$UBUNTU_CODENAME" && \
-    apt-get remove --purge -y wget && \
+    apt-get install --no-install-recommends -y ca-certificates lsb-release puppet-agent="$PUPPET_AGENT_VERSION"-1"$UBUNTU_CODENAME" && \
     apt-get autoremove -y && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
