@@ -1,5 +1,6 @@
 FROM alpine:3.8 as build
 
+# hadolint ignore=DL3018
 RUN apk add --no-cache cmake boost-dev make curl git curl-dev ruby ruby-dev gcc g++ yaml-cpp-dev jq openjdk8
 
 ENV JAVA_HOME /usr/lib/jvm/java-1.8-openjdk
@@ -65,7 +66,9 @@ WORKDIR /workspace/pxp-agent/build
 RUN git checkout "$(jq .ref /workspace/pxp-agent.json | tr -d \")"
 RUN cmake .. $CMAKE_SHARED_OPTIONS ; make ; make install
 
+# hadolint ignore=DL3018
 RUN apk add --no-cache augeas ruby-augeas libressl-dev
+# hadolint ignore=DL3028
 RUN gem install --no-rdoc --no-ri deep_merge json etc semantic_puppet puppet-resource_api multi_json locale httpclient fast_gettext concurrent-ruby
 
 WORKDIR /workspace
@@ -140,6 +143,7 @@ LABEL org.label-schema.maintainer="Puppet Release Team <release@puppet.com>" \
       org.label-schema.schema-version="1.0" \
       org.label-schema.dockerfile="/Dockerfile"
 
+# hadolint ignore=DL3018
 RUN apk add --no-cache \
     bash \
     ruby \
