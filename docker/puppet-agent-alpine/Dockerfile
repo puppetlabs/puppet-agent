@@ -5,8 +5,6 @@ ENV JAVA_HOME=/usr/lib/jvm/java-1.8-openjdk
 ENV PATH=$PATH:$JAVA_HOME/jre/bin:$JAVA_HOME/bin \
     CMAKE_SHARED_OPTIONS='-DCMAKE_PREFIX_PATH=/opt/puppetlabs/puppet -DCMAKE_INSTALL_PREFIX=/opt/puppetlabs/puppet -DCMAKE_INSTALL_RPATH=/opt/puppetlabs/puppet/lib -DCMAKE_VERBOSE_MAKEFILE=ON'
 
-SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
-
 # hadolint ignore=DL3018,DL3028
 RUN apk add --no-cache cmake boost-dev make curl git curl-dev ruby ruby-dev gcc g++ yaml-cpp-dev jq openjdk8 augeas ruby-augeas ruby-etc ruby-json ruby-multi_json libressl-dev && \
     gem install --no-rdoc --no-ri deep_merge semantic_puppet puppet-resource_api locale httpclient fast_gettext concurrent-ruby
@@ -19,7 +17,7 @@ COPY configs/components/leatherman.json /workspace
 RUN git clone -b master https://github.com/puppetlabs/leatherman && \
     mkdir -p /workspace/leatherman/build
 WORKDIR /workspace/leatherman/build
-RUN git checkout "$(jq .ref /workspace/leatherman.json | tr -d \")" && \
+RUN git checkout "$(jq -r .ref /workspace/leatherman.json)" && \
     cmake .. -DBOOST_STATIC=OFF -DCMAKE_VERBOSE_MAKEFILE=ON ; make ; make install
 
 WORKDIR /workspace
@@ -28,7 +26,7 @@ COPY configs/components/libwhereami.json /workspace
 RUN git clone https://github.com/puppetlabs/libwhereami && \
     mkdir -p /workspace/libwhereami/build
 WORKDIR /workspace/libwhereami/build
-RUN git checkout "$(jq .ref /workspace/libwhereami.json | tr -d \")" && \
+RUN git checkout "$(jq -r .ref /workspace/libwhereami.json)" && \
     cmake $CMAKE_SHARED_OPTIONS -DBOOST_STATIC=OFF ..; make ; make install
 
 WORKDIR /workspace
@@ -37,7 +35,7 @@ COPY configs/components/cpp-hocon.json /workspace
 RUN git clone https://github.com/puppetlabs/cpp-hocon && \
     mkdir -p /workspace/cpp-hocon/build
 WORKDIR /workspace/cpp-hocon/build
-RUN git checkout "$(jq .ref /workspace/cpp-hocon.json | tr -d \")" && \
+RUN git checkout "$(jq -r .ref /workspace/cpp-hocon.json)" && \
     cmake $CMAKE_SHARED_OPTIONS -DBOOST_STATIC=OFF ..; make ; make install
 
 WORKDIR /workspace
@@ -47,7 +45,7 @@ COPY configs/components/facter.json /workspace
 RUN git clone https://github.com/puppetlabs/facter && \
     mkdir -p /workspace/facter/build
 WORKDIR /workspace/facter/build
-RUN git checkout "$(jq .ref /workspace/facter.json | tr -d \")" && \
+RUN git checkout "$(jq -r .ref /workspace/facter.json)" && \
     cmake /lib $CMAKE_SHARED_OPTIONS -DRUBY_LIB_INSTALL=/usr/lib/ruby/vendor_ruby ..; make ; make install
 
 WORKDIR /workspace
@@ -56,7 +54,7 @@ COPY configs/components/cpp-pcp-client.json /workspace
 RUN git clone https://github.com/puppetlabs/cpp-pcp-client && \
     mkdir -p /workspace/cpp-pcp-client/build
 WORKDIR /workspace/cpp-pcp-client/build
-RUN git checkout "$(jq .ref /workspace/cpp-pcp-client.json | tr -d \")" && \
+RUN git checkout "$(jq -r .ref /workspace/cpp-pcp-client.json)" && \
     cmake .. $CMAKE_SHARED_OPTIONS ; make ; make install
 
 WORKDIR /workspace
@@ -65,7 +63,7 @@ COPY configs/components/pxp-agent.json /workspace
 RUN git clone https://github.com/puppetlabs/pxp-agent && \
     mkdir -p /workspace/pxp-agent/build
 WORKDIR /workspace/pxp-agent/build
-RUN git checkout "$(jq .ref /workspace/pxp-agent.json | tr -d \")" && \
+RUN git checkout "$(jq -r .ref /workspace/pxp-agent.json)" && \
     cmake .. $CMAKE_SHARED_OPTIONS ; make ; make install
 
 WORKDIR /workspace
@@ -82,14 +80,14 @@ WORKDIR /workspace
 COPY configs/components/hiera.json /workspace
 RUN git clone https://github.com/puppetlabs/hiera
 WORKDIR /workspace/hiera
-RUN git checkout "$(jq .ref /workspace/hiera.json | tr -d \")" && \
+RUN git checkout "$(jq -r .ref /workspace/hiera.json)" && \
     ./install.rb --no-configs --bindir=/opt/puppetlabs/puppet/bin --sitelibdir=/usr/lib/ruby/vendor_ruby
 
 WORKDIR /workspace
 COPY configs/components/puppet.json /workspace
 RUN git clone https://github.com/puppetlabs/puppet
 WORKDIR /workspace/puppet
-RUN git checkout "$(jq .ref /workspace/puppet.json | tr -d \")" && \
+RUN git checkout "$(jq -r .ref /workspace/puppet.json)" && \
     ./install.rb --bindir=/opt/puppetlabs/puppet/bin --configdir=/etc/puppetlabs/puppet --sitelibdir=/usr/lib/ruby/vendor_ruby --codedir=/etc/puppetlabs/code --vardir=/opt/puppetlabs/puppet/cache --logdir=/var/log/puppetlabs/puppet --rundir=/var/run/puppetlabs --quick
 
 RUN mkdir -p /opt/puppetlabs/bin && \
