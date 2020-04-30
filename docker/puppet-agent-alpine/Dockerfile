@@ -10,7 +10,7 @@ ENV PATH=$PATH:$JAVA_HOME/jre/bin:$JAVA_HOME/bin \
     CMAKE_SHARED_OPTIONS='-DCMAKE_PREFIX_PATH=/opt/puppetlabs/puppet -DCMAKE_INSTALL_PREFIX=/opt/puppetlabs/puppet -DCMAKE_INSTALL_RPATH=/opt/puppetlabs/puppet/lib -DCMAKE_VERBOSE_MAKEFILE=ON'
 
 # hadolint ignore=DL3018,DL3028
-RUN apk add --no-cache cmake boost-dev make curl git curl-dev ruby ruby-dev gcc g++ yaml-cpp-dev jq openjdk8 augeas ruby-augeas ruby-etc ruby-json ruby-multi_json libressl-dev && \
+RUN apk add --no-cache cmake boost-dev make curl git curl-dev ruby ruby-dev gcc g++ yaml-cpp-dev jq openjdk8 augeas ruby-augeas ruby-etc ruby-json ruby-multi_json libressl-dev virt-what && \
     gem install --no-rdoc --no-ri deep_merge semantic_puppet puppet-resource_api locale httpclient fast_gettext concurrent-ruby
 
 RUN mkdir /workspace && \
@@ -116,20 +116,10 @@ RUN git checkout "$(jq -r .ref /workspace/pxp-agent.json)" && \
 # puppet (install from source)
 #   depends on facter -> cpp-hocon
 #                        libwhereami -> leatherman
-#   builds virt-what
 #   installs hiera
 ######################################################
 
 FROM facter as puppet
-
-WORKDIR /workspace
-RUN curl -O -L https://people.redhat.com/~rjones/virt-what/files/virt-what-1.18.tar.gz && \
-    tar zxf virt-what-1.18.tar.gz
-
-WORKDIR /workspace/virt-what-1.18
-RUN ./configure && \
-    make && \
-    make install
 
 WORKDIR /workspace
 
@@ -172,10 +162,9 @@ RUN puppet config set confdir /etc/puppetlabs/puppet && \
     puppet module install puppetlabs-apk
 
 ######################################################
-# finall (assemble prior stages)
+# final (assemble prior stages)
 #   depends on puppet -> facter -> cpp-hocon
 #                                  libwhereami -> leatherman
-#                        virt-what
 #                        hiera
 #   depends on pxp-agent -> cpp-hocon -> leatherman (file COPY)
 #                           cpp-pcp-client
@@ -230,7 +219,8 @@ RUN apk add --no-cache \
     boost-filesystem \
     boost-prg_exec_monitor \
     boost-regex \
-    boost-thread
+    boost-thread \
+    virt-what
 
 COPY --from=pxp-agent /opt/puppetlabs /opt/puppetlabs
 COPY --from=puppet /etc/puppetlabs /etc/puppetlabs
