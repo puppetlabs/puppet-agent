@@ -4,7 +4,7 @@ services:
   # bionic uses 18.06 but need 19.03+ so upgrade later in relevant cell
   - docker
 git:
-  depth: 150
+  depth: 250
 language: ruby
 bundler_args: --jobs 4 --retry 2 --without packaging documentation
 before_install:
