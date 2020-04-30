@@ -1,3 +1,7 @@
+######################################################
+# build tooling
+######################################################
+
 FROM alpine:3.8 as build
 
 # note: JAVA_HOME cannot be defined in the same ENV block it's used in
@@ -11,6 +15,12 @@ RUN apk add --no-cache cmake boost-dev make curl git curl-dev ruby ruby-dev gcc 
 
 RUN mkdir /workspace && \
     sed -i -e 's/sys\/poll/poll/' /usr/include/boost/asio/detail/socket_types.hpp
+
+######################################################
+# leatherman (build from source)
+######################################################
+
+FROM build as leatherman
 WORKDIR /workspace
 
 COPY configs/components/leatherman.json /workspace
@@ -19,43 +29,78 @@ RUN git clone -b master https://github.com/puppetlabs/leatherman && \
 WORKDIR /workspace/leatherman/build
 RUN git checkout "$(jq -r .ref /workspace/leatherman.json)" && \
     cmake .. -DBOOST_STATIC=OFF -DCMAKE_VERBOSE_MAKEFILE=ON ; make ; make install
+WORKDIR /workspace
 
+######################################################
+# libwhereami (build from source)
+#   depends on leatherman
+######################################################
+
+FROM leatherman as libwhereami
 WORKDIR /workspace
 
 COPY configs/components/libwhereami.json /workspace
 RUN git clone https://github.com/puppetlabs/libwhereami && \
     mkdir -p /workspace/libwhereami/build
 WORKDIR /workspace/libwhereami/build
+# hadolint ignore=SC2086
 RUN git checkout "$(jq -r .ref /workspace/libwhereami.json)" && \
     cmake $CMAKE_SHARED_OPTIONS -DBOOST_STATIC=OFF ..; make ; make install
 
+######################################################
+# cpp-hocon (build from source)
+#   depends on leatherman
+######################################################
+
+FROM leatherman as cpp-hocon
 WORKDIR /workspace
 
 COPY configs/components/cpp-hocon.json /workspace
 RUN git clone https://github.com/puppetlabs/cpp-hocon && \
     mkdir -p /workspace/cpp-hocon/build
 WORKDIR /workspace/cpp-hocon/build
+# hadolint ignore=SC2086
 RUN git checkout "$(jq -r .ref /workspace/cpp-hocon.json)" && \
     cmake $CMAKE_SHARED_OPTIONS -DBOOST_STATIC=OFF ..; make ; make install
 
-WORKDIR /workspace
+######################################################
+# facter (build from source)
+#   depends on cpp-hocon -> leatherman
+#   depends on libwhereami (file COPY)
+######################################################
 
+FROM cpp-hocon as facter
+WORKDIR /workspace
+# wait for libwhereami to compile to /opt/puppetlabs/puppet/lib/libwhereami.a
+COPY --from=libwhereami /opt/puppetlabs /opt/puppetlabs
 COPY configs/components/facter.json /workspace
 
 RUN git clone https://github.com/puppetlabs/facter && \
     mkdir -p /workspace/facter/build
 WORKDIR /workspace/facter/build
+# hadolint ignore=SC2086
 RUN git checkout "$(jq -r .ref /workspace/facter.json)" && \
     cmake /lib $CMAKE_SHARED_OPTIONS -DRUBY_LIB_INSTALL=/usr/lib/ruby/vendor_ruby ..; make ; make install
 
+######################################################
+# pxp-agent (build from source)
+#   depends on cpp-hocon -> leatherman (file COPY)
+#   builds cpp-pcp-client
+######################################################
+
+FROM leatherman as pxp-agent
 WORKDIR /workspace
 
 COPY configs/components/cpp-pcp-client.json /workspace
 RUN git clone https://github.com/puppetlabs/cpp-pcp-client && \
     mkdir -p /workspace/cpp-pcp-client/build
 WORKDIR /workspace/cpp-pcp-client/build
+# hadolint ignore=SC2086
 RUN git checkout "$(jq -r .ref /workspace/cpp-pcp-client.json)" && \
     cmake .. $CMAKE_SHARED_OPTIONS ; make ; make install
+
+# wait for cpp-hocon to compile to /opt/puppetlabs/puppet/lib/libcpp-hocon.a
+COPY --from=cpp-hocon /opt/puppetlabs /opt/puppetlabs
 
 WORKDIR /workspace
 
@@ -63,8 +108,19 @@ COPY configs/components/pxp-agent.json /workspace
 RUN git clone https://github.com/puppetlabs/pxp-agent && \
     mkdir -p /workspace/pxp-agent/build
 WORKDIR /workspace/pxp-agent/build
+# hadolint ignore=SC2086
 RUN git checkout "$(jq -r .ref /workspace/pxp-agent.json)" && \
     cmake .. $CMAKE_SHARED_OPTIONS ; make ; make install
+
+######################################################
+# puppet (install from source)
+#   depends on facter -> cpp-hocon
+#                        libwhereami -> leatherman
+#   builds virt-what
+#   installs hiera
+######################################################
+
+FROM facter as puppet
 
 WORKDIR /workspace
 RUN curl -O -L https://people.redhat.com/~rjones/virt-what/files/virt-what-1.18.tar.gz && \
@@ -115,8 +171,17 @@ RUN puppet config set confdir /etc/puppetlabs/puppet && \
     puppet module install puppetlabs-zone_core && \
     puppet module install puppetlabs-apk
 
+######################################################
+# finall (assemble prior stages)
+#   depends on puppet -> facter -> cpp-hocon
+#                                  libwhereami -> leatherman
+#                        virt-what
+#                        hiera
+#   depends on pxp-agent -> cpp-hocon -> leatherman (file COPY)
+#                           cpp-pcp-client
+######################################################
 
-FROM alpine:3.8
+FROM alpine:3.8 as final
 
 ARG version=6.0.0
 ARG vcs_ref
@@ -167,10 +232,11 @@ RUN apk add --no-cache \
     boost-regex \
     boost-thread
 
-COPY --from=build /etc/puppetlabs /etc/puppetlabs
-COPY --from=build /opt/puppetlabs /opt/puppetlabs
-COPY --from=build /usr/lib/ruby/gems /usr/lib/ruby/gems
-COPY --from=build /usr/lib/ruby/vendor_ruby /usr/lib/ruby/vendor_ruby
+COPY --from=pxp-agent /opt/puppetlabs /opt/puppetlabs
+COPY --from=puppet /etc/puppetlabs /etc/puppetlabs
+COPY --from=puppet /opt/puppetlabs /opt/puppetlabs
+COPY --from=puppet /usr/lib/ruby/gems /usr/lib/ruby/gems
+COPY --from=puppet /usr/lib/ruby/vendor_ruby /usr/lib/ruby/vendor_ruby
 
 LABEL org.label-schema.vcs-ref="$vcs_ref" \
       org.label-schema.version="$version" \
