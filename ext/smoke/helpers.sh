@@ -138,7 +138,12 @@ function install_puppetdb_from_package() {
   # Either "dev" (packages on builds.puppetlabs.lan) or "repo" (packages released).
   local type="$2"
   local collection="$3"
-  local which_master=`identify_master ${master_vm}`
+
+  if [[ "$type" = "dev" ]]; then
+    local which_master="${master_vm}"
+  elif [[ "$type" = "repo" ]]; then
+    local which_master=`identify_master ${master_vm}`
+  fi
 
   echo "STEP: Install PuppetDB from package on ${which_master}!"
 
