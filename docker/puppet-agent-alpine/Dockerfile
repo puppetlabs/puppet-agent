@@ -7,7 +7,7 @@ FROM alpine:3.9 as build
 # note: JAVA_HOME cannot be defined in the same ENV block it's used in
 ENV JAVA_HOME=/usr/lib/jvm/java-1.8-openjdk
 ENV PATH=$PATH:$JAVA_HOME/jre/bin:$JAVA_HOME/bin \
-    CMAKE_SHARED_OPTIONS='-DCMAKE_PREFIX_PATH=/opt/puppetlabs/puppet -DCMAKE_INSTALL_PREFIX=/opt/puppetlabs/puppet -DCMAKE_INSTALL_RPATH=/opt/puppetlabs/puppet/lib -DCMAKE_VERBOSE_MAKEFILE=ON'
+    CMAKE_SHARED_OPTIONS='-DCMAKE_PREFIX_PATH=/opt/puppetlabs/puppet -DCMAKE_INSTALL_PREFIX=/opt/puppetlabs/puppet -DCMAKE_INSTALL_RPATH=/opt/puppetlabs/puppet/lib -DCMAKE_VERBOSE_MAKEFILE=ON -Bbuild'
 
 # pin back to boost, gcc and g++ packages from alpine 3.8
 # 3.9+ packages g++6 and gcc6 are difficult to install, even when using --force-broken-world
@@ -24,15 +24,12 @@ RUN mkdir /workspace && \
 ######################################################
 
 FROM build as leatherman
-WORKDIR /workspace
+WORKDIR /workspace/leatherman
 
 COPY configs/components/leatherman.json /workspace
-RUN git clone -b master https://github.com/puppetlabs/leatherman && \
-    mkdir -p /workspace/leatherman/build
-WORKDIR /workspace/leatherman/build
-RUN git checkout "$(jq -r .ref /workspace/leatherman.json)" && \
-    cmake .. -DBOOST_STATIC=OFF -DCMAKE_VERBOSE_MAKEFILE=ON ; make ; make install
-WORKDIR /workspace
+RUN git clone -b master https://github.com/puppetlabs/leatherman . && \
+    git checkout "$(jq -r .ref /workspace/leatherman.json)" && \
+    cmake . -DBOOST_STATIC=OFF -DCMAKE_VERBOSE_MAKEFILE=ON -Bbuild; make -C build ; make -C build install
 
 ######################################################
 # libwhereami (build from source)
@@ -40,15 +37,13 @@ WORKDIR /workspace
 ######################################################
 
 FROM leatherman as libwhereami
-WORKDIR /workspace
+WORKDIR /workspace/libwhereami
 
 COPY configs/components/libwhereami.json /workspace
-RUN git clone https://github.com/puppetlabs/libwhereami && \
-    mkdir -p /workspace/libwhereami/build
-WORKDIR /workspace/libwhereami/build
 # hadolint ignore=SC2086
-RUN git checkout "$(jq -r .ref /workspace/libwhereami.json)" && \
-    cmake $CMAKE_SHARED_OPTIONS -DBOOST_STATIC=OFF ..; make ; make install
+RUN git clone https://github.com/puppetlabs/libwhereami . && \
+    git checkout "$(jq -r .ref /workspace/libwhereami.json)" && \
+    cmake $CMAKE_SHARED_OPTIONS -DBOOST_STATIC=OFF .; make -C build ; make -C build install
 
 ######################################################
 # cpp-hocon (build from source)
@@ -56,15 +51,13 @@ RUN git checkout "$(jq -r .ref /workspace/libwhereami.json)" && \
 ######################################################
 
 FROM leatherman as cpp-hocon
-WORKDIR /workspace
+WORKDIR /workspace/cpp-hocon
 
 COPY configs/components/cpp-hocon.json /workspace
-RUN git clone https://github.com/puppetlabs/cpp-hocon && \
-    mkdir -p /workspace/cpp-hocon/build
-WORKDIR /workspace/cpp-hocon/build
 # hadolint ignore=SC2086
-RUN git checkout "$(jq -r .ref /workspace/cpp-hocon.json)" && \
-    cmake $CMAKE_SHARED_OPTIONS -DBOOST_STATIC=OFF ..; make ; make install
+RUN git clone https://github.com/puppetlabs/cpp-hocon . && \
+    git checkout "$(jq -r .ref /workspace/cpp-hocon.json)" && \
+    cmake $CMAKE_SHARED_OPTIONS -DBOOST_STATIC=OFF .; make -C build ; make -C build install
 
 ######################################################
 # facter (build from source)
@@ -73,17 +66,16 @@ RUN git checkout "$(jq -r .ref /workspace/cpp-hocon.json)" && \
 ######################################################
 
 FROM cpp-hocon as facter
-WORKDIR /workspace
+WORKDIR /workspace/facter
+
 # wait for libwhereami to compile to /opt/puppetlabs/puppet/lib/libwhereami.a
 COPY --from=libwhereami /opt/puppetlabs /opt/puppetlabs
 COPY configs/components/facter.json /workspace
 
-RUN git clone https://github.com/puppetlabs/facter && \
-    mkdir -p /workspace/facter/build
-WORKDIR /workspace/facter/build
 # hadolint ignore=SC2086
-RUN git checkout "$(jq -r .ref /workspace/facter.json)" && \
-    cmake /lib $CMAKE_SHARED_OPTIONS -DRUBY_LIB_INSTALL=/usr/lib/ruby/vendor_ruby ..; make ; make install
+RUN git clone https://github.com/puppetlabs/facter . && \
+    git checkout "$(jq -r .ref /workspace/facter.json)" && \
+    cmake /lib $CMAKE_SHARED_OPTIONS -DRUBY_LIB_INSTALL=/usr/lib/ruby/vendor_ruby .; make -C build ; make -C build install
 
 ######################################################
 # pxp-agent (build from source)
@@ -92,28 +84,24 @@ RUN git checkout "$(jq -r .ref /workspace/facter.json)" && \
 ######################################################
 
 FROM leatherman as pxp-agent
-WORKDIR /workspace
+WORKDIR /workspace/cpp-pcp-client
 
 COPY configs/components/cpp-pcp-client.json /workspace
-RUN git clone https://github.com/puppetlabs/cpp-pcp-client && \
-    mkdir -p /workspace/cpp-pcp-client/build
-WORKDIR /workspace/cpp-pcp-client/build
 # hadolint ignore=SC2086
-RUN git checkout "$(jq -r .ref /workspace/cpp-pcp-client.json)" && \
-    cmake .. $CMAKE_SHARED_OPTIONS ; make ; make install
+RUN git clone https://github.com/puppetlabs/cpp-pcp-client . && \
+    git checkout "$(jq -r .ref /workspace/cpp-pcp-client.json)" && \
+    cmake . $CMAKE_SHARED_OPTIONS; make -C build ; make -C build install
 
 # wait for cpp-hocon to compile to /opt/puppetlabs/puppet/lib/libcpp-hocon.a
 COPY --from=cpp-hocon /opt/puppetlabs /opt/puppetlabs
 
-WORKDIR /workspace
+WORKDIR /workspace/pxp-agent
 
 COPY configs/components/pxp-agent.json /workspace
-RUN git clone https://github.com/puppetlabs/pxp-agent && \
-    mkdir -p /workspace/pxp-agent/build
-WORKDIR /workspace/pxp-agent/build
 # hadolint ignore=SC2086
-RUN git checkout "$(jq -r .ref /workspace/pxp-agent.json)" && \
-    cmake .. $CMAKE_SHARED_OPTIONS ; make ; make install
+RUN git clone https://github.com/puppetlabs/pxp-agent . && \
+    git checkout "$(jq -r .ref /workspace/pxp-agent.json)" && \
+    cmake . $CMAKE_SHARED_OPTIONS; make -C build ; make -C build install
 
 ######################################################
 # puppet (install from source)
@@ -124,19 +112,18 @@ RUN git checkout "$(jq -r .ref /workspace/pxp-agent.json)" && \
 
 FROM facter as puppet
 
-WORKDIR /workspace
+WORKDIR /workspace/hiera
 
 COPY configs/components/hiera.json /workspace
-RUN git clone https://github.com/puppetlabs/hiera
-WORKDIR /workspace/hiera
-RUN git checkout "$(jq -r .ref /workspace/hiera.json)" && \
+RUN git clone https://github.com/puppetlabs/hiera . && \
+    git checkout "$(jq -r .ref /workspace/hiera.json)" && \
     ./install.rb --no-configs --bindir=/opt/puppetlabs/puppet/bin --sitelibdir=/usr/lib/ruby/vendor_ruby
 
-WORKDIR /workspace
-COPY configs/components/puppet.json /workspace
-RUN git clone https://github.com/puppetlabs/puppet
 WORKDIR /workspace/puppet
-RUN git checkout "$(jq -r .ref /workspace/puppet.json)" && \
+
+COPY configs/components/puppet.json /workspace
+RUN git clone https://github.com/puppetlabs/puppet . && \
+    git checkout "$(jq -r .ref /workspace/puppet.json)" && \
     ./install.rb --bindir=/opt/puppetlabs/puppet/bin --configdir=/etc/puppetlabs/puppet --sitelibdir=/usr/lib/ruby/vendor_ruby --codedir=/etc/puppetlabs/code --vardir=/opt/puppetlabs/puppet/cache --logdir=/var/log/puppetlabs/puppet --rundir=/var/run/puppetlabs --quick
 
 RUN mkdir -p /opt/puppetlabs/bin && \
