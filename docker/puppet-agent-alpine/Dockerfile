@@ -13,7 +13,7 @@ ENV PATH=$PATH:$JAVA_HOME/jre/bin:$JAVA_HOME/bin \
 # pin back to boost, gcc and g++ packages from alpine 3.8
 # 3.9+ packages g++6 and gcc6 are difficult to install, even when using --force-broken-world
 # hadolint ignore=DL3018,DL3028
-RUN apk add --no-cache --update-cache --repository http://nl.alpinelinux.org/alpine/v3.8/main cmake boost-dev make gcc=6.4.0-r9 g++=6.4.0-r9  && \
+RUN apk add --no-cache --update-cache --repository http://nl.alpinelinux.org/alpine/v3.8/main gcc=6.4.0-r9 g++=6.4.0-r9  && \
     apk add --no-cache cmake boost-dev make curl git curl-dev ruby ruby-dev yaml-cpp-dev jq openjdk8 augeas ruby-augeas ruby-etc ruby-json ruby-multi_json libressl-dev virt-what && \
     gem install --no-rdoc --no-ri deep_merge semantic_puppet puppet-resource_api locale httpclient fast_gettext concurrent-ruby
 
