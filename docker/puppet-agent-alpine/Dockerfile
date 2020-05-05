@@ -2,7 +2,7 @@
 # build tooling
 ######################################################
 
-FROM alpine:3.9 as build
+FROM alpine:3.10 as build
 
 # note: JAVA_HOME cannot be defined in the same ENV block it's used in
 ENV JAVA_HOME=/usr/lib/jvm/java-1.8-openjdk
@@ -10,7 +10,7 @@ ENV PATH=$PATH:$JAVA_HOME/jre/bin:$JAVA_HOME/bin \
     CMAKE_SHARED_OPTIONS='-DCMAKE_PREFIX_PATH=/opt/puppetlabs/puppet -DCMAKE_INSTALL_PREFIX=/opt/puppetlabs/puppet -DCMAKE_INSTALL_RPATH=/opt/puppetlabs/puppet/lib -DCMAKE_VERBOSE_MAKEFILE=ON -Bbuild'
 
 # pin back to boost, gcc and g++ packages from alpine 3.8
-# 3.9+ packages g++6 and gcc6 are difficult to install, even when using --force-broken-world
+# 3.10+ packages g++6 and gcc6 are difficult to install, even when using --force-broken-world
 # hadolint ignore=DL3018,DL3028
 RUN apk add --no-cache --update-cache --repository http://nl.alpinelinux.org/alpine/v3.8/main gcc=6.4.0-r9 g++=6.4.0-r9  && \
     apk add --no-cache cmake boost-dev make curl git curl-dev ruby ruby-dev yaml-cpp-dev jq openjdk8 augeas ruby-augeas ruby-etc ruby-json ruby-multi_json libressl-dev virt-what && \
@@ -160,7 +160,7 @@ RUN puppet config set confdir /etc/puppetlabs/puppet && \
 #                           cpp-pcp-client
 ######################################################
 
-FROM alpine:3.9 as final
+FROM alpine:3.10 as final
 
 ARG version=6.0.0
 ARG vcs_ref
@@ -195,7 +195,6 @@ RUN apk add --no-cache \
     boost-random \
     boost-iostreams \
     boost-graph \
-    boost-signals \
     boost \
     boost-serialization \
     boost-program_options \
