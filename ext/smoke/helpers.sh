@@ -138,7 +138,12 @@ function install_puppetdb_from_package() {
   # Either "dev" (packages on builds.puppetlabs.lan) or "repo" (packages released).
   local type="$2"
   local collection="$3"
-  local which_master=`identify_master ${master_vm}`
+
+  if [[ "$type" = "dev" ]]; then
+    local which_master="${master_vm}"
+  elif [[ "$type" = "repo" ]]; then
+    local which_master=`identify_master ${master_vm}`
+  fi
 
   echo "STEP: Install PuppetDB from package on ${which_master}!"
 
@@ -149,7 +154,7 @@ function install_puppetdb_from_package() {
   local yum_cmd="yum --releasever=7"
 
   echo "STEP: Set-up postgresql 9.6 to use with PuppetDB"
-  on_master ${master_vm} "rpm --query --quiet pgdg-redhat96-9.6-3.noarch || ${yum_cmd} install -y https://yum.postgresql.org/9.6/redhat/rhel-7-x86_64/pgdg-redhat96-9.6-3.noarch.rpm"
+  on_master ${master_vm} "rpm --query --quiet pgdg-redhat96-9.6-3.noarch || ${yum_cmd} install -y https://yum.postgresql.org/9.6/redhat/rhel-7-x86_64/pgdg-redhat-repo-42.0-9.noarch.rpm"
   on_master ${master_vm} "rpm --query --quiet postgresql96-server || ${yum_cmd} install -y postgresql96-server"
   on_master ${master_vm} "rpm --query --quiet postgresql96-contrib || ${yum_cmd} install -y postgresql96-contrib"
   on_master ${master_vm} "puppet resource service postgresql-9.6 ensure=stopped"
@@ -157,7 +162,7 @@ function install_puppetdb_from_package() {
   on_master ${master_vm} "puppet resource service postgresql-9.6 ensure=running enable=true"
 
   #After postgress has been installed we need to remove the postgress repo or else other yum install commands will fail.
-  on_master ${master_vm} "${yum_cmd} remove -y pgdg-redhat-repo-42.0-5.noarch"
+  on_master ${master_vm} "${yum_cmd} remove -y pgdg-redhat-repo-42.0-9.noarch"
 
   # Enters 'puppet' as the password.
   on_master ${master_vm} "runuser -l postgres -c '(echo puppet && echo puppet) | createuser -DRSP puppetdb'"
