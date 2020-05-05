@@ -1,7 +1,7 @@
 ######################################################
 # build tooling
 ######################################################
-ARG alpine_version=3.10
+ARG alpine_version=3.11
 
 FROM alpine:${alpine_version} as build
 
@@ -11,11 +11,14 @@ ENV PATH=$PATH:$JAVA_HOME/jre/bin:$JAVA_HOME/bin \
     CMAKE_SHARED_OPTIONS='-DCMAKE_PREFIX_PATH=/opt/puppetlabs/puppet -DCMAKE_INSTALL_PREFIX=/opt/puppetlabs/puppet -DCMAKE_INSTALL_RPATH=/opt/puppetlabs/puppet/lib -DCMAKE_VERBOSE_MAKEFILE=ON -Bbuild'
 
 # pin back to boost, gcc and g++ packages from alpine 3.8
-# 3.10+ packages g++6 and gcc6 are difficult to install, even when using --force-broken-world
+# 3.11+ packages g++6 and gcc6 are difficult to install, even when using --force-broken-world
+# cmake 3.15.5-r0 (from alpine 3.11) requires libstdc++-9.2.0-r4, so downgrade to last known good cmake 3.14.5-r0 (from alpine 3.10)
+# same situation for boost (due to locale) and yaml-cpp, so pin to alpine 3.10 - yaml-cpp is a part of community repo
 # hadolint ignore=DL3018,DL3028
-RUN apk add --no-cache --update-cache --repository http://nl.alpinelinux.org/alpine/v3.8/main gcc=6.4.0-r9 g++=6.4.0-r9  && \
-    apk add --no-cache cmake boost-dev make curl git curl-dev ruby ruby-dev yaml-cpp-dev jq openjdk8 augeas ruby-augeas ruby-etc ruby-json ruby-multi_json libressl-dev virt-what && \
-    gem install --no-rdoc --no-ri deep_merge semantic_puppet puppet-resource_api locale httpclient fast_gettext concurrent-ruby
+RUN apk add --no-cache --repository http://nl.alpinelinux.org/alpine/v3.8/main gcc=6.4.0-r9 g++=6.4.0-r9 && \
+    apk add --no-cache --repository http://nl.alpinelinux.org/alpine/v3.10/main --repository http://nl.alpinelinux.org/alpine/v3.10/community cmake=3.14.5-r0 boost-dev=1.69.0-r4 yaml-cpp-dev=0.6.2-r2 && \
+    apk add --no-cache make curl git curl-dev ruby ruby-dev jq openjdk8 augeas ruby-augeas ruby-etc ruby-json ruby-multi_json libressl-dev virt-what && \
+    gem install --no-document deep_merge semantic_puppet puppet-resource_api locale httpclient fast_gettext concurrent-ruby
 
 RUN mkdir /workspace && \
     sed -i -e 's/sys\/poll/poll/' /usr/include/boost/asio/detail/socket_types.hpp
@@ -161,7 +164,7 @@ RUN puppet config set confdir /etc/puppetlabs/puppet && \
 #                           cpp-pcp-client
 ######################################################
 
-FROM alpine:3.10 as final
+FROM alpine:3.11 as final
 
 ARG version=6.0.0
 ARG vcs_ref
@@ -181,6 +184,30 @@ LABEL org.label-schema.maintainer="Puppet Release Team <release@puppet.com>" \
       org.label-schema.schema-version="1.0" \
       org.label-schema.dockerfile="/Dockerfile"
 
+# boost is in main, while yaml-cpp is in community
+RUN apk add --no-cache \
+    --repository http://nl.alpinelinux.org/alpine/v3.10/main \
+    --repository http://nl.alpinelinux.org/alpine/v3.10/community \
+    boost-date_time=1.69.0-r4 \
+    boost-doc=1.69.0-r4 \
+    boost-filesystem=1.69.0-r4 \
+    boost-graph=1.69.0-r4 \
+    boost-iostreams=1.69.0-r4 \
+    boost-locale=1.69.0-r4 \
+    boost-log=1.69.0-r4 \
+    boost-math=1.69.0-r4 \
+    boost-prg_exec_monitor=1.69.0-r4 \
+    boost-program_options=1.69.0-r4 \
+    boost-random=1.69.0-r4 \
+    boost-regex=1.69.0-r4 \
+    boost-serialization=1.69.0-r4 \
+    boost-system=1.69.0-r4 \
+    boost-thread=1.69.0-r4 \
+    boost-unit_test_framework=1.69.0-r4 \
+    boost-wave=1.69.0-r4 \
+    boost-wserialization=1.69.0-r4 \
+    yaml-cpp=0.6.2-r2
+
 # hadolint ignore=DL3018
 RUN apk add --no-cache \
     bash \
@@ -188,28 +215,10 @@ RUN apk add --no-cache \
     bind-tools \
     curl \
     shadow \
-    yaml-cpp \
     ruby-etc \
     ruby-json \
     ruby-multi_json \
     ruby-augeas \
-    boost-random \
-    boost-iostreams \
-    boost-graph \
-    boost \
-    boost-serialization \
-    boost-program_options \
-    boost-system \
-    boost-unit_test_framework \
-    boost-math \
-    boost-doc \
-    boost-wserialization \
-    boost-date_time \
-    boost-wave \
-    boost-filesystem \
-    boost-prg_exec_monitor \
-    boost-regex \
-    boost-thread \
     virt-what
 
 COPY --from=pxp-agent /opt/puppetlabs /opt/puppetlabs
