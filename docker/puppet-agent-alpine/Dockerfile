@@ -1,9 +1,13 @@
+ARG alpine_version=3.11
+
+# alias for the alpine version we want
+FROM alpine:${alpine_version} AS alpine
+
 ######################################################
 # build tooling
 ######################################################
-ARG alpine_version=3.11
 
-FROM alpine:${alpine_version} as build
+FROM alpine as build
 
 # note: JAVA_HOME cannot be defined in the same ENV block it's used in
 ENV JAVA_HOME=/usr/lib/jvm/java-1.8-openjdk
@@ -164,7 +168,7 @@ RUN puppet config set confdir /etc/puppetlabs/puppet && \
 #                           cpp-pcp-client
 ######################################################
 
-FROM alpine:3.11 as final
+FROM alpine as final
 
 ARG version=6.0.0
 ARG vcs_ref
