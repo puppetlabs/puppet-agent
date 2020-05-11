@@ -1,7 +1,6 @@
-dist: bionic
+dist: focal
 sudo: false
 services:
-  # bionic uses 18.06 but need 19.03+ so upgrade later in relevant cell
   - docker
 git:
   depth: 250
@@ -26,7 +25,7 @@ matrix:
       env: "CHECK=commits"
     - stage: puppet-agent container tests
       language: ruby
-      rvm: 2.5.5
+      rvm: 2.6.6
       env:
         - DOCKER_COMPOSE_VERSION=1.25.5
         # necessary to prevent overwhelming TravisCI build output limits
@@ -34,9 +33,6 @@ matrix:
       script:
         - |
           set -ex
-          sudo apt update -y && sudo apt install -y docker.io
-          sudo systemctl unmask docker.service
-          sudo systemctl start docker
           sudo rm /usr/local/bin/docker-compose
           curl --location https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname --kernel-name`-`uname --machine` > docker-compose
           chmod +x docker-compose
