@@ -1,8 +1,9 @@
 ######################################################
 # build tooling
 ######################################################
+ARG alpine_version=3.9
 
-FROM alpine:3.9 as build
+FROM alpine:${alpine_version} as build
 
 # note: JAVA_HOME cannot be defined in the same ENV block it's used in
 ENV JAVA_HOME=/usr/lib/jvm/java-1.8-openjdk
