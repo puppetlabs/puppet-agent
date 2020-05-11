@@ -1,4 +1,6 @@
-FROM ubuntu:18.04
+ARG ubuntu_version=18.04
+
+FROM ubuntu:${ubuntu_version}
 
 ARG version="6.0.0"
 ARG vcs_ref
