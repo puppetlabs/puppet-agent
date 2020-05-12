@@ -19,7 +19,7 @@ variables:
   CONTAINER_BUILD_PATH: .
   CONTAINER_NAME2: puppet-agent-alpine
   LINT_IGNORES:
-  BUILD_OPTIONS: --memory 3g
+  BUILD_OPTIONS: --memory 3g --build-arg alpine_version=3.9 --build-arg ubuntu_version=18.04
 
 workspace:
   clean: resources
