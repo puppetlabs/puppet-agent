@@ -169,6 +169,15 @@ component "facter" do |pkg, settings, platform|
   end
 
   # FACTER_RUBY Needs bindir
+  #
+  # Boost_NO_BOOST_CMAKE=ON was added while upgrading to boost
+  # 1.73 for PA-3244. https://cmake.org/cmake/help/v3.0/module/FindBoost.html#boost-cmake
+  # describes the setting itself (and what we are disabling). It
+  # may make sense in the future to remove this cmake parameter and
+  # actually make the boost build work with boost's own cmake
+  # helpers. But for now disabling boost's cmake helpers allow us
+  # to upgrade boost with minimal changes.
+  #                                  - Sean P. McDonald 5/19/2020
   pkg.configure do
     ["#{cmake} \
         #{toolchain} \
@@ -178,6 +187,7 @@ component "facter" do |pkg, settings, platform|
         -DCMAKE_INSTALL_RPATH=#{settings[:libdir]} \
         -DRUBY_LIB_INSTALL=#{settings[:ruby_vendordir]} \
         #{special_flags} \
+        -DBoost_NO_BOOST_CMAKE=ON \
         #{boost_static_flag} \
         #{yamlcpp_static_flag} \
         -DWITHOUT_CURL=#{skip_curl} \
