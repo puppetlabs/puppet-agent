@@ -47,6 +47,15 @@ component "libwhereami" do |pkg, settings, platform|
 
   # Until we build our own gettext packages, disable using locales.
   # gettext 0.17 is required to compile .mo files with msgctxt.
+  #
+  # Boost_NO_BOOST_CMAKE=ON was added while upgrading to boost
+  # 1.73 for PA-3244. https://cmake.org/cmake/help/v3.0/module/FindBoost.html#boost-cmake
+  # describes the setting itself (and what we are disabling). It
+  # may make sense in the future to remove this cmake parameter and
+  # actually make the boost build work with boost's own cmake
+  # helpers. But for now disabling boost's cmake helpers allow us
+  # to upgrade boost with minimal changes.
+  #                                  - Sean P. McDonald 5/19/2020
   pkg.configure do
     ["#{cmake} \
         #{toolchain} \
@@ -54,6 +63,7 @@ component "libwhereami" do |pkg, settings, platform|
         -DCMAKE_PREFIX_PATH=#{settings[:prefix]} \
         -DCMAKE_INSTALL_PREFIX=#{settings[:prefix]} \
         #{special_flags} \
+        -DBoost_NO_BOOST_CMAKE=ON \
         #{boost_static_flag} \
         ."]
   end
