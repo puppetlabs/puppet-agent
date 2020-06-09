@@ -2,6 +2,14 @@
 
 unset DYLD_LIBRARY_PATH
 unset DYLD_INSERT_LIBRARIES
+unset GEM_HOME
+unset GEM_PATH
+unset DLN_LIBRARY_PATH
+unset RUBYLIB
+unset RUBYLIB_PREFIX
+unset RUBYOPT
+unset RUBYPATH
+unset RUBYSHELL
 
 # If $PATH does not match a regex for /opt/puppetlabs/bin
 if [ `expr "${PATH}" : '.*/opt/puppetlabs/bin'` -eq 0 ]; then
