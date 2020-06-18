@@ -61,24 +61,6 @@ RUN git clone https://github.com/puppetlabs/cpp-hocon . && \
     cmake $CMAKE_SHARED_OPTIONS -DBOOST_STATIC=OFF .; make -C build ; make -C build install
 
 ######################################################
-# facter (build from source)
-#   depends on cpp-hocon -> leatherman
-#   depends on libwhereami (file COPY)
-######################################################
-
-FROM cpp-hocon as facter
-WORKDIR /workspace/facter
-
-# wait for libwhereami to compile to /opt/puppetlabs/puppet/lib/libwhereami.a
-COPY --from=libwhereami /opt/puppetlabs /opt/puppetlabs
-COPY configs/components/facter.json /workspace
-
-# hadolint ignore=SC2086
-RUN git clone https://github.com/puppetlabs/facter . && \
-    git checkout "$(jq -r .ref /workspace/facter.json)" && \
-    cmake /lib $CMAKE_SHARED_OPTIONS -DRUBY_LIB_INSTALL=/usr/lib/ruby/vendor_ruby .; make -C build ; make -C build install
-
-######################################################
 # pxp-agent (build from source)
 #   depends on cpp-hocon -> leatherman (file COPY)
 #   builds cpp-pcp-client
@@ -106,12 +88,10 @@ RUN git clone https://github.com/puppetlabs/pxp-agent . && \
 
 ######################################################
 # puppet (install from source)
-#   depends on facter -> cpp-hocon
-#                        libwhereami -> leatherman
-#   installs hiera
+#   installs hiera, facter
 ######################################################
 
-FROM facter as puppet
+FROM build as puppet
 
 WORKDIR /workspace/hiera
 
@@ -119,6 +99,14 @@ COPY configs/components/hiera.json /workspace
 RUN git clone https://github.com/puppetlabs/hiera . && \
     git checkout "$(jq -r .ref /workspace/hiera.json)" && \
     ./install.rb --no-configs --bindir=/opt/puppetlabs/puppet/bin --sitelibdir=/usr/lib/ruby/vendor_ruby
+
+WORKDIR /workspace/facter
+
+COPY configs/components/facter.json /workspace
+# hadolint ignore=DL3028
+RUN git clone https://github.com/puppetlabs/facter . && \
+    git checkout "$(jq -r .ref /workspace/facter.json)" && gem build facter.gemspec && \
+    gem install --no-rdoc --no-ri facter-*.gem --bindir /opt/puppetlabs/puppet/bin
 
 WORKDIR /workspace/puppet
 
@@ -154,9 +142,7 @@ RUN puppet config set confdir /etc/puppetlabs/puppet && \
 
 ######################################################
 # final (assemble prior stages)
-#   depends on puppet -> facter -> cpp-hocon
-#                                  libwhereami -> leatherman
-#                        hiera
+#   depends on puppet -> hiera
 #   depends on pxp-agent -> cpp-hocon -> leatherman (file COPY)
 #                           cpp-pcp-client
 ######################################################
