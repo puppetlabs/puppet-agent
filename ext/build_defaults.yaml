@@ -2,30 +2,36 @@
 project: 'puppet-agent'
 # foss_platforms will be shipped to the nightly repos
 foss_platforms:
+  - debian-9-amd64
+  - debian-9-i386
   - debian-10-amd64
   - debian-11-amd64
   - el-6-i386
   - el-6-x86_64
   - el-7-x86_64
+  - el-7-ppc64le
   - el-7-aarch64
   - el-8-x86_64
   - el-8-ppc64le
   - el-8-aarch64
-  - el-9-x86_64
-  - fedora-36-x86_64
+  - fedora-32-x86_64
+  - fedora-34-x86_64
   - osx-10.15-x86_64
-  - osx-11-arm64
   - osx-11-x86_64
-  - osx-12-arm64
-  - osx-12-x86_64
+  - sles-11-i386
+  - sles-11-x86_64
   - sles-12-x86_64
+  - sles-12-ppc64le
   - sles-15-x86_64
+  - ubuntu-14.04-amd64
+  - ubuntu-14.04-i386
+  - ubuntu-16.04-amd64
+  - ubuntu-16.04-i386
+  - ubuntu-16.04-ppc64el
   - ubuntu-18.04-amd64
   - ubuntu-18.04-aarch64
   - ubuntu-20.04-amd64
   - ubuntu-20.04-aarch64
-  - ubuntu-22.04-amd64
-  - ubuntu-22.04-aarch64
   - windows-2012-x86
   - windows-2012-x64
 pe_platforms:
@@ -46,6 +52,8 @@ platform_repos:
     repo_location: repos/el/6/**/x86_64
   - name: el-7-x86_64
     repo_location: repos/el/7/**/x86_64
+  - name: el-7-ppc64le
+    repo_location: repos/el/7/**/ppc64le
   - name: el-7-aarch64
     repo_location: repos/el/7/**/aarch64
   - name: el-8-x86_64
@@ -54,22 +62,42 @@ platform_repos:
     repo_location: repos/el/8/**/ppc64le
   - name: el-8-aarch64
     repo_location: repos/el/8/**/aarch64
-  - name: el-9-x86_64
-    repo_location: repos/el/9/**/x86_64
   - name: redhatfips-7-x86_64
     repo_location: repos/redhatfips/7/**/x86_64
   - name: redhatfips-8-x86_64
     repo_location: repos/redhatfips/8/**/x86_64
+  - name: sles-11-i386
+    repo_location: repos/sles/11/**/i386
+  - name: sles-11-x86_64
+    repo_location: repos/sles/11/**/x86_64
   - name: sles-12-x86_64
     repo_location: repos/sles/12/**/x86_64
+  - name: sles-12-ppc64le
+    repo_location: repos/sles/12/**/ppc64le
   - name: sles-15-x86_64
     repo_location: repos/sles/15/**/x86_64
-  - name: fedora-36-x86_64
-    repo_location: repos/fedora/36/**/x86_64
+  - name: fedora-32-x86_64
+    repo_location: repos/fedora/32/**/x86_64
+  - name: fedora-34-x86_64
+    repo_location: repos/fedora/34/**/x86_64
+  - name: debian-9-i386
+    repo_location: repos/apt/stretch
+  - name: debian-9-amd64
+    repo_location: repos/apt/stretch
   - name: debian-10-amd64
     repo_location: repos/apt/buster
   - name: debian-11-amd64
     repo_location: repos/apt/bullseye
+  - name: ubuntu-14.04-i386
+    repo_location: repos/apt/trusty
+  - name: ubuntu-14.04-amd64
+    repo_location: repos/apt/trusty
+  - name: ubuntu-16.04-i386
+    repo_location: repos/apt/xenial
+  - name: ubuntu-16.04-amd64
+    repo_location: repos/apt/xenial
+  - name: ubuntu-16.04-ppc64el
+    repo_location: repos/apt/xenial
   - name: ubuntu-18.04-amd64
     repo_location: repos/apt/bionic
   - name: ubuntu-18.04-aarch64
@@ -78,20 +106,10 @@ platform_repos:
     repo_location: repos/apt/focal
   - name: ubuntu-20.04-aarch64
     repo_location: repos/apt/focal
-  - name: ubuntu-22.04-amd64
-    repo_location: repos/apt/jammy
-  - name: ubuntu-22.04-aarch64
-    repo_location: repos/apt/jammy
-  - name: osx-10.15-x86_64
+  - name: osx-10.15
     repo_location: repos/apple/10.15/**/x86_64/*.dmg
-  - name: osx-11-arm64
-    repo_location: repos/apple/11/**/arm64/*.dmg
-  - name: osx-11-x86_64
+  - name: osx-11
     repo_location: repos/apple/11/**/x86_64/*.dmg
-  - name: osx-12-arm64
-    repo_location: repos/apple/12/**/arm64/*.dmg
-  - name: osx-12-x86_64
-    repo_location: repos/apple/12/**/x86_64/*.dmg
   - name: solaris-10-i386
     repo_location: repos/solaris/10/**/*.i386.pkg.gz
   - name: solaris-10-sparc
@@ -100,16 +118,20 @@ platform_repos:
     repo_location: repos/solaris/11/**/*.i386.p5p
   - name: solaris-11-sparc
     repo_location: repos/solaris/11/**/*.sparc.p5p
-deb_targets: 'xenial-amd64 bionic-amd64 focal-amd64'
-rpm_targets: 'el-6-x86_64 el-7-x86_64 el-8-x86_64 el-9-x86_64 redhatfips-7-x86_64 redhatfips-8-x86_64 sles-12-x86_64 sles-15-x86_64'
+  - name: windows
+    repo_location: repos/windows
+  - name: windowsfips
+    repo_location: repos/windowsfips
+deb_targets: 'xenial-amd64 bionic-amd64'
+rpm_targets: 'el-6-x86_64 el-7-x86_64 el-8-x86_64 redhatfips-7-x86_64 redhatfips-8-x86_64 sles-12-x86_64'
 sign_tar: FALSE
 osx_signing_cert: "Developer ID Installer: PUPPET LABS, INC. (VKGLGN2B6Y)"
 osx_signing_keychain: "/Users/jenkins/Library/Keychains/signing.keychain"
-osx_signing_server: 'osx-signer-prod-2.delivery.puppetlabs.net'
+osx_signing_server: 'osx-signer.delivery.puppetlabs.net'
 vanagon_project: TRUE
-apt_repo_name: 'puppet7'
-yum_repo_name: 'puppet7'
-repo_name: 'puppet7'
-nonfinal_repo_name: 'puppet7-nightly'
+apt_repo_name: 'puppet6'
+yum_repo_name: 'puppet6'
+repo_name: 'puppet6'
+nonfinal_repo_name: 'puppet6-nightly'
 build_tar: FALSE
 build_gem: TRUE
