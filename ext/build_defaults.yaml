@@ -94,6 +94,11 @@ platform_repos:
     repo_location: repos/solaris/11/**/*.i386.p5p
   - name: solaris-11-sparc
     repo_location: repos/solaris/11/**/*.sparc.p5p
+  - name: windows
+    repo_location: repos/windows/puppet-agent-[0-9]*.msi
+  - name: windowsfips
+    repo_location: repos/windowsfips/puppet-agent-[0-9]*.msi
+
 deb_targets: 'xenial-amd64 bionic-amd64 focal-amd64 jammy-amd64'
 rpm_targets: 'el-6-x86_64 el-7-x86_64 el-8-x86_64 el-9-x86_64 redhatfips-7-x86_64 redhatfips-8-x86_64 sles-12-x86_64 sles-15-x86_64'
 sign_tar: FALSE
