@@ -147,6 +147,9 @@
         <![CDATA[VersionNT64 >= 100 AND <%= settings[:win64] %> = no AND NOT (&<%= settings[:product_id] %>Runtime = 2)]]>
       </Custom>
       <%-end-%>
+
+      <Custom Action='RemoveLegacyNssmRegistryKey' Before='RemoveExistingProducts' />
+
     </InstallExecuteSequence>
 
     <SetProperty Id="ARPINSTALLLOCATION" Value="[INSTALLDIR]" After="CostFinalize" />
