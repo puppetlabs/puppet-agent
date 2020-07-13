@@ -42,7 +42,12 @@ function on_agent() {
 
 function start_puppetdb() {
   local master_vm="$1"
-  local which_master=`identify_master ${master_vm}`
+
+  if [[ "$type" = "dev" ]]; then
+    local which_master="${master_vm}"
+  elif [[ "$type" = "repo" ]]; then
+    local which_master=`identify_master ${master_vm}`
+  fi
 
   echo "STEP: Start PuppetDB and point it to puppetserver"
   on_master ${master_vm} "puppet resource service puppetdb ensure=running enable=true"
@@ -62,7 +67,7 @@ function start_puppetdb() {
 
   echo "STEP: Creating route_file with puppetdb terminus for facts"
   local route_file
-  route_file=`on_master ${master_vm} "puppet master --configprint route_file" | tail -n 1`
+  route_file=`on_master ${master_vm} "puppet config print route_file" | tail -n 1`
   on_master ${master_vm} "echo --- > ${route_file}"
   on_master ${master_vm} "echo master: >> ${route_file}"
   on_master ${master_vm} "echo \"  facts:\" >> ${route_file}"
@@ -97,7 +102,12 @@ function start_puppetdb() {
 
 function install_puppetdb_from_module() {
   local master_vm="$1"
-  local which_master=`identify_master ${master_vm}`
+
+  if [[ "$type" = "dev" ]]; then
+    local which_master="${master_vm}"
+  elif [[ "$type" = "repo" ]]; then
+    local which_master=`identify_master ${master_vm}`
+  fi
 
   echo "STEP: Install PuppetDB from the module on ${which_master}!"
   on_master ${master_vm} "puppet module install puppetlabs-puppetdb"
