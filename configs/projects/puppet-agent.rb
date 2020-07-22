@@ -64,12 +64,12 @@ project "puppet-agent" do |proj|
   proj.setting(:forge_download_baseurl, "https://forge.puppet.com/v3/files")
 
   proj.description "The Puppet Agent package contains all of the elements needed to run puppet, including ruby, facter, and hiera."
-  proj.version_from_git
+  proj.version(proj.version_from_git.gsub(/6\.\d+\.\d+/, '7.0.0'))
   proj.write_version_file File.join(proj.prefix, 'VERSION')
   proj.license "See components"
   proj.vendor "Puppet Labs <info@puppetlabs.com>"
   proj.homepage "https://www.puppetlabs.com"
-  proj.target_repo "puppet6"
+  proj.target_repo "puppet7"
 
   if platform.is_solaris?
     proj.identifier "puppetlabs.com"
