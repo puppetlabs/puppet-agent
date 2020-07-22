@@ -6,6 +6,7 @@ component "facter" do |pkg, settings, platform|
 
   flags = " --bindir=#{settings[:bindir]} \
             --sitelibdir=#{settings[:ruby_vendordir]} \
+            --mandir=#{settings[:mandir]} \
             --ruby=#{File.join(settings[:bindir], 'ruby')} "
 
   if platform.is_windows?
