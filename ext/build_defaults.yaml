@@ -5,8 +5,6 @@ foss_platforms:
   - debian-9-amd64
   - debian-9-i386
   - debian-10-amd64
-  - el-5-i386
-  - el-5-x86_64
   - el-6-i386
   - el-6-x86_64
   - el-7-x86_64
@@ -36,10 +34,6 @@ pe_platforms:
 platform_repos:
   - name: aix-6.1-power
     repo_location: repos/aix/6.1/**/ppc
-  - name: el-5-i386
-    repo_location: repos/el/5/**/i386
-  - name: el-5-x86_64
-    repo_location: repos/el/5/**/x86_64
   - name: el-6-i386
     repo_location: repos/el/6/**/i386
   - name: el-6-x86_64
