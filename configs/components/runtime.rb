@@ -16,7 +16,7 @@ component "runtime" do |pkg, settings, platform|
     pkg.build_requires "pl-pdcurses-#{platform.architecture}"
     # We only need zlib because curl is dynamically linking against zlib
     pkg.build_requires "pl-zlib-#{platform.architecture}"
-  elsif platform.name =~ /debian-9|el-[567]|redhatfips-7|sles-12|ubuntu-(:?16.04|18.04)/
+  elsif platform.name =~ /debian-9|el-[67]|redhatfips-7|sles-12|ubuntu-(:?16.04|18.04)/
     pkg.build_requires "pl-gcc"
   end
 

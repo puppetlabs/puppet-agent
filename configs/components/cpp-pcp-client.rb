@@ -41,7 +41,7 @@ component "cpp-pcp-client" do |pkg, settings, platform|
 
     cmake = "C:/ProgramData/chocolatey/bin/cmake.exe -G \"MinGW Makefiles\""
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=#{settings[:tools_root]}/pl-build-toolchain.cmake"
-  elsif platform.name =~ /debian-9|el-[567]|redhatfips-7|sles-12|ubuntu-(:?16.04|18.04)/
+  elsif platform.name =~ /debian-9|el-[67]|redhatfips-7|sles-12|ubuntu-(:?16.04|18.04)/
     # use default that is pl-build-tools
   else
     # These platforms use the default OS toolchain, rather than pl-build-tools
