@@ -12,7 +12,7 @@ component "puppet" do |pkg, settings, platform|
     pkg.build_requires "pl-gettext-#{platform.architecture}"
   elsif platform.is_aix?
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-gettext-0.19.8-2.aix#{platform.os_version}.ppc.rpm"
-  elsif platform.name =~ /debian-[89]|el-[567]|redhatfips-7|sles-(:?11|12)|ubuntu-(:?16.04|18.04)/
+  elsif platform.name =~ /debian-[89]|el-[567]|redhatfips-7|sles-12|ubuntu-(:?16.04|18.04)/
     pkg.build_requires "pl-gettext"
   end
 
@@ -107,7 +107,7 @@ component "puppet" do |pkg, settings, platform|
       msgfmt = "/cygdrive/c/tools/pl-build-tools/bin/msgfmt.exe"
     elsif platform.is_macos?
       msgfmt = "/usr/local/opt/gettext/bin/msgfmt"
-    elsif platform.name =~ /debian-[89]|el-[567]|redhatfips-7|sles-(:?11|12)|ubuntu-(:?16.04|18.04)/ ||
+    elsif platform.name =~ /debian-[89]|el-[567]|redhatfips-7|sles-12|ubuntu-(:?16.04|18.04)/ ||
           platform.is_aix?
       msgfmt = "/opt/pl-build-tools/bin/msgfmt"
     else
