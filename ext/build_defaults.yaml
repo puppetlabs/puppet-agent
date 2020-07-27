@@ -19,8 +19,6 @@ foss_platforms:
   - fedora-31-x86_64
   - osx-10.14-x86_64
   - osx-10.15-x86_64
-  - sles-11-i386
-  - sles-11-x86_64
   - sles-12-x86_64
   - sles-12-ppc64le
   - sles-15-x86_64
@@ -60,10 +58,6 @@ platform_repos:
     repo_location: repos/el/8/**/x86_64
   - name: redhatfips-7-x86_64
     repo_location: repos/redhatfips/7/**/x86_64
-  - name: sles-11-i386
-    repo_location: repos/sles/11/**/i386
-  - name: sles-11-x86_64
-    repo_location: repos/sles/11/**/x86_64
   - name: sles-12-x86_64
     repo_location: repos/sles/12/**/x86_64
   - name: sles-12-ppc64le
