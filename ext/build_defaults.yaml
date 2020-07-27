@@ -32,8 +32,6 @@ foss_platforms:
 pe_platforms:
   - aix-6.1-power
   - redhatfips-7-x86_64
-  - solaris-10-i386
-  - solaris-10-sparc
   - solaris-11-i386
   - solaris-11-sparc
   - windowsfips-2012-x64
@@ -92,10 +90,6 @@ platform_repos:
     repo_location: repos/apple/10.14/**/x86_64/*.dmg
   - name: osx-10.15
     repo_location: repos/apple/10.15/**/x86_64/*.dmg
-  - name: solaris-10-i386
-    repo_location: repos/solaris/10/**/*.i386.pkg.gz
-  - name: solaris-10-sparc
-    repo_location: repos/solaris/10/**/*.sparc.pkg.gz
   - name: solaris-11-i386
     repo_location: repos/solaris/11/**/*.i386.p5p
   - name: solaris-11-sparc
