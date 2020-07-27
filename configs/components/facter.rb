@@ -83,7 +83,13 @@ component "facter" do |pkg, settings, platform|
     if (platform.is_el? && platform.os_version.to_i >= 6) || (platform.is_sles? && platform.os_version.to_i >= 11) || platform.is_fedora?
       # Ensure libblkid-devel isn't installed for all cross-compiled builds,
       # otherwise the build will fail trying to link to the x86_64 libblkid:
-      pkg.build_requires "libblkid-devel" unless platform.is_cross_compiled?
+      unless platform.is_cross_compiled?
+        pkg.build_requires "libblkid-devel"
+
+        #needed for `yum .. --best` as it will install latest version of above package
+        #and will fail because dependencies are not latest versions
+        pkg.build_requires "libblkid libuuid" if platform.is_fedora?
+      end
       skip_blkid = 'OFF'
     elsif (platform.is_el? && platform.os_version.to_i < 6) || (platform.is_sles? && platform.os_version.to_i < 11)
       pkg.build_requires "e2fsprogs-devel"
