@@ -2,15 +2,7 @@
 component "runtime" do |pkg, settings, platform|
   pkg.add_source "file://resources/files/runtime/runtime.sh"
 
-  if platform.name =~ /solaris-10/
-    if platform.architecture == 'sparc'
-      pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/solaris/10/pl-gcc-4.8.2-9.#{platform.architecture}.pkg.gz"
-      pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/solaris/10/pl-binutils-2.27-2.#{platform.architecture}.pkg.gz"
-    else
-      pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/solaris/10/pl-gcc-4.8.2-1.#{platform.architecture}.pkg.gz"
-      pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/solaris/10/pl-binutils-2.27-1.#{platform.architecture}.pkg.gz"
-    end
-  elsif platform.is_cross_compiled_linux? || platform.name =~ /solaris-11/
+  if platform.is_cross_compiled_linux? || platform.name =~ /solaris-11/
     pkg.build_requires "pl-binutils-#{platform.architecture}"
     pkg.build_requires "pl-gcc-#{platform.architecture}"
     pkg.build_requires "pl-binutils-#{platform.architecture}"
@@ -24,7 +16,7 @@ component "runtime" do |pkg, settings, platform|
     pkg.build_requires "pl-pdcurses-#{platform.architecture}"
     # We only need zlib because curl is dynamically linking against zlib
     pkg.build_requires "pl-zlib-#{platform.architecture}"
-  elsif platform.name =~ /debian-[89]|el-[567]|redhatfips-7|sles-(:?11|12)|ubuntu-(:?14.04|16.04|18.04)/
+  elsif platform.name =~ /debian-9|el-[67]|redhatfips-7|sles-12|ubuntu-(:?16.04|18.04)/
     pkg.build_requires "pl-gcc"
   end
 

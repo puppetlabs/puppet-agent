@@ -11,9 +11,6 @@ component "virt-what" do |pkg, settings, platform|
   unless platform.is_deb?
     requires "util-linux"
   end
-  if platform.name =~ /^sles-(10|11)-.*$/
-    requires "pmtools"
-  end
 
   if platform.is_rpm?
     pkg.build_requires "util-linux"
