@@ -18,7 +18,13 @@ test_name 'Ensure puppet facts can use facter-ng' do
     step "test puppet facts with facter-ng has all the dependencies installed" do
       on agent, puppet('config set facterng true')
       on agent, puppet('facts --debug'), :acceptable_exit_codes => [0] do
-        unresolved_fact = stdout.match(/(resolving fact .+\, but)/)
+        if agent['platform'] =~ /win/
+          # exclude augeas as it is not provided on Windows
+          unresolved_fact = stdout.match(/(resolving fact (?!augeas).+\, but)/)
+        else
+          unresolved_fact = stdout.match(/(resolving fact .+\, but)/)
+        end
+
         assert_nil(unresolved_fact, "missing dependency for facter-ng from: #{unresolved_fact.inspect}")
       end
     end
