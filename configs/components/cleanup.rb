@@ -2,11 +2,6 @@
 component "cleanup" do |pkg, settings, platform|
   # This component must depend on all other C++ components in order to be
   # executed last, after they all finish building.
-  pkg.build_requires "cpp-pcp-client"
-  pkg.build_requires "cpp-hocon"
-  pkg.build_requires "facter"
-  pkg.build_requires "leatherman"
-  pkg.build_requires "libwhereami"
   pkg.build_requires "pxp-agent"
 
   unless settings[:dev_build]
@@ -39,6 +34,7 @@ component "cleanup" do |pkg, settings, platform|
       cleanup_steps << "#{rm} #{settings[:bindir]}/curl*"
     end
 
+    cleanup_steps << "#{rm} -rf #{settings[:service_conf]}"
 
     pkg.install { cleanup_steps }
   end
