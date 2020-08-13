@@ -5,7 +5,7 @@ project "puppet-agent" do |proj|
   # - Modifications to global settings like flags and target directories should be made in puppet-runtime.
   # - Settings included in this file should apply only to local components in this repository.
   runtime_details = JSON.parse(File.read('configs/components/puppet-runtime.json'))
-  agent_branch = 'master'
+  agent_branch = 'main'
 
   settings[:puppet_runtime_version] = runtime_details['version']
   settings[:puppet_runtime_location] = runtime_details['location']
