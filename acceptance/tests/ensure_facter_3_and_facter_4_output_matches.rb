@@ -17,7 +17,7 @@ test_name 'Ensure Facter 3 and Facter 4 outputs match' do
       boardassettag dmi\.board\.asset_tag boardassettag dmi\.board\.asset_tag lsbdistrelease lsbminordistrelease
       processor.* processors\.models\..* processors\.speed bios_release_date bios_vendor bios_version chassisassettag
       chassistype dmi\..* hypervisors\.zone\..* manufacturer productname virtual zones os\.distro\.description
-      kernelmajversion uuid sshed25519key]
+      kernelmajversion uuid sshed25519key sshecdsakey]
 
   agents.each do |agent|
     teardown do
