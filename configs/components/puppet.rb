@@ -140,17 +140,20 @@ component "puppet" do |pkg, settings, platform|
 
   if platform.is_windows?
     vardir = File.join(settings[:sysconfdir], 'puppet', 'cache')
+    publicdir = File.join(settings[:sysconfdir], 'puppet', 'public')
     configdir = File.join(settings[:sysconfdir], 'puppet', 'etc')
     logdir = File.join(settings[:sysconfdir], 'puppet', 'var', 'log')
     piddir = File.join(settings[:sysconfdir], 'puppet', 'var', 'run')
     prereqs = "--check-prereqs"
   else
     vardir = File.join(settings[:prefix], 'cache')
+    publicdir = File.join(settings[:prefix], 'public')
     configdir = settings[:puppet_configdir]
     logdir = settings[:logdir]
     piddir = settings[:piddir]
     prereqs = "--no-check-prereqs"
   end
+
   pkg.install do
     [
       "#{settings[:host_ruby]} install.rb \
@@ -161,6 +164,7 @@ component "puppet" do |pkg, settings, platform|
         --sitelibdir=#{settings[:ruby_vendordir]} \
         --codedir=#{settings[:puppet_codedir]} \
         --vardir=#{vardir} \
+        --publicdir=#{publicdir} \
         --rundir=#{piddir} \
         --logdir=#{logdir} \
         --localedir=#{settings[:datadir]}/locale \
@@ -220,6 +224,7 @@ component "puppet" do |pkg, settings, platform|
   pkg.configfile File.join(configdir, 'auth.conf')
 
   pkg.directory vardir, mode: '0750'
+  pkg.directory publicdir, mode: '0755'
   pkg.directory configdir
   pkg.directory File.join(settings[:datadir], "locale")
   pkg.directory settings[:puppet_codedir]
