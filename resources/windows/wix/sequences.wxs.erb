@@ -148,7 +148,9 @@
       </Custom>
       <%-end-%>
 
-      <Custom Action='RemoveLegacyNssmRegistryKey' Before='RemoveExistingProducts' />
+      <Custom Action='RemoveLegacyNssmRegistryKey' Before='RemoveExistingProducts' >
+        NOT SKIP_NSSM_REGISTRY_CLEANUP
+      </Custom>
 
     </InstallExecuteSequence>
 
