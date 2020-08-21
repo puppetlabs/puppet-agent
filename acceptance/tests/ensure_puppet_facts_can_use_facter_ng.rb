@@ -28,6 +28,13 @@ test_name 'Ensure puppet facts can use facter-ng' do
         assert_nil(unresolved_fact, "missing dependency for facter-ng from: #{unresolved_fact.inspect}")
       end
     end
+
+    step "test that stderr is empty on puppet facts with facter-ng'" do
+      on agent, puppet('config set facterng true')
+      on agent, puppet('facts'), :acceptable_exit_codes => [0] do
+        assert_empty(stderr, "Expected `puppet facts` stderr to be empty")
+      end
+    end
   end
 end
 
