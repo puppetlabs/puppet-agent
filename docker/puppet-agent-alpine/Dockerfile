@@ -21,14 +21,24 @@ RUN mkdir /workspace && \
     sed -i -e 's/sys\/poll/poll/' /usr/include/boost/asio/detail/socket_types.hpp
 
 ######################################################
+# pxp-agent-vanagon (contains c++ components)
+######################################################
+FROM build as pxp-agent-vanagon
+WORKDIR /workspace/pxp-agent-vanagon
+
+COPY configs/components/pxp-agent.json /workspace
+RUN git clone https://github.com/puppetlabs/pxp-agent-vanagon . && \
+    git checkout "$(jq -r .location /workspace/pxp-agent.json | tr -d '\"' | sed -e 's/.*pxp-agent\/\(.*\)\/artifacts\/.*/\1/')"
+
+######################################################
 # leatherman (build from source)
 ######################################################
 
-FROM build as leatherman
+FROM pxp-agent-vanagon as leatherman
 WORKDIR /workspace/leatherman
 
-COPY configs/components/leatherman.json /workspace
-RUN git clone -b master https://github.com/puppetlabs/leatherman . && \
+RUN cp /workspace/pxp-agent-vanagon/configs/components/leatherman.json /workspace && \
+    git clone -b master https://github.com/puppetlabs/leatherman . && \
     git checkout "$(jq -r .ref /workspace/leatherman.json)" && \
     cmake . -DBOOST_STATIC=OFF -DCMAKE_VERBOSE_MAKEFILE=ON -Bbuild; make -C build ; make -C build install
 
@@ -40,9 +50,9 @@ RUN git clone -b master https://github.com/puppetlabs/leatherman . && \
 FROM leatherman as libwhereami
 WORKDIR /workspace/libwhereami
 
-COPY configs/components/libwhereami.json /workspace
 # hadolint ignore=SC2086
-RUN git clone https://github.com/puppetlabs/libwhereami . && \
+RUN cp /workspace/pxp-agent-vanagon/configs/components/libwhereami.json /workspace && \
+    git clone https://github.com/puppetlabs/libwhereami . && \
     git checkout "$(jq -r .ref /workspace/libwhereami.json)" && \
     cmake $CMAKE_SHARED_OPTIONS -DBOOST_STATIC=OFF .; make -C build ; make -C build install
 
@@ -54,9 +64,9 @@ RUN git clone https://github.com/puppetlabs/libwhereami . && \
 FROM leatherman as cpp-hocon
 WORKDIR /workspace/cpp-hocon
 
-COPY configs/components/cpp-hocon.json /workspace
 # hadolint ignore=SC2086
-RUN git clone https://github.com/puppetlabs/cpp-hocon . && \
+RUN cp /workspace/pxp-agent-vanagon/configs/components/cpp-hocon.json /workspace && \
+    git clone https://github.com/puppetlabs/cpp-hocon . && \
     git checkout "$(jq -r .ref /workspace/cpp-hocon.json)" && \
     cmake $CMAKE_SHARED_OPTIONS -DBOOST_STATIC=OFF .; make -C build ; make -C build install
 
@@ -69,9 +79,9 @@ RUN git clone https://github.com/puppetlabs/cpp-hocon . && \
 FROM leatherman as pxp-agent
 WORKDIR /workspace/cpp-pcp-client
 
-COPY configs/components/cpp-pcp-client.json /workspace
 # hadolint ignore=SC2086
-RUN git clone https://github.com/puppetlabs/cpp-pcp-client . && \
+RUN cp /workspace/pxp-agent-vanagon/configs/components/cpp-pcp-client.json /workspace && \
+    git clone https://github.com/puppetlabs/cpp-pcp-client . && \
     git checkout "$(jq -r .ref /workspace/cpp-pcp-client.json)" && \
     cmake . $CMAKE_SHARED_OPTIONS; make -C build ; make -C build install
 
@@ -80,9 +90,9 @@ COPY --from=cpp-hocon /opt/puppetlabs /opt/puppetlabs
 
 WORKDIR /workspace/pxp-agent
 
-COPY configs/components/pxp-agent.json /workspace
 # hadolint ignore=SC2086
-RUN git clone https://github.com/puppetlabs/pxp-agent . && \
+RUN cp /workspace/pxp-agent-vanagon/configs/components/pxp-agent.json /workspace && \
+    git clone https://github.com/puppetlabs/pxp-agent . && \
     git checkout "$(jq -r .ref /workspace/pxp-agent.json)" && \
     cmake . $CMAKE_SHARED_OPTIONS; make -C build ; make -C build install
 
