@@ -41,7 +41,7 @@ task(:commits) do
 \n\tThis test for the commit summary is case-insensitive.\n\n\n
     HEREDOC
 
-    if /^\((maint|doc|docs|packaging)\)|revert|bumping|merge|promoting/i.match(commit_summary).nil?
+    if /^\((maint|doc|docs|packaging|pa-\d+)\)|revert|bumping|merge|promoting/i.match(commit_summary).nil?
       ticket = commit_summary.match(/^\(([[:alpha:]]+-[[:digit:]]+)\).*/)
       if ticket.nil?
         raise error_message
