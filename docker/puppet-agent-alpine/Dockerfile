@@ -27,8 +27,9 @@ FROM build as pxp-agent-vanagon
 WORKDIR /workspace/pxp-agent-vanagon
 
 COPY configs/components/pxp-agent.json /workspace
-RUN git clone https://github.com/puppetlabs/pxp-agent-vanagon . && \
-    git checkout "$(jq -r .location /workspace/pxp-agent.json | tr -d '\"' | sed -e 's/.*pxp-agent\/\(.*\)\/artifacts\/.*/\1/')"
+# hadolint ignore=DL4006
+RUN git clone -b main https://github.com/puppetlabs/pxp-agent-vanagon . && \
+    git checkout "$(jq -r .location /workspace/pxp-agent.json | sed -e 's/.*pxp-agent\/\(.*\)\/artifacts\/.*/\1/')"
 
 ######################################################
 # leatherman (build from source)
