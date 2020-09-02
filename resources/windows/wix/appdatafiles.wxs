@@ -27,6 +27,7 @@
           <Directory Id="PuppetAppData" Name="puppet">
             <Directory Id="PuppetConfDir" Name="etc"/>
             <Directory Id="PuppetVarDir" Name="var"/>
+            <Directory Id="PuppetPublicDir" Name="public"/>
           </Directory>
           <Directory Id="FacterAppData" Name="facter">
             <Directory Id="FactsDotD" Name="facts.d"/>
@@ -243,6 +244,16 @@
         Guid="B95A17F3-CF5E-4EC7-859E-F10C0965645F"
         Directory="PuppetVarDir">
         <CreateFolder />
+      </Component>
+      <Component
+        Id="PuppetPublicDir"
+        Permanent="yes"
+        Guid="B1A31F2F-D759-4444-B4E6-8EF9A353B47A"
+        Directory="PuppetPublicDir">
+        <CreateFolder>
+          <!-- allow everyone read & execute -->
+          <PermissionEx Sddl="O:SYG:SYD:P(A;OICI;0x1200a9;;;WD)(A;OICI;FA;;;SY)(A;OICI;FA;;;BA)" />
+        </CreateFolder>
       </Component>
       <Component
         Id="FacterAppDir"

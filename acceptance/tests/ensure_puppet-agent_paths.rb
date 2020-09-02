@@ -28,6 +28,7 @@ def config_options(agent)
     codedir = "#{puppetlabs_data}/code"
     confdir = "#{puppetlabs_data}/puppet/etc"
     vardir = "#{puppetlabs_data}/puppet/cache"
+    publicdir = "#{puppetlabs_data}/puppet/public"
     logdir = "#{puppetlabs_data}/puppet/var/log"
     rundir = "#{puppetlabs_data}/puppet/var/run"
     sep = ";"
@@ -37,6 +38,7 @@ def config_options(agent)
     codedir = '/etc/puppetlabs/code'
     confdir = '/etc/puppetlabs/puppet'
     vardir = '/opt/puppetlabs/puppet/cache'
+    publicdir = '/opt/puppetlabs/puppet/public'
     logdir = '/var/log/puppetlabs/puppet'
     rundir = '/var/run/puppetlabs'
     sep = ":"
@@ -80,6 +82,9 @@ def config_options(agent)
     {:name => :logdir,          :expected => logdir,                      :installed => :dir},
     {:name => :rundir,          :expected => rundir,                      :installed => :dir},
     {:name => :pidfile,         :expected => "#{rundir}/agent.pid"},
+
+    # publicdir
+    {:name => :publicdir,       :expected => publicdir,                   :installed => :dir},
   ]
 end
 
