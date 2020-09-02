@@ -5,11 +5,16 @@ project "puppet-agent" do |proj|
   # - Modifications to global settings like flags and target directories should be made in puppet-runtime.
   # - Settings included in this file should apply only to local components in this repository.
   runtime_details = JSON.parse(File.read('configs/components/puppet-runtime.json'))
+  pxp_agent_details = JSON.parse(File.read('configs/components/pxp-agent.json'))
   agent_branch = 'main'
 
   settings[:puppet_runtime_version] = runtime_details['version']
   settings[:puppet_runtime_location] = runtime_details['location']
   settings[:puppet_runtime_basename] = "agent-runtime-#{agent_branch}-#{runtime_details['version']}.#{platform.name}"
+
+  settings[:pxp_agent_version] = pxp_agent_details['version']
+  settings[:pxp_agent_location] = pxp_agent_details['location']
+  settings[:pxp_agent_basename] = "pxp-agent-#{pxp_agent_details['version']}.#{platform.name}"
 
   settings_uri = File.join(runtime_details['location'], "#{proj.settings[:puppet_runtime_basename]}.settings.yaml")
   sha1sum_uri = "#{settings_uri}.sha1"
@@ -63,6 +68,8 @@ project "puppet-agent" do |proj|
   # Used to construct download URLs for forge modules in _base-module.rb
   proj.setting(:forge_download_baseurl, "https://forge.puppet.com/v3/files")
 
+  proj.setting(:service_conf, File.join(proj.install_root, 'service_conf'))
+
   proj.description "The Puppet Agent package contains all of the elements needed to run puppet, including ruby, facter, and hiera."
   proj.version(proj.version_from_git.gsub(/6\.\d+\.\d+/, '7.0.0'))
   proj.write_version_file File.join(proj.prefix, 'VERSION')
@@ -85,20 +92,14 @@ project "puppet-agent" do |proj|
   # Set package version, for use by Facter in creating the AIO_AGENT_VERSION fact.
   proj.setting(:package_version, proj.get_version)
 
-  # First our stuff
+  # Provides augeas, curl, libedit, libxml2, libxslt, openssl, puppet-ca-bundle, ruby and rubygem-*
+  proj.component "puppet-runtime"
+  proj.component "pxp-agent"
+
   proj.component "puppet"
   proj.component "facter"
   proj.component "hiera"
-  proj.component "leatherman"
-  proj.component "cpp-hocon"
-  proj.component "cpp-pcp-client"
-  proj.component "pxp-agent"
-  proj.component "libwhereami"
 
-  # Then the dependencies
-  # Provides augeas, curl, libedit, libxml2, libxslt, openssl, puppet-ca-bundle, ruby and rubygem-*
-  proj.component "puppet-runtime"
-  proj.component "nssm" if platform.is_windows?
   proj.component "puppet-resource_api"
 
   # These utilites don't really work on unix
@@ -107,9 +108,6 @@ project "puppet-agent" do |proj|
     proj.component "dmidecode" unless platform.architecture =~ /ppc64/
     proj.component "shellpath"
   end
-
-  proj.component "runtime" if platform.name =~ /debian-9|el-[67]|redhatfips-7|sles-12|ubuntu-(:?16.04|18.04)/ ||
-                              !platform.is_linux?
 
   # Windows doesn't need these wrappers, only unix platforms
   unless platform.is_windows?
