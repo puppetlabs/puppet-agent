@@ -83,7 +83,13 @@ component "facter" do |pkg, settings, platform|
     if (platform.is_el? && platform.os_version.to_i >= 6) || (platform.is_sles? && platform.os_version.to_i >= 11) || platform.is_fedora?
       # Ensure libblkid-devel isn't installed for all cross-compiled builds,
       # otherwise the build will fail trying to link to the x86_64 libblkid:
-      pkg.build_requires "libblkid-devel" unless platform.is_cross_compiled?
+      unless platform.is_cross_compiled?
+        pkg.build_requires "libblkid-devel"
+
+        #needed for `yum .. --best` as it will install latest version of above package
+        #and will fail because dependencies are not latest versions
+        pkg.build_requires "libblkid libuuid" if platform.is_fedora?
+      end
       skip_blkid = 'OFF'
     elsif (platform.is_el? && platform.os_version.to_i < 6) || (platform.is_sles? && platform.os_version.to_i < 11)
       pkg.build_requires "e2fsprogs-devel"
@@ -164,6 +170,15 @@ component "facter" do |pkg, settings, platform|
   end
 
   # FACTER_RUBY Needs bindir
+  #
+  # Boost_NO_BOOST_CMAKE=ON was added while upgrading to boost
+  # 1.73 for PA-3244. https://cmake.org/cmake/help/v3.0/module/FindBoost.html#boost-cmake
+  # describes the setting itself (and what we are disabling). It
+  # may make sense in the future to remove this cmake parameter and
+  # actually make the boost build work with boost's own cmake
+  # helpers. But for now disabling boost's cmake helpers allow us
+  # to upgrade boost with minimal changes.
+  #                                  - Sean P. McDonald 5/19/2020
   pkg.configure do
     ["#{cmake} \
         #{toolchain} \
@@ -173,6 +188,7 @@ component "facter" do |pkg, settings, platform|
         -DCMAKE_INSTALL_RPATH=#{settings[:libdir]} \
         -DRUBY_LIB_INSTALL=#{settings[:ruby_vendordir]} \
         #{special_flags} \
+        -DBoost_NO_BOOST_CMAKE=ON \
         #{boost_static_flag} \
         #{yamlcpp_static_flag} \
         -DWITHOUT_CURL=#{skip_curl} \

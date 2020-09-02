@@ -1,5 +1,7 @@
 component "facter-ng" do |pkg, settings, platform|
-  pkg.load_from_json("configs/components/facter-ng.json")
+  pkg.version '4.0.36'
+  pkg.sha256sum '09bfe8ceb09039aafc55750d685ede6270498007a66ae823bd4bf2febc6c728c'
+  pkg.url "https://github.com/puppetlabs/facter/archive/#{pkg.get_version}.tar.gz"
 
   pkg.build_requires "puppet-runtime"
   pkg.build_requires "pl-ruby-patch"
@@ -16,6 +18,16 @@ component "facter-ng" do |pkg, settings, platform|
   if settings[:ruby_vendordir]
     pkg.environment "RUBYLIB", "#{settings[:ruby_vendordir]}:$(RUBYLIB)"
   end
+
+
+  pkg.configure do
+    [
+        "cd ..",
+        "mv facter-#{pkg.get_version}/* #{pkg.get_version}",
+        "cd #{pkg.get_version}"
+    ]
+  end
+
 
   # Remove required_ruby_version from gemspec, this is needed for cross-compiled
   # platforms as ruby version is lower than 2.3 on these platforms.

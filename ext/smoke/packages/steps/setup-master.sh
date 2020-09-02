@@ -72,7 +72,7 @@ echo ""
 
 # Create route_file with puppetdb terminus for facts
 echo "STEP (6): Creating route_file with puppetdb terminus for facts"
-route_file=`on_master ${master_vm} "puppet master --configprint route_file" | tail -n 1`
+route_file=`on_master ${master_vm} "puppet config print route_file" | tail -n 1`
 on_master ${master_vm} "echo --- > ${route_file}"
 on_master ${master_vm} "echo master: >> ${route_file}"
 on_master ${master_vm} "echo \"  facts:\" >> ${route_file}"

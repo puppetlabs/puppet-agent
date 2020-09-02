@@ -64,6 +64,14 @@ component "pxp-agent" do |pkg, settings, platform|
     special_flags += " -DENABLE_CXX_WERROR=OFF " unless platform.name =~ /sles-15/
   end
 
+  # Boost_NO_BOOST_CMAKE=ON was added while upgrading to boost
+  # 1.73 for PA-3244. https://cmake.org/cmake/help/v3.0/module/FindBoost.html#boost-cmake
+  # describes the setting itself (and what we are disabling). It
+  # may make sense in the future to remove this cmake parameter and
+  # actually make the boost build work with boost's own cmake
+  # helpers. But for now disabling boost's cmake helpers allow us
+  # to upgrade boost with minimal changes.
+  #                                  - Sean P. McDonald 5/19/2020
   pkg.configure do
     [
       "#{cmake}\
@@ -76,6 +84,7 @@ component "pxp-agent" do |pkg, settings, platform|
           -DMODULES_INSTALL_PATH=#{File.join(settings[:install_root], 'pxp-agent', 'modules')} \
           #{special_flags} \
           #{boost_static_flag} \
+          -DBoost_NO_BOOST_CMAKE=ON \
           ."
     ]
   end
@@ -129,7 +138,7 @@ component "pxp-agent" do |pkg, settings, platform|
   when "windows"
     # Note - this definition indicates that the file should be filtered out from the Wix
     # harvest. A corresponding service definition file is also required in resources/windows/wix
-    pkg.install_service "SourceDir\\#{settings[:base_dir]}\\#{settings[:company_id]}\\#{settings[:product_id]}\\puppet\\bin\\nssm.exe"
+    pkg.install_service "SourceDir\\#{settings[:base_dir]}\\#{settings[:company_id]}\\#{settings[:product_id]}\\puppet\\bin\\nssm-pxp-agent.exe"
   else
     fail "need to know where to put #{pkg.get_name} service files"
   end

@@ -42,7 +42,12 @@ function on_agent() {
 
 function start_puppetdb() {
   local master_vm="$1"
-  local which_master=`identify_master ${master_vm}`
+
+  if [[ "$type" = "dev" ]]; then
+    local which_master="${master_vm}"
+  elif [[ "$type" = "repo" ]]; then
+    local which_master=`identify_master ${master_vm}`
+  fi
 
   echo "STEP: Start PuppetDB and point it to puppetserver"
   on_master ${master_vm} "puppet resource service puppetdb ensure=running enable=true"
@@ -62,7 +67,7 @@ function start_puppetdb() {
 
   echo "STEP: Creating route_file with puppetdb terminus for facts"
   local route_file
-  route_file=`on_master ${master_vm} "puppet master --configprint route_file" | tail -n 1`
+  route_file=`on_master ${master_vm} "puppet config print route_file" | tail -n 1`
   on_master ${master_vm} "echo --- > ${route_file}"
   on_master ${master_vm} "echo master: >> ${route_file}"
   on_master ${master_vm} "echo \"  facts:\" >> ${route_file}"
@@ -97,7 +102,12 @@ function start_puppetdb() {
 
 function install_puppetdb_from_module() {
   local master_vm="$1"
-  local which_master=`identify_master ${master_vm}`
+
+  if [[ "$type" = "dev" ]]; then
+    local which_master="${master_vm}"
+  elif [[ "$type" = "repo" ]]; then
+    local which_master=`identify_master ${master_vm}`
+  fi
 
   echo "STEP: Install PuppetDB from the module on ${which_master}!"
   on_master ${master_vm} "puppet module install puppetlabs-puppetdb"
@@ -138,7 +148,12 @@ function install_puppetdb_from_package() {
   # Either "dev" (packages on builds.puppetlabs.lan) or "repo" (packages released).
   local type="$2"
   local collection="$3"
-  local which_master=`identify_master ${master_vm}`
+
+  if [[ "$type" = "dev" ]]; then
+    local which_master="${master_vm}"
+  elif [[ "$type" = "repo" ]]; then
+    local which_master=`identify_master ${master_vm}`
+  fi
 
   echo "STEP: Install PuppetDB from package on ${which_master}!"
 
@@ -149,7 +164,7 @@ function install_puppetdb_from_package() {
   local yum_cmd="yum --releasever=7"
 
   echo "STEP: Set-up postgresql 9.6 to use with PuppetDB"
-  on_master ${master_vm} "rpm --query --quiet pgdg-redhat96-9.6-3.noarch || ${yum_cmd} install -y https://yum.postgresql.org/9.6/redhat/rhel-7-x86_64/pgdg-redhat96-9.6-3.noarch.rpm"
+  on_master ${master_vm} "rpm --query --quiet pgdg-redhat96-9.6-3.noarch || ${yum_cmd} install -y https://yum.postgresql.org/9.6/redhat/rhel-7-x86_64/pgdg-redhat-repo-42.0-9.noarch.rpm"
   on_master ${master_vm} "rpm --query --quiet postgresql96-server || ${yum_cmd} install -y postgresql96-server"
   on_master ${master_vm} "rpm --query --quiet postgresql96-contrib || ${yum_cmd} install -y postgresql96-contrib"
   on_master ${master_vm} "puppet resource service postgresql-9.6 ensure=stopped"
@@ -157,7 +172,7 @@ function install_puppetdb_from_package() {
   on_master ${master_vm} "puppet resource service postgresql-9.6 ensure=running enable=true"
 
   #After postgress has been installed we need to remove the postgress repo or else other yum install commands will fail.
-  on_master ${master_vm} "${yum_cmd} remove -y pgdg-redhat-repo-42.0-5.noarch"
+  on_master ${master_vm} "${yum_cmd} remove -y pgdg-redhat-repo-42.0-9.noarch"
 
   # Enters 'puppet' as the password.
   on_master ${master_vm} "runuser -l postgres -c '(echo puppet && echo puppet) | createuser -DRSP puppetdb'"
