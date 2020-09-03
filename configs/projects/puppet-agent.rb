@@ -94,7 +94,7 @@ project "puppet-agent" do |proj|
 
   # Provides augeas, curl, libedit, libxml2, libxslt, openssl, puppet-ca-bundle, ruby and rubygem-*
   proj.component "puppet-runtime"
-  proj.component "pxp-agent"
+  proj.component "pxp-agent" if ENV['NO_PXP_AGENT'].to_s.empty?
 
   proj.component "puppet"
   proj.component "facter"
