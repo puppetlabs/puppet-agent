@@ -27,14 +27,6 @@ component 'puppet-runtime' do |pkg, settings, platform|
 
   pkg.requires 'findutils' if platform.is_linux?
 
-  if platform.is_cross_compiled_linux? || platform.name =~ /solaris-11/
-    pkg.build_requires "pl-binutils-#{platform.architecture}"
-    pkg.build_requires "pl-gcc-#{platform.architecture}"
-    pkg.build_requires "pl-binutils-#{platform.architecture}"
-  elsif platform.is_aix?
-    pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-gcc-5.2.0-11.aix#{platform.os_version}.ppc.rpm"
-  end
-
   pkg.install_only true
 
   # Even though puppet's ruby comes from puppet-runtime, we still need a ruby
