@@ -1,9 +1,5 @@
 # This component exists only to remove unnecessary files that bloat the final puppet-agent package.
 component "cleanup" do |pkg, settings, platform|
-  # This component must depend on all other C++ components in order to be
-  # executed last, after they all finish building.
-  pkg.build_requires "pxp-agent"
-
   unless settings[:dev_build]
     # Unless the settings specify that this is a development build, remove
     # unneeded header files (boost headers, for example, increase the size of

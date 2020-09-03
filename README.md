@@ -32,6 +32,10 @@ built separately into a tarball and consumed here in the
 [puppet-runtime](https://github.com/puppetlabs/puppet-runtime) project for more
 information and a full list of the vendored dependencies it provides.
 
+pxp-agent is built separately into a tarball and consumed here in the
+[pxp-agent](configs/components/puppet-pxp-agent.rb) component. See the
+[pxp-agent-vanagon](https://github.com/puppetlabs/pxp-agent-vanagon) project for more information.
+
 Runtime Requirements
 ---
 Ruby and [bundler](http://bundler.io/) are required to build puppet-agent. The
@@ -54,30 +58,28 @@ By default, headers and other files that aren't needed in the final puppet-agent
 Building puppet-agent or the facter gem
 ---
 
-If you wish to build puppet-agent or the facter gem yourself:
+If you wish to build puppet-agent yourself:
 
 1. First, build the
    [puppet-runtime](https://github.com/puppetlabs/puppet-runtime) for your
    target platform and agent version.
 2. Run `bundle install` to install required ruby dependencies.
-3. When building puppet-agent or the cfacter gem on infrastructure outside of
-   Puppet, you will need to make a few edits in the component and project
-   files. The build process depends on the following packages:
-     - GCC (>=4.8.0)
-     - CMake (>= 3.2.3)
-
-     Any references to pl-gcc, pl-cmake, etc. in the [configs
-     directory](configs/) will need to be changed to refer to equivalent
-     installable packages on your target operating system. In many cases, you
-     can drop the `pl-` prefix and ensure that CXX or CC environment variables
-     are what they should be.
-4. Update the `location` and `version` in the [puppet-runtime
+3. Update the `location` and `version` in the [puppet-runtime
    component json file](configs/components/puppet-runtime.json) as follows:
    - `location` should be a file URL to your local puppet-runtime output
      directory, for example: `file:///home/you/puppet-runtime/output`
    - `version` should be the version of puppet-runtime that you built; You
      can find this value at the top level of the json metadata file produced by
      the build in your puppet-runtime output directory.
+  4. You can disable the packaging of pxp-agent by setting `NO_PXP_AGENT` ENV variable.
+  If you want to  build an agent package that also contains pxp-agent you need to
+  update the `location` and `version` in the [pxp-agent
+   component json file](configs/components/pxp-agent.json) as follows:
+   - `location` should be a file URL to your local pxp-agent- output
+     directory, for example: `file:///home/you/pxp-agent-vanagon/output`
+   - `version` should be the version of pxp-agent that you built; You
+     can find this value at the top level of the json metadata file produced by
+     the build in your pxp-agent output directory.
   - You also may need to change the source URIs for some other components. We
     recognize this is less than ideal at this point, but we wanted to err on
     the side of getting this work out in public rather than having everything
@@ -92,8 +94,7 @@ If you wish to build puppet-agent or the facter gem yourself:
    ```
 
    Where:
-   - project name is a project from [configs/projects](configs/projects) (this
-     can be `puppet-agent`, `facter-gem`, or `facter-source-gem`),
+   - project name is a project from [configs/projects](configs/projects) (this can be `puppet-agent`),
    - platform is a platform supported by vanagon and defined in the
      [configs/platforms](configs/platforms/) directory (for example,
      `el-7-x86_64`), and
@@ -104,28 +105,28 @@ If you wish to build puppet-agent or the facter gem yourself:
 Branches in puppet-agent
 ---
 
-Tracking branch (master + stable):
+Tracking branch (main + stable):
   * some components may reference tags if they’re slow moving (ruby, openssl)
   * some components reference SHAs promoted by a CI pipeline (generally puppet-agent#master pipelines track components' master branches, and likewise for stable)
 
 Guidelines on Merging Between Branches
-* stable should be merged to master regularly (e.g. per commit), as is done for component repos; no PR needed
-* master should be merged to stable as-needed; typically this is done when a component merges its master to stable, and there are matching changes needed in puppet-agent
+* stable should be merged to main regularly (e.g. per commit), as is done for component repos; no PR needed
+* main should be merged to stable as-needed; typically this is done when a component merges its main to stable, and there are matching changes needed in puppet-agent
 
-Generally, no PR is needed for routine merges from stable to master, but a PR is advised for other merges. Use your judgment of course, and put up a PR if you want review.
+Generally, no PR is needed for routine merges from stable to main, but a PR is advised for other merges. Use your judgment of course, and put up a PR if you want review.
 
-Note that for all merges from master or stable, the merge should pick up:
+Note that for all merges from main or stable, the merge should pick up:
 * changes outside of config/components
 * changes that bumped to a tag inside config/components
 
 But never:
 * changes that bumped to a SHA inside config/components
 
-Here's a sample snippet used for a stable -> master merge:
+Here's a sample snippet used for a stable -> main merge:
 
 ```
 git merge --no-commit --no-ff stable
-for i in {hiera,facter,puppet,pxp-agent,cpp-pcp-client}; do git checkout master -- configs/components/$i.json;done
+for i in {hiera,facter,puppet,pxp-agent,cpp-pcp-client}; do git checkout main -- configs/components/$i.json;done
 git commit -m "(maint) Restore promoted components refs after merge from stable"
 ```
 
