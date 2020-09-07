@@ -2,6 +2,8 @@ test_name 'Ensure puppet facts can use facter-ng' do
 
   require 'puppet/acceptance/common_utils'
 
+  confine :except, :platform => /el-5/
+
   teardown do
     on agent, puppet('config set facterng false')
   end
