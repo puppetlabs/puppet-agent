@@ -2,22 +2,24 @@ test_name 'Ensure Facter 3 and Facter 4 outputs match' do
   require 'puppet/acceptance/common_utils'
   require 'puppet/acceptance/fact_dif'
 
-  EXCLUDE_LIST = %w[os\.selinux\.enabled networking\.mtu fips_enabled mtu_lo mtu_ens192 selinux is_virtual
-      load_averages\.1m load_averages\.5m load_averages\.15m mountpoints\./dev\.available_bytes
-      system_uptime\.seconds system_uptime\.days system_uptime\.hours uptime_seconds uptime_days uptime_hours
-      identity\.privileged identity\.gid identity\.uid processors\.physicalcount processors\.count physicalprocessorcount
-      processorcount  memorysize_mb
-      memoryfree_mb swapsize_mb swapfree_mb clientnoop
-      memoryfree system_uptime\.uptime uptime facterversion lsbmajdistrelease blockdevices
-      filesystems hypervisors\.vmware\.version sshfp_ecdsa sshfp_rsa sshfp_ed25519 sshfp_dsa
-      blockdevice_.*_vendor blockdevice_.*_model blockdevice_.*_size mountpoints\..* partitions\..* operatingsystemrelease
-      os\.release\.full mtu_.* networking\.interfaces\..* scope6 disks\..* hypervisors\.lpar\.partition_number.*
-      interfaces.* memory\..*
-      processors\.speed serialnumber sshdsakey sshrsakey swapfree hypervisors\.xen\.privileged os\.release\.minor
-      boardassettag dmi\.board\.asset_tag boardassettag dmi\.board\.asset_tag lsbdistrelease lsbminordistrelease
-      processor.* processors\.models\..* processors\.speed bios_release_date bios_vendor bios_version chassisassettag
-      chassistype dmi\..* hypervisors\.zone\..* manufacturer productname virtual zones os\.distro\.description
-      kernelmajversion uuid sshed25519key sshecdsakey]
+  confine :except, :platform => 'el-5-x86_64'
+
+  EXCLUDE_LIST = %w[ fips_enabled facterversion identity\.gid identity\.privileged identity\.uid
+                    load_averages\.15m load_averages\.1m load_averages\.5m memory\.swap\.available_bytes
+                    memory\.swap\.capacity memory\.swap\.total_bytes memory\.swap\.used_bytes memory\.swap\.available
+                    memory\.system\.available memory\.system\.available_bytes memory\.system\.capacity memory\.swap\.used
+                    memory\.system\.total_bytes memory\.system\.used memory\.system\.used_bytes memoryfree memoryfree_mb
+                    memorysize_mb mountpoints\..* mtu_.* networking\.interfaces\..*\.mtu networking\.mtu
+                    os\.selinux\.enabled partitions\..*\.filesystem partitions\..*\.size_bytes partitions\..*\.mount
+                    partitions\..*\.uuid physicalprocessorcount processorcount processors\.count
+                    processors\.physicalcount selinux swapfree_mb swapsize_mb system_uptime\.days system_uptime\.hours
+                    system_uptime\.seconds uptime_days uptime_hours uptime_seconds clientnoop swapfree
+                    disks\..*\.size_bytes hypervisors\.lpar\.partition_number mountpoints\..*\.capacity
+                    processors\.speed serialnumber hypervisors\.xen\.privileged os\.release.\minor
+                    operatingsystemrelease os\.release\.full os\.distro\.description filesystems
+                    sp_uptime system_profiler\.uptime os\.release\.minor
+                    hypervisors\.zone\..* system_uptime\.uptime uptime hypervisors\.ldom\..* ldom_.*
+                    boardassettag dmi\.board\.asset_tag is_virtual kernelmajversion lsbmajdistrelease]
 
   agents.each do |agent|
     teardown do
