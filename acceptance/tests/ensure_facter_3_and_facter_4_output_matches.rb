@@ -2,6 +2,8 @@ test_name 'Ensure Facter 3 and Facter 4 outputs match' do
   require 'puppet/acceptance/common_utils'
   require 'puppet/acceptance/fact_dif'
 
+  confine :except, :platform => /el-5/
+
   EXCLUDE_LIST = %w[os\.selinux\.enabled networking\.mtu fips_enabled mtu_lo mtu_ens192 selinux is_virtual
       load_averages\.1m load_averages\.5m load_averages\.15m mountpoints\./dev\.available_bytes
       system_uptime\.seconds system_uptime\.days system_uptime\.hours uptime_seconds uptime_days uptime_hours
