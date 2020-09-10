@@ -53,7 +53,6 @@ def config_options(agent)
 
     # confdir
     {:name => :confdir,         :expected => confdir,                     :installed => :dir},
-    {:name => :rest_authconfig, :expected => "#{confdir}/auth.conf"},
     {:name => :autosign,        :expected => "#{confdir}/autosign.conf"},
     {:name => :binder_config,   :expected => ""},
     {:name => :csr_attributes,  :expected => "#{confdir}/csr_attributes.yaml"},

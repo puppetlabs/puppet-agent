@@ -223,7 +223,6 @@ component "puppet" do |pkg, settings, platform|
   end
 
   pkg.configfile File.join(configdir, 'puppet.conf')
-  pkg.configfile File.join(configdir, 'auth.conf')
 
   pkg.directory vardir, mode: '0750'
   pkg.directory publicdir, mode: '0755'
