@@ -89,7 +89,7 @@
     <String Id="FatalError_Title" Overridable="yes"><!-- _locID_text="FatalError_Title" _locComment="FatalError_Title" -->[ProductName] Setup</String>
     <String Id="FatalErrorBitmap" Overridable="yes"><!-- _locID_text="FatalErrorBitmap" _locComment="FatalErrorBitmap" -->WixUI_Bmp_Dialog</String>
     <String Id="FatalErrorTitle" Overridable="yes"><!-- _locID_text="FatalErrorTitle" _locComment="FatalErrorTitle" -->{\WixUI_Font_Bigger}[ProductName] Setup Wizard ended prematurely</String>
-    <String Id="FatalErrorDescription1" Overridable="yes"><!-- _locID_text="FatalErrorDescription1" _locComment="FatalErrorDescription1" -->The [ProductName] installer has encountered an error from which it cannot recover.  Please visit our windows installer support page: http://links.puppetlabs.com/windows_installer_error</String>
+    <String Id="FatalErrorDescription1" Overridable="yes"><!-- _locID_text="FatalErrorDescription1" _locComment="FatalErrorDescription1" -->The [ProductName] installer has encountered an error from which it cannot recover. For information on troubleshooting installation, see https://puppet.com/docs/pe/latest/troubleshooting_windows.html#installation_fails_windows</String>
     <String Id="FatalErrorDescription2" Overridable="yes"><!-- _locID_text="FatalErrorDescription2" _locComment="FatalErrorDescription2" -->Click the Finish button to exit the Setup Wizard.</String>
 
     <String Id="FeaturesDlg_Title" Overridable="yes"><!-- _locID_text="FeaturesDlg_Title" _locComment="FeaturesDlg_Title" -->[ProductName] Setup</String>
