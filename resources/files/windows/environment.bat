@@ -9,8 +9,8 @@ SET PUPPET_DIR=%PL_BASEDIR%\puppet
 REM Set a fact so we can easily source the environment.bat file in the future.
 SET FACTER_env_windows_installdir=%PL_BASEDIR%
 
-REM Add puppet's bindirs to the PATH
-SET PATH=%PUPPET_DIR%\bin;%PL_BASEDIR%\bin;%PATH%
+REM Add puppet's bin to the PATH
+SET PATH=%PATH%;%PL_BASEDIR%\bin
 
 REM Set the RUBY LOAD_PATH using the RUBYLIB environment variable
 SET RUBYLIB=%PUPPET_DIR%\lib;%RUBYLIB%

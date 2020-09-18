@@ -2,4 +2,4 @@
 @echo off
 SETLOCAL
 call "%~dp0environment.bat" %0 %*
-@elevate.exe "%~dp0puppet_interactive.bat"
+@"%PUPPET_DIR%\bin\elevate.exe" "%~dp0puppet_interactive.bat"

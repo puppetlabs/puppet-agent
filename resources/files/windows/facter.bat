@@ -3,4 +3,4 @@ SETLOCAL
 
 call "%~dp0environment.bat" %0 %*
 
-ruby -S -- facter %*
+"%PUPPET_DIR%\bin\ruby.exe" -S -- "%PUPPET_DIR%\bin\facter" %*
