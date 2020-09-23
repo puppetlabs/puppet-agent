@@ -68,7 +68,7 @@ component "puppet" do |pkg, settings, platform|
       [<<-HERE.undent
         mkdir -p  #{rpm_statedir} && chown root #{rpm_statedir} && chmod 0700 #{rpm_statedir} || :
         if [ -x #{puppet_bin} ] ; then
-          #{puppet_bin} resource service puppet | awk -F "'" '/ensure =>/ { print $2 }' > #{service_statefile} || :
+          #{puppet_bin} resource service puppet | awk -F "'" '/ensure[[:space:]]+=>/ { print $2 }' > #{service_statefile} || :
         fi
         HERE
       ]
