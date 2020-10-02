@@ -149,4 +149,4 @@ See [MAINTAINERS](MAINTAINERS)
 
 Running Tests
 ---
-See [Acceptance README](acceptance/README)
+See [Acceptance README](acceptance/README.md)
