@@ -11,6 +11,7 @@ foss_platforms:
   - el-7-ppc64le
   - el-7-aarch64
   - el-8-x86_64
+  - el-8-aarch64
   - fedora-30-x86_64
   - fedora-31-x86_64
   - fedora-32-x86_64
@@ -47,6 +48,8 @@ platform_repos:
     repo_location: repos/el/7/**/aarch64
   - name: el-8-x86_64
     repo_location: repos/el/8/**/x86_64
+  - name: el-8-aarch64
+    repo_location: repos/el/8/**/aarch64
   - name: redhatfips-7-x86_64
     repo_location: repos/redhatfips/7/**/x86_64
   - name: sles-12-x86_64
