@@ -8,7 +8,6 @@ foss_platforms:
   - el-6-i386
   - el-6-x86_64
   - el-7-x86_64
-  - el-7-ppc64le
   - el-7-aarch64
   - el-8-x86_64
   - el-8-aarch64
@@ -18,11 +17,9 @@ foss_platforms:
   - osx-10.14-x86_64
   - osx-10.15-x86_64
   - sles-12-x86_64
-  - sles-12-ppc64le
   - sles-15-x86_64
   - ubuntu-16.04-amd64
   - ubuntu-16.04-i386
-  - ubuntu-16.04-ppc64el
   - ubuntu-18.04-amd64
   - ubuntu-20.04-amd64
   - windows-2012-x86
@@ -42,8 +39,6 @@ platform_repos:
     repo_location: repos/el/6/**/x86_64
   - name: el-7-x86_64
     repo_location: repos/el/7/**/x86_64
-  - name: el-7-ppc64le
-    repo_location: repos/el/7/**/ppc64le
   - name: el-7-aarch64
     repo_location: repos/el/7/**/aarch64
   - name: el-8-x86_64
@@ -54,8 +49,6 @@ platform_repos:
     repo_location: repos/redhatfips/7/**/x86_64
   - name: sles-12-x86_64
     repo_location: repos/sles/12/**/x86_64
-  - name: sles-12-ppc64le
-    repo_location: repos/sles/12/**/ppc64le
   - name: sles-15-x86_64
     repo_location: repos/sles/15/**/x86_64
   - name: fedora-30-x86_64
@@ -71,8 +64,6 @@ platform_repos:
   - name: ubuntu-16.04-i386
     repo_location: repos/apt/xenial
   - name: ubuntu-16.04-amd64
-    repo_location: repos/apt/xenial
-  - name: ubuntu-16.04-ppc64el
     repo_location: repos/apt/xenial
   - name: ubuntu-18.04-amd64
     repo_location: repos/apt/bionic
