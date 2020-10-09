@@ -28,7 +28,7 @@ class FactDif
         path.pop
       end
     else
-      compare(path, sh.to_s)
+      compare(path, sh)
     end
   end
 
