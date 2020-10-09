@@ -2,7 +2,7 @@ test_name 'Ensure Facter 3 and Facter 4 outputs match' do
   require 'puppet/acceptance/common_utils'
   require 'puppet/acceptance/fact_dif'
 
-  confine :except, :platform => /el-5-x86_64|el-8-aarch64/
+  confine :except, :platform => /el-5-x86_64/
 
   EXCLUDE_LIST = %w[ fips_enabled facterversion identity\.gid identity\.privileged identity\.uid
                     load_averages\.15m load_averages\.1m load_averages\.5m memory\.swap\.available_bytes
@@ -19,7 +19,7 @@ test_name 'Ensure Facter 3 and Facter 4 outputs match' do
                     operatingsystemrelease os\.release\.full os\.distro\.description filesystems
                     sp_uptime system_profiler\.uptime os\.release\.minor
                     hypervisors\.zone\..* system_uptime\.uptime uptime hypervisors\.ldom\..* ldom_.*
-                    boardassettag dmi\.board\.asset_tag is_virtual kernelmajversion lsbmajdistrelease]
+                    boardassettag dmi\.board\.asset_tag is_virtual kernelmajversion lsbmajdistrelease zones virtual]
 
   agents.each do |agent|
     teardown do
