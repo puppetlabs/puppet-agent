@@ -43,6 +43,7 @@ If (fso.FileExists(iniPath)) Then
   Set iniFile = Nothing
   SetPropertyFromIni "server", "INI_PUPPET_MASTER_SERVER", iniFileText
   SetPropertyFromIni "masterport", "INI_PUPPET_MASTER_PORT", iniFileText
+  SetPropertyFromIni "serverport", "INI_PUPPET_SERVER_PORT", iniFileText
   SetPropertyFromIni "environment", "INI_PUPPET_AGENT_ENVIRONMENT", iniFileText
   SetPropertyFromIni "certname", "INI_PUPPET_AGENT_CERTNAME", iniFileText
   SetPropertyFromIni "ca_server", "INI_PUPPET_CA_SERVER", iniFileText
@@ -116,6 +117,16 @@ End If
        Id="SetFromCmdLinePuppetMasterPort"
        Property="MASTER_PORT"
        Value="[PUPPET_MASTER_PORT]"
+       Execute="firstSequence" />
+     <CustomAction
+      Id="SetFromIniPuppetServerPort"
+      Property="SERVER_PORT"
+      Value="[INI_PUPPET_SERVER_PORT]"
+      Execute="firstSequence" />
+    <CustomAction
+       Id="SetFromCmdLinePuppetServerPort"
+       Property="SERVER_PORT"
+       Value="[PUPPET_SERVER_PORT]"
        Execute="firstSequence" />
 
     <!-- PUPPET_AGENT_ENVIRONMENT -->
