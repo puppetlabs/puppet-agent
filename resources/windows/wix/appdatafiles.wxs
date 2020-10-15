@@ -130,6 +130,34 @@
           Key="masterport"
           Directory="PuppetConfDir" />
       </Component>
+      <Component
+        Id="PuppetServerPortSetting"
+        Guid="D9CBF5C4-06DE-11EB-ADC1-0242AC120002"
+        Transitive = "yes"
+        Directory="PuppetConfDir" >
+        <CreateFolder />
+        <Condition><![CDATA[(SERVER_PORT <> ".") AND (SERVER_PORT <> "")]]></Condition>
+        <IniFile
+          Id="PuppetConfServerPort" Name="puppet.conf"
+          Action="addLine"
+          Section="main"
+          Key="serverport" Value="[SERVER_PORT]"
+          Directory="PuppetConfDir" />
+      </Component>
+      <Component
+        Id="PuppetServerPortSettingClean"
+        Guid="296650AC-06DF-11EB-ADC1-0242AC120002"
+        Transitive = "yes"
+        Directory="PuppetConfDir" >
+        <CreateFolder />
+        <Condition><![CDATA[(SERVER_PORT = ".") OR (SERVER_PORT = "")]]></Condition>
+        <IniFile
+          Id="PuppetConfServerPort" Name="puppet.conf"
+          Action="removeLine"
+          Section="main"
+          Key="serverport"
+          Directory="PuppetConfDir" />
+      </Component>
       <!-- This is a permanent directory, do not remove on uninstall -->
       <Component
         Id="PuppetConfUnconditionalSettings"

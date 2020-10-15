@@ -67,6 +67,12 @@
       <Custom Action='SetFromIniPuppetMasterPort' Before='FileCost'>
         INI_PUPPET_MASTER_PORT AND NOT PUPPET_MASTER_PORT
       </Custom>
+      <Custom Action='SetFromCmdLinePuppetServerPort' After='FileCost'>
+        PUPPET_SERVER_PORT
+      </Custom>
+      <Custom Action='SetFromIniPuppetServerPort' Before='FileCost'>
+        INI_PUPPET_SERVER_PORT AND NOT PUPPET_SERVER_PORT
+      </Custom>
     </InstallUISequence>
 
     <InstallExecuteSequence>
@@ -124,11 +130,17 @@
       <Custom Action='SetDomainToNtAuthority' After='SetDomainToLocalComputer'>
         (PUPPET_AGENT_ACCOUNT_USER ~= "LocalService") OR (PUPPET_AGENT_ACCOUNT_USER ~= "NetworkService")
       </Custom>
-       <Custom Action='SetFromCmdLinePuppetMasterPort' After='FileCost'>
+      <Custom Action='SetFromCmdLinePuppetMasterPort' After='FileCost'>
         PUPPET_MASTER_PORT
       </Custom>
       <Custom Action='SetFromIniPuppetMasterPort' Before='FileCost'>
         INI_PUPPET_MASTER_PORT AND NOT PUPPET_MASTER_PORT
+      </Custom>
+      <Custom Action='SetFromCmdLinePuppetServerPort' After='FileCost'>
+        PUPPET_SERVER_PORT
+      </Custom>
+      <Custom Action='SetFromIniPuppetServerPort' Before='FileCost'>
+        INI_PUPPET_SERVER_PORT AND NOT PUPPET_SERVER_PORT
       </Custom>
 
       <!-- Due to PUP-6729, make sure admins and system have permision to reset permissions -->
