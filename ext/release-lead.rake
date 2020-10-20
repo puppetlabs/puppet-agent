@@ -1,5 +1,6 @@
 require 'json'
 require 'optparse'
+require 'net/http'
 
 namespace :release_lead do
   desc "Find platforms added and removed between releases"
@@ -20,6 +21,26 @@ namespace :release_lead do
   # Calculate name of repository from the name of the component's .json file.
   def json_name_to_component_name(json_filename)
     json_filename.split('/').last.split('.').first
+  end
+
+  def component_json_from_archive(component, json_data)
+    url = json_data['location']
+    version = json_data['version']
+
+    puts "Getting data for #{component} from archive, url: #{url}, version: #{version}"
+
+    begin
+      uri = URI("#{url}#{version}.build_metadata.json")
+      res = Net::HTTP.get_response(uri)
+      if res.is_a?(Net::HTTPSuccess)
+        data = JSON.parse(res.body)
+        data.dig('components', component)
+      else
+       puts  "Error when calling #{uri}, code: #{res.code}, body: #{res.body}"
+      end
+    rescue StandardError => e
+      puts "Could not retrieve data: #{e.message}"
+    end
   end
 
   # Input a git repository, a SHA or tag to check out, and a place where it can be cloned.
@@ -73,11 +94,19 @@ namespace :release_lead do
       Dir.glob("./configs/components/*.json").each do |component|
         json = JSON.parse(File.read(component))
         url = json['url']
+
         if url.nil?
-          name = json_name_to_component_name(component)
-          result[name] = 'No URL provided'
-          next
+          if component =~ /puppet-runtime/ || json['location'].nil?
+            name = json_name_to_component_name(component)
+            result[name] = 'No URL provided'
+            next
+          else
+            component_name =  json['location'].split("/")[3]
+            json = component_json_from_archive(component_name, json)
+            url = json.fetch('url')
+          end
         end
+
         name = url_to_component_name(url)
         ref = json['ref']
         sha_or_tag = ref =~ /^refs\/tags/ ? ref.gsub('refs/tags/', '') : ref
