@@ -5,8 +5,8 @@ test_name 'Ensure puppet facts can use facter' do
   agents.each do |agent|
     step 'test puppet facts with correct facter version' do
       on agent, puppet('facts'), :acceptable_exit_codes => [0] do
-        facter_major_version = JSON.parse(stdout)["values"]["facterversion"]
-        assert_match(/4.[0-9]+.[0-9]+/, facter_major_version, "wrong facter version")
+        facter_major_version =  Integer(JSON.parse(stdout)["facterversion"].split('.').first)
+        assert(4 >= facter_major_version, "wrong facter version")
       end
     end
 
@@ -23,8 +23,7 @@ test_name 'Ensure puppet facts can use facter' do
       end
     end
 
-    step "test that stderr is empty on puppet facts with facter-ng'" do
-      on agent, puppet('config set facterng true')
+    step "test that stderr is empty on puppet facts'" do
       on agent, puppet('facts'), :acceptable_exit_codes => [0] do
         assert_empty(stderr, "Expected `puppet facts` stderr to be empty")
       end
