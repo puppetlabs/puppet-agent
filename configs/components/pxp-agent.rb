@@ -26,8 +26,11 @@ component "pxp-agent" do |pkg, settings, platform|
   special_flags = " -DCMAKE_INSTALL_PREFIX=#{settings[:prefix]} "
 
   if platform.is_aix?
-    pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-gcc-5.2.0-11.aix#{platform.os_version}.ppc.rpm"
-    pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-cmake-3.2.3-2.aix#{platform.os_version}.ppc.rpm"
+    # as we build on aix6.1, we need to overwrite os version here (should be platform.os_version)
+    os_version = 6.1
+
+    pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{os_version}/ppc/pl-gcc-5.2.0-11.aix#{os_version}.ppc.rpm"
+    pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{os_version}/ppc/pl-cmake-3.2.3-2.aix#{os_version}.ppc.rpm"
   elsif platform.is_macos?
     cmake = "/usr/local/bin/cmake"
     toolchain = ""

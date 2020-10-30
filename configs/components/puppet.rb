@@ -11,7 +11,10 @@ component "puppet" do |pkg, settings, platform|
   elsif platform.is_windows?
     pkg.build_requires "pl-gettext-#{platform.architecture}"
   elsif platform.is_aix?
-    pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-gettext-0.19.8-2.aix#{platform.os_version}.ppc.rpm"
+    # as we build on aix6.1, we need to overwrite os version here (should be platform.os_version)
+    os_version = 6.1
+
+    pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{os_version}/ppc/pl-gettext-0.19.8-2.aix#{os_version}.ppc.rpm"
   elsif platform.name =~ /debian-[89]|el-[567]|redhatfips-7|sles-(:?11|12)|ubuntu-(:?14.04|16.04|18.04)/
     pkg.build_requires "pl-gettext"
   end
