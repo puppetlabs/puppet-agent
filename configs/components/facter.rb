@@ -23,4 +23,9 @@ component "facter" do |pkg, settings, platform|
 
   pkg.install_file "facter.gemspec", "#{settings[:gem_home]}/specifications/#{pkg.get_name}-#{pkg.get_version_forced}.gemspec" unless platform.is_windows?
 
+  if platform.is_windows?
+    pkg.directory File.join(settings[:sysconfdir], 'facter', 'facts.d')
+  else
+    pkg.directory File.join(settings[:install_root], 'facter', 'facts.d')
+  end
 end
