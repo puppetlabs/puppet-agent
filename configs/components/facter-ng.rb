@@ -1,6 +1,6 @@
 component "facter-ng" do |pkg, settings, platform|
-  pkg.version '4.0.43'
-  pkg.sha256sum '680f6874b10bc349754cfeb9b79755545c5c6a1926d9f06de3332b8d834f7278'
+  pkg.version '4.0.44'
+  pkg.sha256sum '70bbfff592b82b60872d0338715c00b9d004395bdff765b585c7e84855e426c9'
   pkg.url "https://github.com/puppetlabs/facter/archive/#{pkg.get_version}.tar.gz"
 
   pkg.build_requires "puppet-runtime"
