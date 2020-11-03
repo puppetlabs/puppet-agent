@@ -19,8 +19,12 @@
         INI_PUPPET_MASTER_SERVER
       </Custom>
       <Custom Action='SaveCmdLinePuppetMasterServer' Before='AppSearch' />
+      <Custom Action='SaveCmdLinePuppetServer' Before='AppSearch' />
       <Custom Action='SetFromCmdLinePuppetMasterServer' After='FileCost'>
         CMDLINE_PUPPET_MASTER_SERVER
+      </Custom>
+      <Custom Action='SetFromCmdLinePuppetServer' After='FileCost'>
+        CMDLINE_PUPPET_SERVER
       </Custom>
       <Custom Action='SetDefaultPuppetMasterServer' Before='CostFinalize'>
         PUPPET_MASTER_SERVER=""
