@@ -2,6 +2,8 @@ require 'puppet/acceptance/common_utils.rb'
 require 'puppet/acceptance/temp_file_utils'
 extend Puppet::Acceptance::CommandUtils
 
+confine :except, :platform => 'sles-12-ppc64le'
+
 def package_installer(agent)
   # for some reason, beaker does not have a configured package installer
   # for AIX, and for solaris-10 we install dependencies from opencsw. so we
