@@ -106,7 +106,7 @@ def install_dependencies(agent)
   dependencies = {
     'apt-get' => ['gcc', 'make', 'libsqlite3-dev'],
     'yum' => ['gcc', 'make', 'sqlite-devel'],
-    'zypper' => ['gcc', 'sqlite3-devel'],
+    'zypper' => ['gcc', 'sqlite3'],
     'opt/csw/bin/pkgutil' => ['sqlite3', 'libsqlite3_dev'],
     'rpm' => [
       'http://pl-build-tools.delivery.puppetlabs.net/aix/6.1/ppc/pl-gcc-5.2.0-11.aix6.1.ppc.rpm',
