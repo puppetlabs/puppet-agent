@@ -87,6 +87,18 @@ End If
       Value="[CMDLINE_INSTALLDIR]"
       Execute="firstSequence" />
 
+    <!-- PUPPET_SERVER -->
+    <CustomAction
+      Id="SaveCmdLinePuppetServer"
+      Property="CMDLINE_PUPPET_SERVER"
+      Value="[PUPPET_SERVER]"
+      Execute="firstSequence" />
+    <CustomAction
+      Id="SetFromCmdLinePuppetServer"
+      Property="PUPPET_MASTER_SERVER"
+      Value="[CMDLINE_PUPPET_SERVER]"
+      Execute="firstSequence" />
+
     <!-- PUPPET_MASTER_SERVER -->
     <CustomAction
       Id="SetFromIniPuppetMasterServer"
