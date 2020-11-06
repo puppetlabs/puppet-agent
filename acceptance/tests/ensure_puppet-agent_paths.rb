@@ -31,6 +31,7 @@ def config_options(agent)
     publicdir = "#{puppetlabs_data}/puppet/public"
     logdir = "#{puppetlabs_data}/puppet/var/log"
     rundir = "#{puppetlabs_data}/puppet/var/run"
+    facterdir = "#{puppetlabs_data}/facter"
     sep = ";"
 
     module_working_dir = on(agent, "#{ruby_command(agent)} -e 'require \"tmpdir\"; print Dir.tmpdir'").stdout.chomp
@@ -41,6 +42,7 @@ def config_options(agent)
     publicdir = '/opt/puppetlabs/puppet/public'
     logdir = '/var/log/puppetlabs/puppet'
     rundir = '/var/run/puppetlabs'
+    facterdir = "/opt/puppetlabs/facter"
     sep = ":"
 
     module_working_dir = "#{vardir}/puppet-module"
@@ -52,38 +54,41 @@ def config_options(agent)
     {:name => :environmentpath, :expected => "#{codedir}/environments"},
 
     # confdir
-    {:name => :confdir,         :expected => confdir,                     :installed => :dir},
-    {:name => :autosign,        :expected => "#{confdir}/autosign.conf"},
-    {:name => :binder_config,   :expected => ""},
-    {:name => :csr_attributes,  :expected => "#{confdir}/csr_attributes.yaml"},
+    {:name => :confdir,                  :expected => confdir,                     :installed => :dir},
+    {:name => :autosign,                 :expected => "#{confdir}/autosign.conf"},
+    {:name => :binder_config,            :expected => ""},
+    {:name => :csr_attributes,           :expected => "#{confdir}/csr_attributes.yaml"},
     {:name => :trusted_oid_mapping_file, :expected => "#{confdir}/custom_trusted_oid_mapping.yaml"},
-    {:name => :deviceconfig,    :expected => "#{confdir}/device.conf"},
-    {:name => :fileserverconfig, :expected => "#{confdir}/fileserver.conf"},
-    {:name => :config,          :expected => "#{confdir}/puppet.conf",    :installed => :file},
-    {:name => :route_file,      :expected => "#{confdir}/routes.yaml"},
-    {:name => :ssldir,          :expected => "#{confdir}/ssl",            :installed => :dir},
-    {:name => :hiera_config,    :expected => "#{confdir}/hiera.yaml"},
+    {:name => :deviceconfig,             :expected => "#{confdir}/device.conf"},
+    {:name => :fileserverconfig,         :expected => "#{confdir}/fileserver.conf"},
+    {:name => :config,                   :expected => "#{confdir}/puppet.conf",    :installed => :file},
+    {:name => :route_file,               :expected => "#{confdir}/routes.yaml"},
+    {:name => :ssldir,                   :expected => "#{confdir}/ssl",            :installed => :dir},
+    {:name => :hiera_config,             :expected => "#{confdir}/hiera.yaml"},
 
     # vardir
-    {:name => :vardir,          :expected => "#{vardir}",                 :installed => :dir},
-    {:name => :bucketdir,       :expected => "#{vardir}/bucket"},
-    {:name => :devicedir,       :expected => "#{vardir}/devices"},
-    {:name => :pluginfactdest,  :expected => "#{vardir}/facts.d",         :installed => :dir},
-    {:name => :libdir,          :expected => "#{vardir}/lib",             :installed => :dir},
-    {:name => :factpath,        :expected => "#{vardir}/lib/facter#{sep}#{vardir}/facts", :not_path => true},
-    {:name => :module_working_dir, :expected => module_working_dir},
-    {:name => :reportdir,       :expected => "#{vardir}/reports"},
-    {:name => :server_datadir,  :expected => "#{vardir}/server_data"},
-    {:name => :statedir,        :expected => "#{vardir}/state",           :installed => :dir},
-    {:name => :yamldir,         :expected => "#{vardir}/yaml"},
+    {:name => :vardir,                   :expected => "#{vardir}",                 :installed => :dir},
+    {:name => :bucketdir,                :expected => "#{vardir}/bucket"},
+    {:name => :devicedir,                :expected => "#{vardir}/devices"},
+    {:name => :pluginfactdest,           :expected => "#{vardir}/facts.d",         :installed => :dir},
+    {:name => :libdir,                   :expected => "#{vardir}/lib",             :installed => :dir},
+    {:name => :factpath,                 :expected => "#{vardir}/lib/facter#{sep}#{vardir}/facts", :not_path => true},
+    {:name => :module_working_dir,       :expected => module_working_dir},
+    {:name => :reportdir,                :expected => "#{vardir}/reports"},
+    {:name => :server_datadir,           :expected => "#{vardir}/server_data"},
+    {:name => :statedir,                 :expected => "#{vardir}/state",           :installed => :dir},
+    {:name => :yamldir,                  :expected => "#{vardir}/yaml"},
 
     # logdir/rundir
-    {:name => :logdir,          :expected => logdir,                      :installed => :dir},
-    {:name => :rundir,          :expected => rundir,                      :installed => :dir},
-    {:name => :pidfile,         :expected => "#{rundir}/agent.pid"},
+    {:name => :logdir,                   :expected => logdir,                      :installed => :dir},
+    {:name => :rundir,                   :expected => rundir,                      :installed => :dir},
+    {:name => :pidfile,                  :expected => "#{rundir}/agent.pid"},
 
     # publicdir
-    {:name => :publicdir,       :expected => publicdir,                   :installed => :dir},
+    {:name => :publicdir,                :expected => publicdir,                   :installed => :dir},
+
+    #non-Puppet config dirs
+    {:name => :facter_factsdir,          :expected => "#{facterdir}/facts.d",      :installed => :dir, :not_puppet_config => true},
   ]
 end
 
@@ -91,7 +96,7 @@ step 'test configprint outputs'
 agents.each do |agent|
   on(agent, puppet_agent('--configprint all')) do
     output = stdout
-    config_options(agent).each do |config_option|
+    config_options(agent).select {|v| !v[:not_puppet_config] }.each do |config_option|
       assert_match("#{config_option[:name]} = #{config_option[:expected]}", output)
     end
   end
@@ -101,13 +106,13 @@ step 'test puppet genconfig entries'
 agents.each do |agent|
   on(agent, puppet_agent('--genconfig')) do
     output = stdout
-    config_options(agent).each do |config_option|
+    config_options(agent).select {|v| !v[:not_puppet_config] }.each do |config_option|
       assert_match("#{config_option[:name]} = #{config_option[:expected]}", output)
     end
   end
 end
 
-step 'test puppet config paths exist'
+step 'test puppet agent paths exist'
 agents.each do |agent|
   config_options(agent).select {|v| !v[:not_path] }.each do |config_option|
     path = config_option[:expected]

@@ -29,7 +29,7 @@
         <Control Id="ChangeFolder" Type="PushButton" X="20" Y="100" Width="56" Height="17" Text="!(loc.InstallDirDlgChange)" />
 
         <Control Id="PuppetMasterServerText" Type="Text" X="20" Y="135" Width="290" Height="13" NoPrefix="yes"
-          Text="Fully qualified domain name of the Puppet master:" />
+          Text="Fully qualified domain name of the Puppet server:" />
         <Control Id="PuppetMasterServerEdit" Type="Edit" X="20" Y="150" Width="320" Height="18"
                  Text="[PUPPET_MASTER_SERVER]"
                  Property="PUPPET_MASTER_SERVER" />
