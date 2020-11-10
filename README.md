@@ -48,7 +48,7 @@ for each desired package.
 The location of Vanagon in the Gemfile can be overridden with the environment variable `VANAGON_LOCATION`. Can be set prior to `bundle install` or updated with `bundle update`.
 
 * `0.3.14` - Specific tag from the Vanagon git repo
-* `git@github.com:puppetlabs/vanagon#master` - Remote git location and tag
+* `https://github.com/puppetlabs/vanagon#version` - Remote git location and version (can be a ref, branch or tag)
 * `file:///workspace/vanagon` - Absolute file path
 * `file://../vanagon` - File path relative to the project directory
 
@@ -107,7 +107,7 @@ Branches in puppet-agent
 
 Tracking branch (main + stable):
   * some components may reference tags if they’re slow moving (ruby, openssl)
-  * some components reference SHAs promoted by a CI pipeline (generally puppet-agent#master pipelines track components' master branches, and likewise for stable)
+  * some components reference SHAs promoted by a CI pipeline (generally puppet-agent#main pipelines track components' main branches, and likewise for stable)
 
 Guidelines on Merging Between Branches
 * stable should be merged to main regularly (e.g. per commit), as is done for component repos; no PR needed
@@ -133,7 +133,7 @@ git commit -m "(maint) Restore promoted components refs after merge from stable"
 Installer plugin for OSX
 ---
 The GUI installer for OSX includes a custom plugin that captures and sets information such
-as the puppet master and certificate name for the client.  The source for this Xcode project
+as the puppet server and certificate name for the client.  The source for this Xcode project
 can be found [here](https://github.com/puppetlabs/puppet-agent-osx-installer-plugin).
 
 Issues
