@@ -36,6 +36,7 @@ foss_platforms:
   - windows-2012-x64
 pe_platforms:
   - aix-6.1-power
+  - aix-7.1-power
   - redhatfips-7-x86_64
   - solaris-10-i386
   - solaris-10-sparc
