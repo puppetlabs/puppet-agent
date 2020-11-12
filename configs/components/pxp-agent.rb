@@ -83,6 +83,11 @@ component "pxp-agent" do |pkg, settings, platform|
     pkg.install_service "#{service_conf}/osx/pxp-agent.plist", nil, 'com.puppetlabs.pxp-agent'
   when 'smf'
     pkg.install_service "#{service_conf}/solaris/smf/pxp-agent.xml", service_type: 'network'
+    logadm_script = <<-EOM
+    logadm -C30 -z0\
+      -w /var/log/puppetlabs/pxp-agent/pxp-agent.log
+    EOM
+    pkg.add_postinstall_action ['install'], [logadm_script]
   when 'aix'
     pkg.install_service 'resources/aix/pxp-agent.service', nil, 'pxp-agent'
   when 'windows'
