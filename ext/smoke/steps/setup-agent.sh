@@ -77,10 +77,10 @@ set -e
 echo "### DEBUG: Sleeping for 5 seconds to give some time for the agent cert to appear on the master ..."
 sleep 5
 # TODO check collection for puppet7
-if [[ "${collection}" = "puppet6" ]]; then
-  on_master "puppetserver ca sign --all"
-else
+if [[ "${collection}" = "puppet5" ]]; then
   on_master "puppet cert sign --all"
+else
+  on_master "puppetserver ca sign --all"
 fi
 echo ""
 echo ""
