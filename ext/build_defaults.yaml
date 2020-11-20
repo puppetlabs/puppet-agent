@@ -34,7 +34,6 @@ foss_platforms:
   - windows-2012-x86
   - windows-2012-x64
 pe_platforms:
-  - aix-6.1-power
   - aix-7.1-power
   - redhatfips-7-x86_64
   - solaris-10-i386
@@ -43,8 +42,6 @@ pe_platforms:
   - solaris-11-sparc
   - windowsfips-2012r2-x64
 platform_repos:
-  - name: aix-6.1-power
-    repo_location: repos/aix/6.1/**/ppc
   - name: aix-7.1-power
     repo_location: repos/aix/7.1/**/ppc
   - name: eos-4-i386
