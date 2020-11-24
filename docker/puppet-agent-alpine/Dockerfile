@@ -156,7 +156,7 @@ RUN puppet config set confdir /etc/puppetlabs/puppet && \
 
 FROM alpine:3.9 as final
 
-ARG version=6.0.0
+ARG version=7.0.0
 ARG vcs_ref
 ARG build_date
 

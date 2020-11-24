@@ -2,7 +2,7 @@ ARG ubuntu_version=18.04
 
 FROM ubuntu:${ubuntu_version}
 
-ARG version="6.0.0"
+ARG version="7.0.0"
 ARG vcs_ref
 ARG build_date
 ARG UBUNTU_CODENAME="bionic"
@@ -21,11 +21,11 @@ LABEL org.label-schema.maintainer="Puppet Release Team <release@puppet.com>" \
 ENTRYPOINT ["/opt/puppetlabs/bin/puppet"]
 CMD ["agent", "--verbose", "--onetime", "--no-daemonize", "--summarize"]
 
-ADD https://apt.puppetlabs.com/puppet6-release-"$UBUNTU_CODENAME".deb /puppet6.deb
+ADD https://apt.puppetlabs.com/puppet7-release-"$UBUNTU_CODENAME".deb /puppet7.deb
 
 # hadolint ignore=DL3008
-RUN dpkg -i /puppet6.deb && \
-    rm /puppet6.deb && \
+RUN dpkg -i /puppet7.deb && \
+    rm /puppet7.deb && \
     apt-get update && \
     apt-get install --no-install-recommends -y ca-certificates lsb-release puppet-agent="$version"-1"$UBUNTU_CODENAME" && \
     apt-get autoremove -y && \
