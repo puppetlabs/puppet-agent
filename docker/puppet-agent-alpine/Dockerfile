@@ -10,11 +10,8 @@ ENV JAVA_HOME=/usr/lib/jvm/java-1.8-openjdk
 ENV PATH=$PATH:$JAVA_HOME/jre/bin:$JAVA_HOME/bin \
     CMAKE_SHARED_OPTIONS='-DCMAKE_PREFIX_PATH=/opt/puppetlabs/puppet -DCMAKE_INSTALL_PREFIX=/opt/puppetlabs/puppet -DCMAKE_INSTALL_RPATH=/opt/puppetlabs/puppet/lib -DCMAKE_VERBOSE_MAKEFILE=ON -Bbuild'
 
-# pin back to boost, gcc and g++ packages from alpine 3.8
-# 3.9+ packages g++6 and gcc6 are difficult to install, even when using --force-broken-world
 # hadolint ignore=DL3018,DL3028
-RUN apk add --no-cache --update-cache --repository http://nl.alpinelinux.org/alpine/v3.8/main cmake boost-dev make gcc=6.4.0-r9 g++=6.4.0-r9  && \
-    apk add --no-cache cmake boost-dev make curl git curl-dev ruby ruby-dev yaml-cpp-dev jq openjdk8 augeas ruby-augeas ruby-etc ruby-json ruby-multi_json libressl-dev virt-what && \
+RUN apk add --no-cache cmake boost-dev make gcc g++ curl git curl-dev ruby ruby-dev yaml-cpp-dev jq openjdk8 augeas ruby-augeas ruby-etc ruby-json ruby-multi_json libressl-dev virt-what && \
     gem install --no-rdoc --no-ri deep_merge semantic_puppet puppet-resource_api locale httpclient fast_gettext concurrent-ruby thor hocon
 
 RUN mkdir /workspace && \
@@ -41,7 +38,7 @@ WORKDIR /workspace/leatherman
 RUN cp /workspace/pxp-agent-vanagon/configs/components/leatherman.json /workspace && \
     git clone -b master https://github.com/puppetlabs/leatherman . && \
     git checkout "$(jq -r .ref /workspace/leatherman.json)" && \
-    cmake . -DBOOST_STATIC=OFF -DCMAKE_VERBOSE_MAKEFILE=ON -Bbuild; make -C build ; make -C build install
+    cmake . -DENABLE_CXX_WERROR=OFF -DBOOST_STATIC=OFF -DCMAKE_VERBOSE_MAKEFILE=ON -Bbuild; make -C build ; make -C build install
 
 ######################################################
 # libwhereami (build from source)
@@ -69,7 +66,7 @@ WORKDIR /workspace/cpp-hocon
 RUN cp /workspace/pxp-agent-vanagon/configs/components/cpp-hocon.json /workspace && \
     git clone https://github.com/puppetlabs/cpp-hocon . && \
     git checkout "$(jq -r .ref /workspace/cpp-hocon.json)" && \
-    cmake $CMAKE_SHARED_OPTIONS -DBOOST_STATIC=OFF .; make -C build ; make -C build install
+    cmake -DENABLE_CXX_WERROR=OFF $CMAKE_SHARED_OPTIONS -DBOOST_STATIC=OFF .; make -C build ; make -C build install
 
 ######################################################
 # pxp-agent (build from source)
@@ -84,7 +81,7 @@ WORKDIR /workspace/cpp-pcp-client
 RUN cp /workspace/pxp-agent-vanagon/configs/components/cpp-pcp-client.json /workspace && \
     git clone https://github.com/puppetlabs/cpp-pcp-client . && \
     git checkout "$(jq -r .ref /workspace/cpp-pcp-client.json)" && \
-    cmake . $CMAKE_SHARED_OPTIONS; make -C build ; make -C build install
+    cmake . -DENABLE_CXX_WERROR=OFF $CMAKE_SHARED_OPTIONS; make -C build ; make -C build install
 
 # wait for cpp-hocon to compile to /opt/puppetlabs/puppet/lib/libcpp-hocon.a
 COPY --from=cpp-hocon /opt/puppetlabs /opt/puppetlabs
@@ -95,7 +92,7 @@ WORKDIR /workspace/pxp-agent
 RUN cp /workspace/pxp-agent-vanagon/configs/components/pxp-agent.json /workspace && \
     git clone https://github.com/puppetlabs/pxp-agent . && \
     git checkout "$(jq -r .ref /workspace/pxp-agent.json)" && \
-    cmake . $CMAKE_SHARED_OPTIONS; make -C build ; make -C build install
+    cmake . -DENABLE_CXX_WERROR=OFF $CMAKE_SHARED_OPTIONS; make -C build ; make -C build install
 
 ######################################################
 # puppet (install from source)
