@@ -70,6 +70,27 @@
         </RegistryKey>
       </Component>
 
+      <Component Id="PXPAgentEventLogRegistryEntries"
+        Guid="450339B3-56AB-4E53-8B07-29E18E01076E"
+        Directory="TARGETDIR"
+        Win64="no"
+        Permanent="yes">
+
+        <RegistryKey
+            Root="HKLM"
+            Key="SYSTEM\CurrentControlSet\services\eventlog\Application\pxp-agent"
+            Action="createAndRemoveOnUninstall">
+          <RegistryValue
+            Type="string"
+            Name="EventMessageFile"
+            Value="%SystemRoot%\System32\EventCreate.exe"/>
+          <RegistryValue
+            Type="integer"
+            Name="TypesSupported"
+            Value="7"/>
+        </RegistryKey>
+      </Component>
+
       <Component
         Id="RegistryEntriesArchitectureDependent"
         Directory="TARGETDIR"
