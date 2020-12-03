@@ -17,7 +17,7 @@ RUN apk add --no-cache --update-cache --repository http://nl.alpinelinux.org/alp
     apk add --no-cache cmake boost-dev make curl git curl-dev ruby ruby-dev yaml-cpp-dev jq openjdk8 augeas ruby-augeas ruby-etc ruby-json ruby-multi_json libressl-dev virt-what && \
     gem install --no-rdoc --no-ri deep_merge semantic_puppet puppet-resource_api locale httpclient fast_gettext concurrent-ruby thor hocon
 
-RUN mkdir /workspace && \
+RUN mkdir -p /workspace && \
     sed -i -e 's/sys\/poll/poll/' /usr/include/boost/asio/detail/socket_types.hpp
 
 ######################################################
