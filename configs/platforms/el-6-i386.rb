@@ -6,5 +6,5 @@ platform "el-6-i386" do |plat|
   plat.add_build_repository "http://pl-build-tools.delivery.puppetlabs.net/yum/pl-build-tools-release-#{plat.get_os_name}-#{plat.get_os_version}.noarch.rpm"
   plat.provision_with "yum install --assumeyes autoconf automake createrepo rsync gcc make rpmdevtools rpm-libs yum-utils rpm-sign"
   plat.install_build_dependencies_with "yum install --assumeyes"
-  plat.vmpooler_template "centos-6-i386"
+  plat.vmpooler_template "redhat-6-i386"
 end
