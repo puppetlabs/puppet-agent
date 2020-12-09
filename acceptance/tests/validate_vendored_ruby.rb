@@ -36,7 +36,7 @@ def setup_build_environment(agent)
     # for some reason pkg install does not install developer/gcc-48 for sol 11, so need
     # to use the one provided by pl-build-tools instead.
     on(agent, "curl -O http://pl-build-tools.delivery.puppetlabs.net/solaris/11/sol-11-i386-compiler.tar.gz")
-    on(agent, "gunzip sol-11-i386-compiler.tar.gz && tar -xf sol-11-i386-compiler.tar")
+    on(agent, "gunzip -f sol-11-i386-compiler.tar.gz && tar -xf sol-11-i386-compiler.tar && rm -f sol-11-i386-compiler.tar")
     on(agent, "mv pl-build-tools/ /opt/")
     gem_install_sqlite3 = "export PATH=\"/opt/pl-build-tools/i386/bin:/usr/sfw/bin:$PATH\" && #{gem_install_sqlite3}"
   when /solaris-11-sparc/
