@@ -19,7 +19,8 @@ test_name 'Ensure Facter 3 and Facter 4 outputs match' do
                     operatingsystemrelease os\.release\.full os\.distro\.description filesystems
                     sp_uptime system_profiler\.uptime os\.release\.minor
                     hypervisors\.zone\..* system_uptime\.uptime uptime hypervisors\.ldom\..* ldom_.*
-                    boardassettag dmi\.board\.asset_tag is_virtual kernelmajversion lsbmajdistrelease zones virtual]
+                    boardassettag dmi\.board\.asset_tag is_virtual kernelmajversion lsbmajdistrelease zones virtual
+                    blockdevice_.*_vendor blockdevice_.*_size]
 
   agents.each do |agent|
     teardown do
