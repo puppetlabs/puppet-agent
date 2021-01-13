@@ -25,7 +25,7 @@ FROM build as leatherman
 WORKDIR /workspace/leatherman
 
 COPY configs/components/leatherman.json /workspace
-RUN git clone -b master https://github.com/puppetlabs/leatherman . && \
+RUN git clone -b main https://github.com/puppetlabs/leatherman . && \
     git checkout "$(jq -r .ref /workspace/leatherman.json)" && \
     cmake . -DENABLE_CXX_WERROR=OFF -DBOOST_STATIC=OFF -DCMAKE_VERBOSE_MAKEFILE=ON -Bbuild; make -C build ; make -C build install
 
