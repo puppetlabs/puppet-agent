@@ -135,7 +135,7 @@ function install_puppetdb_from_module() {
 
 function install_puppetdb_from_package() {
   local master_vm="$1"
-  # Either "dev" (packages on builds.puppetlabs.lan) or "repo" (packages released).
+  # Either "dev" (packages on builds.delivery.puppetlabs.net) or "repo" (packages released).
   local type="$2"
   local collection="$3"
 
@@ -187,8 +187,8 @@ function install_puppetdb_from_package() {
   # Install the PuppetDB package
   echo "STEP: Installing the PuppetDB package ..."
   if [[ "$type" = "dev" ]]; then
-    on_master ${master_vm} "curl -f -O http://builds.puppetlabs.lan/puppetdb/${puppetdb_version}/artifacts/el/7/${collection}/x86_64/puppetdb-termini-${puppetdb_version}-1.el7.noarch.rpm"
-    on_master ${master_vm} "curl -f -O http://builds.puppetlabs.lan/puppetdb/${puppetdb_version}/artifacts/el/7/${collection}/x86_64/puppetdb-${puppetdb_version}-1.el7.noarch.rpm"
+    on_master ${master_vm} "curl -f -O http://builds.delivery.puppetlabs.net/puppetdb/${puppetdb_version}/artifacts/el/7/${collection}/x86_64/puppetdb-termini-${puppetdb_version}-1.el7.noarch.rpm"
+    on_master ${master_vm} "curl -f -O http://builds.delivery.puppetlabs.net/puppetdb/${puppetdb_version}/artifacts/el/7/${collection}/x86_64/puppetdb-${puppetdb_version}-1.el7.noarch.rpm"
     on_master ${master_vm} "rpm -ivh puppetdb-${puppetdb_version}-1.el7.noarch.rpm puppetdb-termini-${puppetdb_version}-1.el7.noarch.rpm"
   elif [[ "$type" = "repo" ]]; then
     on_master ${master_vm} "rpm --quiet --query puppetdb-${puppetdb_version} || yum install -y puppetdb-${puppetdb_version}"

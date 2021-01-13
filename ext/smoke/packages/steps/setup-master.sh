@@ -28,7 +28,7 @@ echo ""
 
 # Install puppet-agent package
 echo "STEP (1): Install the puppet-agent package"
-on_master ${master_vm} "curl -f -O http://builds.puppetlabs.lan/puppet-agent/${agent_version}/artifacts/el/7/${collection}/x86_64/puppet-agent-${agent_version}-1.el7.x86_64.rpm"
+on_master ${master_vm} "curl -f -O http://builds.delivery.puppetlabs.net/puppet-agent/${agent_version}/artifacts/el/7/${collection}/x86_64/puppet-agent-${agent_version}-1.el7.x86_64.rpm"
 on_master ${master_vm} "rpm -ivh puppet-agent-${agent_version}-1.el7.x86_64.rpm"
 echo ""
 echo ""
@@ -37,7 +37,7 @@ echo ""
 
 # Install puppetserver
 echo "STEP (2): Install puppetserver"
-on_master ${master_vm} "curl -f -O http://builds.puppetlabs.lan/puppetserver/${server_version}/artifacts/el/7/${collection}/x86_64/puppetserver-${server_version}-1.el7.noarch.rpm"
+on_master ${master_vm} "curl -f -O http://builds.delivery.puppetlabs.net/puppetserver/${server_version}/artifacts/el/7/${collection}/x86_64/puppetserver-${server_version}-1.el7.noarch.rpm"
 # FIXME: Might need to parametrize on Java?
 on_master ${master_vm} "yum install -y java-1.8.0-openjdk-headless"
 on_master ${master_vm} "rpm -ivh puppetserver-${server_version}-1.el7.noarch.rpm"
