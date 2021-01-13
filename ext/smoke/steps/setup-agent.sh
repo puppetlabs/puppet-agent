@@ -59,7 +59,7 @@ if [[ "${type}" = "repo" ]]; then
   on_agent "rpm -Uvh http://yum.puppetlabs.com/${collection}/${collection}-release-el-7.noarch.rpm --force"
   on_agent "rpm --quiet --query puppet-agent-${agent_version} || yum install -y puppet-agent-${agent_version}"
 elif [[ "${type}" = "package" ]]; then
-  on_agent "curl -f -O http://builds.puppetlabs.lan/puppet-agent/${agent_version}/artifacts/el/7/${collection}/x86_64/puppet-agent-${agent_version}-1.el7.x86_64.rpm"
+  on_agent "curl -f -O http://builds.delivery.puppetlabs.net/puppet-agent/${agent_version}/artifacts/el/7/${collection}/x86_64/puppet-agent-${agent_version}-1.el7.x86_64.rpm"
   on_agent "rpm -ivh puppet-agent-${agent_version}-1.el7.x86_64.rpm"
 else
   echo "Unrecognized type '${type}' supplied"
