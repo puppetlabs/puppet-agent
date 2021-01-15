@@ -36,7 +36,7 @@ FROM pxp-agent-vanagon as leatherman
 WORKDIR /workspace/leatherman
 
 RUN cp /workspace/pxp-agent-vanagon/configs/components/leatherman.json /workspace && \
-    git clone -b master https://github.com/puppetlabs/leatherman . && \
+    git clone -b main https://github.com/puppetlabs/leatherman . && \
     git checkout "$(jq -r .ref /workspace/leatherman.json)" && \
     cmake . -DENABLE_CXX_WERROR=OFF -DBOOST_STATIC=OFF -DCMAKE_VERBOSE_MAKEFILE=ON -Bbuild; make -C build ; make -C build install
 
