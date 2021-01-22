@@ -118,12 +118,12 @@ component "pxp-agent" do |pkg, settings, platform|
       pkg.install_service "ext/systemd/pxp-agent.service", "ext/redhat/pxp-agent.sysconfig", init_system: servicetype
       pkg.install_configfile "ext/systemd/pxp-agent.logrotate", "/etc/logrotate.d/pxp-agent"
       if platform.is_deb?
-        pkg.add_postinstall_action ["install"], ["if [ -d '/run/systemd/system' ] ; then systemctl disable pxp-agent.service >/dev/null || :; fi"]
+        pkg.add_postinstall_action ["install"], ["if [ -f '/proc/1/comm' ]; then init_comm=`cat /proc/1/comm`;  if [ \"$init_comm\" == \"systemd\" ]; then systemctl disable pxp-agent.service >/dev/null || :; fi; fi"]
       end
     when "sysv"
       if platform.is_deb?
         pkg.install_service "ext/debian/pxp-agent.init", "ext/debian/pxp-agent.default", init_system: servicetype
-        pkg.add_postinstall_action ["install"], ["update-rc.d pxp-agent disable > /dev/null || :"]
+        pkg.add_postinstall_action ["install"], ["if [ -f '/proc/1/comm' ]; then init_comm=`cat /proc/1/comm`;  if [ \"$init_comm\" == \"init\" ]; then update-rc.d pxp-agent disable > /dev/null || :; fi; fi"]
       elsif platform.is_sles?
         pkg.install_service "ext/suse/pxp-agent.init", "ext/redhat/pxp-agent.sysconfig", init_system: servicetype
       elsif platform.is_rpm?
