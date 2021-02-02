@@ -1,9 +1,9 @@
 platform "debian-8-armel" do |plat|
   # Note: This is a community-maintained platform. It is not tested in Puppet's
   # CI pipelines, and does not receive official releases.
-  plat.servicedir "/lib/systemd/system"
   plat.defaultdir "/etc/default"
-  plat.servicetype "systemd"
+  plat.servicetype "systemd", servicedir: "/lib/systemd/system"
+  plat.servicetype "sysv", servicedir: "/etc/init.d"
   plat.codename "jessie"
 
   plat.add_build_repository "http://pl-build-tools.delivery.puppetlabs.net/debian/pl-build-tools-release-jessie.deb"

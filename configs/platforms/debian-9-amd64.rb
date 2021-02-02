@@ -1,7 +1,7 @@
 platform "debian-9-amd64" do |plat|
-  plat.servicedir "/lib/systemd/system"
   plat.defaultdir "/etc/default"
-  plat.servicetype "systemd"
+  plat.servicetype "systemd", servicedir: "/lib/systemd/system"
+  plat.servicetype "sysv", servicedir: "/etc/init.d"
   plat.codename "stretch"
 
   plat.add_build_repository "http://pl-build-tools.delivery.puppetlabs.net/debian/pl-build-tools-release-#{plat.get_codename}.deb"
