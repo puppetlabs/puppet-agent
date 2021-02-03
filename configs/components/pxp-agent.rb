@@ -140,7 +140,7 @@ component "pxp-agent" do |pkg, settings, platform|
     when "windows"
       # Note - this definition indicates that the file should be filtered out from the Wix
       # harvest. A corresponding service definition file is also required in resources/windows/wix
-      pkg.install_service "SourceDir\\#{settings[:base_dir]}\\#{settings[:company_id]}\\#{settings[:product_id]}\\service\\nssm.exe", init_system: servicetype
+      pkg.install_service "SourceDir\\#{settings[:base_dir]}\\#{settings[:company_id]}\\#{settings[:product_id]}\\puppet\\bin\\nssm-pxp-agent.exe", init_system: servicetype
     else
       fail "need to know where to put #{pkg.get_name} service files"
     end
