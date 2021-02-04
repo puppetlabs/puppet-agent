@@ -2,7 +2,7 @@ test_name 'Ensure Facter 3 and Facter 4 outputs match' do
   require 'puppet/acceptance/common_utils'
   require 'puppet/acceptance/fact_dif'
 
-  confine :except, :platform => /el-5-x86_64/
+  confine :except, :platform => /el-5-x86_64|aix/
 
   EXCLUDE_LIST = %w[ fips_enabled facterversion identity\.gid identity\.privileged identity\.uid
                     load_averages\.15m load_averages\.1m load_averages\.5m memory\.swap\.available_bytes
