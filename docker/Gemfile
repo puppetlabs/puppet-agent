@@ -2,7 +2,7 @@ source ENV['GEM_SOURCE'] || "https://rubygems.org"
 
 gem 'pupperware',
   :git => 'https://github.com/puppetlabs/pupperware.git',
-  :ref => 'master',
+  :ref => 'main',
   :glob => 'gem/*.gemspec'
 
 group :test do
