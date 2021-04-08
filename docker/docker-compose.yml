@@ -1,0 +1,11 @@
+version: '3.7'
+
+services:
+  agent-apply:
+    image: ${PUPPET_AGENT_IMAGE:-puppet/puppet-agent-ubuntu}
+    command: 'apply -e "notify { ''test'': }"'
+
+  agent-facter:
+    image: ${PUPPET_AGENT_IMAGE:-puppet/puppet-agent-ubuntu}
+    entrypoint: 'facter'
+    command: 'is_virtual'
