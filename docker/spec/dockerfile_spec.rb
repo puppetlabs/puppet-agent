@@ -7,9 +7,8 @@ Pupperware::SpecHelpers.load_compose_services = 'puppet'
 RSpec.configure do |c|
   c.before(:suite) do
     ENV['PUPPET_AGENT_IMAGE'] = require_test_image
-    pull_images(['agent-apply', 'agent-facter'])
+    pull_images(['agent_apply', 'agent_facter', 'agent-run'])
     teardown_cluster
-    # no certs to preload, but if the suite adds puppetserver, be explicit
     docker_compose_up(preload_certs: false)
   end
 
@@ -23,6 +22,7 @@ describe 'puppet-agent container' do
   {
     'agent-apply': 'be able to run a puppet apply',
     'agent-facter': 'be able to run facter',
+    'agent-run': 'be able to run against a server'
   }.each do |container, op|
     it "should #{op}" do
       container = get_service_container(container)
