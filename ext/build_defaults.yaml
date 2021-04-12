@@ -18,6 +18,7 @@ foss_platforms:
   - el-8-aarch64
   - fedora-30-x86_64
   - fedora-31-x86_64
+  - fedora-32-x86_64
   - osx-10.14-x86_64
   - osx-10.15-x86_64
   - sles-11-i386
@@ -80,6 +81,8 @@ platform_repos:
     repo_location: repos/fedora/30/**/x86_64
   - name: fedora-31-x86_64
     repo_location: repos/fedora/31/**/x86_64
+  - name: fedora-32-x86_64
+    repo_location: repos/fedora/32/**/x86_64
   - name: debian-8-i386
     repo_location: repos/apt/jessie
   - name: debian-8-amd64
