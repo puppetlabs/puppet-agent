@@ -56,6 +56,8 @@ platform_repos:
     repo_location: repos/fedora/30/**/x86_64
   - name: fedora-31-x86_64
     repo_location: repos/fedora/31/**/x86_64
+  - name: fedora-32-x86_64
+    repo_location: repos/fedora/32/**/x86_64
   - name: debian-9-i386
     repo_location: repos/apt/stretch
   - name: debian-9-amd64
