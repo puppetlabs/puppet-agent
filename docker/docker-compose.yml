@@ -1,0 +1,23 @@
+version: '3.7'
+
+services:
+  agent-apply:
+    image: ${PUPPET_AGENT_IMAGE:-puppet/puppet-agent-ubuntu}
+    command: 'apply -e "notify { ''test'': }"'
+
+  agent-facter:
+    image: ${PUPPET_AGENT_IMAGE:-puppet/puppet-agent-ubuntu}
+    entrypoint: 'facter'
+    command: 'is_virtual'
+
+  puppet:
+    environment:
+      # overrides default shared service definition
+      - USE_PUPPETDB=false
+
+  agent-run:
+    hostname: agent-run
+    image: ${PUPPET_AGENT_IMAGE:-puppet/puppet-agent-ubuntu}
+    entrypoint: '/bin/bash'
+    # give server a 30s start buffer, then try agent runs for 15s before exiting
+    command: "-c 'sleep 30; i=0; while ! /opt/puppetlabs/bin/puppet agent --verbose --onetime --no-daemonize --summarize --server puppet --certname agent-run --masterport 8140 --ca_server puppet --ca_port 8140 --waitforcert 180; do sleep 5; i=$$((i+1)); if [ $$i -gt 5 ]; then exit 1; fi; done;'"
