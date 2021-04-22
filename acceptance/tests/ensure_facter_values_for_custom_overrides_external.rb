@@ -3,7 +3,13 @@ test_name 'Ensure Facter values usage custom fact overriding external fact' do
 
       output = on agent, puppet('config print modulepath')
 
-      module_path = output.stdout.split(':')[0]
+      if agent.platform =~ /windows/
+        delimiter = ';'
+      else
+        delimiter = ':'
+      end
+      module_path = output.stdout.split(delimiter)[0]
+
       foo_module_dir = File.join(module_path, 'foo')
       foo_custom_facts_dir = File.join(foo_module_dir, 'lib', 'facter')
       foo_external_facts_dir = File.join(foo_module_dir, 'facts.d')

@@ -3,7 +3,13 @@ test_name 'Ensure Facter values usage for external fact overriding core dotted f
 
       output = on agent, puppet('config print modulepath')
 
-      module_path = output.stdout.split(':')[0]
+      if agent.platform =~ /windows/
+        delimiter = ';'
+      else
+        delimiter = ':'
+      end
+      module_path = output.stdout.split(delimiter)[0]
+
       foo_module_dir = File.join(module_path, 'foo')
       foo_external_facts_dir = File.join(foo_module_dir, 'facts.d')
 
