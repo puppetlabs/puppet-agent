@@ -4,7 +4,7 @@ test_name 'Ensure Facter 3 and Facter 4 outputs match' do
 
   confine :except, :platform => /el-5-x86_64|aix/
 
-  EXCLUDE_LIST = %w[ fips_enabled facterversion identity\.gid identity\.privileged identity\.uid
+  exclude_list = %w[ fips_enabled facterversion identity\.gid identity\.privileged identity\.uid
                     load_averages\.15m load_averages\.1m load_averages\.5m memory\.swap\.available_bytes
                     memory\.swap\.capacity memory\.swap\.total_bytes memory\.swap\.used_bytes memory\.swap\.available
                     memory\.system\.available memory\.system\.available_bytes memory\.system\.capacity memory\.swap\.used
@@ -23,6 +23,8 @@ test_name 'Ensure Facter 3 and Facter 4 outputs match' do
                     blockdevice_.*_vendor blockdevice_.*_size]
 
   agents.each do |agent|
+    exclude_list += ['macosx_productversion.*', 'os.macosx.version'] if agent.platform =~ /^osx-11/
+
     teardown do
       step 'disable facterng feature flag' do
         on agent, puppet('config set facterng false')
@@ -38,7 +40,7 @@ test_name 'Ensure Facter 3 and Facter 4 outputs match' do
     step 'enable facterng feature flag' do
       on agent, puppet('config set facterng true')
     end
-    
+
     step 'obtain output from puppet facts running with Facter 4.x' do
       on agent, puppet('facts') do
         @facter4_output = stdout
@@ -46,7 +48,7 @@ test_name 'Ensure Facter 3 and Facter 4 outputs match' do
     end
 
     step 'compare Facter 3 to Facter 4 outputs' do
-      fact_dif = FactDif.new(@facter3_output, @facter4_output, EXCLUDE_LIST)
+      fact_dif = FactDif.new(@facter3_output, @facter4_output, exclude_list)
       unless fact_dif.difs.empty?
         fail_test("Facter 3 and Facter 4 outputs have the fallowing differences:  #{fact_dif.difs}")
       end
