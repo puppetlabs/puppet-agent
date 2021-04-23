@@ -14,3 +14,4 @@ acceptance/tmp/*
 acceptance/merged_options.rb
 acceptance/.beaker/*
 ext/smoke/*output.txt
+*~
