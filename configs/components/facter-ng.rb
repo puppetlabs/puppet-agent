@@ -1,7 +1,6 @@
 component "facter-ng" do |pkg, settings, platform|
-  pkg.version '4.1.0'
-  pkg.sha256sum 'e0cc89e6f2398ae5f5029a1975e801d4d8b6e5e8c8027a92ae77cfbe7e14c990'
-  pkg.url "https://github.com/puppetlabs/facter/archive/#{pkg.get_version}.tar.gz"
+  pkg.load_from_json('configs/components/facter-ng.json')
+  pkg.dirname("facter-ng")
 
   pkg.build_requires "puppet-runtime"
   pkg.build_requires "pl-ruby-patch"
@@ -17,15 +16,6 @@ component "facter-ng" do |pkg, settings, platform|
   # will fail by blowing out the stack.
   if settings[:ruby_vendordir]
     pkg.environment "RUBYLIB", "#{settings[:ruby_vendordir]}:$(RUBYLIB)"
-  end
-
-
-  pkg.configure do
-    [
-        "cd ..",
-        "mv facter-#{pkg.get_version}/* #{pkg.get_version}",
-        "cd #{pkg.get_version}"
-    ]
   end
 
 
