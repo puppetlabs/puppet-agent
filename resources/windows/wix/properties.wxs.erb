@@ -94,6 +94,23 @@
         Type="raw"
         Win64="no" />
     </Property>
+    <Property Id="PUPPET_SERVER">
+      <!-- Recall the property in repair, upgrade, and uninstall scenarios -->
+      <RegistrySearch
+        Id="RecallBadPuppetServer"
+        Root="HKLM"
+        Key="[REMEMBERED_PUPPET_ROOT_KEY]"
+        Name="RememberedPuppetServer"
+        Type="raw"
+        Win64="no" />
+      <RegistrySearch
+        Id="RecallPuppetServer"
+        Root="HKLM"
+        Key="[REMEMBERED_PUPPETINSTALLER_ROOT_KEY]"
+        Name="RememberedPuppetServer"
+        Type="raw"
+        Win64="no" />
+    </Property>
     <Property Id="PUPPET_AGENT_ENVIRONMENT">
       <!-- Recall the property in repair, upgrade, and uninstall scenarios -->
       <RegistrySearch
