@@ -12,9 +12,9 @@ ENV PATH=$PATH:$JAVA_HOME/jre/bin:$JAVA_HOME/bin \
 
 # hadolint ignore=DL3018,DL3028
 RUN apk add --no-cache cmake boost-dev make gcc g++ curl git curl-dev ruby ruby-dev yaml-cpp-dev jq openjdk8 augeas ruby-augeas ruby-etc ruby-json ruby-multi_json libressl-dev virt-what && \
-    gem install --no-rdoc --no-ri deep_merge semantic_puppet puppet-resource_api locale httpclient fast_gettext concurrent-ruby
-
-RUN mkdir /workspace && \
+    gem install --no-rdoc --no-ri deep_merge semantic_puppet puppet-resource_api locale httpclient fast_gettext concurrent-ruby  && \
+    \
+    mkdir /workspace && \
     sed -i -e 's/sys\/poll/poll/' /usr/include/boost/asio/detail/socket_types.hpp
 
 ######################################################
@@ -122,9 +122,9 @@ WORKDIR /workspace/puppet
 COPY configs/components/puppet.json /workspace
 RUN git clone https://github.com/puppetlabs/puppet . && \
     git checkout "$(jq -r .ref /workspace/puppet.json)" && \
-    ./install.rb --bindir=/opt/puppetlabs/puppet/bin --configdir=/etc/puppetlabs/puppet --sitelibdir=/usr/lib/ruby/vendor_ruby --codedir=/etc/puppetlabs/code --vardir=/opt/puppetlabs/puppet/cache --logdir=/var/log/puppetlabs/puppet --rundir=/var/run/puppetlabs --quick
-
-RUN mkdir -p /opt/puppetlabs/bin && \
+    ./install.rb --bindir=/opt/puppetlabs/puppet/bin --configdir=/etc/puppetlabs/puppet --sitelibdir=/usr/lib/ruby/vendor_ruby --codedir=/etc/puppetlabs/code --vardir=/opt/puppetlabs/puppet/cache --logdir=/var/log/puppetlabs/puppet --rundir=/var/run/puppetlabs --quick && \
+    \
+    mkdir -p /opt/puppetlabs/bin && \
     ln -s /opt/puppetlabs/puppet/bin/facter /opt/puppetlabs/bin/facter && \
     ln -s /opt/puppetlabs/puppet/bin/puppet /opt/puppetlabs/bin/puppet && \
     ln -s /opt/puppetlabs/puppet/bin/hiera /opt/puppetlabs/bin/hiera
