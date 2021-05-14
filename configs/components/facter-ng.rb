@@ -22,7 +22,7 @@ component "facter-ng" do |pkg, settings, platform|
   # Remove required_ruby_version from gemspec, this is needed for cross-compiled
   # platforms as ruby version is lower than 2.3 on these platforms.
   if platform.is_cross_compiled?
-    sed_pattern = %(s/spec.required_ruby_version = '~> 2.3'/ /)
+    sed_pattern = %(/spec.required_ruby_version/d)
     pkg.build do
       [
           %(#{platform[:sed]} -ie "#{sed_pattern}" agent/facter-ng.gemspec)
