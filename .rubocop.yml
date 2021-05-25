@@ -314,5 +314,12 @@ Style/RegexpLiteral:
 Style/ModuleFunction:
   Enabled: false
 
+# Excluding 'configs/platforms/*' so rubocop ignores the platforms that just 
+# inherit from default. 
+Style/SymbolProc:
+  Enabled: true
+  Exclude: 
+    - 'configs/platforms/*'
+
 Lint/Debugger:
   Enabled: false
