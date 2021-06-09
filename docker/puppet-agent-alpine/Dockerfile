@@ -134,7 +134,7 @@ RUN puppet config set confdir /etc/puppetlabs/puppet && \
     puppet config set vardir /opt/puppetlabs/puppet/cache && \
     puppet config set logdir /var/log/puppetlabs/puppet && \
     puppet config set rundir /var/run/puppetlabs && \
-    mkdir -p /etc/puppetlabs/code/environment/production && \
+    mkdir -p /etc/puppetlabs/code/environments/production && \
     puppet module install puppetlabs-augeas_core && \
     puppet module install puppetlabs-cron_core && \
     puppet module install puppetlabs-host_core && \
