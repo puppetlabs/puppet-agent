@@ -127,8 +127,6 @@ platform_repos:
     repo_location: repos/solaris/11/**/*.i386.p5p
   - name: solaris-11-sparc
     repo_location: repos/solaris/11/**/*.sparc.p5p
-gpg_name: 'info@puppetlabs.com'
-gpg_key: '7F438280EF8D349F'
 deb_targets: 'xenial-amd64 bionic-amd64'
 rpm_targets: 'el-6-x86_64 el-7-x86_64 el-8-x86_64 redhatfips-7-x86_64 sles-12-x86_64'
 sign_tar: FALSE
