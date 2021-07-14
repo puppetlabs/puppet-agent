@@ -27,7 +27,7 @@ namespace :release_lead do
   def git_describe_repo(name, url, sha_or_tag, where_to_clone, show_extra_commits)
     Dir.chdir(where_to_clone) do
       puts "Cloning #{name}..."
-      `git clone #{url} 2> /dev/null`
+      `git clone #{url} #{name} 2> /dev/null`
       # `git clone --local '../../#{name}' 2> /dev/null`
       # 0 for successful clone, 128 for already exists.
       unless [0, 128].include? $?.exitstatus
@@ -79,6 +79,7 @@ namespace :release_lead do
           next
         end
         name = url_to_component_name(url)
+        name = json_name_to_component_name(component) if name == 'facter'
         ref = json['ref']
         sha_or_tag = ref =~ /^refs\/tags/ ? ref.gsub('refs/tags/', '') : ref
         result[name] = git_describe_repo(name, url, sha_or_tag, where_to_clone, show_extra_commits)
