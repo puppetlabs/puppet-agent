@@ -29,6 +29,7 @@ component "cpp-pcp-client" do |pkg, settings, platform|
     special_flags = "-DCMAKE_CXX_FLAGS='#{settings[:cflags]}' -DENABLE_CXX_WERROR=OFF"
     toolchain = ""
     boost_static_flag = "-DBOOST_STATIC=OFF"
+    pkg.environment "CXX", "clang++ -target arm64-apple-macos11" if platform.is_cross_compiled?
   elsif platform.is_cross_compiled_linux?
     cmake = "/opt/pl-build-tools/bin/cmake"
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/#{settings[:platform_triple]}/pl-build-toolchain.cmake"

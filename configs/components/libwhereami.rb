@@ -13,6 +13,7 @@ component "libwhereami" do |pkg, settings, platform|
     cmake = "/usr/local/bin/cmake"
     special_flags = "-DCMAKE_CXX_FLAGS='#{settings[:cflags]}'"
     boost_static_flag = "-DBOOST_STATIC=OFF"
+    pkg.environment "CXX", "clang++ -target arm64-apple-macos11" if platform.is_cross_compiled?
   elsif platform.is_cross_compiled_linux?
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/#{settings[:platform_triple]}/pl-build-toolchain.cmake"
     cmake = "/opt/pl-build-tools/bin/cmake"
@@ -70,22 +71,19 @@ component "libwhereami" do |pkg, settings, platform|
   end
 
   # Make test will explode horribly in a cross-compile situation
-  if platform.is_cross_compiled?
-    test = "/bin/true"
+  # Tests will be skipped on AIX until they are expected to pass
+  if platform.is_cross_compiled? || platform.is_aix?
+    if platform.is_macos?
+      test = "/usr/bin/true"
+    else
+      test = "/bin/true"
+    end
   else
     test = "#{make} test ARGS=-V"
   end
 
   if platform.is_solaris? && platform.architecture != 'sparc'
     test = "LANG=C LC_ALL=C #{test}"
-  end
-
-  # Make test will explode horribly in a cross-compile situation
-  # Tests will be skipped on AIX until they are expected to pass
-  if platform.is_cross_compiled? || platform.is_aix?
-    test = "/bin/true"
-  else
-    test = "#{make} test ARGS=-V"
   end
 
   pkg.build do
