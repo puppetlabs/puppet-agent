@@ -28,7 +28,7 @@ component "runtime" do |pkg, settings, platform|
     pkg.build_requires "pl-gcc"
   end
 
-  if platform.is_cross_compiled? || !platform.is_macos?
+  if platform.is_cross_compiled? && !platform.is_macos?
     libdir = File.join("/opt/pl-build-tools", settings[:platform_triple], "lib")
     libdir = File.join("/opt/pl-build-tools", settings[:platform_triple], "lib64") if platform.architecture =~ /aarch64|ppc64/
   elsif platform.is_solaris? || platform.architecture =~ /i\d86/
