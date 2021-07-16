@@ -35,14 +35,12 @@ component "puppet" do |pkg, settings, platform|
   platform.get_service_types.each do |servicetype|
     case servicetype
     when "systemd"
-      pkg.install_service "ext/systemd/puppet.service", "ext/redhat/client.sysconfig", init_system: servicetype
+      pkg.install_service "ext/systemd/puppet.service", init_system: servicetype
     when "sysv"
       if platform.is_deb?
         pkg.install_service "ext/debian/puppet.init", "ext/debian/puppet.default", init_system: servicetype
       elsif platform.is_sles?
-        pkg.install_service "ext/suse/client.init", "ext/redhat/client.sysconfig", init_system: servicetype
-      elsif platform.is_rpm?
-        pkg.install_service "ext/redhat/client.init", "ext/redhat/client.sysconfig", init_system: servicetype
+        pkg.install_service "ext/suse/client.init", init_system: servicetype
       end
     when "launchd"
       pkg.install_service "ext/osx/puppet.plist", nil, "com.puppetlabs.puppet", init_system: servicetype
