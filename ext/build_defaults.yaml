@@ -16,11 +16,9 @@ foss_platforms:
   - el-8-x86_64
   - el-8-ppc64le
   - el-8-aarch64
-  - fedora-30-x86_64
   - fedora-31-x86_64
   - fedora-32-x86_64
   - fedora-34-x86_64
-  - osx-10.14-x86_64
   - osx-10.15-x86_64
   - osx-11-x86_64
   - sles-11-i386
@@ -81,8 +79,6 @@ platform_repos:
     repo_location: repos/sles/12/**/ppc64le
   - name: sles-15-x86_64
     repo_location: repos/sles/15/**/x86_64
-  - name: fedora-30-x86_64
-    repo_location: repos/fedora/30/**/x86_64
   - name: fedora-31-x86_64
     repo_location: repos/fedora/31/**/x86_64
   - name: fedora-32-x86_64
@@ -113,8 +109,6 @@ platform_repos:
     repo_location: repos/apt/focal
   - name: ubuntu-20.04-aarch64
     repo_location: repos/apt/focal
-  - name: osx-10.14
-    repo_location: repos/apple/10.14/**/x86_64/*.dmg
   - name: osx-10.15
     repo_location: repos/apple/10.15/**/x86_64/*.dmg
   - name: osx-11
