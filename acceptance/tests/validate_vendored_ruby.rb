@@ -29,9 +29,6 @@ def setup_build_environment(agent)
   when /aix/
     # use pl-build-tools' gcc on AIX machines
     gem_install_sqlite3 = "export PATH=\"/opt/pl-build-tools/bin:$PATH\" && #{gem_install_sqlite3}"
-  when /el-5/
-    # PA-1638
-    gem_install_sqlite3 += " -v 1.3.11"
   when /solaris-11(.4|)-i386/
     # for some reason pkg install does not install developer/gcc-48 for sol 11, so need
     # to use the one provided by pl-build-tools instead.

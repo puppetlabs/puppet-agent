@@ -1,7 +1,7 @@
 test_name 'Ensure Facter 3 and Facter 4 outputs match' do
   require 'puppet/acceptance/common_utils'
 
-  confine :except, :platform => /el-5-x86_64|aix/
+  confine :except, :platform => /aix/
 
   exclude_list = %w{mountpoints\..*
     partitions\..*\.filesystem
