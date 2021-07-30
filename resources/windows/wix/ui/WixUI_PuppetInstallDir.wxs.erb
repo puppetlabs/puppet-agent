@@ -59,6 +59,7 @@ Patch dialog sequence:
       <Publish Dialog="BrowseDlg" Control="OK" Event="SpawnDialog" Value="InvalidDirDlg" Order="4"><![CDATA[WIXUI_INSTALLDIR_VALID<>"1"]]></Publish>
 
       <Publish Dialog="ExitDialog" Control="Finish" Event="EndDialog" Value="Return" Order="999">1</Publish>
+      <Publish Dialog="ExitDialog" Control="Finish" Event="DoAction" Value="EnableLongPathName" Order="999">WIXUI_EXITDIALOGOPTIONALCHECKBOX = 1</Publish>
 
      <Publish Dialog="PuppetWelcomeDlg" Control="Next" Event="NewDialog" Value="PuppetLicenseAgreementDlg" Order="1"><![CDATA[NOT Installed]]></Publish>
      <Publish Dialog="PuppetWelcomeDlg" Control="Next" Event="NewDialog" Value="VerifyReadyDlg" Order="1"><![CDATA[Installed AND PATCH]]></Publish>
@@ -93,6 +94,7 @@ Patch dialog sequence:
       <Publish Dialog="BrowseDlg" Control="OK" Event="SpawnDialog" Value="InvalidDirDlg" Order="4"><![CDATA[WIXUI_INSTALLDIR_VALID<>"1"]]></Publish>
 
       <Publish Dialog="ExitDialog" Control="Finish" Event="EndDialog" Value="Return" Order="999">1</Publish>
+      <Publish Dialog="ExitDialog" Control="Finish" Event="DoAction" Value="EnableLongPathName" Order="999">WIXUI_EXITDIALOGOPTIONALCHECKBOX = 1</Publish>
 
       <Publish Dialog="PuppetWelcomeDlg" Control="Next" Event="NewDialog" Value="PuppetLicenseAgreementDlg" Order="1"><![CDATA[NOT VersionNT64 AND NOT Installed]]></Publish>
       <Publish Dialog="PuppetWelcomeDlg" Control="Next" Event="NewDialog" Value="VerifyReadyDlg" Order="1"><![CDATA[NOT VersionNT64 AND Installed AND PATCH]]></Publish>
