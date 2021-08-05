@@ -253,9 +253,21 @@ End If
     <%-if @platform.architecture == "x86"-%>
     <Property Id="WixQuietExecCmdLine" Value="&quot;[%WINDIR]\System32\WindowsPowerShell\v1.0\powershell.exe&quot; -NoLogo -NonInteractive -InputFormat None -NoProfile -ExecutionPolicy Bypass -Command &quot;if (Test-Path -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Installer\UserData\S-1-5-18\Components') { Get-ChildItem 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Installer\UserData\S-1-5-18\Components' -Recurse | foreach { foreach ($prop in $_.Property) { if($_.GetValue($prop) -like '*service\nssm.exe*') { Set-ItemProperty -Path $_.PSPath -Name $prop -Value '' -ErrorAction Stop } } }; Get-ChildItem 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Installer\UserData\S-1-5-18\Components' -Recurse | foreach { foreach ($prop in $_.Property) { if($_.GetValue($prop) -like '*puppet\bin\nssm.exe*') { Set-ItemProperty -Path $_.PSPath -Name $prop -Value '' -ErrorAction Stop } } } }&quot;"/>
     <CustomAction Id="RemoveLegacyNssmRegistryKey" BinaryKey="WixCA" DllEntry="WixQuietExec" Execute="immediate" Return="check"/>
+    <Property Id="WixSilentExecCmdLine"  Value="&quot;[%WINDIR]\System32\WindowsPowerShell\v1.0\powershell.exe&quot; try {$check_long_path_enabled = Get-ItemProperty -Path &quot;HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem&quot; | Select-Object -ExpandProperty  &quot;LongPathsEnabled&quot; -ErrorAction Stop;if($check_long_path_enabled -ne 1 ){throw  &quot;Value needs to be 1&quot;}} catch { New-ItemProperty -Path  &quot;HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem&quot; -Name  &quot;LongPathsEnabled&quot; -Value 1 -PropertyType DWORD -Force }"/>
+    <CustomAction Id="EnableLongPathName"
+            BinaryKey="WixCA"
+            DllEntry="WixSilentExec"
+            Execute="immediate"
+            Impersonate="yes" />
     <%-else-%>
     <Property Id="WixQuietExec64CmdLine" Value="&quot;[%WINDIR]\System32\WindowsPowerShell\v1.0\powershell.exe&quot; -NoLogo -NonInteractive -InputFormat None -NoProfile -ExecutionPolicy Bypass -Command &quot;if (Test-Path -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Installer\UserData\S-1-5-18\Components') { Get-ChildItem 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Installer\UserData\S-1-5-18\Components' -Recurse | foreach { foreach ($prop in $_.Property) { if($_.GetValue($prop) -like '*service\nssm.exe*') { Set-ItemProperty -Path $_.PSPath -Name -Value '' $prop -ErrorAction Stop } } }; Get-ChildItem 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Installer\UserData\S-1-5-18\Components' -Recurse | foreach { foreach ($prop in $_.Property) { if($_.GetValue($prop) -like '*puppet\bin\nssm.exe*') { Set-ItemProperty -Path $_.PSPath -Name $prop -Value '' -ErrorAction Stop } } } }&quot;"/>
     <CustomAction Id="RemoveLegacyNssmRegistryKey" BinaryKey="WixCA" DllEntry="WixQuietExec64" Execute="immediate" Return="check"/>
+    <Property Id="WixSilentExec64CmdLine"  Value="&quot;[%WINDIR]\System32\WindowsPowerShell\v1.0\powershell.exe&quot; try{$check_long_path_enabled = Get-ItemProperty -Path &quot;HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem&quot; | Select-Object -ExpandProperty  &quot;LongPathsEnabled&quot; -ErrorAction Stop;if($check_long_path_enabled -ne 1 ){throw  &quot;Value needs to be 1&quot;}} catch { New-ItemProperty -Path  &quot;HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem&quot; -Name  &quot;LongPathsEnabled&quot; -Value 1 -PropertyType DWORD -Force }"/>
+    <CustomAction Id="EnableLongPathName"
+            BinaryKey="WixCA"
+            DllEntry="WixSilentExec64"
+            Execute="immediate"
+            Impersonate="yes" />
     <%-end-%>
 
     <!-- Due to PUP-6729, system may not have permission to modify DACL, so first take ownership -->
