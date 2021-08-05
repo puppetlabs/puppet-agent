@@ -150,7 +150,9 @@
       <Custom Action='SetFromIniPuppetServerPort' Before='FileCost'>
         INI_PUPPET_SERVER_PORT AND NOT PUPPET_SERVER_PORT
       </Custom>
-
+       <Custom Action='EnableLongPathName' Before='InstallFiles'>
+        ENABLE_LONG_PATHS
+       </Custom>
       <!-- Due to PUP-6729, make sure admins and system have permision to reset permissions -->
       <!-- Also resets permissions for children beneath each appdir -->
       <Custom Action='ResetDataPermissions' After='InstallFiles'>
