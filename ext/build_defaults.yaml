@@ -22,6 +22,7 @@ foss_platforms:
   - ubuntu-16.04-amd64
   - ubuntu-16.04-i386
   - ubuntu-18.04-amd64
+  - ubuntu-18.04-aarch64
   - ubuntu-20.04-amd64
   - ubuntu-20.04-aarch64
   - windows-2012-x86
@@ -72,6 +73,8 @@ platform_repos:
   - name: ubuntu-16.04-amd64
     repo_location: repos/apt/xenial
   - name: ubuntu-18.04-amd64
+    repo_location: repos/apt/bionic
+  - name: ubuntu-18.04-aarch64
     repo_location: repos/apt/bionic
   - name: ubuntu-20.04-amd64
     repo_location: repos/apt/focal
