@@ -10,8 +10,13 @@ component "facter" do |pkg, settings, platform|
             --ruby=#{File.join(settings[:bindir], 'ruby')} "
 
   if platform.is_windows?
-    pkg.add_source("file://resources/files/windows/facter.bat", sum: "1521ec859c1ec981a088de5ebe2b270c")
+    pkg.add_source("file://resources/files/windows/facter.bat", sum: "eabed128c7160289790a2b59a84a9a13")
+    pkg.add_source("file://resources/files/windows/facter_interactive.bat", sum: "20a1c0bc5368ffb24980f42432f1b372")
+    pkg.add_source("file://resources/files/windows/run_facter_interactive.bat", sum: "c5e0c0a80e5c400a680a06a4bac8abd4")
+
     pkg.install_file "../facter.bat", "#{settings[:link_bindir]}/facter.bat"
+    pkg.install_file "../facter_interactive.bat", "#{settings[:link_bindir]}/facter_interactive.bat"
+    pkg.install_file "../run_facter_interactive.bat", "#{settings[:link_bindir]}/run_facter_interactive.bat"
   end
 
   pkg.install do
