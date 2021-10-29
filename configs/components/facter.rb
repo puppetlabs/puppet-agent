@@ -106,7 +106,6 @@ component "facter" do |pkg, settings, platform|
   ruby = "#{settings[:host_ruby]} -rrbconfig"
 
   make = platform[:make]
-  cp = platform[:cp]
 
   special_flags = " -DCMAKE_INSTALL_PREFIX=#{settings[:prefix]} "
   boost_static_flag = ""
