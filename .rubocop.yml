@@ -9,317 +9,98 @@ AllCops:
     - 'vendor/**/*'
     - 'bundle/**/*'
 
-
-# MAYBE useful - errors when rescue {} happens.
-Lint/HandleExceptions:
+Layout/ArgumentAlignment:
   Enabled: false
 
-# MAYBE useful - catches while 1
-Lint/LiteralInCondition:
+Layout/BlockAlignment:
   Enabled: false
 
-# DISABLED really useless. Detects return as last statement.
-Style/RedundantReturn:
+Layout/ClosingHeredocIndentation:
   Enabled: false
 
-# DISABLED since the instances do not seem to indicate any specific errors.
-Lint/AmbiguousOperator:
+Layout/EmptyLineAfterGuardClause:
   Enabled: false
 
-# DISABLED - not useful
-Style/SpaceBeforeComment:
+Layout/EmptyLines:
   Enabled: false
 
-# DISABLED - not useful
-Style/HashSyntax:
+Layout/EmptyLinesAroundBlockBody:
   Enabled: false
 
-# USES: as shortcut for non nil&valid checking a = x() and a.empty?
-# DISABLED - not useful
-Style/AndOr:
+Layout/FirstArrayElementIndentation:
   Enabled: false
 
-# DISABLED - not useful
-Style/RedundantSelf:
+Layout/FirstHashElementIndentation:
   Enabled: false
 
-# DISABLED - not useful
-Metrics/MethodLength:
+Layout/HeredocIndentation:
   Enabled: false
 
-# DISABLED - not useful
-Style/WhileUntilModifier:
+Layout/LeadingCommentSpace:
   Enabled: false
 
-# DISABLED - the offender is just haskell envy
-Lint/AmbiguousRegexpLiteral:
+Layout/MultilineArrayBraceLayout:
   Enabled: false
 
-# DISABLED
-Lint/Eval:
-  Enabled: false
-# DISABLED
-Lint/BlockAlignment:
-  Enabled: false
-
-# DISABLED
-Lint/DefEndAlignment:
-  Enabled: false
-
-# DISABLED
-Lint/EndAlignment:
-  Enabled: false
-
-# DISABLED
-Lint/DeprecatedClassMethods:
-  Enabled: false
-
-# DISABLED
-Lint/Loop:
-  Enabled: false
-
-# DISABLED
-Lint/ParenthesesAsGroupedExpression:
-  Enabled: false
-
-Lint/RescueException:
-  Enabled: false
-
-Lint/StringConversionInInterpolation:
+Layout/TrailingEmptyLines:
   Enabled: false
 
 Lint/UnusedBlockArgument:
   Enabled: false
 
-Lint/UnusedMethodArgument:
-  Enabled: false
-
-# DISABLED - TODO
-Lint/UselessAccessModifier:
-  Enabled: false
-
-# DISABLED - TODO
-Lint/UselessAssignment:
-  Enabled: false
-
-# DISABLED - TODO
-Lint/Void:
-  Enabled: false
-
-Style/AccessModifierIndentation:
-  Enabled: false
-
-Style/AccessorMethodName:
-  Enabled: false
-
-Style/Alias:
-  Enabled: false
-
-Style/AlignArray:
-  Enabled: false
-
-Style/AlignHash:
-  Enabled: false
-
-Style/AlignParameters:
+Metrics/BlockLength:
   Enabled: false
 
 Metrics/BlockNesting:
   Enabled: false
 
-Style/AsciiComments:
+Naming/FileName:
   Enabled: false
 
-Style/Attr:
-  Enabled: false
-
-Style/BlockDelimiters:
-  Enabled: false
-
-Style/BracesAroundHashParameters:
-  Enabled: false
-
-Style/CaseEquality:
-  Enabled: false
-
-Style/CaseIndentation:
-  Enabled: false
-
-Style/CharacterLiteral:
-  Enabled: false
-
-Style/ClassAndModuleCamelCase:
-  Enabled: false
-
-Style/ClassAndModuleChildren:
-  Enabled: false
-
-Style/ClassCheck:
-  Enabled: false
-
-Metrics/ClassLength:
-  Enabled: false
-
-Style/ClassMethods:
-  Enabled: false
-
-Style/ClassVars:
-  Enabled: false
-
-Style/WhenThen:
-  Enabled: false
-
-
-# DISABLED - not useful
-Style/WordArray:
-  Enabled: false
-
-Style/UnneededPercentQ:
-  Enabled: false
-
-Style/Tab:
-  Enabled: false
-
-Style/TrailingBlankLines:
-  Enabled: false
-
-Style/LeadingCommentSpace:
-  Enabled: false
-
-Style/CollectionMethods:
-  Enabled: false
-
-Style/CommentIndentation:
-  Enabled: false
-
-Style/ColonMethodCall:
+Style/CaseLikeIf:
   Enabled: false
 
 Style/CommentAnnotation:
   Enabled: false
 
-Metrics/CyclomaticComplexity:
+Style/ConditionalAssignment:
   Enabled: false
 
-Style/ConstantName:
+Style/FormatStringToken:
   Enabled: false
 
-Style/Documentation:
+Style/FrozenStringLiteralComment:
   Enabled: false
 
-Style/DefWithParentheses:
-  Enabled: false
-
-Style/DeprecatedHashMethods:
-  Enabled: false
-
-Style/DotPosition:
-  Enabled: false
-
-# DISABLED - used for converting to bool
-Style/DoubleNegation:
-  Enabled: false
-
-Style/EachWithObject:
-  Enabled: false
-
-Style/EmptyLineBetweenDefs:
-  Enabled: false
-
-Style/IndentArray:
-  Enabled: false
-
-Style/IndentHash:
-  Enabled: false
-
-Style/EmptyLines:
-  Enabled: false
-
-Style/EmptyLinesAroundAccessModifier:
-  Enabled: false
-
-Style/EmptyLinesAroundBlockBody:
-  Enabled: false
-
-Style/EmptyLinesAroundClassBody:
-  Enabled: false
-
-Style/EmptyLinesAroundModuleBody:
-  Enabled: false
-
-Style/EmptyLinesAroundMethodBody:
-  Enabled: false
-
-Style/EmptyLiteral:
-  Enabled: false
-
-Metrics/LineLength:
-  Enabled: false
-
-Style/LineEndConcatenation:
-  Enabled: false
-
-Style/StringLiterals:
-  Enabled: false
-
-Style/TrailingComma:
-  Enabled: false
-
-Style/GlobalVars:
-  Enabled: false
-
-Style/GuardClause:
+Style/HashSyntax:
   Enabled: false
 
 Style/IfUnlessModifier:
   Enabled: false
 
-Style/Next:
+Style/PercentLiteralDelimiters:
   Enabled: false
 
-Style/SingleLineBlockParams:
-  Enabled: false
-
-Style/SingleLineMethods:
-  Enabled: false
-
-Style/SpecialGlobalVars:
-  Enabled: false
-
-Style/TrivialAccessors:
-  Enabled: false
-
-# This pushes preference for shell commands as backticks instead of %x
-Style/CommandLiteral:
-  EnforcedStyle: mixed
-
-Style/Lambda:
-  Enabled: false
-
-Style/MethodName:
+Style/RedundantInterpolation:
   Enabled: false
 
 Style/SignalException:
   Enabled: false
 
-Style/PerlBackrefs:
+Style/StringLiterals:
   Enabled: false
 
-Style/PredicateName:
-  Enabled: false
-
-Style/RegexpLiteral:
-  Enabled: false
-
-Style/ModuleFunction:
-  Enabled: false
-
-# Excluding 'configs/platforms/*' so rubocop ignores the platforms that just 
-# inherit from default. 
 Style/SymbolProc:
-  Enabled: true
-  Exclude: 
-    - 'configs/platforms/*'
+  Enabled: false
 
-Lint/Debugger:
+Style/TrailingCommaInArrayLiteral:
+  Enabled: false
+
+Style/TrailingCommaInHashLiteral:
+  Enabled: false
+
+Style/WordArray:
+  Enabled: false
+
+Layout/LineLength:
   Enabled: false
