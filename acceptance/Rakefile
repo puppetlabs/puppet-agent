@@ -82,4 +82,42 @@ namespace :acceptance do
   #{USAGE}
   EOS
   task :development => 'ci:test:aio'
+
+desc  <<-EOS
+Rake task to generate a .json file with facts from a platform using a specific SHA
+Generated file will be available in file in ./output/facts/<facter_version>/{platform}.facts
+
+`bundle exec rake acceptance:facts[<SHA>,<Platform_template>,<optional_hypervisor>]`
+
+USAGE
+  Required Settings
+    SHA='sha'
+       Supply git ref (sha or tag) of packages of puppet-agent to be put under test.
+       Also supports the literal string 'latest' which references the latest
+       build on #{DEFAULT_NIGHTLIES_DOWNLOAD_URL}.
+       If setting SHA to 'latest', you must also set ENV['AGENT_DOWNLOAD_URL'] to
+       #{DEFAULT_NIGHTLIES_DOWNLOAD_URL}.
+    PLATFORM_TEMPLATE = 'fedora32-64a'
+      Supply a test target in the form beaker-hostgenerator accepts, e.g.
+      ubuntu1504-64a, redhat8-64a, etc...
+      Always append 'a' because the test runs on agent only.
+  Optional Settings
+    HYPERVISOR = 'abs'
+      The hypervisor from which to get the virtual machines.
+      If not specified, it defaults to abs hypervisor.
+
+EXAMPLE: `bundle exec rake acceptance:facts[6.24.0,redhat8-64a,abs]` will generate a the .json
+file in ./output/facts/4.1.1/el-8-x86_64.facts
+
+EOS
+  task :facts, [:sha, :platform, :hypervisor] do |t, args|
+    ENV['SHA'] = args[:sha]
+    hypervisor = args[:hypervisor] || "abs"
+    ENV['HOSTS'] = args[:platform]
+    ENV['TESTS'] = 'tests/facter_output/puppet_facts_output.rb'
+
+    Rake::Task['ci:gen_hosts'].invoke(hypervisor)
+    ENV['OPTIONS'] = '--preserve-hosts=always'
+    Rake::Task['ci:test:aio'].invoke
+  end
 end
