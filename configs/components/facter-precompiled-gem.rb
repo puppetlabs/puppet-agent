@@ -6,7 +6,7 @@ component "facter-precompiled-gem" do |pkg, settings, platform|
 
   if platform.is_osx?
     pkg.build_requires "cmake"
-  elsif platform.is_windows?
+  elsif platform.is_windows? #rubocop:disable Lint/DuplicateBranch
     pkg.build_requires "cmake"
   elsif platform.name =~ /sles-15/
     # These platforms use their default OS toolchain and have package
