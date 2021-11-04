@@ -15,7 +15,7 @@ component "puppet" do |pkg, settings, platform|
     pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-gettext-0.19.8-2.aix#{platform.os_version}.ppc.rpm"
   elsif platform.is_solaris?
     # do nothing
-  else
+  else #rubocop:disable Lint/DuplicateBranch
     pkg.build_requires "gettext"
   end
 
