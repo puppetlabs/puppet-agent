@@ -1,7 +1,7 @@
 
 agents.each do |agent|
   on agent, puppet("facts"), :acceptable_exit_codes => [0] do 
-    facter_major_version = JSON.parse(stdout)["values"]["facterversion"]
+    facter_major_version = JSON.parse(stdout)["facterversion"]
 
     # save locally 
     folderpath = File.expand_path(File.join('output', 'facts', "#{facter_major_version}"))
