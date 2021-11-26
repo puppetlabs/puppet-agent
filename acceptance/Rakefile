@@ -87,7 +87,7 @@ desc  <<-EOS
 Rake task to generate a .json file with facts from a platform using a specific SHA
 Generated file will be available in file in ./output/facts/<facter_version>/{platform}.facts
 
-`bundle exec rake acceptance:facts[<SHA>,<Platform_template>,<optional_hypervisor>]`
+`bundle exec rake acceptance:facts[<SHA>,<ship>=false]`
 
 USAGE
   Required Settings
@@ -97,27 +97,25 @@ USAGE
        build on #{DEFAULT_NIGHTLIES_DOWNLOAD_URL}.
        If setting SHA to 'latest', you must also set ENV['AGENT_DOWNLOAD_URL'] to
        #{DEFAULT_NIGHTLIES_DOWNLOAD_URL}.
-    PLATFORM_TEMPLATE = 'fedora32-64a'
-      Supply a test target in the form beaker-hostgenerator accepts, e.g.
-      ubuntu1504-64a, redhat8-64a, etc...
-      Always append 'a' because the test runs on agent only.
   Optional Settings
-    HYPERVISOR = 'abs'
-      The hypervisor from which to get the virtual machines.
-      If not specified, it defaults to abs hypervisor.
+    <ship> = 'false'
+      If set to 'true' it will ship the json files to builds.delivery.puppetlabs.net
 
-EXAMPLE: `bundle exec rake acceptance:facts[6.24.0,redhat8-64a,abs]` will generate a the .json
-file in ./output/facts/4.1.1/el-8-x86_64.facts
+EXAMPLE
+`bundle exec beaker-hostgenerator ubuntu2004-64a --hypervisor abs > hosts.yaml && bundle exec rake acceptance:facts[7.12.1] BEAKER_HOSTS=hosts.yaml`
+will generate a the .json file in output/facts/4.2.5/ubuntu-20.04-amd64.facts
 
 EOS
-  task :facts, [:sha, :platform, :hypervisor] do |t, args|
-    ENV['SHA'] = args[:sha]
-    hypervisor = args[:hypervisor] || "abs"
-    ENV['HOSTS'] = args[:platform]
-    ENV['TESTS'] = 'tests/facter_output/puppet_facts_output.rb'
+  task :facts, [:sha, :ship] do |t, args|
+    args.with_defaults(:ship => false)
 
-    Rake::Task['ci:gen_hosts'].invoke(hypervisor)
+    ENV['SHA'] = args[:sha]
+    ENV['TESTS'] = 'tests/facter_output/puppet_facts_output.rb'
     ENV['OPTIONS'] = '--preserve-hosts=always'
     Rake::Task['ci:test:aio'].invoke
+    if args[:ship]
+      system("/usr/bin/ssh  -t builds.delivery.puppetlabs.net 'set -e;mkdir --mode=775 --parents /opt/jenkins-builds/puppet-facts/#{args[:sha]}'")
+      system("/usr/bin/rsync -avz output/ builds.delivery.puppetlabs.net:/opt/jenkins-builds/puppet-facts/#{args[:sha]}/")
+    end
   end
 end
