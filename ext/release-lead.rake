@@ -23,23 +23,49 @@ namespace :release_lead do
     json_filename.split('/').last.split('.').first
   end
 
-  def component_json_from_archive(component, json_data)
+  def metadata_from_archive(archive_component, json_data)
     url = json_data['location']
     version = json_data['version']
 
-    puts "Getting data for #{component} from archive, url: #{url}, version: #{version}"
+    puts "Getting data for #{archive_component} from archive, url: #{url}, version: #{version}"
 
     begin
       uri = URI("#{url}#{version}.build_metadata.json")
       res = Net::HTTP.get_response(uri)
       if res.is_a?(Net::HTTPSuccess)
-        data = JSON.parse(res.body)
-        data.dig('components', component)
+        JSON.parse(res.body)
       else
        puts  "Error when calling #{uri}, code: #{res.code}, body: #{res.body}"
       end
     rescue StandardError => e
       puts "Could not retrieve data: #{e.message}"
+    end
+  end
+
+  # read the components moved to pxp-agent-vanagon
+  # FIXME nssm is not part of metadata
+  def handle_pxp_agent_vanagon_components(result, where_to_clone, show_extra_commits)
+    pxp_agent_vanagon_components = [
+      'cpp-hocon',
+      'cpp-pcp-client',
+      'leatherman',
+      'nssm',
+      'pxp-agent',
+    ]
+
+    json = JSON.parse(File.read('./configs/components/pxp-agent.json'))
+    component_name =  json['location'].split("/")[3]
+    archive_metadata = metadata_from_archive(component_name, json)
+
+    pxp_agent_vanagon_components.each do |component|
+      component_metadata = archive_metadata.dig('components', component)
+      if component_metadata #nssm component is not present in metadata, needs to be investigated later
+        url = component_metadata.fetch('url')
+        name = url_to_component_name(url)
+        ref = json['ref']
+        sha_or_tag = ref =~ /^refs\/tags/ ? ref.gsub('refs/tags/', '') : ref
+        result[name] = git_describe_repo(name, url, sha_or_tag, where_to_clone, show_extra_commits)
+      end
     end
   end
 
@@ -94,24 +120,18 @@ namespace :release_lead do
       Dir.glob("./configs/components/*.json").each do |component|
         json = JSON.parse(File.read(component))
         url = json['url']
-
         if url.nil?
-          if component =~ /puppet-runtime/ || json['location'].nil?
-            name = json_name_to_component_name(component)
-            result[name] = 'No URL provided'
-            next
-          else
-            component_name =  json['location'].split("/")[3]
-            json = component_json_from_archive(component_name, json)
-            url = json.fetch('url')
-          end
+          name = json_name_to_component_name(component)
+          result[name] = 'No URL provided'
+          next
         end
-
         name = url_to_component_name(url)
         ref = json['ref']
         sha_or_tag = ref =~ /^refs\/tags/ ? ref.gsub('refs/tags/', '') : ref
         result[name] = git_describe_repo(name, url, sha_or_tag, where_to_clone, show_extra_commits)
       end
+
+      handle_pxp_agent_vanagon_components(result, where_to_clone, show_extra_commits)
 
       max_length = result.keys.map(&:length).max
       puts "\n** Latest versions in #{args.puppet_agent_branch}:\n"
