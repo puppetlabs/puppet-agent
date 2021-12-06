@@ -23,48 +23,34 @@ namespace :release_lead do
     json_filename.split('/').last.split('.').first
   end
 
-  def metadata_from_archive(archive_component, json_data)
-    url = json_data['location']
-    version = json_data['version']
+  # read the components that are part of pxp-agent-vanagon
+  def check_pxp_agent_vanagon_components(result, where_to_clone, show_extra_commits)
+    json_file = './configs/components/pxp-agent.json'
+    component_name =  "#{json_name_to_component_name(json_file)}-vanagon"
 
-    puts "Getting data for #{archive_component} from archive, url: #{url}, version: #{version}"
+    json = JSON.parse(File.read(json_file))
+    version = json['version']
 
-    begin
-      uri = URI("#{url}#{version}.build_metadata.json")
-      res = Net::HTTP.get_response(uri)
-      if res.is_a?(Net::HTTPSuccess)
-        JSON.parse(res.body)
-      else
-       puts  "Error when calling #{uri}, code: #{res.code}, body: #{res.body}"
+    url = "git://github.com/puppetlabs/#{component_name}.git"
+
+    Dir.chdir(where_to_clone) do
+      puts "Cloning #{component_name}..."
+      `git clone #{url} 2> /dev/null`
+      unless [0, 128].include? $?.exitstatus
+        next 'Could not find remote repository #{url}'
       end
-    rescue StandardError => e
-      puts "Could not retrieve data: #{e.message}"
-    end
-  end
 
-  # read the components moved to pxp-agent-vanagon
-  # FIXME nssm is not part of metadata
-  def handle_pxp_agent_vanagon_components(result, where_to_clone, show_extra_commits)
-    pxp_agent_vanagon_components = [
-      'cpp-hocon',
-      'cpp-pcp-client',
-      'leatherman',
-      'nssm',
-      'pxp-agent',
-    ]
+      Dir.chdir(component_name) do
+        `git fetch 2> /dev/null`
+        `git checkout #{version} 2> /dev/null`
+        unless $?.exitstatus == 0
+          puts "Could not find reference #{version}"
+          exit
+        end
 
-    json = JSON.parse(File.read('./configs/components/pxp-agent.json'))
-    component_name =  json['location'].split("/")[3]
-    archive_metadata = metadata_from_archive(component_name, json)
-
-    pxp_agent_vanagon_components.each do |component|
-      component_metadata = archive_metadata.dig('components', component)
-      if component_metadata #nssm component is not present in metadata, needs to be investigated later
-        url = component_metadata.fetch('url')
-        name = url_to_component_name(url)
-        ref = json['ref']
-        sha_or_tag = ref =~ /^refs\/tags/ ? ref.gsub('refs/tags/', '') : ref
-        result[name] = git_describe_repo(name, url, sha_or_tag, where_to_clone, show_extra_commits)
+        Dir.glob("./configs/components/*.json").each do |component|
+          check_component(result, component, where_to_clone, show_extra_commits)
+        end
       end
     end
   end
@@ -105,6 +91,20 @@ namespace :release_lead do
     end
   end
 
+  def check_component(result, component, where_to_clone, show_extra_commits)
+    json = JSON.parse(File.read(component))
+    url = json['url']
+    if url.nil?
+      name = json_name_to_component_name(component)
+      result[name] = 'No URL provided'
+      return
+    end
+    name = url_to_component_name(url)
+    ref = json['ref']
+    sha_or_tag = ref =~ /^refs\/tags/ ? ref.gsub('refs/tags/', '') : ref
+    result[name] = git_describe_repo(name, url, sha_or_tag, where_to_clone, show_extra_commits)
+  end
+
   def check_components(args, show_extra_commits = false)
     result = {}
     abort('Error: puppet_agent_branch argument is required') unless args.puppet_agent_branch
@@ -118,20 +118,10 @@ namespace :release_lead do
       `git checkout #{args.puppet_agent_branch} 2> /dev/null`
 
       Dir.glob("./configs/components/*.json").each do |component|
-        json = JSON.parse(File.read(component))
-        url = json['url']
-        if url.nil?
-          name = json_name_to_component_name(component)
-          result[name] = 'No URL provided'
-          next
-        end
-        name = url_to_component_name(url)
-        ref = json['ref']
-        sha_or_tag = ref =~ /^refs\/tags/ ? ref.gsub('refs/tags/', '') : ref
-        result[name] = git_describe_repo(name, url, sha_or_tag, where_to_clone, show_extra_commits)
+        check_component(result, component, where_to_clone, show_extra_commits)
       end
 
-      handle_pxp_agent_vanagon_components(result, where_to_clone, show_extra_commits)
+      check_pxp_agent_vanagon_components(result, where_to_clone, show_extra_commits)
 
       max_length = result.keys.map(&:length).max
       puts "\n** Latest versions in #{args.puppet_agent_branch}:\n"
