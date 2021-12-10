@@ -165,7 +165,7 @@ function install_puppetdb_from_package() {
 
   echo "STEP: Set-up postgresql 9.6 to use with PuppetDB"
   on_master ${master_vm} "yum install -y ca-certificates"
-  on_master ${master_vm} "rpm --query --quiet pgdg-redhat96-9.6-3.noarch || ${yum_cmd} install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-7-x86_64/pgdg-redhat-repo-42.0-20.noarch.rpm"
+  on_master ${master_vm} "rpm --query --quiet pgdg-redhat96-9.6-3.noarch || ${yum_cmd} install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-7-x86_64/pgdg-redhat-repo-42.0-23.noarch.rpm"
   on_master ${master_vm} "rpm --query --quiet postgresql96-server || ${yum_cmd} install -y postgresql96-server"
   on_master ${master_vm} "rpm --query --quiet postgresql96-contrib || ${yum_cmd} install -y postgresql96-contrib"
   on_master ${master_vm} "puppet resource service postgresql-9.6 ensure=stopped"
