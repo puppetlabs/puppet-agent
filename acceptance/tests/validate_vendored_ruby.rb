@@ -35,6 +35,7 @@ def setup_build_environment(agent)
     on(agent, "curl -O http://pl-build-tools.delivery.puppetlabs.net/solaris/11/sol-11-i386-compiler.tar.gz")
     on(agent, "gunzip -f sol-11-i386-compiler.tar.gz && tar -xf sol-11-i386-compiler.tar && rm -f sol-11-i386-compiler.tar")
     on(agent, "mv pl-build-tools/ /opt/")
+    on(agent, "ln -s i386/bin /opt/pl-build-tools/bin")
     gem_install_sqlite3 = "export PATH=\"/opt/pl-build-tools/i386/bin:/usr/sfw/bin:$PATH\" && #{gem_install_sqlite3}"
   when /solaris-11-sparc/
     install_package_on_agent.call("developer/gcc-48")
