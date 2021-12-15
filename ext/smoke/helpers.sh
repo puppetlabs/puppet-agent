@@ -110,6 +110,7 @@ function install_puppetdb_from_module() {
   fi
 
   echo "STEP: Install PuppetDB from the module on ${which_master}!"
+  on_master ${master_vm} "yum install -y ca-certificates"
   on_master ${master_vm} "puppet module install puppetlabs-puppetdb"
   local site_pp="/etc/puppetlabs/code/environments/production/manifests/site.pp"
   FILE="node '\`facter fqdn\`' {
