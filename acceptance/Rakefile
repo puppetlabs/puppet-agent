@@ -110,7 +110,7 @@ EOS
     args.with_defaults(:ship => false)
 
     ENV['SHA'] = args[:sha]
-    ENV['TESTS'] = 'tests/facter_output/puppet_facts_output.rb'
+    ENV['TESTS'] = 'util/puppet_facts_output.rb'
     ENV['OPTIONS'] = '--preserve-hosts=always'
     Rake::Task['ci:test:aio'].invoke
     if args[:ship]
