@@ -10,8 +10,8 @@ def location_for(place)
   end
 end
 
-gem 'vanagon', *location_for(ENV['VANAGON_LOCATION'] || '~> 0.21')
-gem 'packaging', *location_for(ENV['PACKAGING_LOCATION'] || '~> 0.99.43')
+gem 'vanagon', *location_for(ENV['VANAGON_LOCATION'] || '~> 0.24')
+gem 'packaging', *location_for(ENV['PACKAGING_LOCATION'] || '~> 0.105')
 gem 'artifactory'
 gem 'rake'
 gem 'json'
