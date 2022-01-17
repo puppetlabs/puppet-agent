@@ -132,7 +132,7 @@ test_name "get facts, obfuscate, and save to a local file for uploading to facte
   end
 
   agents.each do |agent|
-    on agent, "facter --show-legacy -p -j", :acceptable_exit_codes => [0] do
+    on agent, facter('--show-legacy -p -j'), :acceptable_exit_codes => [0] do
       facts = JSON.parse(stdout)
       facter_major_version = facts['facterversion']
       primary_network = facts['networking']['primary']
