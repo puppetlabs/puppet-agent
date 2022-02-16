@@ -16,6 +16,8 @@ platform 'osx-10.15-x86_64' do |plat|
   plat.provision_with 'cd /etc/homebrew'
   plat.provision_with 'su test -c \'echo | /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"\''
   plat.provision_with 'sudo chown -R test:admin /Users/test/'
+  plat.provision_with 'echo ============ SSH DEBUG STATEMENT FOLLOWS ======='
+  plat.provision_with 'ssh-add -l'
   plat.vmpooler_template 'osx-1015-x86_64'
   plat.output_dir File.join('apple', '10.15', 'puppet7', 'x86_64')
 end
