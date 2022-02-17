@@ -26,6 +26,7 @@ component 'puppet-runtime' do |pkg, settings, platform|
   pkg.replaces 'pe-rubygem-net-ssh'
 
   pkg.requires 'findutils' if platform.is_linux?
+  pkg.requires 'lsb-release' if platform.is_deb?
 
   pkg.install_only true
 
