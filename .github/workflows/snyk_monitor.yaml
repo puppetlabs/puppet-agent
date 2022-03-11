@@ -1,0 +1,34 @@
+---
+name: Snyk Monitor
+on:
+  pull_request:
+    branches:
+      - 6.x
+jobs:
+  snyk_monitor:
+    if: ${{ github.repository_owner == 'puppetlabs' }}
+    runs-on: ubuntu-latest
+    name: Snyk Monitor
+    steps:
+      - name: Checkout current PR
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.7
+      - name: Install dependencies
+        run: bundle install --jobs 3 --retry 3
+      # - name: Extract branch name
+      #   shell: bash
+      #   run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+      #   id: extract_branch
+      - name: Run Snyk to check for vulnerabilities
+        uses: snyk/actions/ruby@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_PE_TOKEN }}
+        with:
+          command: test
+          args: --org=puppet-enterprise --project-name=${{ github.repository }}
+          #--target-reference ${{ steps.extract_branch.outputs.branch }}
