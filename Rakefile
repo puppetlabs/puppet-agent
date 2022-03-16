@@ -23,12 +23,20 @@ end
 
 desc "verify that commit messages match CONTRIBUTING.md requirements"
 task(:commits) do
-  commits = ENV['TRAVIS_COMMIT_RANGE']
-  if commits.nil?
-    puts "TRAVIS_COMMIT_RANGE is undefined, I don't know what to check."
-    exit
-  end
-
+  # This rake task looks at the summary from every commit from this branch not
+  # in the branch targeted for a PR. This is accomplished by using the
+  # TRAVIS_COMMIT_RANGE environment variable, which is present in travis CI and
+  # populated with the range of commits the PR contains. If not available, this
+  # falls back to `main..HEAD` as a next best bet as `main` is unlikely to
+  # ever be absent.
+  #
+  # When we move to GH actions, use `GITHUB_BASE_REF` to resolve the merge base
+  # ref, which is the common ancestor between the base branch and PR. Then do
+  # git log for all of the commits in `HEAD` that are not in the base ref
+  #
+  #   baseref = %x{git merge-base HEAD $GITHUB_BASE_REF}
+  #   commits = "#{baseref}..HEAD"
+  commits = ENV['TRAVIS_COMMIT_RANGE'].nil? ? 'main..HEAD' : ENV['TRAVIS_COMMIT_RANGE'].sub(/\.\.\./, '..')
   %x{git log --no-merges --pretty=%s #{commits}}.each_line do |commit_summary|
     error_message=<<-HEREDOC
 \n\n\n\tThis commit summary didn't match CONTRIBUTING.md guidelines:\n \
