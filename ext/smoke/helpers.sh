@@ -164,17 +164,17 @@ function install_puppetdb_from_package() {
   # The $releasever on Rehat 7 Server is "7Server" causing the postgresql installtion to fail because //download.postgresql.org/pub/repos/yum/12/redhat/rhel-7Server-x86_64/repodata/repomd.xml does not exist.
   local yum_cmd="yum --releasever=7"
 
-  echo "STEP: Set-up postgresql 9.6 to use with PuppetDB"
+  echo "STEP: Set-up postgresql11 to use with PuppetDB"
   on_master ${master_vm} "yum install -y ca-certificates"
-  on_master ${master_vm} "rpm --query --quiet pgdg-redhat96-9.6-3.noarch || ${yum_cmd} install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-7-x86_64/pgdg-redhat-repo-42.0-23.noarch.rpm"
-  on_master ${master_vm} "rpm --query --quiet postgresql96-server || ${yum_cmd} install -y postgresql96-server"
-  on_master ${master_vm} "rpm --query --quiet postgresql96-contrib || ${yum_cmd} install -y postgresql96-contrib"
-  on_master ${master_vm} "puppet resource service postgresql-9.6 ensure=stopped"
-  on_master ${master_vm} "rm -rf /var/lib/pgsql/9.6/data && /usr/pgsql-9.6/bin/postgresql96-setup initdb"
-  on_master ${master_vm} "puppet resource service postgresql-9.6 ensure=running enable=true"
+  on_master ${master_vm} "${yum_cmd} install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-7-x86_64/pgdg-redhat-repo-42.0-24.noarch.rpm"
+  on_master ${master_vm} "rpm --query --quiet postgresql11-server || ${yum_cmd} install -y postgresql11-server"
+  on_master ${master_vm} "rpm --query --quiet postgresql11-contrib || ${yum_cmd} install -y postgresql11-contrib"
+  on_master ${master_vm} "puppet resource service postgresql-11 ensure=stopped"
+  on_master ${master_vm} "rm -rf /var/lib/pgsql/11/data && /usr/pgsql-11/bin/postgresql-11-setup initdb"
+  on_master ${master_vm} "puppet resource service postgresql-11 ensure=running enable=true"
 
   #After postgress has been installed we need to remove the postgress repo or else other yum install commands will fail.
-  on_master ${master_vm} "${yum_cmd} remove -y pgdg-redhat-repo-42.0-20.noarch"
+  on_master ${master_vm} "${yum_cmd} remove -y pgdg-redhat-repo-42.0-24.noarch"
 
   # Enters 'puppet' as the password.
   on_master ${master_vm} "runuser -l postgres -c '(echo puppet && echo puppet) | createuser -DRSP puppetdb'"
@@ -190,7 +190,7 @@ function install_puppetdb_from_package() {
 
   # Restart postgresql and ensure that the puppetdb user can authenticate
   # (you will need to enter the password then hit exit)
-  on_master ${master_vm} 'service postgresql-9.6 restart'
+  on_master ${master_vm} 'service postgresql-11 restart'
   # Should list puppetdb as one of the users
   on_master ${master_vm} "echo puppet | psql -h localhost puppetdb puppetdb -c '\\du' | grep puppetdb"
   echo ""

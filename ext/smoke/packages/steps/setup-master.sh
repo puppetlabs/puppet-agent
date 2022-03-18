@@ -54,11 +54,11 @@ echo ""
 
 ## PUPPETDB
 
-# Here we install puppetdb. To do so, we first set-up postgresql 9.6
+# Here we install puppetdb. To do so, we first set-up postgresql 11
 # and use that to set-up the puppetdb user and database
 
 # FIXME: Parametrize on postgres version?
-echo "STEP (4): Set-up postgresql 9.6 to use with PuppetDB"
+echo "STEP (4): Set-up postgresql 11 to use with PuppetDB"
 install_puppetdb_from_package ${master_vm} "dev" ${collection}
 
 # Add PuppetDB to storeconfigs and reports settings in puppet.conf file
