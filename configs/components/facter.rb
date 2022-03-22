@@ -41,7 +41,7 @@ component "facter" do |pkg, settings, platform|
   java_home = ''
   java_includedir = ''
   case platform.name
-  when /el-(6|7|8)|redhatfips-7/
+  when /el-(6|7|8)|redhatfips-(7|8)/
     pkg.build_requires 'java-1.8.0-openjdk-devel'
   when /ubuntu-14/
     pkg.build_requires 'openjdk-7-jdk'
@@ -52,6 +52,9 @@ component "facter" do |pkg, settings, platform|
   when /debian-10|debian-11|ubuntu-20/
     pkg.build_requires 'openjdk-11-jdk'
     java_home = "/usr/lib/jvm/java-11-openjdk-#{platform.architecture}"
+  when /sles-15/
+    pkg.build_requires 'java-1_8_0-openjdk-devel'
+    java_home = "/usr/lib64/jvm/java-1.8.0-openjdk"
   when /sles-12/
     pkg.build_requires 'java-1_7_0-openjdk-devel'
     java_home = "/usr/lib64/jvm/java-1.7.0-openjdk"
