@@ -21,7 +21,7 @@ test_name 'Ensure Facter 3 and Facter 4 outputs match' do
     os\.distro\.description  }
 
   agents.each do |agent|
-    exclude_list += ['macosx_productversion.*', 'os.macosx.version'] if agent.platform =~ /^osx-11/
+    exclude_list += ['macosx_productversion.*', 'os.macosx.version'] if agent.platform =~ /^osx-1[1-9]/
 
     step 'run puppet facts diff ' do
       on agent, puppet('facts diff') do
