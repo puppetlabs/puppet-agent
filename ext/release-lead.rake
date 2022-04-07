@@ -31,7 +31,7 @@ namespace :release_lead do
     json = JSON.parse(File.read(json_file))
     version = json['version']
 
-    url = "git://github.com/puppetlabs/#{component_name}.git"
+    url = "https://github.com/puppetlabs/#{component_name}.git"
 
     Dir.chdir(where_to_clone) do
       puts "Cloning #{component_name}..."
