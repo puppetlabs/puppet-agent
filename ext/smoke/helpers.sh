@@ -164,7 +164,7 @@ function install_puppetdb_from_package() {
   # The $releasever on Rehat 7 Server is "7Server" causing the postgresql installtion to fail because //download.postgresql.org/pub/repos/yum/12/redhat/rhel-7Server-x86_64/repodata/repomd.xml does not exist.
   local yum_cmd="yum --releasever=7"
 
-  echo "STEP: Set-up postgresql11 to use with PuppetDB"
+  echo "STEP: Set-up postgresql 11 to use with PuppetDB"
   on_master ${master_vm} "yum install -y ca-certificates"
   on_master ${master_vm} "${yum_cmd} install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-7-x86_64/pgdg-redhat-repo-42.0-24.noarch.rpm"
   on_master ${master_vm} "rpm --query --quiet postgresql11-server || ${yum_cmd} install -y postgresql11-server"
