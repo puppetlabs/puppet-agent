@@ -114,15 +114,18 @@ component "facter" do |pkg, settings, platform|
   boost_static_flag = ""
   yamlcpp_static_flag = ""
 
-  # cmake on OSX is provided by brew
-  # a toolchain is not currently required for OSX since we're building with clang.
+  # cmake on macOS is provided by brew
+  # a toolchain is not currently required for macOS since we're building with clang.
   if platform.is_macos?
     toolchain = ""
     cmake = "/usr/local/bin/cmake"
     boost_static_flag = "-DBOOST_STATIC=OFF"
     special_flags += "-DCMAKE_CXX_FLAGS='#{settings[:cflags]}' -DENABLE_CXX_WERROR=OFF"
     yamlcpp_static_flag = "-DYAMLCPP_STATIC=OFF"
-    pkg.environment "CXX", "clang++ -target arm64-apple-macos11" if platform.is_cross_compiled?
+    if platform.is_cross_compiled?
+      pkg.environment 'CXX', 'clang++ -target arm64-apple-macos11' if platform.name =~ /osx-11/
+      pkg.environment 'CXX', 'clang++ -target arm64-apple-macos12' if platform.name =~ /osx-12/
+    end
   elsif platform.is_cross_compiled_linux?
     ruby = "#{settings[:host_ruby]} -r#{settings[:datadir]}/doc/rbconfig-#{settings[:ruby_version]}-orig.rb"
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/#{settings[:platform_triple]}/pl-build-toolchain.cmake"
