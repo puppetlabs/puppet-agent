@@ -16,6 +16,6 @@ gem 'artifactory'
 gem 'rake'
 gem 'json'
 gem 'octokit'
-gem 'rubocop', "~> 1.22"
+gem 'rubocop', "< 1.29"
 
 eval_gemfile("#{__FILE__}.local") if File.exist?("#{__FILE__}.local")
