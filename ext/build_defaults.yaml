@@ -102,7 +102,7 @@ rpm_targets: 'el-6-x86_64 el-7-x86_64 el-8-x86_64 el-9-x86_64 redhatfips-7-x86_6
 sign_tar: FALSE
 osx_signing_cert: "Developer ID Installer: PUPPET LABS, INC. (VKGLGN2B6Y)"
 osx_signing_keychain: "/Users/jenkins/Library/Keychains/signing.keychain"
-osx_signing_server: 'osx-signer.delivery.puppetlabs.net'
+osx_signing_server: 'osx-signer-prod-2.delivery.puppetlabs.net'
 vanagon_project: TRUE
 apt_repo_name: 'puppet7'
 yum_repo_name: 'puppet7'
