@@ -35,6 +35,8 @@ foss_platforms:
   - ubuntu-18.04-aarch64
   - ubuntu-20.04-amd64
   - ubuntu-20.04-aarch64
+  - ubuntu-22.04-amd64
+  - ubuntu-22.04-aarch64
   - windows-2012-x86
   - windows-2012-x64
 pe_platforms:
@@ -111,6 +113,10 @@ platform_repos:
     repo_location: repos/apt/focal
   - name: ubuntu-20.04-aarch64
     repo_location: repos/apt/focal
+  - name: ubuntu-22.04-amd64
+    repo_location: repos/apt/jammy
+  - name: ubuntu-22.04-aarch64
+    repo_location: repos/apt/jammy
   - name: osx-10.15
     repo_location: repos/apple/10.15/**/x86_64/*.dmg
   - name: osx-11
