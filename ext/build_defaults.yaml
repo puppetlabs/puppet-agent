@@ -106,9 +106,13 @@ platform_repos:
     repo_location: repos/apt/jammy
   - name: osx-10.15
     repo_location: repos/apple/10.15/**/x86_64/*.dmg
-  - name: osx-11
+  - name: osx-11-arm64
+    repo_location: repos/apple/11/**/arm64/*.dmg
+  - name: osx-11-x86_64
     repo_location: repos/apple/11/**/x86_64/*.dmg
-  - name: osx-12
+  - name: osx-12-arm64
+    repo_location: repos/apple/12/**/arm64/*.dmg
+  - name: osx-12-x86_64
     repo_location: repos/apple/12/**/x86_64/*.dmg
   - name: solaris-10-i386
     repo_location: repos/solaris/10/**/*.i386.pkg.gz
