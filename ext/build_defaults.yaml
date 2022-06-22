@@ -14,15 +14,12 @@ foss_platforms:
   - el-8-ppc64le
   - el-8-aarch64
   - el-9-x86_64
-  - fedora-32-x86_64
   - fedora-34-x86_64
   - osx-10.15-x86_64
   - osx-11-x86_64
   - osx-12-x86_64
   - sles-12-x86_64
   - sles-15-x86_64
-  - ubuntu-16.04-amd64
-  - ubuntu-16.04-i386
   - ubuntu-18.04-amd64
   - ubuntu-18.04-aarch64
   - ubuntu-20.04-amd64
@@ -65,8 +62,6 @@ platform_repos:
     repo_location: repos/sles/12/**/x86_64
   - name: sles-15-x86_64
     repo_location: repos/sles/15/**/x86_64
-  - name: fedora-32-x86_64
-    repo_location: repos/fedora/32/**/x86_64
   - name: fedora-34-x86_64
     repo_location: repos/fedora/34/**/x86_64
   - name: debian-9-i386
@@ -77,10 +72,6 @@ platform_repos:
     repo_location: repos/apt/buster
   - name: debian-11-amd64
     repo_location: repos/apt/bullseye
-  - name: ubuntu-16.04-i386
-    repo_location: repos/apt/xenial
-  - name: ubuntu-16.04-amd64
-    repo_location: repos/apt/xenial
   - name: ubuntu-18.04-amd64
     repo_location: repos/apt/bionic
   - name: ubuntu-18.04-aarch64
@@ -95,9 +86,13 @@ platform_repos:
     repo_location: repos/apt/jammy
   - name: osx-10.15
     repo_location: repos/apple/10.15/**/x86_64/*.dmg
-  - name: osx-11
+  - name: osx-11-arm64
+    repo_location: repos/apple/11/**/arm64/*.dmg
+  - name: osx-11-x86_64
     repo_location: repos/apple/11/**/x86_64/*.dmg
-  - name: osx-12
+  - name: osx-12-arm64
+    repo_location: repos/apple/12/**/arm64/*.dmg
+  - name: osx-12-x86_64
     repo_location: repos/apple/12/**/x86_64/*.dmg
   - name: solaris-11-i386
     repo_location: repos/solaris/11/**/*.i386.p5p
