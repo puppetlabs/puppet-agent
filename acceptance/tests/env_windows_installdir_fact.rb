@@ -3,8 +3,7 @@
 # present and accurate.
 test_name 'PA-466: Ensure env_windows_installdir fact is present and correct' do
 
-  tag 'audit:low',       # important runtime environment/packaging integration, rarely changed?
-      'audit:delete',    # Move to puppet-agent suite
+  tag 'audit:high', # PE and modules rely on this fact in order to execute ruby, curl, etc
       'audit:acceptance'
 
   confine :to, :platform => 'windows'
@@ -22,7 +21,7 @@ test_name 'PA-466: Ensure env_windows_installdir fact is present and correct' do
 
       on agent, puppet('facts', '--render-as json') do |result|
         facts = JSON.parse(result.stdout)
-        actual_value = facts["values"]["env_windows_installdir"]
+        actual_value = facts["env_windows_installdir"]
         assert_equal(install_dir, actual_value, "env_windows_installdir fact did not match expected output")
       end
     end
