@@ -17,7 +17,9 @@ foss_platforms:
   - el-9-x86_64
   - fedora-34-x86_64
   - osx-10.15-x86_64
+  - osx-11-arm64
   - osx-11-x86_64
+  - osx-12-arm64
   - osx-12-x86_64
   - sles-11-i386
   - sles-11-x86_64
