@@ -22,6 +22,13 @@ test_name 'Ensure Facter 3 and Facter 4 outputs match' do
 
   agents.each do |agent|
     exclude_list += ['macosx_productversion.*', 'os.macosx.version'] if agent.platform =~ /^osx-1[1-9]/
+    # FACT-3039 was only fixed in facter 4
+    exclude_list += %w[
+      operatingsystemrelease
+      operatingsystemmajrelease
+      os.release.full
+      os.release.major
+    ] if agent.platform =~ /windows-11/
 
     step 'run puppet facts diff ' do
       on agent, puppet('facts diff') do
