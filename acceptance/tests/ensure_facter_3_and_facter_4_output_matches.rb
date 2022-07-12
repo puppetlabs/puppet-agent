@@ -18,6 +18,7 @@ test_name 'Ensure Facter 3 and Facter 4 outputs match' do
     virtual
     blockdevice_.*_vendor blockdevice_.*_size
     hypervisors.vmware.version
+    gce\.project\.attributes\.sshKeys # until we can fix FACT-3136
     os\.distro\.description  }
 
   agents.each do |agent|
