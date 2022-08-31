@@ -14,12 +14,7 @@ component "hiera" do |pkg, settings, platform|
 
   if platform.is_cross_compiled? && platform.is_macos?
     ruby_version_y = settings[:ruby_version].gsub(/(\d+)\.(\d+)\.(\d+)/, '\1.\2')
-    # Pin to an older version of ruby@2.5. This can be removed once we're no longer cross-compiling
-    if ruby_version_y == "2.5"
-      pkg.build_requires "puppetlabs/puppet/ruby@2.5"
-    else
-      pkg.build_requires "ruby@#{ruby_version_y}"
-    end
+    pkg.build_requires "ruby@#{ruby_version_y}"
   end
 
   if platform.is_windows?
