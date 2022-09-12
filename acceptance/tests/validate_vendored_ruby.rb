@@ -24,6 +24,7 @@ def setup_build_environment(agent)
   # this path when listing / loading gems in the test below.
   gem_install_sqlite3 = "env GEM_HOME=/opt/puppetlabs/puppet/lib/ruby/vendor_gems " + gem_command(agent) + " install sqlite3"
   install_package_on_agent = package_installer(agent)
+  on(agent, "#{gem_command(agent)} update --system")
 
   case agent['platform']
   when /aix/
