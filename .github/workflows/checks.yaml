@@ -1,0 +1,36 @@
+name: Checks
+
+on:
+  push:
+    branches: 
+      - main
+      - 6.x
+  pull_request:
+    branches: 
+      - main
+      - 6.x
+
+permissions:
+  contents: read
+
+jobs:
+  rake_checks:
+    name: Rake Checks
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        check: [ 'rubocop', 'commits' ]
+    steps:
+      - name: Checkout current PR
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Install Ruby version 2.7
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.7
+      - name: Update rubygems and install gems
+        run: |
+          gem update --system --silent --no-document
+          bundle install --jobs 4 --retry 3
+      - run: bundle exec rake ${{ matrix.check }}
