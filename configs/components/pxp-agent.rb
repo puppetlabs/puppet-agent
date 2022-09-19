@@ -58,7 +58,7 @@ component "pxp-agent" do |pkg, settings, platform|
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=#{settings[:tools_root]}/pl-build-toolchain.cmake"
     special_flags += ' -DDYNAMICBASE=OFF' if platform.name =~ /windowsfips-2012r2/
 
-  elsif platform.name =~ /debian-9|el-[567]|redhatfips-7|sles-(:?11|12)|ubuntu-(:?14.04|16.04|18.04-amd64)/
+  elsif platform.name =~ /debian-9|el-[567]|redhatfips-7|sles-(:?11|12)|ubuntu-(:?14.04|18.04-amd64)/
     # use default that is pl-build-tools
   else
     # These platforms use the default OS toolchain, rather than pl-build-tools
