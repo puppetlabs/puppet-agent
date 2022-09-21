@@ -2,8 +2,6 @@
 project: 'puppet-agent'
 # foss_platforms will be shipped to the nightly repos
 foss_platforms:
-  - debian-9-amd64
-  - debian-9-i386
   - debian-10-amd64
   - debian-11-amd64
   - el-6-i386
@@ -85,10 +83,6 @@ platform_repos:
     repo_location: repos/fedora/34/**/x86_64
   - name: fedora-36-x86_64
     repo_location: repos/fedora/36/**/x86_64
-  - name: debian-9-i386
-    repo_location: repos/apt/stretch
-  - name: debian-9-amd64
-    repo_location: repos/apt/stretch
   - name: debian-10-amd64
     repo_location: repos/apt/buster
   - name: debian-11-amd64
