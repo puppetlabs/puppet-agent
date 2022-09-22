@@ -17,13 +17,13 @@ component "leatherman" do |pkg, settings, platform|
   elsif platform.is_windows?
     pkg.build_requires "cmake"
     pkg.build_requires "pl-gettext-#{platform.architecture}"
-  elsif platform.name =~ /debian-9|el-[567]|redhatfips-7|sles-(:?11|12)|ubuntu-(:?14.04|18.04-amd64)/
+  elsif platform.name =~ /el-[567]|redhatfips-7|sles-(:?11|12)|ubuntu-(:?14.04|18.04-amd64)/
     pkg.build_requires "pl-cmake"
     pkg.build_requires "pl-gettext"
   end
 
   pkg.build_requires "puppet-runtime" # Provides curl and ruby
-  pkg.build_requires "runtime" if platform.name =~ /debian-9|el-[567]|redhatfips-7|sles-(:?11|12)|ubuntu-(:?14.04|18.04-amd64)/ ||
+  pkg.build_requires "runtime" if platform.name =~ /el-[567]|redhatfips-7|sles-(:?11|12)|ubuntu-(:?14.04|18.04-amd64)/ ||
                                   !platform.is_linux?
 
   ruby = "#{settings[:host_ruby]} -rrbconfig"
@@ -70,7 +70,7 @@ component "leatherman" do |pkg, settings, platform|
 
     # Use environment variable set in environment.bat to find locale files
     leatherman_locale_var = "-DLEATHERMAN_LOCALE_VAR='PUPPET_DIR' -DLEATHERMAN_LOCALE_INSTALL='share/locale'"
-  elsif platform.name =~ /debian-9|el-[567]|redhatfips-7|sles-(:?11|12)|ubuntu-(:?14.04|18.04-amd64)/ ||
+  elsif platform.name =~ /el-[567]|redhatfips-7|sles-(:?11|12)|ubuntu-(:?14.04|18.04-amd64)/ ||
         platform.is_aix?
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/pl-build-toolchain.cmake"
     cmake = "/opt/pl-build-tools/bin/cmake"
