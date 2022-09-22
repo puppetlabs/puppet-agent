@@ -20,7 +20,7 @@ component "facter" do |pkg, settings, platform|
 
   pkg.build_requires 'puppet-runtime' # Provides augeas, boost, curl, openssl, ruby, yaml-cpp
   pkg.build_requires 'leatherman'
-  pkg.build_requires 'runtime' if platform.name =~ /debian-9|el-[567]|redhatfips-7|sles-(:?11|12)|ubuntu-(:?14.04|18.04-amd64)/ ||
+  pkg.build_requires 'runtime' if platform.name =~ /el-[567]|redhatfips-7|sles-(:?11|12)|ubuntu-(:?14.04|18.04-amd64)/ ||
                                   !platform.is_linux?
   pkg.build_requires 'cpp-hocon'
   pkg.build_requires 'libwhereami'
@@ -46,7 +46,7 @@ component "facter" do |pkg, settings, platform|
   when /ubuntu-14/
     pkg.build_requires 'openjdk-7-jdk'
     java_home = "/usr/lib/jvm/java-7-openjdk-#{platform.architecture}"
-  when /(debian-9|ubuntu-(15|16|18.04-amd64))/
+  when /(ubuntu-(15|16|18.04-amd64))/
     pkg.build_requires 'openjdk-8-jdk'
     java_home = "/usr/lib/jvm/java-8-openjdk-#{platform.architecture}"
   when /debian-10|debian-11|ubuntu-20/
@@ -149,7 +149,7 @@ component "facter" do |pkg, settings, platform|
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=#{settings[:tools_root]}/pl-build-toolchain.cmake"
     special_flags += ' -DDYNAMICBASE=OFF' if platform.name =~ /windowsfips-2012r2/
 
-  elsif platform.name =~ /debian-9|el-[567]|redhatfips-7|sles-(:?11|12)|ubuntu-(:?14.04|18.04-amd64)/ ||
+  elsif platform.name =~ /el-[567]|redhatfips-7|sles-(:?11|12)|ubuntu-(:?14.04|18.04-amd64)/ ||
         platform.is_aix?
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/pl-build-toolchain.cmake"
     cmake = "/opt/pl-build-tools/bin/cmake"
@@ -237,7 +237,7 @@ component "facter" do |pkg, settings, platform|
   end
 
   # Disable tests for platforms that use the default OS toolchain
-  if platform.name =~ /debian-9|el-[567]|redhatfips-7|sles-(:?11|12)|ubuntu-(:?14.04|18.04-amd64)/ || !platform.is_linux?
+  if platform.name =~ /el-[567]|redhatfips-7|sles-(:?11|12)|ubuntu-(:?14.04|18.04-amd64)/ || !platform.is_linux?
     pkg.check do
       tests
     end
