@@ -24,8 +24,6 @@ foss_platforms:
   - sles-12-x86_64
   - sles-12-ppc64le
   - sles-15-x86_64
-  - ubuntu-14.04-amd64
-  - ubuntu-14.04-i386
   - ubuntu-18.04-amd64
   - ubuntu-18.04-aarch64
   - ubuntu-20.04-amd64
@@ -84,10 +82,6 @@ platform_repos:
     repo_location: repos/apt/buster
   - name: debian-11-amd64
     repo_location: repos/apt/bullseye
-  - name: ubuntu-14.04-i386
-    repo_location: repos/apt/trusty
-  - name: ubuntu-14.04-amd64
-    repo_location: repos/apt/trusty
   - name: ubuntu-18.04-amd64
     repo_location: repos/apt/bionic
   - name: ubuntu-18.04-aarch64
