@@ -4,9 +4,8 @@ The Puppet Agent
  * Runtime requirements
  * Building puppet-agent
  * Branches in puppet-agent
- * Installer plugin for OSX
  * License
- * Maintainers
+ * Code Owners
  * Running Tests
 
 Overview
@@ -130,12 +129,6 @@ for i in {hiera,facter,puppet,pxp-agent,cpp-pcp-client}; do git checkout main --
 git commit -m "(maint) Restore promoted components refs after merge from stable"
 ```
 
-Installer plugin for OSX
----
-The GUI installer for OSX includes a custom plugin that captures and sets information such
-as the puppet server and certificate name for the client.  The source for this Xcode project
-can be found [here](https://github.com/puppetlabs/puppet-agent-osx-installer-plugin).
-
 Issues
 ---
 File issues in the [Puppet Agent (PA) project](https://tickets.puppet.com/browse/PA) on the Puppet Labs Jira site. Issues with individual components should be filed in their respective projects.
@@ -144,9 +137,9 @@ License
 ---
 Puppet agent is licensed under the [Apache-2.0](LICENSE) license.
 
-Maintainers
+Code Owners
 ---
-See [MAINTAINERS](MAINTAINERS)
+See [CODEOWNERS](CODEOWNERS)
 
 Running Tests
 ---
