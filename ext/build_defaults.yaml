@@ -32,6 +32,7 @@ pe_platforms:
   - aix-7.1-power
   - redhatfips-7-x86_64
   - redhatfips-8-x86_64
+  - solaris-10-i386
   - solaris-11-i386
   - solaris-11-sparc
   - windowsfips-2012-x64
@@ -90,6 +91,8 @@ platform_repos:
     repo_location: repos/apple/12/**/arm64/*.dmg
   - name: osx-12-x86_64
     repo_location: repos/apple/12/**/x86_64/*.dmg
+  - name: solaris-10-i386
+    repo_location: repos/solaris/10/**/*.i386.pkg.gz
   - name: solaris-11-i386
     repo_location: repos/solaris/11/**/*.i386.p5p
   - name: solaris-11-sparc
