@@ -31,8 +31,8 @@ project "puppet-agent" do |proj|
   end
 
   if platform.is_fedora?
-    proj.package_override("# Disable check-rpaths since /opt/* is not a valid path\n%global __brp_check_rpaths \%{nil}")
-    proj.package_override("# Disable the removal of la files, they are still required\n%global __brp_remove_la_files \%{nil}")
+    proj.package_override("# Disable check-rpaths since /opt/* is not a valid path\n%global __brp_check_rpaths %{nil}")
+    proj.package_override("# Disable the removal of la files, they are still required\n%global __brp_remove_la_files %{nil}")
   end
 
   # Project level settings our components will care about

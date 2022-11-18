@@ -11,7 +11,7 @@ platform "solaris-10-i386" do |plat|
 # please see man -s 4 admin for details about this file:
 # http://www.opensolarisforum.org/man/man4/admin.html
 #
-# The key thing we don\'t want to prompt for are conflicting files.
+# The key thing we don't want to prompt for are conflicting files.
 # The other nocheck settings are mostly defensive to prevent prompts
 # We _do_ want to check for available free space and abort if there is
 # not enough
@@ -25,7 +25,7 @@ runlevel=nocheck
 # Do not bother checking package dependencies (We take care of this)
 idepend=nocheck
 rdepend=nocheck
-# DO check for available free space and abort if there isn\'t enough
+# DO check for available free space and abort if there isn't enough
 space=quit
 # Do not check for setuid files.
 setuid=nocheck
