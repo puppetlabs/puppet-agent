@@ -26,21 +26,23 @@ component "pl-ruby-patch" do |pkg, settings, platform|
                 end
 
     # weird architecture naming conventions...
-    target_triple = if platform.architecture =~ /ppc64el|ppc64le/
-                      "powerpc64le-linux"
-                    elsif platform.name == 'solaris-11-sparc'
-                      "sparc-solaris-2.11"
-                    elsif platform.is_macos?
-                      "aarch64-darwin"
-                    else
-                      "#{platform.architecture}-linux"
-                    end
+    unless platform.name =~ /solaris-10/
+      target_triple = if platform.architecture =~ /ppc64el|ppc64le/
+                        "powerpc64le-linux"
+                      elsif platform.name == 'solaris-11-sparc'
+                        "sparc-solaris-2.11"
+                      elsif platform.is_macos?
+                        "aarch64-darwin"
+                      else
+                        "#{platform.architecture}-linux"
+                      end
 
-    pkg.build do
-      [
-        %(#{platform[:sed]} -i 's/Gem::Platform.local.to_s/"#{target_triple}"/' #{base_ruby}/rubygems/basic_specification.rb),
-        %(#{platform[:sed]} -i 's/Gem.extension_api_version/"#{ruby_api_version}"/' #{base_ruby}/rubygems/basic_specification.rb)
-      ]
+      pkg.build do
+        [
+          %(#{platform[:sed]} -i 's/Gem::Platform.local.to_s/"#{target_triple}"/' #{base_ruby}/rubygems/basic_specification.rb),
+          %(#{platform[:sed]} -i 's/Gem.extension_api_version/"#{ruby_api_version}"/' #{base_ruby}/rubygems/basic_specification.rb)
+        ]
+      end
     end
 
     # make rubygems use our target rbconfig when installing gems
