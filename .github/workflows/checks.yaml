@@ -2,13 +2,9 @@ name: Checks
 
 on:
   push:
-    branches: 
-      - main
-      - 6.x
+    branches: [main]
   pull_request:
-    branches: 
-      - main
-      - 6.x
+    branches: [main]
 
 permissions:
   contents: read
