@@ -2,9 +2,7 @@
 name: Snyk Monitor
 on:
   push:
-    branches:
-      - main
-      - 6.x
+    branches: [7.x]
 
 jobs:
   snyk_monitor:
