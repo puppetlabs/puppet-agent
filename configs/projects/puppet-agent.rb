@@ -90,7 +90,7 @@ project "puppet-agent" do |proj|
   proj.license "See components"
   proj.vendor "Puppet Labs <info@puppetlabs.com>"
   proj.homepage "https://www.puppetlabs.com"
-  proj.target_repo "puppet7"
+  proj.target_repo "puppet8"
 
   if platform.is_solaris?
     proj.identifier "puppetlabs.com"
