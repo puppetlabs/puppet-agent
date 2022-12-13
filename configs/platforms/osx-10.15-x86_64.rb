@@ -17,5 +17,4 @@ platform 'osx-10.15-x86_64' do |plat|
   plat.provision_with 'su test -c \'/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"\''
   plat.provision_with 'sudo chown -R test:admin /Users/test/'
   plat.vmpooler_template 'osx-1015-x86_64'
-  plat.output_dir File.join('apple', '10.15', 'puppet8', 'x86_64')
 end
