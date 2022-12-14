@@ -18,5 +18,4 @@ platform "osx-11-arm64" do |plat|
   plat.provision_with "sudo chown -R test:admin /Users/test/"
   plat.vmpooler_template "macos-112-x86_64"
   plat.cross_compiled true
-  plat.output_dir File.join('apple', '11', 'puppet7', 'arm64')
 end

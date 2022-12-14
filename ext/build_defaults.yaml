@@ -107,9 +107,9 @@ osx_signing_cert: "Developer ID Installer: PUPPET LABS, INC. (VKGLGN2B6Y)"
 osx_signing_keychain: "/Users/jenkins/Library/Keychains/signing.keychain"
 osx_signing_server: 'osx-signer-prod-2.delivery.puppetlabs.net'
 vanagon_project: TRUE
-apt_repo_name: 'puppet7'
-yum_repo_name: 'puppet7'
-repo_name: 'puppet7'
-nonfinal_repo_name: 'puppet7-nightly'
+apt_repo_name: 'puppet8'
+yum_repo_name: 'puppet8'
+repo_name: 'puppet8'
+nonfinal_repo_name: 'puppet8-nightly'
 build_tar: FALSE
 build_gem: TRUE

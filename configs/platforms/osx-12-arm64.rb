@@ -25,5 +25,4 @@ platform 'osx-12-arm64' do |plat|
 
     plat.vmpooler_template 'macos-12-x86_64'
     plat.cross_compiled true
-    plat.output_dir File.join('apple', '12', 'puppet7', 'arm64')
   end
