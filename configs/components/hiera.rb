@@ -2,10 +2,6 @@ component "hiera" do |pkg, settings, platform|
   pkg.load_from_json('configs/components/hiera.json')
 
   pkg.build_requires 'puppet-runtime' # Provides ruby and rubygem-deep-merge
-  pkg.replaces 'hiera', '2.0.0'
-  pkg.provides 'hiera', '2.0.0'
-
-  pkg.replaces 'pe-hiera'
 
   configdir = settings[:puppet_configdir]
   flags = " --bindir=#{settings[:bindir]} \
