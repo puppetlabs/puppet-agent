@@ -19,11 +19,6 @@ component "puppet" do |pkg, settings, platform|
     pkg.build_requires "gettext"
   end
 
-  if platform.is_deb?
-    pkg.replaces 'puppet-common', '4.0.0'
-    pkg.provides 'puppet-common', '4.0.0'
-  end
-
   platform.get_service_types.each do |servicetype|
     case servicetype
     when "systemd"
