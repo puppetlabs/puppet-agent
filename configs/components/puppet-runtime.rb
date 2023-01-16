@@ -9,22 +9,6 @@ component 'puppet-runtime' do |pkg, settings, platform|
   pkg.url File.join(settings[:puppet_runtime_location], tarball_name)
   pkg.sha1sum File.join(settings[:puppet_runtime_location], "#{tarball_name}.sha1")
 
-  # The contents of the runtime replace the following:
-  pkg.replaces 'pe-augeas'
-  pkg.replaces 'pe-openssl'
-  pkg.replaces 'pe-ruby'
-  pkg.replaces 'pe-ruby-mysql'
-  pkg.replaces 'pe-rubygems'
-  pkg.replaces 'pe-libyaml'
-  pkg.replaces 'pe-libldap'
-  pkg.replaces 'pe-ruby-ldap'
-  pkg.replaces 'pe-ruby-augeas'
-  pkg.replaces 'pe-ruby-selinux'
-  pkg.replaces 'pe-ruby-shadow'
-  pkg.replaces 'pe-ruby-stomp'
-  pkg.replaces 'pe-rubygem-deep-merge'
-  pkg.replaces 'pe-rubygem-net-ssh'
-
   pkg.requires 'findutils' if platform.is_linux?
 
   pkg.install_only true
