@@ -15,7 +15,7 @@ component "wrapper-script" do |pkg, settings, platform|
     pkg.install_file "sysv-wrapper.sh", wrapper, mode: '0755'
   end
 
-  ["facter", "hiera", "puppet", "pxp-agent"].each do |exe|
+  ["facter", "puppet", "pxp-agent"].each do |exe|
     pkg.link wrapper, "#{settings[:link_bindir]}/#{exe}"
   end
 end

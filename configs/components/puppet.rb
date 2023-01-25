@@ -3,7 +3,7 @@ component "puppet" do |pkg, settings, platform|
 
   pkg.build_requires "puppet-runtime" # Provides ruby and rubygem-win32-dir
   pkg.build_requires "facter"
-  pkg.build_requires "hiera"
+
   # Used to compile binary translation files
   # i18n is not supported on Solaris
   if platform.is_macos?

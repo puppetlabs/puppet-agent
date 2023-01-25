@@ -131,8 +131,8 @@ end
 
 
 public_binaries = {
-  :posix => ['puppet', 'facter', 'hiera'],
-  :win   => ['puppet.bat', 'facter.bat', 'hiera.bat']
+  :posix => ['puppet', 'facter'],
+  :win   => ['puppet.bat', 'facter.bat']
 }
 
 def locations(platform, ruby_arch, type)

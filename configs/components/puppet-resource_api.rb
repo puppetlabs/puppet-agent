@@ -7,8 +7,8 @@ component "puppet-resource_api" do |pkg, settings, platform|
   pkg.environment "GEM_HOME", settings[:puppet_gem_vendor_dir]
 
   # PA-25 in order to install gems in a cross-compiled environment we need to
-  # set RUBYLIB to include puppet and hiera, so that their gemspecs can resolve
-  # hiera/version and puppet/version requires. Without this the gem install
+  # set RUBYLIB to include puppet, so that its gemspec can resolve
+  # puppet/version requires. Without this the gem install
   # will fail by blowing out the stack.
   pkg.environment "RUBYLIB", "#{settings[:ruby_vendordir]}:$(RUBYLIB)"
 
