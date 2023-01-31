@@ -21,11 +21,6 @@ project "puppet-agent" do |proj|
   metadata_uri = File.join(runtime_details['location'], "#{proj.settings[:puppet_runtime_basename]}.json")
   proj.inherit_yaml_settings(settings_uri, sha1sum_uri, metadata_uri: metadata_uri)
 
-  # (PA-678) pe-r10k versions prior to 2.5.0.0 ship gettext gems.
-  # Since we also ship those gems as part of puppet-agent
-  # at present, we need to conflict with pe-r10k < 2.5.0.0
-  proj.conflicts "pe-r10k", "2.5.0.0"
-
   if platform.is_macos?
     proj.extra_file_to_sign File.join(proj.bindir, 'puppet')
     proj.extra_file_to_sign File.join(proj.bindir, 'pxp-agent')
