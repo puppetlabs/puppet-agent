@@ -79,7 +79,7 @@ project "puppet-agent" do |proj|
 
   proj.setting(:service_conf, File.join(proj.install_root, 'service_conf'))
 
-  proj.description "The Puppet Agent package contains all of the elements needed to run puppet, including ruby, facter, and hiera."
+  proj.description "The Puppet Agent package contains all of the elements needed to run puppet, including ruby and facter."
   proj.version_from_git
   proj.write_version_file File.join(proj.prefix, 'VERSION')
   proj.license "See components"
@@ -107,7 +107,6 @@ project "puppet-agent" do |proj|
 
   proj.component "puppet"
   proj.component "facter"
-  proj.component "hiera"
 
   proj.component "puppet-resource_api"
 
