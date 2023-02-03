@@ -37,6 +37,9 @@ component 'puppet-runtime' do |pkg, settings, platform|
     end
   elsif platform.is_cross_compiled_linux?
     pkg.build_requires 'pl-ruby'
+  elsif platform.is_cross_compiled? && platform.is_macos?
+    ruby_version_y = settings[:ruby_version].gsub(/(\d+)\.(\d+)\.(\d+)/, '\1.\2')
+    pkg.build_requires "ruby@#{ruby_version_y}"
   end
 
   if platform.is_windows?
