@@ -15,12 +15,22 @@ component 'puppet-runtime' do |pkg, settings, platform|
 
   # Even though puppet's ruby comes from puppet-runtime, we still need a ruby
   # to build with on these platforms:
-  if platform.architecture == "sparc"
-    if platform.os_version == "11"
+  if platform.is_cross_compiled?
+    if platform.is_solaris?
+      case platform.os_version
+      when "11"
+        pkg.build_requires 'pl-ruby'
+      when "10"
+        # ruby20 installed from OpenCSW in solaris-10-sparc platform definition
+      else
+        raise "Unknown solaris os_version: #{platform.os_version}"
+      end
+    elsif platform.is_linux?
       pkg.build_requires 'pl-ruby'
+    elsif platform.is_macos?
+      ruby_version_y = settings[:ruby_version].gsub(/(\d+)\.(\d+)\.(\d+)/, '\1.\2')
+      pkg.build_requires "ruby@#{ruby_version_y}"
     end
-  elsif platform.is_cross_compiled_linux?
-    pkg.build_requires 'pl-ruby'
   end
 
   if platform.is_windows?
