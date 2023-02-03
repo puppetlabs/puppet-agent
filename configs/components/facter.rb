@@ -2,7 +2,6 @@ component "facter" do |pkg, settings, platform|
   pkg.load_from_json('configs/components/facter.json')
 
   pkg.build_requires 'puppet-runtime' # Provides ruby and rubygem-deep-merge
-  pkg.build_requires "pl-ruby-patch"
 
   flags = " --bindir=#{settings[:bindir]} \
             --sitelibdir=#{settings[:ruby_vendordir]} \
