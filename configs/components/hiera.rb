@@ -12,11 +12,6 @@ component "hiera" do |pkg, settings, platform|
             --sitelibdir=#{settings[:ruby_vendordir]} \
             --ruby=#{File.join(settings[:bindir], 'ruby')} "
 
-  if platform.is_cross_compiled? && platform.is_macos?
-    ruby_version_y = settings[:ruby_version].gsub(/(\d+)\.(\d+)\.(\d+)/, '\1.\2')
-    pkg.build_requires "ruby@#{ruby_version_y}"
-  end
-
   if platform.is_windows?
     pkg.add_source("file://resources/files/windows/hiera.bat", sum: "bbe0a513808af61ed9f4b57463851326")
     pkg.install_file "../hiera.bat", "#{settings[:link_bindir]}/hiera.bat"

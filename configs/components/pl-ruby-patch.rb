@@ -46,10 +46,11 @@ component "pl-ruby-patch" do |pkg, settings, platform|
     end
 
     # make rubygems use our target rbconfig when installing gems
-    if ruby_version_y == '2.7'
-      sed_command = %(s|Gem.ruby.shellsplit|& << '-r/opt/puppetlabs/puppet/share/doc/rbconfig-#{settings[:ruby_version]}-orig.rb'|)
-    else
+    case File.basename(base_ruby)
+    when '2.0.0', '2.1.0'
       sed_command = %(s|Gem.ruby|&, '-r/opt/puppetlabs/puppet/share/doc/rbconfig-#{settings[:ruby_version]}-orig.rb'|)
+    else
+      sed_command = %(s|Gem.ruby.shellsplit|& << '-r/opt/puppetlabs/puppet/share/doc/rbconfig-#{settings[:ruby_version]}-orig.rb'|)
     end
 
     pkg.build do
