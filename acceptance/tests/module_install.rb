@@ -1,6 +1,6 @@
 test_name 'PA-3125: make sure we can install a forge module' do
 
-  tag 'audit:low',
+  tag 'audit:high',
       'audit:acceptance'
 
   require 'puppet/acceptance/common_utils'
