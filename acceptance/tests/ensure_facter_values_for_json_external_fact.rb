@@ -51,25 +51,25 @@ test_name 'Ensure Facter values usage for json external fact' do
 
       step 'check that json external fact key is not visible to puppet in $facts' do
         on agent, puppet("apply -e 'notice(\$facts[\"fizz.buzz\"])'") do |output|
-          assert_not_match(/Notice: .*: {"bizz": "buzz"}/, output.stdout)
+          refute_match(/Notice: .*: {"bizz": "buzz"}/, output.stdout)
         end
       end
 
       step 'check that json external fact key is not visible to puppet in $facts.dig' do
         on agent, puppet("apply -e 'notice(\$facts.dig(\"fizz.buzz\"))'") do |output|
-          assert_not_match(/Notice: .*: {"bizz": "buzz"}/, output.stdout)
+          refute_match(/Notice: .*: {"bizz": "buzz"}/, output.stdout)
         end
       end
 
       step 'check that json external fact key is not visible to puppet in $facts.get' do
         on agent, puppet("apply -e 'notice(\$facts.get(\"fizz.buzz\"))'"), acceptable_exit_codes: [1] do |output|
-          assert_not_match(/Notice: .*: {"bizz": "buzz"}/, output.stdout)
+          refute_match(/Notice: .*: {"bizz": "buzz"}/, output.stdout)
         end
       end
 
       step 'check that json external fact key is not visible to puppet in getvar' do
         on agent, puppet("apply -e 'notice(getvar(\"facts.fizz.buzz\"))'"), acceptable_exit_codes: [1] do |output|
-          assert_not_match(/Notice: .*: {"bizz": "buzz"}/, output.stdout)
+          refute_match(/Notice: .*: {"bizz": "buzz"}/, output.stdout)
         end
       end
     end

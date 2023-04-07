@@ -60,7 +60,7 @@ FILE
 
       step 'check that json custom fact is interpreted as text' do
         on agent, puppet("apply -e 'notice(\$facts[\"ruby\"][\"version\"])'") , acceptable_exit_codes: [1]  do |output|
-          assert_not_match(/Notice: .*: 1.1.1/, output.stdout)
+          refute_match(/Notice: .*: 1.1.1/, output.stdout)
         end
       end
     end

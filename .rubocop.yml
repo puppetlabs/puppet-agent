@@ -85,6 +85,9 @@ Style/PercentLiteralDelimiters:
 Style/RedundantInterpolation:
   Enabled: false
 
+Style/RedundantLineContinuation:
+  Enabled: false
+
 Style/SignalException:
   Enabled: false
 
