@@ -39,7 +39,7 @@ echo ""
 echo "STEP (2): Install puppetserver"
 on_master ${master_vm} "curl -f -O http://builds.delivery.puppetlabs.net/puppetserver/${server_version}/artifacts/el/7/${collection}/x86_64/puppetserver-${server_version}-1.el7.noarch.rpm"
 # FIXME: Might need to parametrize on Java?
-on_master ${master_vm} "yum install -y java-1.8.0-openjdk-headless"
+on_master ${master_vm} "yum install -y java-11-openjdk-headless"
 on_master ${master_vm} "rpm -ivh puppetserver-${server_version}-1.el7.noarch.rpm"
 on_master ${master_vm} "echo \`facter ipaddress\` puppet > /etc/hosts"
 echo ""
