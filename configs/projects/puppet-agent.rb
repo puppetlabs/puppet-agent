@@ -103,6 +103,7 @@ project "puppet-agent" do |proj|
 
   # Provides augeas, curl, libedit, libxml2, libxslt, openssl, puppet-ca-bundle, ruby and rubygem-*
   proj.component "puppet-runtime"
+  proj.component 'openssl-fips' if platform.is_fips? && !platform.is_windows? # REMIND not yet on windows
   proj.component "pxp-agent" if ENV['NO_PXP_AGENT'].to_s.empty?
 
   proj.component "puppet"
