@@ -268,6 +268,38 @@ End If
             DllEntry="WixSilentExec64"
             Execute="immediate"
             Impersonate="yes" />
+
+        <!-- Fips is only supported in 64-bit -->
+        <%-if @platform.is_fips?-%>
+            <!--
+                 The FipsInstall custom action depends on the user-specified
+                 INSTALLDIR, so it can't be an immediate action. Also, "custom
+                 actions that change the system directly, or call another system
+                 service, must be deferred to the time when the installation
+                 script is executed."
+                 https://learn.microsoft.com/en-us/windows/win32/msi/deferred-execution-custom-actions
+
+                 To create a deferred action, first the "SetProperty" custom
+                 action interpolates the values *Before* the "FipsInstall"
+                 custom action runs. And "the property Id used in the
+                 SetProperty custom action must match the Id value used in the
+                 deferred custom action"
+                 https://wixtoolset.org/docs/v3/customactions/qtexec/#deferred-execution
+
+                 The action runs "openssl fipsinstall" and copies openssl-fips.cnf
+                 to openssl.cnf If you modify the following code, update the rpm
+                 postinstall action in configs/components/openssl-fips.rb too!
+            -->
+        <SetProperty Id="FipsInstall"
+                     Value="&quot;[%WINDIR]\system32\cmd.exe&quot; /c set OPENSSL_CONF=&quot;[INSTALLDIR]\puppet\ssl\openssl.cnf.dist&quot; &amp; &quot;[INSTALLDIR]\puppet\bin\openssl.exe&quot; fipsinstall -module &quot;[INSTALLDIR]\puppet\lib\ossl-modules\fips.dll&quot; -provider_name fips -out &quot;[INSTALLDIR]\puppet\ssl\fipsmodule.cnf&quot; &amp; copy /y &quot;[INSTALLDIR]\puppet\ssl\openssl-fips.cnf&quot; &quot;[INSTALLDIR]\puppet\ssl\openssl.cnf&quot;"
+                     Before="FipsInstall"
+                     Sequence="execute" />
+        <CustomAction Id="FipsInstall"
+                      BinaryKey="WixCA"
+                      DllEntry="WixSilentExec64"
+                      Execute="deferred"
+                      Impersonate="no" />
+    <%-end-%>
     <%-end-%>
 
     <!-- Due to PUP-6729, system may not have permission to modify DACL, so first take ownership -->

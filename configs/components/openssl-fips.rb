@@ -52,6 +52,7 @@ component "openssl-fips" do |pkg, settings, platform|
   # enabled to regenerate `fipsmodule.conf`
   #
   if platform.is_rpm?
+    # If you modify the following code, update customactions.wxs.erb too!
     pkg.add_postinstall_action ["install", "upgrade"],
       [<<-HERE.undent
         OPENSSL_CONF=/opt/puppetlabs/puppet/ssl/openssl.cnf.dist /opt/puppetlabs/puppet/bin/openssl fipsinstall -module /opt/puppetlabs/puppet/lib/ossl-modules/fips.so -provider_name fips -out /opt/puppetlabs/puppet/ssl/fipsmodule.cnf
