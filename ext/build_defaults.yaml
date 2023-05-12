@@ -24,15 +24,15 @@ foss_platforms:
   - windows-2012-x86
   - windows-2012-x64
 pe_platforms:
-  - aix-7.1-power
+  # - aix-7.1-power PA-4719
   - redhatfips-7-x86_64
   - redhatfips-8-x86_64
-  - solaris-11-i386
-  - solaris-11-sparc
-  - windowsfips-2012-x64
+  # - solaris-11-i386 PA-4818
+  # - solaris-11-sparc PA-4818
+  # - windowsfips-2012-x64 PA-4877
 platform_repos:
-  - name: aix-7.1-power
-    repo_location: repos/aix/7.1/**/ppc
+  # - name: aix-7.1-power PA-4719
+  #   repo_location: repos/aix/7.1/**/ppc
   - name: el-7-x86_64
     repo_location: repos/el/7/**/x86_64
   - name: el-8-x86_64
@@ -75,10 +75,10 @@ platform_repos:
     repo_location: repos/apple/12/**/arm64/*.dmg
   - name: osx-12-x86_64
     repo_location: repos/apple/12/**/x86_64/*.dmg
-  - name: solaris-11-i386
-    repo_location: repos/solaris/11/**/*.i386.p5p
-  - name: solaris-11-sparc
-    repo_location: repos/solaris/11/**/*.sparc.p5p
+  # - name: solaris-11-i386 PA-4718
+  #   repo_location: repos/solaris/11/**/*.i386.p5p
+  # - name: solaris-11-sparc PA-4718
+  #   repo_location: repos/solaris/11/**/*.sparc.p5p
 deb_targets: 'xenial-amd64 bionic-amd64 focal-amd64'
 rpm_targets: 'el-7-x86_64 el-8-x86_64 el-9-x86_64 redhatfips-7-x86_64 redhatfips-8-x86_64 sles-12-x86_64 sles-15-x86_64'
 sign_tar: FALSE
