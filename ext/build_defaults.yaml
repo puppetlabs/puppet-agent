@@ -4,17 +4,12 @@ project: 'puppet-agent'
 foss_platforms:
   - debian-10-amd64
   - debian-11-amd64
-  - el-6-i386
-  - el-6-x86_64
   - el-7-x86_64
-  - el-7-aarch64
   - el-8-x86_64
   - el-8-ppc64le
   - el-8-aarch64
   - el-9-x86_64
   - fedora-36-x86_64
-  - osx-10.15-x86_64
-  - osx-11-arm64
   - osx-11-x86_64
   - osx-12-arm64
   - osx-12-x86_64
@@ -32,22 +27,14 @@ pe_platforms:
   - aix-7.1-power
   - redhatfips-7-x86_64
   - redhatfips-8-x86_64
-  - solaris-10-i386
-  - solaris-10-sparc
   - solaris-11-i386
   - solaris-11-sparc
   - windowsfips-2012-x64
 platform_repos:
   - name: aix-7.1-power
     repo_location: repos/aix/7.1/**/ppc
-  - name: el-6-i386
-    repo_location: repos/el/6/**/i386
-  - name: el-6-x86_64
-    repo_location: repos/el/6/**/x86_64
   - name: el-7-x86_64
     repo_location: repos/el/7/**/x86_64
-  - name: el-7-aarch64
-    repo_location: repos/el/7/**/aarch64
   - name: el-8-x86_64
     repo_location: repos/el/8/**/x86_64
   - name: el-8-ppc64le
@@ -82,26 +69,18 @@ platform_repos:
     repo_location: repos/apt/jammy
   - name: ubuntu-22.04-aarch64
     repo_location: repos/apt/jammy
-  - name: osx-10.15-x86_64
-    repo_location: repos/apple/10.15/**/x86_64/*.dmg
-  - name: osx-11-arm64
-    repo_location: repos/apple/11/**/arm64/*.dmg
   - name: osx-11-x86_64
     repo_location: repos/apple/11/**/x86_64/*.dmg
   - name: osx-12-arm64
     repo_location: repos/apple/12/**/arm64/*.dmg
   - name: osx-12-x86_64
     repo_location: repos/apple/12/**/x86_64/*.dmg
-  - name: solaris-10-i386
-    repo_location: repos/solaris/10/**/*.i386.pkg.gz
-  - name: solaris-10-sparc
-    repo_location: repos/solaris/10/**/*.sparc.pkg.gz
   - name: solaris-11-i386
     repo_location: repos/solaris/11/**/*.i386.p5p
   - name: solaris-11-sparc
     repo_location: repos/solaris/11/**/*.sparc.p5p
 deb_targets: 'xenial-amd64 bionic-amd64 focal-amd64'
-rpm_targets: 'el-6-x86_64 el-7-x86_64 el-8-x86_64 el-9-x86_64 redhatfips-7-x86_64 redhatfips-8-x86_64 sles-12-x86_64 sles-15-x86_64'
+rpm_targets: 'el-7-x86_64 el-8-x86_64 el-9-x86_64 redhatfips-7-x86_64 redhatfips-8-x86_64 sles-12-x86_64 sles-15-x86_64'
 sign_tar: FALSE
 osx_signing_cert: "Developer ID Installer: PUPPET LABS, INC. (VKGLGN2B6Y)"
 osx_signing_keychain: "/Users/jenkins/Library/Keychains/signing.keychain"
