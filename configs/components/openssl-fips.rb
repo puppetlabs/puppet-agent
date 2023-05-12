@@ -38,6 +38,26 @@ component "openssl-fips" do |pkg, settings, platform|
     ]
   end
 
+  if platform.is_windows?
+    # We need to include fipsmodule.cnf, but it's hard on Windows because the
+    # installation directory is user-configurable and openssl doesn't support
+    # "./fipsmodule.cnf" to mean look in the same directory as openssl.cnf.
+    #
+    # From https://www.openssl.org/docs/man3.0/man5/config.html
+    #
+    #   "The environment variable OPENSSL_CONF_INCLUDE, if it exists, is
+    #   prepended to all relative pathnames. If the pathname is still relative,
+    #   it is interpreted based on the current working directory."
+    #
+    # So to make it clear how the relative path is converted to absolute, specify
+    # the environment variable directly in openssl-fips.cnf, which will be copied
+    # to openssl.cnf during installation. Use \x24 to specify a literal '$'
+    # character.
+    pkg.install do
+      ["sed -i 's|.include /opt/puppetlabs/puppet/ssl/fipsmodule.cnf|.include \\x24ENV::OPENSSL_CONF_INCLUDE/fipsmodule.cnf|' #{openssl_fips_cnf}"]
+    end
+  end
+
   # See "Making all applications use the FIPS module by default" in
   # https://www.openssl.org/docs/man3.0/man7/fips_module.html
   #

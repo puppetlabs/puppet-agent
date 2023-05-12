@@ -24,3 +24,6 @@ REM Set SSL variables to ensure trusted locations are used
 SET SSL_CERT_FILE=%PUPPET_DIR%\ssl\cert.pem
 SET SSL_CERT_DIR=%PUPPET_DIR%\ssl\certs
 SET OPENSSL_CONF=%PUPPET_DIR%\ssl\openssl.cnf
+SET OPENSSL_CONF_INCLUDE=%PUPPET_DIR%\ssl
+SET OPENSSL_MODULES=%PUPPET_DIR%\lib\ossl-modules
+SET OPENSSL_ENGINES=%PUPPET_DIR%\lib\engines-3
