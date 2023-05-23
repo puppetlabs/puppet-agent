@@ -13,7 +13,6 @@ foss_platforms:
   - el-8-aarch64
   - el-9-x86_64
   - fedora-36-x86_64
-  - osx-10.15-x86_64
   - osx-11-arm64
   - osx-11-x86_64
   - osx-12-arm64
@@ -82,8 +81,6 @@ platform_repos:
     repo_location: repos/apt/jammy
   - name: ubuntu-22.04-aarch64
     repo_location: repos/apt/jammy
-  - name: osx-10.15-x86_64
-    repo_location: repos/apple/10.15/**/x86_64/*.dmg
   - name: osx-11-arm64
     repo_location: repos/apple/11/**/arm64/*.dmg
   - name: osx-11-x86_64
