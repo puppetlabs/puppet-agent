@@ -7,7 +7,6 @@ foss_platforms:
   - el-6-i386
   - el-6-x86_64
   - el-7-x86_64
-  - el-7-aarch64
   - el-8-x86_64
   - el-8-ppc64le
   - el-8-aarch64
@@ -45,8 +44,6 @@ platform_repos:
     repo_location: repos/el/6/**/x86_64
   - name: el-7-x86_64
     repo_location: repos/el/7/**/x86_64
-  - name: el-7-aarch64
-    repo_location: repos/el/7/**/aarch64
   - name: el-8-x86_64
     repo_location: repos/el/8/**/x86_64
   - name: el-8-ppc64le
