@@ -18,7 +18,7 @@ component "pxp-agent" do |pkg, settings, platform|
     # so cmd.exe was not working as expected.
     install_command = [
       "gunzip -c #{tarball_name} | tar --skip-old-files -C /cygdrive/c/ -xf -",
-      "chmod 755 #{settings[:bindir].sub(/C:/, '/cygdrive/c')}/*"
+      "chmod 755 #{settings[:bindir].sub('C:', '/cygdrive/c')}/*"
     ]
   elsif platform.is_macos?
     # We can't untar into '/' because of SIP on macOS; Just copy the contents
