@@ -10,10 +10,7 @@ component "puppet" do |pkg, settings, platform|
     pkg.build_requires "gettext"
   elsif platform.is_windows?
     pkg.build_requires "pl-gettext-#{platform.architecture}"
-  elsif platform.is_aix?
-    pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-gcc-5.2.0-11.aix#{platform.os_version}.ppc.rpm"
-    pkg.build_requires "http://pl-build-tools.delivery.puppetlabs.net/aix/#{platform.os_version}/ppc/pl-gettext-0.19.8-2.aix#{platform.os_version}.ppc.rpm"
-  elsif platform.is_solaris?
+  elsif platform.is_solaris? || platform.is_aix?
     # do nothing
   else #rubocop:disable Lint/DuplicateBranch
     pkg.build_requires "gettext"
@@ -90,14 +87,12 @@ component "puppet" do |pkg, settings, platform|
     pkg.install_configfile 'puppet-agent.conf', File.join(settings[:tmpfilesdir], 'puppet-agent.conf')
   end
 
-  # We do not currently support i18n on Solaris
-  unless platform.is_solaris?
+  # We do not currently support i18n on Solaris or AIX
+  unless platform.is_solaris? || platform.is_aix?
     if platform.is_windows?
       msgfmt = "/cygdrive/c/tools/pl-build-tools/bin/msgfmt.exe"
     elsif platform.is_macos?
       msgfmt = "/usr/local/opt/gettext/bin/msgfmt"
-    elsif platform.is_aix?
-      msgfmt = "/opt/pl-build-tools/bin/msgfmt"
     else
       msgfmt = "msgfmt"
     end
