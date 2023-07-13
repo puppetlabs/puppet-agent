@@ -3,6 +3,7 @@ require 'puppet/acceptance/temp_file_utils'
 extend Puppet::Acceptance::CommandUtils
 
 confine :except, :platform => 'sles-12-ppc64le'
+confine :except, :platform => 'aix-7.2-power' # PA-5654
 
 def package_installer(agent)
   # for some reason, beaker does not have a configured package installer
