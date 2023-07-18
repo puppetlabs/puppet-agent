@@ -25,13 +25,6 @@ foss_platforms:
   - ubuntu-22.04-aarch64
   - windows-2012-x86
   - windows-2012-x64
-pe_platforms:
-  # - aix-7.1-power PA-4719
-  - redhatfips-7-x86_64
-  - redhatfips-8-x86_64
-  # - solaris-11-i386 PA-4818
-  # - solaris-11-sparc PA-4818
-  # - windowsfips-2012-x64 PA-4877
 # The packaging repo uses the `platform_repos` hash to determine which repos
 # to create when shipping and when creating the all repos tarball, see
 # https://github.com/puppetlabs/packaging/blob/0.110.0/lib/packaging/repo.rb#L92
