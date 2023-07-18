@@ -1,6 +1,8 @@
 ---
 project: 'puppet-agent'
-# foss_platforms will be shipped to the nightly repos
+# The packaging repo uses the `foss_platforms` hash to determine which repos
+# to retrieve and deploy, see https://github.com/puppetlabs/packaging/blob/0.110.0/tasks/nightly_repos.rake#L149
+# Only add a platform to this list if it has already been added as a BUILD_TARGET
 foss_platforms:
   - debian-10-amd64
   - debian-11-amd64
@@ -30,9 +32,12 @@ pe_platforms:
   # - solaris-11-i386 PA-4818
   # - solaris-11-sparc PA-4818
   # - windowsfips-2012-x64 PA-4877
+# The packaging repo uses the `platform_repos` hash to determine which repos
+# to create when shipping and when creating the all repos tarball, see
+# https://github.com/puppetlabs/packaging/blob/0.110.0/lib/packaging/repo.rb#L92
 platform_repos:
-  # - name: aix-7.1-power PA-4719
-  #   repo_location: repos/aix/7.1/**/ppc
+  - name: aix-7.2-power
+    repo_location: repos/aix/7.2/**/ppc
   - name: el-7-x86_64
     repo_location: repos/el/7/**/x86_64
   - name: el-8-x86_64
