@@ -112,6 +112,9 @@ component "puppet" do |pkg, settings, platform|
       msgfmt = "/cygdrive/c/tools/pl-build-tools/bin/msgfmt.exe"
     elsif platform.is_macos?
       msgfmt = "/usr/local/opt/gettext/bin/msgfmt"
+      if platform.architecture == 'arm64' && platform.os_version.to_i >= 13
+        msgfmt = "/opt/homebrew/bin/msgfmt"
+      end
     elsif platform.is_aix?
       msgfmt = "/opt/pl-build-tools/bin/msgfmt"
     else
