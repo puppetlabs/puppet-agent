@@ -73,8 +73,8 @@ platform_repos:
     repo_location: repos/apple/12/**/arm64/*.dmg
   - name: osx-12-x86_64
     repo_location: repos/apple/12/**/x86_64/*.dmg
-  # - name: solaris-11-i386 PA-4718
-  #   repo_location: repos/solaris/11/**/*.i386.p5p
+  - name: solaris-11-i386
+    repo_location: repos/solaris/11/**/*.i386.p5p
   # - name: solaris-11-sparc PA-4718
   #   repo_location: repos/solaris/11/**/*.sparc.p5p
 deb_targets: 'xenial-amd64 bionic-amd64 focal-amd64 jammy-amd64'
