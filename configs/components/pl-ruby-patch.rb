@@ -16,33 +16,27 @@ component "pl-ruby-patch" do |pkg, settings, platform|
     ruby_api_version = settings[:ruby_version].gsub(/\.\d*$/, '.0')
     ruby_version_y = settings[:ruby_version].gsub(/(\d+)\.(\d+)\.(\d+)/, '\1.\2')
 
-    base_ruby = case platform.name
-                when /solaris-10/
-                  "/opt/csw/lib/ruby/2.0.0"
-                when /osx/
+    base_ruby = if platform.name =~ /osx/
                   "/usr/local/opt/ruby@#{ruby_version_y}/lib/ruby/#{ruby_api_version}"
                 else
                   "/opt/pl-build-tools/lib/ruby/2.1.0"
                 end
 
-    # weird architecture naming conventions...
-    unless platform.name =~ /solaris-10/
-      target_triple = if platform.architecture =~ /ppc64el|ppc64le/
-                        "powerpc64le-linux"
-                      elsif platform.name == 'solaris-11-sparc'
-                        "sparc-solaris-2.11"
-                      elsif platform.is_macos?
-                        "aarch64-darwin"
-                      else
-                        "#{platform.architecture}-linux"
-                      end
+    target_triple = if platform.architecture =~ /ppc64el|ppc64le/
+                      "powerpc64le-linux"
+                    elsif platform.name == 'solaris-11-sparc'
+                      "sparc-solaris-2.11"
+                    elsif platform.is_macos?
+                      "aarch64-darwin"
+                    else
+                      "#{platform.architecture}-linux"
+                    end
 
-      pkg.build do
-        [
-          %(#{platform[:sed]} -i 's/Gem::Platform.local.to_s/"#{target_triple}"/' #{base_ruby}/rubygems/basic_specification.rb),
-          %(#{platform[:sed]} -i 's/Gem.extension_api_version/"#{ruby_api_version}"/' #{base_ruby}/rubygems/basic_specification.rb)
-        ]
-      end
+    pkg.build do
+      [
+        %(#{platform[:sed]} -i 's/Gem::Platform.local.to_s/"#{target_triple}"/' #{base_ruby}/rubygems/basic_specification.rb),
+        %(#{platform[:sed]} -i 's/Gem.extension_api_version/"#{ruby_api_version}"/' #{base_ruby}/rubygems/basic_specification.rb)
+      ]
     end
 
     # make rubygems use our target rbconfig when installing gems
