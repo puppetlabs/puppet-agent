@@ -2,7 +2,6 @@ require 'puppet/acceptance/common_utils.rb'
 require 'puppet/acceptance/temp_file_utils'
 extend Puppet::Acceptance::CommandUtils
 
-confine :except, :platform => 'sles-12-ppc64le'
 confine :except, :platform => 'aix-7.2-power' # PA-5654
 confine :except, :platform => 'solaris-11.4-i386' # PA-5665
 
