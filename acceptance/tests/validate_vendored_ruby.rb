@@ -7,13 +7,9 @@ confine :except, :platform => 'solaris-11.4-i386' # PA-5665
 
 def package_installer(agent)
   # for some reason, beaker does not have a configured package installer
-  # for AIX, and for solaris-10 we install dependencies from opencsw. so we
-  # need to manually set up the package installer for these platforms.
-  case agent['platform']
-  when /aix/
+  # for AIX so we manually set up the package installer for it.
+  if agent['platform'] =~ /aix/
     lambda { |package| on(agent, "rm -f `basename #{package}` && curl -O #{package} && rpm -Uvh `basename #{package}`") }
-  when /solaris-10/
-    lambda { |package| on(agent, "opt/csw/bin/pkgutil --config=/var/tmp/vanagon-pkgutil.conf  -y -i #{package}") }
   else
     lambda { |package| agent.install_package(package) }
   end
@@ -45,58 +41,6 @@ def setup_build_environment(agent)
   when /solaris-11-sparc/
     install_package_on_agent.call("developer/gcc-48")
     gem_install_sqlite3 = "export PATH=\"/usr/gcc/4.8/bin:$PATH\" && #{gem_install_sqlite3}"
-  when /solaris-10/
-    # this code was obtained from https://github.com/puppetlabs/puppet-agent/blob/master/configs/platforms/solaris-10-i386.rb
-    # it's main purpose is to set up a base build environment that lets you compile stuff
-    # on the vm (e.g. by installing the system headers). otherwise, you would not be able to
-    # compile even a hello-world.c program.
-    vanagon_noask_contents = "mail=\n"\
-      "instance=overwrite\n"\
-      "partial=nocheck\n"\
-      "runlevel=nocheck\n"\
-      "idepend=nocheck\n"\
-      "rdepend=nocheck\n"\
-      "space=quit\n"\
-      "setuid=nocheck\n"\
-      "conflict=nocheck\n"\
-      "action=nocheck\n"\
-      "basedir=default"
-    vanagon_noask_path = "/var/tmp/vanagon-noask"
-    on(agent, "echo \"#{vanagon_noask_contents}\" > #{vanagon_noask_path}")
-
-    vanagon_pkgutil_contents = "mirror=https://artifactory.delivery.puppetlabs.net/artifactory/generic__remote_opencsw_mirror/testing"
-    vanagon_pkgutil_path = "/var/tmp/vanagon-pkgutil.conf"
-    on(agent, "echo \"#{vanagon_pkgutil_contents}\" > #{vanagon_pkgutil_path}")
-
-    ["rsync", "gmake", "pkgconfig", "ggrep", "gcc4core"].each { |pkg| install_package_on_agent.call(pkg) }
-    install_package_on_agent.call("coreutils") if agent['platform'] =~ /sparc/
-    on(agent, "ln -sf /opt/csw/bin/rsync /usr/bin/rsync")
-    ["glibc-devel", "ruby", "readline"].each do |pkg|
-      on(agent, "/opt/csw/bin/pkgutil -l #{pkg} | xargs -I{} pkgrm -n -a #{vanagon_noask_path} {}")
-    end
-
-    bin_dirs = ["/opt/csw/bin"]
-    if agent['platform'] =~ /sparc/
-      bin_dirs.concat(["/usr/sfw/bin", "/usr/ccs/bin"])
-    else
-      # for some reason, sparc has everything else that it needs (system headers, gcc, etc.),
-      # but i386 does not. the code below ensures that all these dev tools are installed for i386.
-      # note that we probably don't need everything here, but it is too time consuming to check
-      # which one of these are necessary
-      base_url = "http://pl-build-tools.delivery.puppetlabs.net/solaris/10/depends"
-      ['arc', 'gnu-idn', 'gpch', 'gtar', 'hea', 'libm', 'wgetu', 'xcu4'].each do |pkg|
-        tmpdir = on(agent, "mktemp -p /var/tmp -d").stdout.chomp
-        pkg_gz = "SUNW#{pkg}.pkg.gz"
-        in_temp_dir = lambda do |cmd|
-          "pushd #{tmpdir} && #{cmd} && popd"
-        end
-
-        on(agent, in_temp_dir.call("curl -O #{base_url}/#{pkg_gz}"))
-        on(agent, in_temp_dir.call("gunzip -c #{pkg_gz} | pkgadd -d /dev/stdin -a #{vanagon_noask_path} all"))
-      end
-    end
-
-    gem_install_sqlite3 = "export PATH=\"#{bin_dirs.join(":")}:$PATH\" && #{gem_install_sqlite3}"
   end
 
   gem_install_sqlite3
