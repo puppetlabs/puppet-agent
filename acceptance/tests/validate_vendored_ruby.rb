@@ -27,7 +27,7 @@ def setup_build_environment(agent)
   # We add `--enable-system-libraries` to use system libsqlite3
   gem_install_sqlite3 = "env GEM_HOME=/opt/puppetlabs/puppet/lib/ruby/vendor_gems " + gem_command(agent) + " install sqlite3 -- --enable-system-libraries"
   install_package_on_agent = package_installer(agent)
-  on(agent, "#{gem_command(agent)} update --system 3.3.26")
+  on(agent, "#{gem_command(agent)} update --system")
 
   case agent['platform']
   when /aix/
@@ -189,13 +189,11 @@ test_name 'PA-1319: Validate that the vendored ruby can load gems and is configu
     end
   end
 
-  # Rubygems >= 3.4.0 drops compatibility with Ruby 2.5, which puppet-agent 6.x uses.
-  # We use Rubygems 3.3.26, the last release before then.
   step "'gem update --system' keeps vendor_gems still in path" do
     agents_to_skip = select_hosts({:platform => [/windows/, /cisco/, /eos/, /cumulus/]}, agents)
     agents_to_test = agents - agents_to_skip
     agents_to_test.each do |agent|
-      on(agent, "/opt/puppetlabs/puppet/bin/gem update --system 3.3.26")
+      on(agent, "/opt/puppetlabs/puppet/bin/gem update --system")
       list_env = on(agent, "/opt/puppetlabs/puppet/bin/gem env").stdout.chomp
       unless list_env.include?("/opt/puppetlabs/puppet/lib/ruby/vendor_gems")
         fail_test("Failed to keep vendor_gems directory in GEM_PATH!")
