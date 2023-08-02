@@ -17,14 +17,8 @@ component 'puppet-runtime' do |pkg, settings, platform|
   # to build with on these platforms:
   if platform.is_cross_compiled?
     if platform.is_solaris?
-      case platform.os_version
-      when "11"
-        pkg.build_requires 'pl-ruby'
-      when "10"
-        # ruby20 installed from OpenCSW in solaris-10-sparc platform definition
-      else
-        raise "Unknown solaris os_version: #{platform.os_version}"
-      end
+      raise "Unknown solaris os_version: #{platform.os_version}" unless platform.os_version == '11'
+      pkg.build_requires 'pl-ruby'
     elsif platform.is_linux?
       pkg.build_requires 'pl-ruby'
     elsif platform.is_macos?
