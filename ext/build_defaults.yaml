@@ -77,9 +77,9 @@ platform_repos:
   - name: osx-13-arm64
     repo_location: repos/apple/13/**/arm64/*.dmg
   - name: solaris-11-i386
-    repo_location: repos/solaris/11/*/*/*i386.p5p
+    repo_location: repos/solaris/11/**/*.i386.p5p
   # - name: solaris-11-sparc PA-4718
-  #   repo_location: repos/solaris/11/*/*/*sparc.p5p
+  #   repo_location: repos/solaris/11/**/*.sparc.p5p
 deb_targets: 'xenial-amd64 bionic-amd64 focal-amd64 jammy-amd64'
 rpm_targets: 'el-7-x86_64 el-8-x86_64 el-9-x86_64 redhatfips-7-x86_64 redhatfips-8-x86_64 sles-12-x86_64 sles-15-x86_64'
 sign_tar: FALSE
