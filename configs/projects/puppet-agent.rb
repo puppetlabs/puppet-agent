@@ -35,6 +35,14 @@ project "puppet-agent" do |proj|
     proj.package_override("# Disable the removal of la files, they are still required\n%global __brp_remove_la_files %{nil}")
   end
 
+  # Override gem related commands since runtime was natively compiled, but we're
+  # cross compiling this project.
+  if platform.name == 'solaris-11-sparc'
+    proj.setting(:host_ruby, '/opt/pl-build-tools/bin/ruby')
+    proj.setting(:host_gem, '/opt/pl-build-tools/bin/gem')
+    proj.setting(:gem_install, '/opt/pl-build-tools/bin/gem install --no-rdoc --no-ri --local ')
+  end
+
   # Project level settings our components will care about
   if platform.is_windows?
     proj.setting(:company_name, "Puppet Inc")
