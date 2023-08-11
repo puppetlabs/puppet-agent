@@ -3,7 +3,6 @@ require 'puppet/acceptance/temp_file_utils'
 extend Puppet::Acceptance::CommandUtils
 
 confine :except, :platform => 'aix-7.2-power' # PA-5654
-confine :except, :platform => 'solaris-11.4-i386' # PA-5665
 
 def package_installer(agent)
   # for some reason, beaker does not have a configured package installer
@@ -31,13 +30,30 @@ def setup_build_environment(agent)
     # use pl-build-tools' gcc on AIX machines
     gem_install_sqlite3 = "export PATH=\"/opt/pl-build-tools/bin:$PATH\" && #{gem_install_sqlite3}"
   when /solaris-11(.4|)-i386/
-    # for some reason pkg install does not install developer/gcc-48 for sol 11, so need
-    # to use the one provided by pl-build-tools instead.
-    on(agent, "curl -O http://pl-build-tools.delivery.puppetlabs.net/solaris/11/sol-11-i386-compiler.tar.gz")
-    on(agent, "gunzip -f sol-11-i386-compiler.tar.gz && tar -xf sol-11-i386-compiler.tar && rm -f sol-11-i386-compiler.tar")
-    on(agent, "mv pl-build-tools/ /opt/")
-    on(agent, "ln -s i386/bin /opt/pl-build-tools/bin")
-    gem_install_sqlite3 = "export PATH=\"/opt/pl-build-tools/i386/bin:/usr/sfw/bin:$PATH\" && #{gem_install_sqlite3}"
+    # We need to install a newer compiler to build native extensions,
+    # so we use a newer GCC from OpenCSW
+    vanagon_noask_contents = "mail=\n"\
+      "instance=overwrite\n"\
+      "partial=nocheck\n"\
+      "runlevel=nocheck\n"\
+      "idepend=nocheck\n"\
+      "rdepend=nocheck\n"\
+      "space=quit\n"\
+      "setuid=nocheck\n"\
+      "conflict=nocheck\n"\
+      "action=nocheck\n"\
+      "basedir=default"
+    vanagon_noask_path = "/var/tmp/vanagon-noask"
+    on(agent, "echo \"#{vanagon_noask_contents}\" > #{vanagon_noask_path}")
+
+    vanagon_pkgutil_contents = "mirror=https://artifactory.delivery.puppetlabs.net/artifactory/generic__remote_opencsw_mirror/testing"
+    vanagon_pkgutil_path = "/var/tmp/vanagon-pkgutil.conf"
+    on(agent, "echo \"#{vanagon_pkgutil_contents}\" > #{vanagon_pkgutil_path}")
+
+    on(agent, 'pkgadd -n -a /var/tmp/vanagon-noask -d http://get.opencsw.org/now all')
+    on(agent, '/opt/csw/bin/pkgutil --config=/var/tmp/vanagon-pkgutil.conf -y -i gcc5core')
+
+    gem_install_sqlite3 = "export PATH=\"/opt/csw/bin:$PATH\" && #{gem_install_sqlite3}"
   when /solaris-11-sparc/
     install_package_on_agent.call("developer/gcc-48")
     gem_install_sqlite3 = "export PATH=\"/usr/gcc/4.8/bin:$PATH\" && #{gem_install_sqlite3}"
