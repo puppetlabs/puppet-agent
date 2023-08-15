@@ -2,8 +2,6 @@ require 'puppet/acceptance/common_utils.rb'
 require 'puppet/acceptance/temp_file_utils'
 extend Puppet::Acceptance::CommandUtils
 
-confine :except, :platform => 'aix-7.2-power' # PA-5654
-
 def package_installer(agent)
   # for some reason, beaker does not have a configured package installer
   # for AIX so we manually set up the package installer for it.
@@ -27,6 +25,9 @@ def setup_build_environment(agent)
 
   case agent['platform']
   when /aix/
+    # sed on AIX does not support in place edits or delete
+    on(agent, "sed '/\"warnflags\"/d' /opt/puppetlabs/puppet/lib/ruby/3.2.0/powerpc-aix7.2.0.0/rbconfig.rb > no_warnflags_rbconfig.rb")
+    on(agent, "cp no_warnflags_rbconfig.rb /opt/puppetlabs/puppet/lib/ruby/3.2.0/powerpc-aix7.2.0.0/rbconfig.rb")
     # use pl-build-tools' gcc on AIX machines
     gem_install_sqlite3 = "export PATH=\"/opt/pl-build-tools/bin:$PATH\" && #{gem_install_sqlite3}"
   when /solaris-11(.4|)-i386/
