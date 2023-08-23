@@ -53,7 +53,7 @@ function start_puppetdb() {
   on_master ${master_vm} "puppet resource service puppetdb ensure=running enable=true"
   local puppetdb_conf="/etc/puppetlabs/puppet/puppetdb.conf"
   on_master ${master_vm} "echo [main] > ${puppetdb_conf}"
-  on_master ${master_vm} "echo server_urls = https://\`facter fqdn\`:8081 >> ${puppetdb_conf}"
+  on_master ${master_vm} "echo server_urls = https://\`facter networking.fqdn\`:8081 >> ${puppetdb_conf}"
   echo ""
   echo ""
 
@@ -113,7 +113,7 @@ function install_puppetdb_from_module() {
   on_master ${master_vm} "yum install -y ca-certificates"
   on_master ${master_vm} "puppet module install puppetlabs-puppetdb"
   local site_pp="/etc/puppetlabs/code/environments/production/manifests/site.pp"
-  FILE="node '\`facter fqdn\`' {
+  FILE="node '\`facter networking.fqdn\`' {
     class { 'puppetdb::globals':
     version => '${puppetdb_version}'
     }

@@ -47,7 +47,7 @@ for master_vm in ${master_vm1} ${master_vm2}; do
 
   echo "STEP: Install puppet-agent on ${which_master}"
   on_master ${master_vm} "rpm --quiet --query puppet-agent-${agent_version} || yum install -y puppet-agent-${agent_version}"
-  on_master ${master_vm} "echo \`facter ipaddress\` puppet > /etc/hosts"
+  on_master ${master_vm} "echo \`facter networking.ip\` puppet > /etc/hosts"
   echo ""
   echo ""
 

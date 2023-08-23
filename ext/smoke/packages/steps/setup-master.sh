@@ -41,7 +41,7 @@ on_master ${master_vm} "curl -f -O http://builds.delivery.puppetlabs.net/puppets
 # FIXME: Might need to parametrize on Java?
 on_master ${master_vm} "yum install -y java-11-openjdk-headless"
 on_master ${master_vm} "rpm -ivh puppetserver-${server_version}-1.el7.noarch.rpm"
-on_master ${master_vm} "echo \`facter ipaddress\` puppet > /etc/hosts"
+on_master ${master_vm} "echo \`facter networking.ip\` puppet > /etc/hosts"
 echo ""
 echo ""
 

@@ -53,7 +53,7 @@ fi
 on_agent "rm -rf /etc/puppetlabs/puppet/ssl; sed -i '/puppet/d' /etc/hosts"
 
 echo "STEP: Install the puppet-agent package"
-master_ip=`on_master "facter ipaddress" | tail -n 1`
+master_ip=`on_master "facter networking.ip" | tail -n 1`
 on_agent "echo ${master_ip} puppet >> /etc/hosts"
 if [[ "${type}" = "repo" ]]; then
   on_agent "rpm -Uvh http://yum.puppetlabs.com/${collection}-release-el-7.noarch.rpm --force"
