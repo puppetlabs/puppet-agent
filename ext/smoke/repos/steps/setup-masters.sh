@@ -43,7 +43,7 @@ echo "STEP: Install puppetserver and puppet-agent on both masters"
 
 for master_vm in ${master_vm1} ${master_vm2}; do
   which_master=`identify_master ${master_vm}`
-  on_master ${master_vm} "rpm -Uvh http://yum.puppetlabs.com/${collection}/${collection}-release-el-7.noarch.rpm --force"
+  on_master ${master_vm} "rpm -Uvh http://yum.puppetlabs.com/${collection}-release-el-7.noarch.rpm --force"
 
   echo "STEP: Install puppet-agent on ${which_master}"
   on_master ${master_vm} "rpm --quiet --query puppet-agent-${agent_version} || yum install -y puppet-agent-${agent_version}"
