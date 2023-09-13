@@ -117,7 +117,9 @@ function install_puppetdb_from_module() {
     class { 'puppetdb::globals':
     version => '${puppetdb_version}'
     }
-  include puppetdb
+  class { 'puppetdb':
+    manage_firewall => false
+  }
   include puppetdb::master::config
   }
   node default {
