@@ -11,6 +11,7 @@ foss_platforms:
   - el-8-ppc64le
   - el-8-aarch64
   - el-9-x86_64
+  - el-9-aarch64
   - fedora-36-x86_64
   - osx-11-arm64
   - osx-11-x86_64
@@ -54,6 +55,8 @@ platform_repos:
     repo_location: repos/el/8/**/aarch64
   - name: el-9-x86_64
     repo_location: repos/el/9/**/x86_64
+  - name: el-9-aarch64
+    repo_location: repos/el/9/**/aarch64
   - name: redhatfips-7-x86_64
     repo_location: repos/redhatfips/7/**/x86_64
   - name: redhatfips-8-x86_64
