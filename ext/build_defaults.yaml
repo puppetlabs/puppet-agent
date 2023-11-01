@@ -4,6 +4,7 @@ project: 'puppet-agent'
 foss_platforms:
   - debian-10-amd64
   - debian-11-amd64
+  - debian-11-aarch64
   - el-6-i386
   - el-6-x86_64
   - el-7-x86_64
@@ -70,6 +71,8 @@ platform_repos:
   - name: debian-10-amd64
     repo_location: repos/apt/buster
   - name: debian-11-amd64
+    repo_location: repos/apt/bullseye
+  - name: debian-11-aarch64
     repo_location: repos/apt/bullseye
   - name: ubuntu-18.04-amd64
     repo_location: repos/apt/bionic
