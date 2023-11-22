@@ -4,6 +4,8 @@ project: 'puppet-agent'
 # to retrieve and deploy, see https://github.com/puppetlabs/packaging/blob/0.110.0/tasks/nightly_repos.rake#L149
 # Only add a platform to this list if it has already been added as a BUILD_TARGET
 foss_platforms:
+  - amazon-2023-x86_64
+  - amazon-2023-aarch64
   - debian-10-amd64
   - debian-11-amd64
   - debian-11-aarch64
@@ -35,6 +37,10 @@ foss_platforms:
 platform_repos:
   - name: aix-7.2-power
     repo_location: repos/aix/7.2/**/ppc
+  - name: amazon-2023-x86_64
+    repo_location: repos/amazon/2023/**/x86_64
+  - name: amazon-2023-aarch64
+    repo_location: repos/amazon/2023/**/aarch64
   - name: el-7-x86_64
     repo_location: repos/el/7/**/x86_64
   - name: el-8-x86_64
