@@ -22,6 +22,7 @@ foss_platforms:
   - osx-12-x86_64
   - osx-13-x86_64
   - osx-14-x86_64
+  - osx-14-arm64
   - sles-12-x86_64
   - sles-15-x86_64
   - ubuntu-18.04-amd64
@@ -94,6 +95,8 @@ platform_repos:
     repo_location: repos/apple/13/**/x86_64/*.dmg
   - name: osx-14-x86_64
     repo_location: repos/apple/14/**/x86_64/*.dmg
+  - name: osx-14-arm64
+    repo_location: repos/apple/14/**/arm64/*.dmg
   - name: solaris-11-i386
     repo_location: repos/solaris/11/**/*.i386.p5p
   - name: solaris-11-sparc
