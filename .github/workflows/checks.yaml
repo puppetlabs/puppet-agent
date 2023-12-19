@@ -27,6 +27,6 @@ jobs:
           ruby-version: 2.7
       - name: Update rubygems and install gems
         run: |
-          gem update --system --silent --no-document
+          gem update --system 3.4.22 --silent --no-document
           bundle install --jobs 4 --retry 3
       - run: bundle exec rake ${{ matrix.check }}
