@@ -9,6 +9,8 @@ foss_platforms:
   - debian-10-amd64
   - debian-11-amd64
   - debian-11-aarch64
+  - debian-12-amd64
+  - debian-12-aarch64
   - el-7-x86_64
   - el-8-x86_64
   - el-8-ppc64le
