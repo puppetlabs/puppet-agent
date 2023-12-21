@@ -46,10 +46,6 @@ pe_platforms:
 platform_repos:
   - name: aix-7.1-power
     repo_location: repos/aix/7.1/**/ppc
-  - name: amazon-2023-x86_64
-    repo_location: repos/amazon/2023/**/x86_64
-  - name: amazon-2023-aarch64
-    repo_location: repos/amazon/2023/**/aarch64
   - name: el-6-i386
     repo_location: repos/el/6/**/i386
   - name: el-6-x86_64
@@ -80,8 +76,6 @@ platform_repos:
     repo_location: repos/apt/buster
   - name: debian-11-amd64
     repo_location: repos/apt/bullseye
-  - name: debian-11-aarch64
-    repo_location: repos/apt/bullseye
   - name: ubuntu-18.04-amd64
     repo_location: repos/apt/bionic
   - name: ubuntu-18.04-aarch64
@@ -106,10 +100,6 @@ platform_repos:
     repo_location: repos/apple/13/**/arm64/*.dmg
   - name: osx-13-x86_64
     repo_location: repos/apple/13/**/x86_64/*.dmg
-  - name: osx-14-x86_64
-    repo_location: repos/apple/14/**/x86_64/*.dmg
-  - name: osx-14-arm64
-    repo_location: repos/apple/14/**/arm64/*.dmg
   - name: solaris-10-i386
     repo_location: repos/solaris/10/**/*.i386.pkg.gz
   - name: solaris-10-sparc
