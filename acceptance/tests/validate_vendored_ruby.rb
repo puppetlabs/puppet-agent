@@ -25,7 +25,8 @@ def setup_build_environment(agent)
 
   # The sqlite3 gem >= 1.5.0 bundles libsqlite3, which breaks some tests
   # We add `--enable-system-libraries` to use system libsqlite3
-  gem_install_sqlite3 = "env GEM_HOME=/opt/puppetlabs/puppet/lib/ruby/vendor_gems " + gem_command(agent) + " install sqlite3 -- --enable-system-libraries"
+  # Pin to 1.6.9 which was the last version to support "native gem support for 2.7"
+  gem_install_sqlite3 = "env GEM_HOME=/opt/puppetlabs/puppet/lib/ruby/vendor_gems " + gem_command(agent) + " install sqlite3 -v 1.6.9 -- --enable-system-libraries"
   install_package_on_agent = package_installer(agent)
   on(agent, "#{gem_command(agent)} update --system 3.4.22")
 
