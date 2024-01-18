@@ -169,11 +169,11 @@ function install_puppetdb_from_package() {
   echo "STEP: Set-up postgresql 11 to use with PuppetDB"
   on_master ${master_vm} "yum install -y ca-certificates"
   on_master ${master_vm} "${yum_cmd} install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-7-x86_64/pgdg-redhat-repo-latest.noarch.rpm"
-  on_master ${master_vm} "rpm --query --quiet postgresql11-server || ${yum_cmd} install -y postgresql11-server"
-  on_master ${master_vm} "rpm --query --quiet postgresql11-contrib || ${yum_cmd} install -y postgresql11-contrib"
-  on_master ${master_vm} "puppet resource service postgresql-11 ensure=stopped"
-  on_master ${master_vm} "rm -rf /var/lib/pgsql/11/data && /usr/pgsql-11/bin/postgresql-11-setup initdb"
-  on_master ${master_vm} "puppet resource service postgresql-11 ensure=running enable=true"
+  on_master ${master_vm} "rpm --query --quiet postgresql14-server || ${yum_cmd} install -y postgresql14-server"
+  on_master ${master_vm} "rpm --query --quiet postgresql14-contrib || ${yum_cmd} install -y postgresql14-contrib"
+  on_master ${master_vm} "puppet resource service postgresql-14 ensure=stopped"
+  on_master ${master_vm} "rm -rf /var/lib/pgsql/11/data && /usr/pgsql-14/bin/postgresql-14-setup initdb"
+  on_master ${master_vm} "puppet resource service postgresql-14 ensure=running enable=true"
 
   #After postgress has been installed we need to remove the postgress repo or else other yum install commands will fail.
   on_master ${master_vm} "${yum_cmd} remove -y pgdg-redhat-repo-42.0-24.noarch"
@@ -192,7 +192,7 @@ function install_puppetdb_from_package() {
 
   # Restart postgresql and ensure that the puppetdb user can authenticate
   # (you will need to enter the password then hit exit)
-  on_master ${master_vm} 'service postgresql-11 restart'
+  on_master ${master_vm} 'service postgresql-14 restart'
   # Should list puppetdb as one of the users
   on_master ${master_vm} "echo puppet | psql -h localhost puppetdb puppetdb -c '\\du' | grep puppetdb"
   echo ""
