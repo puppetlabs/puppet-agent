@@ -46,6 +46,10 @@ pe_platforms:
 platform_repos:
   - name: aix-7.1-power
     repo_location: repos/aix/7.1/**/ppc
+  - name: amazon-2023-x86_64
+    repo_location: repos/amazon/2023/**/x86_64
+  - name: amazon-2023-aarch64
+    repo_location: repos/amazon/2023/**/aarch64
   - name: el-6-i386
     repo_location: repos/el/6/**/i386
   - name: el-6-x86_64
