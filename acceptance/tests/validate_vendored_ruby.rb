@@ -143,6 +143,10 @@ test_name 'PA-1319: Validate that the vendored ruby can load gems and is configu
     agents_to_test = agents - agents_to_skip
     agents_to_test.each do |agent|
       gem_install_sqlite3 = setup_build_environment(agent)
+
+      # Upgrade the AlmaLinux release package for newer keys until our image is updated (RE-16096)
+      on(agent, 'dnf -y upgrade almalinux-release') if on(agent, facter('os.name')).stdout.strip == 'AlmaLinux'
+
       install_dependencies(agent)
       on(agent, gem_install_sqlite3)
 
