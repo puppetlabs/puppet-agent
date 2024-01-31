@@ -18,11 +18,7 @@ def config_options(agent)
   platform = agent[:platform]
   case platform
   when /windows/
-    if platform =~ /2003/
-      common_app_data = 'C:/Documents and Settings/All Users/Application Data'
-    else
-      common_app_data = 'C:/ProgramData'
-    end
+    common_app_data = 'C:/ProgramData'
     puppetlabs_data = "#{common_app_data}/PuppetLabs"
 
     codedir = "#{puppetlabs_data}/code"
