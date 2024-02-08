@@ -18,11 +18,7 @@ def config_options(agent)
   platform = agent[:platform]
   case platform
   when /windows/
-    if platform =~ /2003/
-      common_app_data = 'C:/Documents and Settings/All Users/Application Data'
-    else
-      common_app_data = 'C:/ProgramData'
-    end
+    common_app_data = 'C:/ProgramData'
     puppetlabs_data = "#{common_app_data}/PuppetLabs"
 
     codedir = "#{puppetlabs_data}/code"
@@ -94,20 +90,18 @@ end
 
 step 'test configprint outputs'
 agents.each do |agent|
-  on(agent, puppet_agent('--configprint all')) do
-    output = stdout
+  on(agent, puppet_agent('--configprint all')) do |result|
     config_options(agent).select {|v| !v[:not_puppet_config] }.each do |config_option|
-      assert_match("#{config_option[:name]} = #{config_option[:expected]}", output)
+      assert_match("#{config_option[:name]} = #{config_option[:expected]}", result.stdout)
     end
   end
 end
 
 step 'test puppet genconfig entries'
 agents.each do |agent|
-  on(agent, puppet_agent('--genconfig')) do
-    output = stdout
+  on(agent, puppet_agent('--genconfig')) do |result|
     config_options(agent).select {|v| !v[:not_puppet_config] }.each do |config_option|
-      assert_match("#{config_option[:name]} = #{config_option[:expected]}", output)
+      assert_match("#{config_option[:name]} = #{config_option[:expected]}", result.stdout)
     end
   end
 end
