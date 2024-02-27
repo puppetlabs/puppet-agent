@@ -40,6 +40,7 @@ pe_platforms:
   - aix-7.1-power
   - redhatfips-7-x86_64
   - redhatfips-8-x86_64
+  - redhatfips-9-x86_64
   - solaris-10-i386
   - solaris-10-sparc
   - solaris-11-i386
@@ -72,6 +73,8 @@ platform_repos:
     repo_location: repos/redhatfips/7/**/x86_64
   - name: redhatfips-8-x86_64
     repo_location: repos/redhatfips/8/**/x86_64
+  - name: redhatfips-9-x86_64
+    repo_location: repos/redhatfips/9/**/x86_64
   - name: sles-12-x86_64
     repo_location: repos/sles/12/**/x86_64
   - name: sles-15-x86_64
