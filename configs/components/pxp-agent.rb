@@ -27,7 +27,7 @@ component "pxp-agent" do |pkg, settings, platform|
       "tar -xzf #{tarball_name}",
       "for d in opt var private; do rsync -ka --ignore-existing \"$${d}/\" \"/$${d}/\"; done"
     ]
-  elsif platform.is_aix? || platform.is_solaris?
+  elsif platform.is_aix? || platform.is_solaris? || platform.name =~ /sles-11-x86_64/
     install_command = ["gunzip -c #{tarball_name} | #{platform.tar} -C / -xf -"]
   else
     install_command = ["gunzip -c #{tarball_name} | #{platform.tar} --skip-old-files -C / -xf -"]
