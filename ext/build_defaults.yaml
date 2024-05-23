@@ -19,6 +19,7 @@ foss_platforms:
   - el-9-x86_64
   - el-9-aarch64
   - fedora-36-x86_64
+  - fedora-40-x86_64
   - osx-11-x86_64
   - osx-12-arm64
   - osx-13-arm64
@@ -72,6 +73,8 @@ platform_repos:
     repo_location: repos/sles/15/**/x86_64
   - name: fedora-36-x86_64
     repo_location: repos/fedora/36/**/x86_64
+  - name: fedora-40-x86_64
+    repo_location: repos/fedora/40/**/x86_64
   - name: debian-10-amd64
     repo_location: repos/apt/buster
   - name: debian-11-amd64
