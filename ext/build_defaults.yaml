@@ -6,7 +6,6 @@ project: 'puppet-agent'
 foss_platforms:
   - amazon-2023-x86_64
   - amazon-2023-aarch64
-  - amazon-7-aarch64
   - debian-10-amd64
   - debian-11-amd64
   - debian-11-aarch64
@@ -47,8 +46,6 @@ platform_repos:
     repo_location: repos/amazon/2023/**/x86_64
   - name: amazon-2023-aarch64
     repo_location: repos/amazon/2023/**/aarch64
-  - name: amazon-7-aarch64
-    repo_location: repos/amazon/7/**/aarch64
   - name: el-7-x86_64
     repo_location: repos/el/7/**/x86_64
   - name: el-8-x86_64
