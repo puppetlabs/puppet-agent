@@ -46,7 +46,7 @@ test_name 'Validate openssl version and fips' do
           assert_match(Regexp.new(<<~END, Regexp::MULTILINE), result.stdout)
           \s*fips
           \s*name: OpenSSL FIPS Provider
-          \s*version: 3.0.0
+          \s*version: 3.0.9
           \s*status: active
           END
         end
