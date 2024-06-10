@@ -36,6 +36,7 @@ foss_platforms:
   - ubuntu-20.04-aarch64
   - ubuntu-22.04-amd64
   - ubuntu-22.04-aarch64
+  - ubuntu-24.04-amd64
   - windows-2012-x86
   - windows-2012-x64
 # The packaging repo uses the `platform_repos` hash to determine which repos
@@ -100,6 +101,8 @@ platform_repos:
     repo_location: repos/apt/jammy
   - name: ubuntu-22.04-aarch64
     repo_location: repos/apt/jammy
+  - name: ubuntu-24.04-amd64
+    repo_location: repos/apt/noble
   - name: osx-11-x86_64
     repo_location: repos/apple/11/**/x86_64/*.dmg
   - name: osx-12-arm64
