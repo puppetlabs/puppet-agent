@@ -45,7 +45,12 @@ component 'puppet-runtime' do |pkg, settings, platform|
       pkg.build_requires 'pl-ruby'
     elsif platform.is_macos?
       ruby_version_y = settings[:ruby_version].gsub(/(\d+)\.(\d+)\.(\d+)/, '\1.\2')
-      pkg.build_requires "ruby@#{ruby_version_y}"
+      # Pin to an older version of ruby@2.7. This can be removed once we're no longer cross-compiling
+      if ruby_version_y == "2.7"
+        pkg.build_requires "puppetlabs/puppet/ruby@2.7"
+      else
+        pkg.build_requires "ruby@#{ruby_version_y}"
+      end
     end
   end
 
