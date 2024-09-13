@@ -14,7 +14,7 @@ platform "windowsfips-2012r2-x64" do |plat|
 
   #FIXME we need Fips Compliant Wix, currently not in choco repositories
   #plat.provision_with "C:/ProgramData/chocolatey/bin/choco.exe install -y Wix310 -version 3.10.2 -debug -x86 --no-progress"
-  plat.provision_with "curl -L -o /tmp/wix314-binaries.zip https://artifactory.delivery.puppetlabs.net/artifactory/generic/buildsources/windows/wix3/wix3.14.0.6526-binaries.zip && \"C:/Program Files/7-Zip/7z.exe\" x -y -o\"C:/Program Files (x86)/WiX Toolset v3.14/bin\" C:/cygwin64/tmp/wix314-binaries.zip && rm /tmp/wix314-binaries.zip && SETX WIX \"C:\\Program Files (x86)\\WiX Toolset v3.14\" /M"
+  plat.provision_with "curl -L -o /tmp/wix314-binaries.zip https://artifactory.delivery.puppetlabs.net/artifactory/generic__buildsources/buildsources/wix314-binaries.zip && \"C:/Program Files/7-Zip/7z.exe\" x -y -o\"C:/Program Files (x86)/WiX Toolset v3.14/bin\" C:/cygwin64/tmp/wix314-binaries.zip && rm /tmp/wix314-binaries.zip && SETX WIX \"C:\\Program Files (x86)\\WiX Toolset v3.14\" /M"
 
   plat.install_build_dependencies_with "C:/ProgramData/chocolatey/bin/choco.exe install -y --no-progress"
 
