@@ -10,7 +10,7 @@ platform "windows-2012r2-x64" do |plat|
   plat.provision_with "C:/ProgramData/chocolatey/bin/choco.exe upgrade -y chocolatey --no-progress"
   plat.provision_with "C:/ProgramData/chocolatey/bin/choco.exe sources remove -name chocolatey"
 
-  plat.provision_with "C:/ProgramData/chocolatey/bin/choco.exe install -y Wix310 -version 3.10.2 -debug -x86 --no-progress"
+  plat.provision_with "C:/ProgramData/chocolatey/bin/choco.exe install -y wixtoolset -version 3.14.1 -debug -x86 --no-progress --ignore-dependencies"
 
   plat.install_build_dependencies_with "C:/ProgramData/chocolatey/bin/choco.exe install -y --no-progress"
 
