@@ -25,7 +25,7 @@ project "puppet-agent" do |proj|
     proj.extra_file_to_sign File.join(proj.bindir, 'puppet')
     proj.extra_file_to_sign File.join(proj.bindir, 'pxp-agent')
     proj.extra_file_to_sign File.join(proj.bindir, 'wrapper.sh')
-    proj.signing_hostname 'osx-signer-prod-2.delivery.puppetlabs.net'
+    proj.signing_hostname 'osx-signer-prod-3.delivery.puppetlabs.net'
     proj.signing_username 'jenkins'
     proj.signing_command 'security -q unlock-keychain -p \$$OSX_SIGNING_KEYCHAIN_PW \$$OSX_SIGNING_KEYCHAIN; codesign --timestamp --keychain \$$OSX_SIGNING_KEYCHAIN -vfs \"\$$OSX_CODESIGNING_CERT\"'
   end
