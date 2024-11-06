@@ -21,9 +21,7 @@ foss_platforms:
   - el-9-ppc64le
   - fedora-36-x86_64
   - fedora-40-x86_64
-  - osx-11-arm64
   - osx-11-x86_64
-  - osx-12-arm64
   - osx-12-x86_64
   - osx-13-arm64
   - osx-13-x86_64
@@ -118,12 +116,8 @@ platform_repos:
     repo_location: repos/apt/noble
   - name: ubuntu-24.04-aarch64
     repo_location: repos/apt/noble
-  - name: osx-11-arm64
-    repo_location: repos/apple/11/**/arm64/*.dmg
   - name: osx-11-x86_64
     repo_location: repos/apple/11/**/x86_64/*.dmg
-  - name: osx-12-arm64
-    repo_location: repos/apple/12/**/arm64/*.dmg
   - name: osx-12-x86_64
     repo_location: repos/apple/12/**/x86_64/*.dmg
   - name: osx-13-arm64
